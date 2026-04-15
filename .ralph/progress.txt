@@ -16,3 +16,4 @@ Stories: 0/107 complete
 [2026-04-15T23:34:23Z] Completed: story-8 - Audit data sources — write `docs/data-sources.md` (no download)
 [2026-04-15T23:40:13Z] Completed: story-4 - Teacher client (src/distill/teacher_client.py)
 [2026-04-15T23:42:21Z] Completed: story-5 - Smoke-test harness (tests/conftest.py + tests/test_smoke.py)
+[2026-04-15T23:48:30Z] Completed: story-1 - Download + verify Qwen3.5-4B base (BF16 8.8GB + Q4 2.52GB on kxkm-ai:/home/kxkm/models/qwen3.5-4b{,bf16,-q4.gguf}; smoke 'hello, I am a student' OK)

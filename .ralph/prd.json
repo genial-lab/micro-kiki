@@ -7,7 +7,7 @@
       "title": "Download + verify Qwen3.5-4B base",
       "description": "**Download + verify Qwen3.5-4B base**\n\n   - Files to touch: `scripts/download_base.py`, `models/qwen3.5-4b/` (gitignored)\n   - Download from HuggingFace `Qwen/Qwen3.5-4B` (or mirror), verify SHA256, save BF16 safetensors at `models/qwen3.5-4b/bf16/`.\n   - Also produce Q4_K_M GGUF at `models/qwen3.5-4b-q4.gguf` via `llama.cpp/convert_hf_to_gguf.py` + `llama-quantize`.\n   - Acceptance: both files exist, loader smoke test passes (prompt \"hello\" → non-empty response), file sizes within ±5% of expected (~8 GB BF16, ~2.5 GB Q4).\n   - Dependencies: none.",
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-2",
