@@ -1,0 +1,19 @@
+exa:
+  api_key_env: "EXA_API_KEY"
+  base_url: "https://api.exa.ai"
+  max_results: 10
+  cache_ttl_hours: 24
+
+semantic_scholar:
+  base_url: "https://api.semanticscholar.org/graph/v1"
+  max_results: 10
+  cache_ttl_days: 30
+  fields: "title,abstract,url,year,citationCount,authors"
+
+docs_scraper:
+  cache_ttl_days: 7
+  index_path: "data/docs_index.sqlite"
+  user_agent: "micro-kiki/0.1 research-bot"
+
+cache:
+  db_path: "data/search_cache.sqlite"

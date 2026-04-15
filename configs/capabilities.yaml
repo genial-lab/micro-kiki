@@ -1,0 +1,37 @@
+router:
+  num_domain_outputs: 32
+  num_capability_outputs: 5
+  total_outputs: 37
+
+capabilities:
+  web_search:
+    index: 32
+    threshold: 0.15
+    description: "Trigger web/docs/papers search"
+  self_critique_token:
+    index: 33
+    threshold: 0.10
+    description: "Best-of-N / self-consistency"
+  self_critique_response:
+    index: 34
+    threshold: 0.20
+    description: "Structured critique + correction"
+  self_critique_task:
+    index: 35
+    threshold: 0.35
+    description: "Full agentic loop"
+  deep_eval:
+    index: 36
+    threshold: 0.25
+    description: "Formal benchmark evaluation"
+
+best_of_n:
+  high_confidence_threshold: 0.8
+  mid_confidence_threshold: 0.5
+  low_confidence_n: 5
+  mid_confidence_n: 3
+  scoring: "mean_log_prob"
+
+agentic_loop:
+  max_iterations: 5
+  judge_escalation_threshold: 0.5
