@@ -12,3 +12,4 @@ Stories: 0/107 complete
 [Execution log will appear below]
 
 [2026-04-15T23:28:55Z] Completed: story-6 - Distilled dataset generator (`src/distill/generator.py`)
+[2026-04-15T23:32:08Z] Completed: story-7 - Cross-domain dedup (`src/distill/dedup.py`)

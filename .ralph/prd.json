@@ -49,7 +49,7 @@
       "title": "Cross-domain dedup (`src/distill/dedup.py`)",
       "description": "**Cross-domain dedup (`src/distill/dedup.py`)**\n\n   - Files to touch: `src/distill/dedup.py`, `tests/test_dedup.py`\n   - MinHash + LSH across ALL domain jsonls, flag examples appearing in > 1 domain, assign to highest-affinity domain only.\n   - CLI: `python -m src.distill.dedup --input data/raw/ --output data/dedup/`\n   - Acceptance: on synthetic dup set (3 domains, 30% overlap), produces disjoint partition; unit tests pass.\n   - Dependencies: step 6.",
       "priority": 7,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-8",
