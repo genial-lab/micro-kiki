@@ -49,6 +49,24 @@ Stop and document in progress.txt if:
 - Training stacks MUST run in curriculum order (foundations first)
 - Forgetting check required after each new stack
 
+## Phase 14 — Agentic Capabilities
+
+### Additional constraints
+- Web search backends must cache all results (SQLite, enforced TTLs)
+- Best-of-N sampling: N never exceeds 5
+- Agentic loop: hard cap at 5 iterations
+- Self-refine: single correction pass only
+- Ralph hard stop after 3 consecutive failures
+- Forgetting check is non-negotiable after every stack training story
+- All search results include source attribution
+- HTTP bridge timeout: 120s max
+
+### New packages
+- `src/search/` — web search backends (exa, scholar, docs) + cache
+- `src/critique/` — auto-critique levels 1-3
+- `src/orchestrator/` — main engine + HTTP bridge
+- `src/ralph/` — research, self-review, forgetting, autonomous loop
+
 ## Recovery
 
 If the loop fails:
