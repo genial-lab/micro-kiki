@@ -5,6 +5,7 @@
 ## Key decisions locked in
 
 - **Base model**: Qwen3.5-4B (Apache 2.0, 262K ctx, GatedDeltaNet hybrid)
+- **Base architecture mod**: Differential Attention (arxiv 2410.05258) applied only to the 13 full-attention layers (the 36 linear/GatedDeltaNet layers left untouched) — follows Dragon LLM's per-global-layer finding; benefits long ctx, reduces hallucinations, reduces activation outliers (helps Q4 quant)
 - **Adapter technique**: MoE-LoRA (MoLoRA approach), rank 16, 4 experts per projection, top-2 routing
 - **Init strategy**: PiSSA default, LoRA-Null alternative, OPLoRA projection for forgetting prevention
 - **Quantization**: Q4_K_M for serving, BF16 for training
@@ -17,7 +18,7 @@
 
 ## Implementation plan
 
-- `.claude/plans/micro-kiki-v0.2-implementation.md` — 105 stories, 14 phases
+- `.claude/plans/micro-kiki-v0.2-implementation.md` — 106 stories, 14 phases
 - Driven by ralph loop: `uv run .ralph/loop.py`
 - Each story = one shippable unit with explicit files-to-touch + acceptance + dependencies
 - Phase XIII (steps 100–102) adds quantum-inspired techniques (HyQuT hybrid VQC, QMoE routing with classical fallback, Quantum-PEFT adapters); all three run on classical simulators by default — QPU dispatch is optional and lives on the `quantum` branch

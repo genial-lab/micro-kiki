@@ -6,7 +6,7 @@ A 32-domain expert system built on Qwen3.5-4B with MoE-LoRA stacks, cognitive la
 
 Five tightly integrated layers that turn a small base model into a specialist team:
 
-1. **Base**: Qwen3.5-4B (Apache 2.0, GatedDeltaNet hybrid, 262K ctx, 201 languages, thinking mode)
+1. **Base**: Qwen3.5-4B (Apache 2.0, GatedDeltaNet hybrid, 262K ctx, 201 languages, thinking mode), with **Differential Attention** (arxiv 2410.05258) applied to the 13 full-attention layers for better long-context retrieval, lower hallucinations, and reduced activation outliers
 2. **32 MoE-LoRA stacks**: one per domain, 4 experts × rank 16 each, ~150 MB per stack, ~4.8 GB total
 3. **Meta-router**: sigmoid 32 outputs + training-free dispatcher (7 meta-intents)
 4. **Cognitive layer**:
@@ -83,7 +83,7 @@ The design is grounded in 2025–2026 published work:
 
 ## Structure
 
-> **Note:** this tree represents the **target layout** per the 105-step plan. Several directories (`src/memory/`, `src/cognitive/`, `deploy/`) do not exist yet — they are populated as ralph works through the plan. The current state reflects Phase I foundations only.
+> **Note:** this tree represents the **target layout** per the 106-step plan. Several directories (`src/memory/`, `src/cognitive/`, `deploy/`) do not exist yet — they are populated as ralph works through the plan. The current state reflects Phase I foundations only.
 
 ```
 micro-kiki/
@@ -112,11 +112,11 @@ micro-kiki/
 
 ## Status
 
-14 phases, 105 implementation stories. Tracked in `.ralph/prd.json`.
+14 phases, 106 implementation stories. Tracked in `.ralph/prd.json`.
 
 - [x] Design (2026-04-15) — see `docs/specs/`
 - [x] MoE approach research — see `docs/research/`
-- [x] Implementation plan (105 stories, 14 phases)
+- [x] Implementation plan (106 stories, 14 phases)
 - [ ] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
 - [ ] Phase II — Data pipeline
 - [ ] Phase III — First stack (chat-fr E2E)
