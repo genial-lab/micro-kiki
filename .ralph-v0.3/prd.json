@@ -70,14 +70,14 @@
       "title": "Consolidation module",
       "description": "**Consolidation module**\n\n- Files to touch: `src/cognitive/consolidation.py`, `tests/test_consolidation.py`\n- Cluster similar episodes by topic + temporal proximity, summarize each cluster via teacher LLM into a single consolidated episode, preserve backrefs (originals not destroyed).\n- Use Qwen3.5-35B-A3B (kxkm-ai :8000 via tunnel) for summarization.\n- Acceptance: 100 episodes across 10 topics \u2192 \u2264 20 summary nodes; recall via summary node \u2265 0.9 on held-out QA probes.\n- Dependencies: steps 7, 8.",
       "priority": 10,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-11",
       "title": "Unified AeonSleep API",
       "description": "**Unified AeonSleep API**\n\n- Files to touch: `src/memory/aeonsleep.py`, `src/memory/__init__.py`, `tests/test_aeonsleep.py`\n- Single entry-point class wrapping Atlas, Trace, SleepTagger, ForgettingGate, Consolidation.\n- Methods: `write`, `recall(query, k=10)`, `sleep_cycle()`, `query_time(range)`, `stats()`.\n- Acceptance: integration test \u2014 write 500 episodes, run 3 sleep cycles, achieve **\u2265 95% retrieval accuracy at PI depth 10** on SleepGate-paper benchmark.\n- Dependencies: steps 6, 7, 8, 9, 10.",
       "priority": 11,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-12",

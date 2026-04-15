@@ -7,3 +7,25 @@ consolidation) live in :mod:`src.cognitive`.
 """
 
 from __future__ import annotations
+
+from src.memory.aeonsleep import (
+    AeonSleep,
+    Episode,
+    RecallHit,
+    SleepReport,
+)
+from src.memory.atlas import AtlasIndex, AtlasEntry, SearchHit
+from src.memory.trace import Edge, Node, TraceGraph
+
+__all__ = [
+    "AeonSleep",
+    "AtlasEntry",
+    "AtlasIndex",
+    "Edge",
+    "Episode",
+    "Node",
+    "RecallHit",
+    "SearchHit",
+    "SleepReport",
+    "TraceGraph",
+]

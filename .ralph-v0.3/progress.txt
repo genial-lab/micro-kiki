@@ -18,3 +18,5 @@ Stories: 4/26 complete
 [2026-04-16T01:10:00Z] Completed: story-7 - Port Trace neuro-symbolic graph from v0.2
 [2026-04-16T01:12:00Z] Completed: story-8 - SleepGate conflict-aware temporal tagger
 [2026-04-16T01:16:00Z] Completed: story-9 - Forgetting gate network
+[2026-04-16T01:25:00Z] Completed: story-10 - Consolidation module
+[2026-04-16T01:30:00Z] Completed: story-11 - Unified AeonSleep API
