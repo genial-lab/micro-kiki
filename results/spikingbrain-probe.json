@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-04-15T23:51:32.935696+00:00",
+  "spec": "docs/specs/spikingbrain-acquisition.md",
+  "hf_repos": [
+    {
+      "query": "https://huggingface.co/api/models?search=spikingbrain&limit=50",
+      "status": 200,
+      "repo_id": "maujim/spikingbrain-v1-7b-base",
+      "downloads": 163,
+      "likes": 0,
+      "private": false
+    }
+  ],
+  "modelscope_repos": [
+    {
+      "query": "https://modelscope.cn/api/v1/models/Panyuqi/V1-7B-base",
+      "status": 200,
+      "repo_id": "Panyuqi/V1-7B-base",
+      "exists": true,
+      "license": "",
+      "downloads": 534,
+      "model_id": 436748
+    },
+    {
+      "query": "https://modelscope.cn/api/v1/models/Panyuqi/V1-7B-sft-s3-reasoning",
+      "status": 200,
+      "repo_id": "Panyuqi/V1-7B-sft-s3-reasoning",
+      "exists": true,
+      "license": "",
+      "downloads": 1447,
+      "model_id": 448055
+    },
+    {
+      "query": "https://modelscope.cn/api/v1/models/Abel2076/SpikingBrain-7B-W8ASpike",
+      "status": 200,
+      "repo_id": "Abel2076/SpikingBrain-7B-W8ASpike",
+      "exists": true,
+      "license": "Apache License 2.0",
+      "downloads": 1005,
+      "model_id": 550828
+    },
+    {
+      "query": "https://modelscope.cn/api/v1/models/sherry12334/SpikingBrain-7B-VL",
+      "status": 200,
+      "repo_id": "sherry12334/SpikingBrain-7B-VL",
+      "exists": true,
+      "license": "Apache License 2.0",
+      "downloads": 251,
+      "model_id": 587417
+    },
+    {
+      "query": "https://modelscope.cn/api/v1/models/Panyuqi/V1-76B-base",
+      "status": 404,
+      "error": "HTTPError 404: Not Found",
+      "probed_id": "Panyuqi/V1-76B-base"
+    },
+    {
+      "query": "https://modelscope.cn/api/v1/models/Panyuqi/V1-76B-A12B-sft",
+      "status": 404,
+      "error": "HTTPError 404: Not Found",
+      "probed_id": "Panyuqi/V1-76B-A12B-sft"
+    }
+  ],
+  "decision": "fallback-a-7b",
+  "notes": [
+    "only 7B family public — take Fallback A per spec section 4",
+    "re-run monthly until v0.3 freeze (2026-06-01) in case 76B lands"
+  ]
+}

@@ -84,7 +84,7 @@
       "title": "SpikingBrain-76B acquisition plan",
       "description": "**SpikingBrain-76B acquisition plan**\n\n- Files to touch: `docs/specs/spikingbrain-acquisition.md`, `scripts/probe_spikingbrain_hf.py`\n- Probe HuggingFace for an official or community SpikingBrain-76B checkpoint (BICLab, paper authors, arxiv-linked repos).\n- Three paths: (a) official checkpoint \u2192 download; (b) community checkpoint \u2192 verify license + provenance; (c) no checkpoint \u2192 fallback: Spikingformer training-free conversion of Qwen2.5-7B as SpikingBrain-7B.\n- Acceptance: spec committed; probe script emits `results/spikingbrain-probe.json` with decision.\n- Dependencies: none.",
       "priority": 12,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-13",

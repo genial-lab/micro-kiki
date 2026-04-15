@@ -5,7 +5,7 @@ Source: .claude/plans/micro-kiki-v0.3-neuroscience.md
 Branch: neuroscience (cousin fork of v0.2 main, NOT an evolution)
 Started: 2026-04-15T22:55:00Z
 
-Stories: 4/26 complete
+Stories: 12/26 complete
 
 ---
 
@@ -20,3 +20,4 @@ Stories: 4/26 complete
 [2026-04-16T01:16:00Z] Completed: story-9 - Forgetting gate network
 [2026-04-16T01:25:00Z] Completed: story-10 - Consolidation module
 [2026-04-16T01:30:00Z] Completed: story-11 - Unified AeonSleep API
+[2026-04-15T23:52:05Z] Completed: story-12 - SpikingBrain-76B acquisition plan
