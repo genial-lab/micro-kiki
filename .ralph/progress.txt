@@ -14,3 +14,4 @@ Stories: 0/107 complete
 [2026-04-15T23:28:55Z] Completed: story-6 - Distilled dataset generator (`src/distill/generator.py`)
 [2026-04-15T23:32:08Z] Completed: story-7 - Cross-domain dedup (`src/distill/dedup.py`)
 [2026-04-15T23:34:23Z] Completed: story-8 - Audit data sources — write `docs/data-sources.md` (no download)
+[2026-04-15T23:40:13Z] Completed: story-4 - Teacher client (src/distill/teacher_client.py)
