@@ -1,0 +1,5 @@
+{"prompt": "Write a GitHub Actions workflow for building and deploying a Docker image."}
+{"prompt": "Explain blue-green vs canary deployment strategies."}
+{"prompt": "Create a Terraform module for an AWS VPC with public/private subnets."}
+{"prompt": "How do you set up Prometheus alerting for high error rates?"}
+{"prompt": "Write an Ansible playbook that configures nginx as a reverse proxy."}

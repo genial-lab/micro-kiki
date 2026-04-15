@@ -1,0 +1,5 @@
+{"prompt": "Write a Python decorator that caches function results with an LRU strategy."}
+{"prompt": "Explain the Global Interpreter Lock (GIL) and its impact on threading."}
+{"prompt": "Implement a context manager for database transactions in Python."}
+{"prompt": "How do you use asyncio.gather for concurrent API calls?"}
+{"prompt": "Write a Python generator that yields Fibonacci numbers lazily."}

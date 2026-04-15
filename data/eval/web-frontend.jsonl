@@ -1,0 +1,5 @@
+{"prompt": "Build a React component that implements infinite scroll with virtualization."}
+{"prompt": "Explain the virtual DOM reconciliation algorithm."}
+{"prompt": "Write accessible ARIA attributes for a custom dropdown menu."}
+{"prompt": "How do you optimize a React app with React.memo and useMemo?"}
+{"prompt": "Create a CSS animation for a skeleton loading placeholder."}

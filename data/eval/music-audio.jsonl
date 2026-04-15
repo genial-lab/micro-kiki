@@ -1,0 +1,5 @@
+{"prompt": "Implement a simple synthesizer oscillator in Python using numpy."}
+{"prompt": "Explain MIDI message types and their byte structure."}
+{"prompt": "How do you implement real-time audio processing with low latency?"}
+{"prompt": "Write a Python script that generates a WAV file with a chord."}
+{"prompt": "Explain the difference between FM and additive synthesis."}

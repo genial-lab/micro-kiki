@@ -1,0 +1,5 @@
+{"prompt": "Write a FastAPI endpoint with request validation and error handling."}
+{"prompt": "Explain the N+1 query problem and how to solve it with SQLAlchemy."}
+{"prompt": "Implement rate limiting middleware for an Express.js app."}
+{"prompt": "How do you design a REST API for a multi-tenant SaaS?"}
+{"prompt": "Write a WebSocket handler for real-time notifications."}
