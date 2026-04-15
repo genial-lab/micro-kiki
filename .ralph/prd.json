@@ -35,7 +35,7 @@
       "title": "Smoke-test harness (`tests/conftest.py`)",
       "description": "**Smoke-test harness (`tests/conftest.py`)**\n\n   - Files to touch: `tests/conftest.py`, `tests/test_smoke.py`\n   - Pytest fixtures: `tmp_model_dir`, `mock_teacher`, `sample_prompts`.\n   - Smoke tests: 1 per module (`test_loader_smoke`, `test_teacher_smoke`).\n   - Acceptance: `uv run pytest` runs cleanly, all smoke tests green.\n   - Dependencies: steps 3, 4.",
       "priority": 5,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-6",
