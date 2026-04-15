@@ -13,3 +13,8 @@ Stories: 4/26 complete
 [2026-04-15T21:47:55Z] Completed: story-2 - Benchmark v0.2 Dispatcher vs MAP conflict monitor
 [2026-04-15T21:49:31Z] Completed: story-3 - Benchmark v0.2 Negotiator vs MAP state evaluator
 [2026-04-15T21:52:16Z] Completed: story-4 - Technical report: v0.2 as MAP implementation
+[2026-04-16T01:08:00Z] Completed: story-5 - AeonSleep architecture spec
+[2026-04-16T01:09:00Z] Completed: story-6 - Port Atlas SIMD index from v0.2
+[2026-04-16T01:10:00Z] Completed: story-7 - Port Trace neuro-symbolic graph from v0.2
+[2026-04-16T01:12:00Z] Completed: story-8 - SleepGate conflict-aware temporal tagger
+[2026-04-16T01:16:00Z] Completed: story-9 - Forgetting gate network
