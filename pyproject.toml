@@ -7,7 +7,7 @@ readme = "README.md"
 license = { text = "Apache-2.0" }
 
 dependencies = [
-  # Runtime deps added progressively per stack
+  "httpx>=0.27",
 ]
 
 [project.optional-dependencies]
@@ -28,6 +28,14 @@ serve = [
   "vllm",
   "fastapi",
   "uvicorn",
+]
+agentic = [
+  "httpx>=0.27",
+  "beautifulsoup4>=4.12",
+]
+dev = [
+  "pytest>=8.0",
+  "pytest-asyncio>=0.24",
 ]
 
 [build-system]
