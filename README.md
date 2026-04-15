@@ -157,6 +157,7 @@ Phase I step 2 (Differential Attention fork) carries an automatic **rollback cla
 
 - `main` — public v0.2 core (classical + quantum-inspired, runs on CPU/GPU simulators)
 - `quantum` — public hybrid classical/QPU staging area (Qiskit, PennyLane, AWS Braket, IBM Runtime); every experiment must have a classical-simulator fallback
+- `neuroscience` — v0.3 research branch (SpikingBrain-76B + AeonSleep + neuromorphic edge). See [BRANCH-neuroscience.md](https://github.com/electron-rare/micro-kiki/blob/neuroscience/BRANCH-neuroscience.md).
 - Private QPU-only research lives at [`electron-rare/micro-kiki-quantum`](https://github.com/electron-rare/micro-kiki-quantum) (PRIVATE, $250/experiment budget, no classical fallback requirement)
 
 ## License
