@@ -1461,6 +1461,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
+    { name = "numpy" },
     { name = "pyyaml" },
 ]
 
@@ -1503,6 +1504,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'agentic'", specifier = ">=0.27" },
     { name = "mlx", marker = "extra == 'mlx'", specifier = ">=0.26" },
     { name = "mlx-lm", marker = "extra == 'mlx'", specifier = ">=0.30" },
+    { name = "numpy", specifier = ">=1.26" },
     { name = "peft", marker = "extra == 'train'", specifier = ">=0.13" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
