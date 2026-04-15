@@ -1,2 +1,0 @@
-# v0.2 quantum-inspired ralph progress
-# format: [iso-ts] Completed: {story-id} - {story-title}

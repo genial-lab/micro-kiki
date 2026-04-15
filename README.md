@@ -83,7 +83,7 @@ The design is grounded in 2025–2026 published work:
 
 ## Structure
 
-> **Note:** this tree represents the **target layout** per the 102-step plan. Several directories (`src/memory/`, `src/cognitive/`, `deploy/`) do not exist yet — they are populated as ralph works through the plan. The current state reflects Phase I foundations only.
+> **Note:** this tree represents the **target layout** per the 105-step plan. Several directories (`src/memory/`, `src/cognitive/`, `deploy/`) do not exist yet — they are populated as ralph works through the plan. The current state reflects Phase I foundations only.
 
 ```
 micro-kiki/
@@ -112,11 +112,11 @@ micro-kiki/
 
 ## Status
 
-13 phases, 102 implementation stories. Tracked in `.ralph/prd.json`.
+14 phases, 105 implementation stories. Tracked in `.ralph/prd.json`.
 
 - [x] Design (2026-04-15) — see `docs/specs/`
 - [x] MoE approach research — see `docs/research/`
-- [x] Implementation plan (102 stories, 13 phases)
+- [x] Implementation plan (105 stories, 14 phases)
 - [ ] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
 - [ ] Phase II — Data pipeline
 - [ ] Phase III — First stack (chat-fr E2E)
@@ -129,7 +129,8 @@ micro-kiki/
 - [ ] Phase X — Anti-bias (KnowBias + RBD)
 - [ ] Phase XI — Serving deployment
 - [ ] Phase XII — ANE triple pipeline (Mac-only)
-- [ ] Phase XIII — Release v0.1
+- [ ] Phase XIII — Quantum-inspired (HyQuT, QMoE, Quantum-PEFT, classical simulators)
+- [ ] Phase XIV — Release v0.2
 
 ## Execution
 
@@ -144,8 +145,15 @@ Each iteration picks one incomplete story, implements it, runs quality gates, co
 
 ## Roadmap
 
-- **v0.1** (scope of this plan): 32 stacks + router + cognitive layer + serving + ANE + release
-- **v0.2** (planned): temporal context (real-time clock, location, news slice) + future-reasoner (CoT temporal chains, calendar-aware planning). Deferred because LLM 4B underperforms dedicated time-series ML on quantitative forecasting (arxiv 2601.10132); context-injection + tools approach is more appropriate than new stacks.
+- **v0.1** (shipped in plan history): 32 stacks + router + cognitive layer + serving + ANE
+- **v0.2** (scope of current consolidated plan): v0.1 + quantum-inspired techniques (HyQuT hybrid VQC, QMoE routing with classical fallback, Quantum-PEFT adapters — all run on classical simulators by default)
+- **v0.3** (planned): temporal context (real-time clock, location, news slice) + future-reasoner (CoT temporal chains, calendar-aware planning). Deferred because LLM 4B underperforms dedicated time-series ML on quantitative forecasting (arxiv 2601.10132); context-injection + tools approach is more appropriate than new stacks.
+
+## Branches
+
+- `main` — public v0.2 core (classical + quantum-inspired, runs on CPU/GPU simulators)
+- `quantum` — public hybrid classical/QPU staging area (Qiskit, PennyLane, AWS Braket, IBM Runtime); every experiment must have a classical-simulator fallback
+- Private QPU-only research lives at [`electron-rare/micro-kiki-quantum`](https://github.com/electron-rare/micro-kiki-quantum) (PRIVATE, $250/experiment budget, no classical fallback requirement)
 
 ## License
 

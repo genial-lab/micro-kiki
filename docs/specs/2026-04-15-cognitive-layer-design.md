@@ -1,5 +1,7 @@
 # Cognitive layer design — 2026-04-15
 
+> **v0.2 note**: this layer was originally specified as part of v0.1, then consolidated into the unified v0.2 plan at `.claude/plans/micro-kiki-v0.2-implementation.md`.
+
 Companion to `2026-04-15-micro-kiki-design.md`. The base design (32 MoE-LoRA stacks + sigmoid meta-router on Qwen3.5-4B) is preserved verbatim. This document specifies the cognitive layer that wraps it: dispatcher, memory palace, negotiator, and anti-bias pipeline. Each component is grounded in a 2025–2026 published paper so we can explain and defend the choices.
 
 Integration point in the main architecture is the per-turn pipeline documented in `README.md` ("Architecture" section). The cognitive layer inserts four steps: dispatcher before the router, Aeon recall before prompt assembly, negotiator between candidate generation and final selection, anti-bias between selection and emit (with Aeon write as the persistence hook).

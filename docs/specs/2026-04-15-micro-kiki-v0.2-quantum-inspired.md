@@ -1,5 +1,7 @@
 # micro-kiki v0.2 — Quantum-Inspired Layer
 
+> **Status**: integrated into the main v0.2 plan at `.claude/plans/micro-kiki-v0.2-implementation.md` as Phase XIII (steps 100-102). This spec remains as the design reference for the three quantum-inspired techniques.
+
 **Branch:** `quantum-inspired`
 **Parent:** v0.1 classical (main branch, 102 stories)
 **Scope:** Apply quantum-inspired techniques to compress the base and replace LoRA adapters with tensor-network alternatives, without introducing QPU dependencies. 100% classical execution.

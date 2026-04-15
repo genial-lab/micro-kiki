@@ -1,8 +1,8 @@
-# micro-kiki — Implementation Plan
+# micro-kiki v0.2 — Implementation Plan
 
-**Scope**: Build 32 domain-expert MoE-LoRA stacks on Qwen3.5-4B base, with sigmoid meta-router, end-to-end distillation pipeline, and triple-device serving (RTX 4090 + Mac Studio + optional ANE).
+**Scope**: Build 32 domain-expert MoE-LoRA stacks on Qwen3.5-4B base, with sigmoid meta-router, end-to-end distillation pipeline, triple-device serving (RTX 4090 + Mac Studio + optional ANE), plus a **quantum-inspired pre-release overlay** (CompactifAI base compression, QTHA adapter pilot, tensor-network router prototype — 100% classical execution, no QPU).
 
-**Derived from**: `docs/specs/2026-04-15-micro-kiki-design.md` + `docs/research/micro-kiki-moe-research.md`.
+**Derived from**: `docs/specs/2026-04-15-micro-kiki-design.md` + `docs/specs/2026-04-15-cognitive-layer-design.md` + `docs/specs/2026-04-15-micro-kiki-v0.2-quantum-inspired.md` + `docs/research/micro-kiki-moe-research.md`.
 
 **Conventions**:
 - Each step is ONE shippable unit of work — can be committed independently.
@@ -758,34 +758,72 @@
     - Acceptance: latency drops from ~5 ms (CPU) to ~1 ms (ANE); identical outputs within fp16 tolerance.
     - Dependencies: step 69.
 
-### Phase XIII — Release 0.1
+### Phase XIII — Quantum-inspired pre-release (classical only, no QPU)
 
-100. **Freeze config + migration guide**
-    - Files to touch: `MIGRATION.md`, `VERSION`, tag `v0.1.0`
-    - Document breaking changes, adapter format, router protocol. Freeze `configs/` (hash-lock).
-    - Acceptance: `git tag v0.1.0` pushed; MIGRATION.md reviewed.
-    - Dependencies: step 96.
+100. **CompactifAI base compression**
+    - Files to touch: `src/compress/compactifai.py`, `src/compress/__init__.py`, `scripts/compress_base.py`, `tests/test_compactifai.py`, `configs/compactifai.yaml`
+    - Implement tensor-network truncation over self-attn (Q/K/V/O projections) and MLP (gate/up/down) layers of the **debiased, post-stacks-fused** base checkpoint. Use `quimb` for MPS/MPO decomposition and `opt_einsum` for contraction paths.
+    - Expose CLI: `uv run python scripts/compress_base.py --bond-dim 32 --input models/qwen3.5-4b-fused/bf16 --output models/qwen3.5-4b-compact/chi32`.
+    - Progressive chi schedule: produce chi in {64, 32, 16, 8} artifacts; evaluate each on HumanEval-sample + MMLU-Pro-sample.
+    - Commands:
+      - `uv add quimb opt_einsum tensornetwork`
+      - `uv run pytest tests/test_compactifai.py`
+      - `uv run python scripts/compress_base.py --bond-dim 32`
+    - Acceptance: chi=32 artifact exists at `models/qwen3.5-4b-compact/chi32/`, on-disk size <= 1 GB, loader smoke test yields non-empty response, accuracy drop on HumanEval-sample < 5 pp vs BF16 baseline.
+    - Dependencies: step 90 (post-stacks debiased base).
 
-101. **HuggingFace release**
-    - Files to touch: `.github/workflows/hf-release.yml`, HF repo `electron-rare/micro-kiki-v0.1`
-    - Upload: base-model reference (link to Qwen), 32 adapter .safetensors, router.pt, model card, eval results.
-    - Acceptance: `huggingface-cli download electron-rare/micro-kiki-v0.1` works from clean env; model card renders.
-    - Dependencies: step 100.
+101. **QTHA adapter pilot on stack-02 (reasoning) — comparative study vs MoLoRA**
+    - Files to touch: `src/stacks/qtha.py`, `src/stacks/__init__.py`, `scripts/train_qtha_stack.py`, `tests/test_qtha.py`, `configs/qtha-stack-02.yaml`
+    - Implement `QTHAAdapter(nn.Module)`: decomposes the frozen base weights into a tensor-network factor + a trainable low-bond-dim correction. Parameter count target: ~500 K (vs 2 M MoLoRA rank-16). Training hook compatible with PEFT-style attach/detach.
+    - Reuse the stack-02 reasoning dataset (`data/dedup/02-reasoning/`). Train on RTX 4090 via Unsloth-compatible path.
+    - Eval: `win_rate_vs_base` on reasoning eval slice; compare to the v0.1-class MoLoRA stack-02 baseline (step 16).
+    - Commands:
+      - `uv run pytest tests/test_qtha.py`
+      - `uv run python scripts/train_qtha_stack.py --config configs/qtha-stack-02.yaml`
+      - `uv run python scripts/eval_stack.py --stack stack-02-reasoning-qtha --compare stack-02-reasoning`
+    - Acceptance: adapter saved to `outputs/stacks/stack-02-reasoning-qtha/`, param count logged <= 600 K, `win_rate_vs_base` >= MoLoRA stack-02 - 1 pp, comparative report at `results/qtha-vs-molora.md` with a merge/fallback decision line.
+    - Dependencies: step 16 (MoLoRA stack-02 baseline); step 100 optional (for compact base path).
 
-102. **Model card + cookbook**
+102. **Tensor-network router prototype**
+    - Files to touch: `src/routing/tn_router.py`, `src/routing/__init__.py`, `scripts/train_tn_router.py`, `tests/test_tn_router.py`, `configs/tn-router.yaml`
+    - Implement `TNRouter(nn.Module)` gating function using matrix product states (MPS) over embedding input; produce per-domain scores via interference amplitudes.
+    - Train on the final 32-domain router eval set (step 69). Fallback guard: if macro-F1 drops > 2 pp vs sigmoid, flag in report and do not merge into the serving path.
+    - Commands:
+      - `uv run pytest tests/test_tn_router.py`
+      - `uv run python scripts/train_tn_router.py --config configs/tn-router.yaml`
+      - `uv run python scripts/eval_router.py --router tn --compare sigmoid`
+    - Acceptance: `outputs/routers/tn-v0/` artifact exists, comparative report at `results/tn-vs-sigmoid.md`, macro-F1 delta reported (+/- vs sigmoid), decision line ("merge" | "fallback") included.
+    - Dependencies: step 69 (final sigmoid router + 32-domain eval set).
+
+### Phase XIV — Release v0.2
+
+103. **Freeze config + migration guide**
+    - Files to touch: `MIGRATION.md`, `VERSION`, tag `v0.2.0`
+    - Document breaking changes, adapter format, router protocol, quantum-inspired overlay artifacts. Freeze `configs/` (hash-lock).
+    - Acceptance: `git tag v0.2.0` pushed; MIGRATION.md reviewed.
+    - Dependencies: step 96, step 102.
+
+104. **HuggingFace release**
+    - Files to touch: `.github/workflows/hf-release.yml`, HF repo `electron-rare/micro-kiki-v0.2`
+    - Upload: base-model reference (link to Qwen), compact base chi=32 (optional), 32 MoLoRA adapter .safetensors, QTHA stack-02 (optional), router.pt (+ tn-router.pt if merged), model card, eval results.
+    - Acceptance: `huggingface-cli download electron-rare/micro-kiki-v0.2` works from clean env; model card renders.
+    - Dependencies: step 103.
+
+105. **Model card + cookbook**
     - Files to touch: `MODEL_CARD.md`, `COOKBOOK.md`, `examples/` dir
-    - Document: intended use, limitations, training data, eval scores, 5+ runnable examples (chat-fr, code, SPICE, KiCad, reasoning).
+    - Document: intended use, limitations, training data, eval scores, quantum-inspired overlay results (CompactifAI / QTHA / TN-router), 5+ runnable examples (chat-fr, code, SPICE, KiCad, reasoning).
     - Acceptance: all examples in COOKBOOK run green in CI; model card passes HF lint.
-    - Dependencies: step 101.
+    - Dependencies: step 104.
 
 ---
 
-## Success criteria (v0.1)
+## Success criteria (v0.2)
 
 - 32 stacks trained, each ≥ 0.55 win-rate vs base on its domain.
 - Meta-router macro-F1 ≥ 0.82 across 32 domains.
 - Serving stack runs on RTX 4090 24 GB (max 4 active stacks) AND on Mac Studio.
 - Aggregate eval score ≥ +15% over base Qwen3.5-4B.
+- Quantum-inspired overlay: CompactifAI chi=32 artifact ≤ 1 GB with < 5 pp drop; QTHA vs MoLoRA comparative report shipped; TN-router macro-F1 vs sigmoid reported with merge/fallback decision.
 - Released on HuggingFace with model card + cookbook.
 
 ## Risks + mitigations
@@ -794,5 +832,6 @@
 - **Router saturation at 32 domains** → re-trains at stacks 08/12/14/final (steps 27, 32, 35, 69); fallback to hierarchical router (6 phase-groups → intra-group classifier).
 - **VRAM overrun** → hard cap 4 active stacks, Q4 base, KV cache eviction.
 - **Teacher unavailability** → step 3 caches responses; fallback to Qwen3.5-35B (kxkm-ai) if Studio offline.
+- **Quantum-inspired regressions** → each of steps 100-102 ships a fallback/merge decision line; artifacts are overlay-only and do not replace the classical serving path unless the decision is "merge".
 
-**v0.2 roadmap (post-release)**: temporal context injection (real-time clock, location, news slice) and future-reasoner (CoT temporal chains, calendar-aware planning) are explicit non-goals for v0.1. They will ship in v0.2 as a tools layer, not as new stacks (LLM 4B underperforms dedicated time-series ML models per arxiv 2601.10132 — context injection is the right approach).
+**v0.3 roadmap (post-release)**: temporal context injection (real-time clock, location, news slice) and future-reasoner (CoT temporal chains, calendar-aware planning) are explicit non-goals for v0.2. They will ship in v0.3 as a tools layer, not as new stacks (LLM 4B underperforms dedicated time-series ML models per arxiv 2601.10132 — context injection is the right approach). True QPU experiments live on the `quantum` branch (public, hybrid with classical fallback) and in the private `micro-kiki-quantum` repo (QPU-only research).
