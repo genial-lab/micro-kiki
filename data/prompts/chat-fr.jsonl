@@ -1,0 +1,20 @@
+{"prompt": "Explique le fonctionnement d'un condensateur en termes simples."}
+{"prompt": "Quelle est la différence entre un microcontrôleur et un microprocesseur?"}
+{"prompt": "Écris une fonction Python qui trie une liste par insertion."}
+{"prompt": "Comment fonctionne le protocole I2C? Explique avec un exemple."}
+{"prompt": "Donne 3 avantages de l'architecture MoE pour les LLM."}
+{"prompt": "Explique la différence entre UART, SPI et I2C."}
+{"prompt": "Comment dimensionner une alimentation à découpage?"}
+{"prompt": "Écris un script Bash qui surveille l'utilisation CPU."}
+{"prompt": "Qu'est-ce que le DMA et pourquoi est-ce utile en embarqué?"}
+{"prompt": "Explique le concept de LoRA pour le fine-tuning de LLM."}
+{"prompt": "Comment fonctionne un pont en H pour contrôler un moteur DC?"}
+{"prompt": "Décris les étapes de conception d'un PCB 4 couches."}
+{"prompt": "Écris une classe Python pour un buffer circulaire thread-safe."}
+{"prompt": "Quelle est la différence entre FreeRTOS et Zephyr?"}
+{"prompt": "Explique le fonctionnement d'un ADC SAR."}
+{"prompt": "Comment implémenter un filtre de Kalman en Python?"}
+{"prompt": "Décris l'architecture d'un système CAN bus pour automobile."}
+{"prompt": "Écris une fonction TypeScript pour valider un JSON Schema."}
+{"prompt": "Comment fonctionne la modulation PWM pour le contrôle de LED?"}
+{"prompt": "Explique la différence entre compilation AOT et JIT."}
