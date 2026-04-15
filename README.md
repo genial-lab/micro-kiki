@@ -112,11 +112,11 @@ micro-kiki/
 
 ## Status
 
-14 phases, 106 implementation stories. Tracked in `.ralph/prd.json`.
+14 phases, 107 implementation stories. Tracked in `.ralph/prd.json`.
 
 - [x] Design (2026-04-15) — see `docs/specs/`
 - [x] MoE approach research — see `docs/research/`
-- [x] Implementation plan (106 stories, 14 phases)
+- [x] Implementation plan (107 stories, 14 phases)
 - [ ] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
 - [ ] Phase II — Data pipeline
 - [ ] Phase III — First stack (chat-fr E2E)

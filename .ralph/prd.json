@@ -1,747 +1,754 @@
 {
   "plan_source": ".claude/plans/micro-kiki-v0.2-implementation.md",
-  "created_at": "2026-04-15T20:26:42.602466+00:00",
+  "created_at": "2026-04-15T20:37:39.859701+00:00",
   "stories": [
     {
       "id": "story-1",
       "title": "Download + verify Qwen3.5-4B base",
-      "description": "**Download + verify Qwen3.5-4B base**\n\n- Files to touch: `scripts/download_base.py`, `models/qwen3.5-4b/` (gitignored)\n   - Download from HuggingFace `Qwen/Qwen3.5-4B` (or mirror), verify SHA256, save BF16 safetensors at `models/qwen3.5-4b/bf16/`.\n   - Also produce Q4_K_M GGUF at `models/qwen3.5-4b-q4.gguf` via `llama.cpp/convert_hf_to_gguf.py` + `llama-quantize`.\n   - Acceptance: both files exist, loader smoke test passes (prompt \"hello\" → non-empty response), file sizes within ±5% of expected (~8 GB BF16, ~2.5 GB Q4).\n   - Dependencies: none.",
+      "description": "**Download + verify Qwen3.5-4B base**\n\n   - Files to touch: `scripts/download_base.py`, `models/qwen3.5-4b/` (gitignored)\n   - Download from HuggingFace `Qwen/Qwen3.5-4B` (or mirror), verify SHA256, save BF16 safetensors at `models/qwen3.5-4b/bf16/`.\n   - Also produce Q4_K_M GGUF at `models/qwen3.5-4b-q4.gguf` via `llama.cpp/convert_hf_to_gguf.py` + `llama-quantize`.\n   - Acceptance: both files exist, loader smoke test passes (prompt \"hello\" → non-empty response), file sizes within ±5% of expected (~8 GB BF16, ~2.5 GB Q4).\n   - Dependencies: none.",
       "priority": 1,
       "passes": false
     },
     {
       "id": "story-2",
       "title": "Fork Qwen3.5-4B with Differential Attention on full-attn layers",
-      "description": "**Fork Qwen3.5-4B with Differential Attention on full-attn layers**\n\n- Files to touch: `scripts/fork_qwen_diffattn.py`, `src/base/diff_attention.py`, `models/qwen3.5-4b-diffattn/` (gitignored), `tests/test_diff_attention.py`, `docs/specs/diffattn-integration.md`\n   - Implement the differential attention mechanism from arxiv 2410.05258 (ICLR 2025, Microsoft): attention scores = softmax(Q1·K1) − λ·softmax(Q2·K2) where λ is a learnable scalar per head, initialized to reinit_lambda * (depth_pre_train).\n   - Apply **only to the 13 `full_attention` layers** of Qwen3.5-4B (leave the 36 `linear_attention` / GatedDeltaNet layers untouched). Rationale: Dragon LLM's empirical finding (substack post) is that DiffAttn applied to global attention only yields meaningful gains while per-layer application is marginal.\n   - Approach: fork the Qwen3.5-4B weights; for each full_attn layer, duplicate Q and K projections (Q1/Q2, K1/K2); init Q2/K2 with small perturbation of Q1/K1 for warm start (avoid full re-train).\n   - Short SkyLadder-style calibration pass on a small sample (~5K tokens) to stabilize λ — NOT a full retrain. Duration: ~30 min on 4090.\n   - Acceptance: `models/qwen3.5-4b-diffattn/` exists with same file structure as base; forward pass matches within 2% perplexity on a 1K-sample held-out set; activation outliers (max/mean ratio per layer) reduced by ≥ 30% on full-attn layers vs vanilla Qwen3.5-4B; write spec documenting the exact implementation choices.\n   - Dependencies: step 1.",
+      "description": "**Fork Qwen3.5-4B with Differential Attention on full-attn layers**\n\n   - Files to touch: `scripts/fork_qwen_diffattn.py`, `src/base/diff_attention.py`, `models/qwen3.5-4b-diffattn/` (gitignored), `tests/test_diff_attention.py`, `docs/specs/diffattn-integration.md`\n   - Implement the differential attention mechanism from arxiv 2410.05258 (ICLR 2025, Microsoft): attention scores = softmax(Q1·K1) − λ·softmax(Q2·K2) where λ is a learnable scalar per head, initialized to reinit_lambda * (depth_pre_train).\n   - Apply **only to the 13 `full_attention` layers** of Qwen3.5-4B (leave the 36 `linear_attention` / GatedDeltaNet layers untouched). Rationale: Dragon LLM's empirical finding (substack post) is that DiffAttn applied to global attention only yields meaningful gains while per-layer application is marginal.\n   - Approach: fork the Qwen3.5-4B weights; for each full_attn layer, duplicate Q and K projections (Q1/Q2, K1/K2); init Q2/K2 with small perturbation of Q1/K1 for warm start (avoid full re-train).\n   - Short SkyLadder-style calibration pass on a small sample (~5K tokens) to stabilize λ — NOT a full retrain. Duration: ~30 min on 4090.\n   - Acceptance: `models/qwen3.5-4b-diffattn/` exists with same file structure as base; perplexity delta vs vanilla base on 1K-sample held-out ≤ **2%**; activation outliers (max/mean ratio per layer) reduced by ≥ **30%** on full-attn layers vs vanilla Qwen3.5-4B; write spec documenting the exact implementation choices.\n   - **Rollback clause**: If perplexity delta > 3% OR activation outliers are NOT reduced, automatically fall back to vanilla Qwen3.5-4B for all downstream stack training. Modify every `configs/stack-NN-*.yaml` file to set `base_model: models/qwen3.5-4b/bf16` and emit `results/diffattn-rollback.json` documenting the decision + metrics. Do NOT proceed with stack training on a degraded base.\n   - Dependencies: step 1.",
       "priority": 2,
       "passes": false
     },
     {
       "id": "story-3",
       "title": "Write base model loader (`src/base/loader.py`)",
-      "description": "**Write base model loader (`src/base/loader.py`)**\n\n- Files to touch: `src/base/loader.py`, `src/base/__init__.py`, `tests/test_loader.py`\n   - Class `BaseModelLoader` with methods `load_bf16()`, `load_q4()`, `enable_lora_switching()` (Unsloth + PEFT hooks).\n   - Expose context manager `with_stack(adapter_name)` that hot-swaps the LoRA weights.\n   - Acceptance: `pytest tests/test_loader.py::test_load_and_switch` passes.\n   - Dependencies: step 1.",
+      "description": "**Write base model loader (`src/base/loader.py`)**\n\n   - Files to touch: `src/base/loader.py`, `src/base/__init__.py`, `tests/test_loader.py`\n   - Class `BaseModelLoader` with methods `load_bf16()`, `load_q4()`, `enable_lora_switching()` (Unsloth + PEFT hooks).\n   - Expose context manager `with_stack(adapter_name)` that hot-swaps the LoRA weights.\n   - Acceptance: `pytest tests/test_loader.py::test_load_and_switch` passes.\n   - Dependencies: step 1.",
       "priority": 3,
       "passes": false
     },
     {
       "id": "story-4",
       "title": "Write teacher client (`src/distill/teacher_client.py`)",
-      "description": "**Write teacher client (`src/distill/teacher_client.py`)**\n\n- Files to touch: `src/distill/teacher_client.py`, `src/distill/__init__.py`, `tests/test_teacher_client.py`\n   - OpenAI-compatible client wrapping: Mistral-Large-Opus (Studio mlx-lm server), Qwen3.5-122B-A10B Opus-v3 (Studio), Qwen3.5-35B-A3B Opus (kxkm-ai :8000), Devstral-v3/v4 (kxkm-ai).\n   - Features: async HTTP via httpx, exponential backoff retry (3 attempts), on-disk response cache keyed by SHA256(prompt + model + params), Qwen3 thinking-mode toggle (`enable_thinking=False` for scoring).\n   - Endpoints configurable via env vars `TEACHER_MISTRAL_URL`, `TEACHER_QWEN122_URL`, etc.\n   - Acceptance: `pytest tests/test_teacher_client.py` — mocks HTTP, verifies cache hit, verifies retry on 500.\n   - Dependencies: none.",
+      "description": "**Write teacher client (`src/distill/teacher_client.py`)**\n\n   - Files to touch: `src/distill/teacher_client.py`, `src/distill/__init__.py`, `tests/test_teacher_client.py`\n   - OpenAI-compatible client wrapping: Mistral-Large-Opus (Studio mlx-lm server), Qwen3.5-122B-A10B Opus-v3 (Studio), Qwen3.5-35B-A3B Opus (kxkm-ai :8000), Devstral-v3/v4 (kxkm-ai).\n   - Features: async HTTP via httpx, exponential backoff retry (3 attempts), on-disk response cache keyed by SHA256(prompt + model + params), Qwen3 thinking-mode toggle (`enable_thinking=False` for scoring).\n   - Endpoints configurable via env vars `TEACHER_MISTRAL_URL`, `TEACHER_QWEN122_URL`, etc.\n   - Acceptance: `pytest tests/test_teacher_client.py` — mocks HTTP, verifies cache hit, verifies retry on 500.\n   - Dependencies: none.",
       "priority": 4,
       "passes": false
     },
     {
       "id": "story-5",
       "title": "Smoke-test harness (`tests/conftest.py`)",
-      "description": "**Smoke-test harness (`tests/conftest.py`)**\n\n- Files to touch: `tests/conftest.py`, `tests/test_smoke.py`\n   - Pytest fixtures: `tmp_model_dir`, `mock_teacher`, `sample_prompts`.\n   - Smoke tests: 1 per module (`test_loader_smoke`, `test_teacher_smoke`).\n   - Acceptance: `uv run pytest` runs cleanly, all smoke tests green.\n   - Dependencies: steps 3, 4.\n\n### Phase II — Data pipeline",
+      "description": "**Smoke-test harness (`tests/conftest.py`)**\n\n   - Files to touch: `tests/conftest.py`, `tests/test_smoke.py`\n   - Pytest fixtures: `tmp_model_dir`, `mock_teacher`, `sample_prompts`.\n   - Smoke tests: 1 per module (`test_loader_smoke`, `test_teacher_smoke`).\n   - Acceptance: `uv run pytest` runs cleanly, all smoke tests green.\n   - Dependencies: steps 3, 4.",
       "priority": 5,
       "passes": false
     },
     {
       "id": "story-6",
       "title": "Distilled dataset generator (`src/distill/generator.py`)",
-      "description": "**Distilled dataset generator (`src/distill/generator.py`)**\n\n- Files to touch: `src/distill/generator.py`, `tests/test_generator.py`\n   - Function `generate_examples(prompts: list[str], teacher: TeacherClient, n_per_prompt: int = 1) -> Dataset`.\n   - Emits `jsonl` with `{prompt, completion, teacher_model, domain, hash}` rows.\n   - Supports resume from checkpoint (scan existing jsonl, skip already-done hashes).\n   - Acceptance: generates 10 examples from mock teacher, output jsonl valid, resume test passes.\n   - Dependencies: step 4.",
+      "description": "**Distilled dataset generator (`src/distill/generator.py`)**\n\n   - Files to touch: `src/distill/generator.py`, `tests/test_generator.py`\n   - Function `generate_examples(prompts: list[str], teacher: TeacherClient, n_per_prompt: int = 1) -> Dataset`.\n   - Emits `jsonl` with `{prompt, completion, teacher_model, domain, hash}` rows.\n   - Supports resume from checkpoint (scan existing jsonl, skip already-done hashes).\n   - Acceptance: generates 10 examples from mock teacher, output jsonl valid, resume test passes.\n   - Dependencies: step 4.",
       "priority": 6,
       "passes": false
     },
     {
       "id": "story-7",
       "title": "Cross-domain dedup (`src/distill/dedup.py`)",
-      "description": "**Cross-domain dedup (`src/distill/dedup.py`)**\n\n- Files to touch: `src/distill/dedup.py`, `tests/test_dedup.py`\n   - MinHash + LSH across ALL domain jsonls, flag examples appearing in > 1 domain, assign to highest-affinity domain only.\n   - CLI: `python -m src.distill.dedup --input data/raw/ --output data/dedup/`\n   - Acceptance: on synthetic dup set (3 domains, 30% overlap), produces disjoint partition; unit tests pass.\n   - Dependencies: step 6.",
+      "description": "**Cross-domain dedup (`src/distill/dedup.py`)**\n\n   - Files to touch: `src/distill/dedup.py`, `tests/test_dedup.py`\n   - MinHash + LSH across ALL domain jsonls, flag examples appearing in > 1 domain, assign to highest-affinity domain only.\n   - CLI: `python -m src.distill.dedup --input data/raw/ --output data/dedup/`\n   - Acceptance: on synthetic dup set (3 domains, 30% overlap), produces disjoint partition; unit tests pass.\n   - Dependencies: step 6.",
       "priority": 7,
       "passes": false
     },
     {
       "id": "story-8",
       "title": "Audit data sources — write `docs/data-sources.md` (no download)",
-      "description": "**Audit data sources — write `docs/data-sources.md` (no download)**\n\n- Files to touch: `docs/data-sources.md`\n   - For each of the 32 domains (in design-doc order), add a table row listing: (a) candidate local datasets under `~/Documents/Projets/Factory 4 Life/` (especially `KIKI-models-tuning/`), (b) existing HuggingFace datasets worth considering, (c) an `availability` column checked via `ls` / `find` (CONFIRMED / TBD / GAP), (d) any notes on licensing or language.\n   - For French-language domains (chat-fr especially), explicitly reference these HF collections known to exist as of 2026:\n     - `bofenghuang/mt-bench-french` — MT-Bench translation\n     - `manu` HF user collection: FrenchBench evaluation datasets\n     - Community 'OpenAssistant-FR' may or may not have clean HF mirror — verify\n   - The data-sources.md file must list these specific HF IDs with a CONFIRMED / TBD column and licensing note.\n   - NO download or fetch from HF. This is an inventory + planning step only.\n   - Full curation of the `kiki-*` legacy datasets (actual import + dedup) is deferred to steps 37–46.\n   - Acceptance: `docs/data-sources.md` exists with a header row and 32 data rows (one per domain); ≥ 70% of domains (≥ 23) have a CONFIRMED source; each GAP row has a one-line mitigation note (synthetic via teacher, scraping, manual seed, etc.); FR HF IDs listed with CONFIRMED/TBD + license.\n   - Dependencies: none.",
+      "description": "**Audit data sources — write `docs/data-sources.md` (no download)**\n\n   - Files to touch: `docs/data-sources.md`\n   - For each of the 32 domains (in design-doc order), add a table row listing: (a) candidate local datasets under `~/Documents/Projets/Factory 4 Life/` (especially `KIKI-models-tuning/`), (b) existing HuggingFace datasets worth considering, (c) an `availability` column checked via `ls` / `find` (CONFIRMED / TBD / GAP), (d) any notes on licensing or language.\n   - For French-language domains (chat-fr especially), explicitly reference these HF collections known to exist as of 2026:\n     - `bofenghuang/mt-bench-french` — MT-Bench translation\n     - `manu` HF user collection: FrenchBench evaluation datasets\n     - Community 'OpenAssistant-FR' may or may not have clean HF mirror — verify\n   - The data-sources.md file must list these specific HF IDs with a CONFIRMED / TBD column and licensing note.\n   - NO download or fetch from HF. This is an inventory + planning step only.\n   - Full curation of the `kiki-*` legacy datasets (actual import + dedup) is deferred to steps 37–46.\n   - Acceptance: `docs/data-sources.md` exists with a header row and 32 data rows (one per domain); ≥ 70% of domains (≥ 23) have a CONFIRMED source; each GAP row has a one-line mitigation note (synthetic via teacher, scraping, manual seed, etc.); FR HF IDs listed with CONFIRMED/TBD + license.\n   - Dependencies: none.",
       "priority": 8,
       "passes": false
     },
     {
       "id": "story-9",
       "title": "Generate first distilled dataset (chat-fr, 2K examples)",
-      "description": "**Generate first distilled dataset (chat-fr, 2K examples)**\n\n- Files to touch: `data/prompts/chat-fr.jsonl`, `data/distilled/chat-fr.jsonl`, `scripts/distill_chat_fr.py`\n   - Seed prompts (300–500) curated from the sources identified in step 8 for domain 1 (MTBench-FR, OpenAssistant-FR, manual).\n   - Teacher: Mistral-Large-Opus (Studio). Target: 2000 completed examples.\n   - Command: `uv run scripts/distill_chat_fr.py --teacher mistral-large-opus --n 2000 --out data/distilled/chat-fr.jsonl`\n   - Acceptance: `wc -l data/distilled/chat-fr.jsonl == 2000`, random-sample manual quality check (5/5 OK), French ratio ≥ 95%.\n   - Dependencies: steps 6, 8, Studio teacher reachable.\n\n### Phase III — First stack (stack-01 chat-fr, prove E2E)",
+      "description": "**Generate first distilled dataset (chat-fr, 2K examples)**\n\n   - Files to touch: `data/prompts/chat-fr.jsonl`, `data/distilled/chat-fr.jsonl`, `scripts/distill_chat_fr.py`\n   - Seed prompts (300–500) curated from the sources identified in step 8 for domain 1 (MTBench-FR, OpenAssistant-FR, manual).\n   - Teacher: Mistral-Large-Opus (Studio). Target: 2000 completed examples.\n   - Command: `uv run scripts/distill_chat_fr.py --teacher mistral-large-opus --n 2000 --out data/distilled/chat-fr.jsonl`\n   - Acceptance: `wc -l data/distilled/chat-fr.jsonl == 2000`, random-sample manual quality check (5/5 OK), French ratio ≥ 95%.\n   - Dependencies: steps 6, 8, Studio teacher reachable.",
       "priority": 9,
       "passes": false
     },
     {
       "id": "story-10",
       "title": "MoE-LoRA stack trainer (`src/stacks/trainer.py`)",
-      "description": "**MoE-LoRA stack trainer (`src/stacks/trainer.py`)**\n\n- Files to touch: `src/stacks/trainer.py`, `src/stacks/moe_lora.py`, `src/stacks/oplora.py`, `tests/test_trainer.py`\n   - MoLoRA-style: 4 LoRA experts per attention projection (q, k, v, o), rank 16, top-2 routing per token, softmax gate.\n   - **OPLoRA initialization (recommended)**: to prevent catastrophic forgetting across stacks, support Orthogonal Projection LoRA (arxiv 2510.13003, Oct 2025). `src/stacks/oplora.py` exposes orthogonal projection utilities that initialize each expert's A/B matrices in a subspace orthogonal to previously trained stacks' updates. Config lets each stack choose among: `molora-vanilla`, `oplora`, or `molora+oplora` hybrid (OPLoRA applied per-expert inside the MoLoRA mixture). Default for stacks ≥ 04 is `molora+oplora`.\n   - Uses HuggingFace `peft` + custom `MoLoraConfig`. Training via `trl.SFTTrainer`.\n   - Hyperparams from YAML config. Saves adapters to `outputs/stacks/stack-XX-<name>/`.\n   - Acceptance: `pytest tests/test_trainer.py::test_forward_pass` — 1 step with dummy data, loss finite; `pytest tests/test_trainer.py::test_oplora_orthogonality` — OPLoRA init produces updates with cosine < 0.1 vs a fixed prior-stack subspace.\n   - Dependencies: step 3.",
+      "description": "**MoE-LoRA stack trainer (`src/stacks/trainer.py`)**\n\n   - Files to touch: `src/stacks/trainer.py`, `src/stacks/moe_lora.py`, `src/stacks/oplora.py`, `tests/test_trainer.py`\n   - MoLoRA-style: 4 LoRA experts per attention projection (q, k, v, o), rank 16, top-2 routing per token, softmax gate.\n   - **OPLoRA initialization (recommended)**: to prevent catastrophic forgetting across stacks, support Orthogonal Projection LoRA (arxiv 2510.13003, Oct 2025). `src/stacks/oplora.py` exposes orthogonal projection utilities that initialize each expert's A/B matrices in a subspace orthogonal to previously trained stacks' updates. Config lets each stack choose among: `molora-vanilla`, `oplora`, or `molora+oplora` hybrid (OPLoRA applied per-expert inside the MoLoRA mixture). Default for stacks ≥ 04 is `molora+oplora`.\n   - Uses HuggingFace `peft` + custom `MoLoraConfig`. Training via `trl.SFTTrainer`.\n   - Hyperparams from YAML config. Saves adapters to `outputs/stacks/stack-XX-<name>/`.\n   - Acceptance: `pytest tests/test_trainer.py::test_forward_pass` — 1 step with dummy data, loss finite; `pytest tests/test_trainer.py::test_oplora_orthogonality` — OPLoRA init produces updates with cosine < 0.1 vs a fixed prior-stack subspace.\n   - Dependencies: step 3.",
       "priority": 10,
       "passes": false
     },
     {
       "id": "story-11",
       "title": "First stack config (`configs/stack-01-chat-fr.yaml`)",
-      "description": "**First stack config (`configs/stack-01-chat-fr.yaml`)**\n\n- Files to touch: `configs/stack-01-chat-fr.yaml`\n    - Fields: `base_model: models/qwen3.5-4b-diffattn/` (DiffAttn fork from step 2; fallback `models/qwen3.5-4b/` if DiffAttn artifact missing), `num_experts: 4`, `lora_rank: 16`, `lora_alpha: 32`, `top_k: 2`, `learning_rate: 2e-4`, `batch_size: 4`, `grad_accum: 8`, `epochs: 3`, `seq_len: 4096`, `dataset: data/distilled/chat-fr.jsonl`.\n    - Initialization options (add to YAML):\n      ```yaml\n      init_lora_weights: pissa   # options: pissa | lora-null | default\n      pissa_niter: 4\n      # lora-null: init in null space of activations (prevents pre-trained knowledge loss).\n      #   Reference: arxiv 2503.02659 (LoRA-Null, Feb 2026)\n      ```\n    - Acceptance: file loads via `yaml.safe_load` in test, required keys present (including `init_lora_weights`).\n    - Dependencies: step 10.",
+      "description": "**First stack config (`configs/stack-01-chat-fr.yaml`)**\n\n    - Files to touch: `configs/stack-01-chat-fr.yaml`\n    - Fields: `base_model: models/qwen3.5-4b-diffattn/` (DiffAttn fork from step 2; fallback `models/qwen3.5-4b/` if DiffAttn artifact missing), `num_experts: 4`, `lora_rank: 16`, `lora_alpha: 32`, `top_k: 2`, `learning_rate: 2e-4`, `batch_size: 4`, `grad_accum: 8`, `epochs: 3`, `seq_len: 4096`, `dataset: data/distilled/chat-fr.jsonl`.\n    - Initialization options (add to YAML):\n      ```yaml\n      init_lora_weights: pissa   # options: pissa | lora-null | default\n      pissa_niter: 4\n      # lora-null: init in null space of activations (prevents pre-trained knowledge loss).\n      #   Reference: arxiv 2503.02659 (LoRA-Null, Feb 2026)\n      ```\n    - Acceptance: file loads via `yaml.safe_load` in test, required keys present (including `init_lora_weights`).\n    - Dependencies: step 10.",
       "priority": 11,
       "passes": false
     },
     {
       "id": "story-12",
       "title": "Train stack-01 (chat-fr)",
-      "description": "**Train stack-01 (chat-fr)**\n\n- Files to touch: `outputs/stacks/stack-01-chat-fr/` (gitignored, artifact-only)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-01-chat-fr.yaml`\n    - Target: ~30 min on 4090 or ~15 min on Studio MLX.\n    - Acceptance: final train loss < 1.5, eval loss (held-out 5% split) < 1.8, adapter files saved (< 200 MB).\n    - Dependencies: steps 9, 10, 11.",
+      "description": "**Train stack-01 (chat-fr)**\n\n    - Files to touch: `outputs/stacks/stack-01-chat-fr/` (gitignored, artifact-only)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-01-chat-fr.yaml`\n    - Target: ~30 min on 4090 or ~15 min on Studio MLX.\n    - Acceptance: final train loss < 1.5, eval loss (held-out 5% split) < 1.8, adapter files saved (< 200 MB).\n    - Dependencies: steps 9, 10, 11.",
       "priority": 12,
       "passes": false
     },
     {
       "id": "story-13",
       "title": "Per-stack eval harness (`src/eval/stack_eval.py`)",
-      "description": "**Per-stack eval harness (`src/eval/stack_eval.py`)**\n\n- Files to touch: `src/eval/stack_eval.py`, `data/eval/chat-fr.jsonl` (held-out 100 prompts + judge criteria)\n    - Loads base + stack adapter, generates responses, LLM-judges with Mistral-Large-Opus (pairwise vs base-only).\n    - Outputs score JSON: `{stack, n_prompts, win_rate_vs_base, avg_judge_score, sample_responses}`.\n    - Acceptance: run on stack-01 produces valid JSON, win_rate > 0.55 (stack better than base).\n    - Dependencies: step 12.",
+      "description": "**Per-stack eval harness (`src/eval/stack_eval.py`)**\n\n    - Files to touch: `src/eval/stack_eval.py`, `data/eval/chat-fr.jsonl` (held-out 100 prompts + judge criteria)\n    - Loads base + stack adapter, generates responses, LLM-judges with Mistral-Large-Opus (pairwise vs base-only).\n    - Outputs score JSON: `{stack, n_prompts, win_rate_vs_base, avg_judge_score, sample_responses}`.\n    - Acceptance: run on stack-01 produces valid JSON, win_rate > 0.55 (stack better than base).\n    - Dependencies: step 12.",
       "priority": 13,
       "passes": false
     },
     {
       "id": "story-14",
       "title": "Evaluate + commit stack-01 baseline",
-      "description": "**Evaluate + commit stack-01 baseline**\n\n- Files to touch: `results/stack-01-baseline.json`, update `README.md` status section\n    - Run eval, archive results, log tokens/sec at inference, commit adapter metadata (not weights) to git.\n    - Acceptance: `results/` dir exists, JSON committed, README `- [x] First stack trained`.\n    - Dependencies: step 13.\n\n### Phase IV — Meta-router v0 (3 stacks)",
+      "description": "**Evaluate + commit stack-01 baseline**\n\n    - Files to touch: `results/stack-01-baseline.json`, update `README.md` status section\n    - Run eval, archive results, log tokens/sec at inference, commit adapter metadata (not weights) to git.\n    - Acceptance: `results/` dir exists, JSON committed, README `- [x] First stack trained`.\n    - Dependencies: step 13.",
       "priority": 14,
       "passes": false
     },
     {
       "id": "story-15",
       "title": "Dispatcher mapping (training-free meta-intents)",
-      "description": "**Dispatcher mapping (training-free meta-intents)**\n\n- Files to touch: `src/routing/dispatcher.py`, `configs/meta_intents.yaml`, `tests/test_dispatcher.py`\n    - No new model. Derives 7 meta-intents from the 32-dim router sigmoid output via a YAML mapping table: `{quick-reply, coding, reasoning, creative, research, agentic, tool-use} → lists of domain indices`.\n    - Function `dispatch(router_logits: Tensor) -> MetaIntent`: returns the dominant meta-intent for logging + downstream tool-use hints. Does NOT replace the router — it annotates the request.\n    - Latency: zero (lookup + argmax). Zero additional VRAM.\n    - Acceptance: `tests/test_dispatcher.py::test_mapping` — 10 synthetic sigmoid vectors produce expected meta-intents; YAML validates against a schema (each domain index 1..32 appears in exactly one bucket).\n    - Dependencies: step 14 (router v0 already trained in step 19 post-shift; we keep it decoupled — dispatcher reads ANY 32-dim vector, testable with stub).",
+      "description": "**Dispatcher mapping (training-free meta-intents)**\n\n    - Files to touch: `src/routing/dispatcher.py`, `configs/meta_intents.yaml`, `tests/test_dispatcher.py`\n    - No new model. Derives 7 meta-intents from the 32-dim router sigmoid output via a YAML mapping table: `{quick-reply, coding, reasoning, creative, research, agentic, tool-use} → lists of domain indices`.\n    - Function `dispatch(router_logits: Tensor) -> MetaIntent`: returns the dominant meta-intent for logging + downstream tool-use hints. Does NOT replace the router — it annotates the request.\n    - Latency: zero (lookup + argmax). Zero additional VRAM.\n    - Acceptance: `tests/test_dispatcher.py::test_mapping` — 10 synthetic sigmoid vectors produce expected meta-intents; YAML validates against a schema (each domain index 1..32 appears in exactly one bucket).\n    - Dependencies: step 14 (router v0 already trained in step 19 post-shift; we keep it decoupled — dispatcher reads ANY 32-dim vector, testable with stub).",
       "priority": 15,
       "passes": false
     },
     {
       "id": "story-16",
       "title": "Forgetting check framework (`src/eval/forgetting.py`)",
-      "description": "**Forgetting check framework (`src/eval/forgetting.py`)**\n\n- Files to touch: `src/eval/forgetting.py`, `scripts/run_forgetting.sh`\n    - For each already-trained stack, run its eval set with the NEW stack loaded (active-swap test). Flag delta > 0.03 in win_rate_vs_base.\n    - **Gradient subspace overlap metric** (2nd signal): in addition to win-rate delta, measure the geometric angle between the NEW stack's LoRA update gradient subspace and each prior stack's subspace. Small angle = high interference = forgetting risk. Reference: arxiv 2603.02224 (Subspace Geometry, 2026).\n    - Output JSON per prior stack includes both `win_rate_delta` and `gradient_subspace_angle_deg`.\n    - Meant to run automatically after EACH training step from now on (wrap `src.stacks.trainer` CLI or emit a shell hook).\n    - Acceptance: script runs after any trained stack and emits `results/forgetting-stack-XX.json`; no stack has `gradient_subspace_angle_deg < 30°` AND `win_rate_delta > 0.03` simultaneously (either one alone is tolerable).\n    - Dependencies: step 13.",
+      "description": "**Forgetting check framework (`src/eval/forgetting.py`)**\n\n    - Files to touch: `src/eval/forgetting.py`, `scripts/run_forgetting.sh`\n    - For each already-trained stack, run its eval set with the NEW stack loaded (active-swap test). Flag delta > 0.03 in win_rate_vs_base.\n    - **Gradient subspace overlap metric** (2nd signal): in addition to win-rate delta, measure the geometric angle between the NEW stack's LoRA update gradient subspace and each prior stack's subspace. Small angle = high interference = forgetting risk. Reference: arxiv 2603.02224 (Subspace Geometry, 2026).\n    - Output JSON per prior stack includes both `win_rate_delta` and `gradient_subspace_angle_deg`.\n    - Meant to run automatically after EACH training step from now on (wrap `src.stacks.trainer` CLI or emit a shell hook).\n    - Acceptance: script runs after any trained stack and emits `results/forgetting-stack-XX.json`; no stack has `gradient_subspace_angle_deg < 30°` AND `win_rate_delta > 0.03` simultaneously (either one alone is tolerable).\n    - Dependencies: step 13.",
       "priority": 16,
       "passes": false
     },
     {
       "id": "story-17",
       "title": "Train stack-02 (reasoning)",
-      "description": "**Train stack-02 (reasoning)**\n\n- Files to touch: `configs/stack-02-reasoning.yaml`, `data/prompts/reasoning.jsonl`, `data/distilled/reasoning.jsonl`, `data/eval/reasoning.jsonl`, `outputs/stacks/stack-02-reasoning/` (gitignored)\n    - Seed prompts from GSM8K trainset + ARC-easy (design-doc domain 2). Distill 2K examples via Qwen3.5-35B Opus (Qwen3 thinking-mode teacher).\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-02-reasoning.yaml`\n    - Duration: ~45 min on 4090 (or ~20 min on Studio MLX).\n    - Acceptance: win_rate_vs_base ≥ 0.55 on `data/eval/reasoning.jsonl` (50-sample GSM8K subset); forgetting check passes (step 16 gates): no regression > 0.03 on stack-01 AND gradient-angle ≥ 30°.\n    - Dependencies: steps 10, 13, 16 (forgetting framework).",
+      "description": "**Train stack-02 (reasoning)**\n\n    - Files to touch: `configs/stack-02-reasoning.yaml`, `data/prompts/reasoning.jsonl`, `data/distilled/reasoning.jsonl`, `data/eval/reasoning.jsonl`, `outputs/stacks/stack-02-reasoning/` (gitignored)\n    - Seed prompts from GSM8K trainset + ARC-easy (design-doc domain 2). Distill 2K examples via Qwen3.5-35B Opus (Qwen3 thinking-mode teacher).\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-02-reasoning.yaml`\n    - Duration: ~45 min on 4090 (or ~20 min on Studio MLX).\n    - Acceptance: win_rate_vs_base ≥ 0.55 on `data/eval/reasoning.jsonl` (50-sample GSM8K subset); forgetting check passes (step 16 gates): no regression > 0.03 on stack-01 AND gradient-angle ≥ 30°.\n    - Dependencies: steps 10, 13, 16 (forgetting framework).",
       "priority": 17,
       "passes": false
     },
     {
       "id": "story-18",
       "title": "Train stack-03 (python)",
-      "description": "**Train stack-03 (python)**\n\n- Files to touch: `configs/stack-03-python.yaml`, `data/prompts/python.jsonl`, `data/distilled/python.jsonl`, `data/eval/python.jsonl`, `outputs/stacks/stack-03-python/` (gitignored)\n    - Seed prompts from CodeAlpaca + StackOverflow Python top-tagged. Teacher: Devstral-v3/v4 (kxkm-ai).\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-03-python.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on HumanEval 50-subset; forgetting check (step 16) passes against stacks 01–02.\n    - Dependencies: steps 10, 13, 16, 17.",
+      "description": "**Train stack-03 (python)**\n\n    - Files to touch: `configs/stack-03-python.yaml`, `data/prompts/python.jsonl`, `data/distilled/python.jsonl`, `data/eval/python.jsonl`, `outputs/stacks/stack-03-python/` (gitignored)\n    - Seed prompts from CodeAlpaca + StackOverflow Python top-tagged. Teacher: Devstral-v3/v4 (kxkm-ai).\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-03-python.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on HumanEval 50-subset; forgetting check (step 16) passes against stacks 01–02.\n    - Dependencies: steps 10, 13, 16, 17.",
       "priority": 18,
       "passes": false
     },
     {
       "id": "story-19",
       "title": "Meta-router module (`src/routing/router.py`)",
-      "description": "**Meta-router module (`src/routing/router.py`)**\n\n- Files to touch: `src/routing/router.py`, `src/routing/__init__.py`, `tests/test_router.py`\n    - Architecture: extract base model last-hidden-state at layer N (N=16 for 4B), pool (mean + attention-query), feed to Linear(3072→512) → LayerNorm → GELU → Linear(512→32) → sigmoid.\n    - ~2M params total. Training target: multi-label outcome discovery (binary per-domain, threshold 0.12, chat floor 0.20).\n    - Acceptance: `test_router_forward` — dummy batch, outputs shape [B, 32], all in [0,1]; `test_router_init` — trainable params < 3 M.\n    - Dependencies: step 3.",
+      "description": "**Meta-router module (`src/routing/router.py`)**\n\n    - Files to touch: `src/routing/router.py`, `src/routing/__init__.py`, `tests/test_router.py`\n    - Architecture: extract base model last-hidden-state at layer N (N=16 for 4B), pool (mean + attention-query), feed to Linear(3072→512) → LayerNorm → GELU → Linear(512→32) → sigmoid.\n    - ~2M params total. Training target: multi-label outcome discovery (binary per-domain, threshold 0.12, chat floor 0.20).\n    - Acceptance: `test_router_forward` — dummy batch, outputs shape [B, 32], all in [0,1]; `test_router_init` — trainable params < 3 M.\n    - Dependencies: step 3.",
       "priority": 19,
       "passes": false
     },
     {
       "id": "story-20",
       "title": "Train router v0 on 3-stack mix",
-      "description": "**Train router v0 on 3-stack mix**\n\n- Files to touch: `scripts/train_router.py`, `outputs/router/v0/router.pt`\n    - Dataset: concat 3 domain jsonls (chat-fr, reasoning, python), label each example with its domain-id; also generate 1K \"mixed-intent\" examples (queries that span 2 domains) for multi-label training.\n    - Loss: BCEWithLogitsLoss, train 3 epochs, lr 1e-3.\n    - Acceptance: macro-F1 ≥ 0.85 on 3-domain eval; router file < 10 MB.\n    - Dependencies: steps 14, 18, 19.",
+      "description": "**Train router v0 on 3-stack mix**\n\n    - Files to touch: `scripts/train_router.py`, `outputs/router/v0/router.pt`\n    - Dataset: concat 3 domain jsonls (chat-fr, reasoning, python), label each example with its domain-id; also generate 1K \"mixed-intent\" examples (queries that span 2 domains) for multi-label training.\n    - Loss: BCEWithLogitsLoss, train 3 epochs, lr 1e-3.\n    - Acceptance: macro-F1 ≥ 0.85 on 3-domain eval; router file < 10 MB.\n    - Dependencies: steps 14, 18, 19.",
       "priority": 20,
       "passes": false
     },
     {
       "id": "story-21",
       "title": "Runtime adapter switcher (`src/serving/switchable.py`)",
-      "description": "**Runtime adapter switcher (`src/serving/switchable.py`)**\n\n- Files to touch: `src/serving/switchable.py`, `tests/test_switchable.py`\n    - Class `SwitchableModel`: holds base, registry of loaded adapters, method `apply_stacks(names: list[str])` — merges selected LoRAs (weighted sum or sequential application).\n    - Cap active stacks at 4. Cache merged weights until stack-set changes.\n    - Acceptance: switches between stack-01 ↔ stack-03 ↔ none in < 500 ms; generation before/after differs measurably.\n    - Dependencies: steps 12, 18.",
+      "description": "**Runtime adapter switcher (`src/serving/switchable.py`)**\n\n    - Files to touch: `src/serving/switchable.py`, `tests/test_switchable.py`\n    - Class `SwitchableModel`: holds base, registry of loaded adapters, method `apply_stacks(names: list[str])` — merges selected LoRAs (weighted sum or sequential application).\n    - Cap active stacks at 4. Cache merged weights until stack-set changes.\n    - Acceptance: switches between stack-01 ↔ stack-03 ↔ none in < 500 ms; generation before/after differs measurably.\n    - Dependencies: steps 12, 18.",
       "priority": 21,
       "passes": false
     },
     {
       "id": "story-22",
       "title": "End-to-end smoke test (3 stacks)",
-      "description": "**End-to-end smoke test (3 stacks)**\n\n- Files to touch: `tests/test_e2e_3stacks.py`, `scripts/demo_e2e.py`\n    - Prompt → router → top-2 sigmoid scores → SwitchableModel.apply_stacks → generate → print.\n    - Test cases: \"écris un haïku\" → chat-fr dominant; \"factor 231 into primes\" → reasoning dominant; \"python fastapi hello world\" → python dominant.\n    - Acceptance: all 3 test cases have expected domain in top-2 router picks; generation coherent (no garbled tokens).\n    - Dependencies: steps 20, 21.\n\n### Phase V — Curriculum coding core + secondary (stacks 04–14)",
+      "description": "**End-to-end smoke test (3 stacks)**\n\n    - Files to touch: `tests/test_e2e_3stacks.py`, `scripts/demo_e2e.py`\n    - Prompt → router → top-2 sigmoid scores → SwitchableModel.apply_stacks → generate → print.\n    - Test cases: \"écris un haïku\" → chat-fr dominant; \"factor 231 into primes\" → reasoning dominant; \"python fastapi hello world\" → python dominant.\n    - Acceptance: all 3 test cases have expected domain in top-2 router picks; generation coherent (no garbled tokens).\n    - Dependencies: steps 20, 21.",
       "priority": 22,
       "passes": false
     },
     {
       "id": "story-23",
       "title": "Train stack-04 (typescript)",
-      "description": "**Train stack-04 (typescript)**\n\n- Files to touch: `configs/stack-04-typescript.yaml`, `data/distilled/typescript.jsonl`, `data/eval/typescript.jsonl`, `outputs/stacks/stack-04-typescript/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-04-typescript.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against stacks 01–03.\n    - Dependencies: steps 10, 18, 16.",
+      "description": "**Train stack-04 (typescript)**\n\n    - Files to touch: `configs/stack-04-typescript.yaml`, `data/distilled/typescript.jsonl`, `data/eval/typescript.jsonl`, `outputs/stacks/stack-04-typescript/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-04-typescript.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against stacks 01–03.\n    - Dependencies: steps 10, 18, 16.",
       "priority": 23,
       "passes": false
     },
     {
       "id": "story-24",
       "title": "Train stack-05 (cpp)",
-      "description": "**Train stack-05 (cpp)**\n\n- Files to touch: `configs/stack-05-cpp.yaml`, `data/distilled/cpp.jsonl`, `data/eval/cpp.jsonl`, `outputs/stacks/stack-05-cpp/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-05-cpp.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 23, 16.",
+      "description": "**Train stack-05 (cpp)**\n\n    - Files to touch: `configs/stack-05-cpp.yaml`, `data/distilled/cpp.jsonl`, `data/eval/cpp.jsonl`, `outputs/stacks/stack-05-cpp/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-05-cpp.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 23, 16.",
       "priority": 24,
       "passes": false
     },
     {
       "id": "story-25",
       "title": "Train stack-06 (rust)",
-      "description": "**Train stack-06 (rust)**\n\n- Files to touch: `configs/stack-06-rust.yaml`, `data/distilled/rust.jsonl`, `data/eval/rust.jsonl`, `outputs/stacks/stack-06-rust/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-06-rust.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 24, 16.",
+      "description": "**Train stack-06 (rust)**\n\n    - Files to touch: `configs/stack-06-rust.yaml`, `data/distilled/rust.jsonl`, `data/eval/rust.jsonl`, `outputs/stacks/stack-06-rust/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-06-rust.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 24, 16.",
       "priority": 25,
       "passes": false
     },
     {
       "id": "story-26",
       "title": "Train stack-07 (html-css)",
-      "description": "**Train stack-07 (html-css)**\n\n- Files to touch: `configs/stack-07-html-css.yaml`, `data/distilled/html-css.jsonl`, `data/eval/html-css.jsonl`, `outputs/stacks/stack-07-html-css/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-07-html-css.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 25, 16.",
+      "description": "**Train stack-07 (html-css)**\n\n    - Files to touch: `configs/stack-07-html-css.yaml`, `data/distilled/html-css.jsonl`, `data/eval/html-css.jsonl`, `outputs/stacks/stack-07-html-css/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-07-html-css.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 25, 16.",
       "priority": 26,
       "passes": false
     },
     {
       "id": "story-27",
       "title": "Train stack-08 (shell)",
-      "description": "**Train stack-08 (shell)**\n\n- Files to touch: `configs/stack-08-shell.yaml`, `data/distilled/shell.jsonl`, `data/eval/shell.jsonl`, `outputs/stacks/stack-08-shell/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-08-shell.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 26, 16.",
+      "description": "**Train stack-08 (shell)**\n\n    - Files to touch: `configs/stack-08-shell.yaml`, `data/distilled/shell.jsonl`, `data/eval/shell.jsonl`, `outputs/stacks/stack-08-shell/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-08-shell.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 26, 16.",
       "priority": 27,
       "passes": false
     },
     {
       "id": "story-28",
       "title": "Re-train router v1 after stack 08",
-      "description": "**Re-train router v1 after stack 08**\n\n- Files to touch: `outputs/router/v1/router.pt`, `results/router-v1.json`\n    - Re-run the router training script (step 20) with the 8-domain set; generate fresh mixed-intent examples covering new pairings.\n    - Acceptance: macro-F1 ≥ 0.80 on 8-domain held-out eval; router still < 10 MB.\n    - Dependencies: step 27.",
+      "description": "**Re-train router v1 after stack 08**\n\n    - Files to touch: `outputs/router/v1/router.pt`, `results/router-v1.json`\n    - Re-run the router training script (step 20) with the 8-domain set; generate fresh mixed-intent examples covering new pairings.\n    - Acceptance: macro-F1 ≥ 0.80 on 8-domain held-out eval; router still < 10 MB.\n    - Dependencies: step 27.",
       "priority": 28,
       "passes": false
     },
     {
       "id": "story-29",
       "title": "Train stack-09 (sql)",
-      "description": "**Train stack-09 (sql)**\n\n- Files to touch: `configs/stack-09-sql.yaml`, `data/distilled/sql.jsonl`, `data/eval/sql.jsonl`, `outputs/stacks/stack-09-sql/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-09-sql.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 28, 16.",
+      "description": "**Train stack-09 (sql)**\n\n    - Files to touch: `configs/stack-09-sql.yaml`, `data/distilled/sql.jsonl`, `data/eval/sql.jsonl`, `outputs/stacks/stack-09-sql/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-09-sql.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 28, 16.",
       "priority": 29,
       "passes": false
     },
     {
       "id": "story-30",
       "title": "Train stack-10 (yaml-json)",
-      "description": "**Train stack-10 (yaml-json)**\n\n- Files to touch: `configs/stack-10-yaml-json.yaml`, `data/distilled/yaml-json.jsonl`, `data/eval/yaml-json.jsonl`, `outputs/stacks/stack-10-yaml-json/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-10-yaml-json.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 29, 16.",
+      "description": "**Train stack-10 (yaml-json)**\n\n    - Files to touch: `configs/stack-10-yaml-json.yaml`, `data/distilled/yaml-json.jsonl`, `data/eval/yaml-json.jsonl`, `outputs/stacks/stack-10-yaml-json/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-10-yaml-json.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 29, 16.",
       "priority": 30,
       "passes": false
     },
     {
       "id": "story-31",
       "title": "Train stack-11 (docker)",
-      "description": "**Train stack-11 (docker)**\n\n- Files to touch: `configs/stack-11-docker.yaml`, `data/distilled/docker.jsonl`, `data/eval/docker.jsonl`, `outputs/stacks/stack-11-docker/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-11-docker.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 30, 16.",
+      "description": "**Train stack-11 (docker)**\n\n    - Files to touch: `configs/stack-11-docker.yaml`, `data/distilled/docker.jsonl`, `data/eval/docker.jsonl`, `outputs/stacks/stack-11-docker/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-11-docker.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 30, 16.",
       "priority": 31,
       "passes": false
     },
     {
       "id": "story-32",
       "title": "Train stack-12 (kicad-dsl)",
-      "description": "**Train stack-12 (kicad-dsl)**\n\n- Files to touch: `configs/stack-12-kicad-dsl.yaml`, `data/distilled/kicad-dsl.jsonl`, `data/eval/kicad-dsl.jsonl`, `outputs/stacks/stack-12-kicad-dsl/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-12-kicad-dsl.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 31, 16.",
+      "description": "**Train stack-12 (kicad-dsl)**\n\n    - Files to touch: `configs/stack-12-kicad-dsl.yaml`, `data/distilled/kicad-dsl.jsonl`, `data/eval/kicad-dsl.jsonl`, `outputs/stacks/stack-12-kicad-dsl/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-12-kicad-dsl.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 31, 16.",
       "priority": 32,
       "passes": false
     },
     {
       "id": "story-33",
       "title": "Re-train router v2 after stack 12",
-      "description": "**Re-train router v2 after stack 12**\n\n- Files to touch: `outputs/router/v2/router.pt`, `results/router-v2.json`\n    - 12-domain set + mixed-intent refresh.\n    - Acceptance: macro-F1 ≥ 0.80 on 12-domain held-out eval; router still < 10 MB.\n    - Dependencies: step 32.",
+      "description": "**Re-train router v2 after stack 12**\n\n    - Files to touch: `outputs/router/v2/router.pt`, `results/router-v2.json`\n    - 12-domain set + mixed-intent refresh.\n    - Acceptance: macro-F1 ≥ 0.80 on 12-domain held-out eval; router still < 10 MB.\n    - Dependencies: step 32.",
       "priority": 33,
       "passes": false
     },
     {
       "id": "story-34",
       "title": "Train stack-13 (spice)",
-      "description": "**Train stack-13 (spice)**\n\n- Files to touch: `configs/stack-13-spice.yaml`, `data/distilled/spice.jsonl`, `data/eval/spice.jsonl`, `outputs/stacks/stack-13-spice/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-13-spice.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 33, 16.",
+      "description": "**Train stack-13 (spice)**\n\n    - Files to touch: `configs/stack-13-spice.yaml`, `data/distilled/spice.jsonl`, `data/eval/spice.jsonl`, `outputs/stacks/stack-13-spice/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-13-spice.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 33, 16.",
       "priority": 34,
       "passes": false
     },
     {
       "id": "story-35",
       "title": "Train stack-14 (lua-upy)",
-      "description": "**Train stack-14 (lua-upy)**\n\n- Files to touch: `configs/stack-14-lua-upy.yaml`, `data/distilled/lua-upy.jsonl`, `data/eval/lua-upy.jsonl`, `outputs/stacks/stack-14-lua-upy/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-14-lua-upy.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 34, 16.",
+      "description": "**Train stack-14 (lua-upy)**\n\n    - Files to touch: `configs/stack-14-lua-upy.yaml`, `data/distilled/lua-upy.jsonl`, `data/eval/lua-upy.jsonl`, `outputs/stacks/stack-14-lua-upy/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-14-lua-upy.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 34, 16.",
       "priority": 35,
       "passes": false
     },
     {
       "id": "story-36",
       "title": "Re-train router v3 after stack 14",
-      "description": "**Re-train router v3 after stack 14**\n\n- Files to touch: `outputs/router/v3/router.pt`, `results/router-v3.json`\n    - 14-domain set + mixed-intent refresh.\n    - Acceptance: macro-F1 ≥ 0.80 on 14-domain held-out eval; router still < 10 MB.\n    - Dependencies: step 35.\n\n### Phase VI — Technical domains (stacks 15–25)",
+      "description": "**Re-train router v3 after stack 14**\n\n    - Files to touch: `outputs/router/v3/router.pt`, `results/router-v3.json`\n    - 14-domain set + mixed-intent refresh.\n    - Acceptance: macro-F1 ≥ 0.80 on 14-domain held-out eval; router still < 10 MB.\n    - Dependencies: step 35.",
       "priority": 36,
       "passes": false
     },
     {
       "id": "story-37",
       "title": "Curate dataset for domain-15 (embedded)",
-      "description": "**Curate dataset for domain-15 (embedded)**\n\n- Files to touch: `scripts/import_kiki_datasets.py` (create once, reused by steps 38–46), `data/distilled/embedded.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-embedded` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain embedded`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/embedded.jsonl --output data/distilled/embedded.jsonl`.\n    - Acceptance: `data/distilled/embedded.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7 (dedup); step 8 (audit).",
+      "description": "**Curate dataset for domain-15 (embedded)**\n\n    - Files to touch: `scripts/import_kiki_datasets.py` (create once, reused by steps 38–46), `data/distilled/embedded.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-embedded` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain embedded`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/embedded.jsonl --output data/distilled/embedded.jsonl`.\n    - Acceptance: `data/distilled/embedded.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7 (dedup); step 8 (audit).",
       "priority": 37,
       "passes": false
     },
     {
       "id": "story-38",
       "title": "Curate dataset for domain-16 (stm32)",
-      "description": "**Curate dataset for domain-16 (stm32)**\n\n- Files to touch: `data/distilled/stm32.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-stm32` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain stm32` (reuses script from step 37).\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/stm32.jsonl --output data/distilled/stm32.jsonl`.\n    - Acceptance: `data/distilled/stm32.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7 (dedup); step 8 (audit); step 37 (previous curation step, for script reuse).",
+      "description": "**Curate dataset for domain-16 (stm32)**\n\n    - Files to touch: `data/distilled/stm32.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-stm32` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain stm32` (reuses script from step 37).\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/stm32.jsonl --output data/distilled/stm32.jsonl`.\n    - Acceptance: `data/distilled/stm32.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7 (dedup); step 8 (audit); step 37 (previous curation step, for script reuse).",
       "priority": 38,
       "passes": false
     },
     {
       "id": "story-39",
       "title": "Curate dataset for domain-17 (iot)",
-      "description": "**Curate dataset for domain-17 (iot)**\n\n- Files to touch: `data/distilled/iot.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-iot` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain iot`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/iot.jsonl --output data/distilled/iot.jsonl`.\n    - Acceptance: `data/distilled/iot.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 38.",
+      "description": "**Curate dataset for domain-17 (iot)**\n\n    - Files to touch: `data/distilled/iot.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-iot` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain iot`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/iot.jsonl --output data/distilled/iot.jsonl`.\n    - Acceptance: `data/distilled/iot.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 38.",
       "priority": 39,
       "passes": false
     },
     {
       "id": "story-40",
       "title": "Curate dataset for domain-18 (freecad)",
-      "description": "**Curate dataset for domain-18 (freecad)**\n\n- Files to touch: `data/distilled/freecad.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-freecad` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain freecad`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/freecad.jsonl --output data/distilled/freecad.jsonl`.\n    - Acceptance: `data/distilled/freecad.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 39.",
+      "description": "**Curate dataset for domain-18 (freecad)**\n\n    - Files to touch: `data/distilled/freecad.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-freecad` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain freecad`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/freecad.jsonl --output data/distilled/freecad.jsonl`.\n    - Acceptance: `data/distilled/freecad.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 39.",
       "priority": 40,
       "passes": false
     },
     {
       "id": "story-41",
       "title": "Curate dataset for domain-19 (platformio)",
-      "description": "**Curate dataset for domain-19 (platformio)**\n\n- Files to touch: `data/distilled/platformio.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-platformio` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain platformio`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/platformio.jsonl --output data/distilled/platformio.jsonl`.\n    - Acceptance: `data/distilled/platformio.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 40.",
+      "description": "**Curate dataset for domain-19 (platformio)**\n\n    - Files to touch: `data/distilled/platformio.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-platformio` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain platformio`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/platformio.jsonl --output data/distilled/platformio.jsonl`.\n    - Acceptance: `data/distilled/platformio.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 40.",
       "priority": 41,
       "passes": false
     },
     {
       "id": "story-42",
       "title": "Curate dataset for domain-20 (power)",
-      "description": "**Curate dataset for domain-20 (power)**\n\n- Files to touch: `data/distilled/power.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-power` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain power`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/power.jsonl --output data/distilled/power.jsonl`.\n    - Acceptance: `data/distilled/power.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 41.",
+      "description": "**Curate dataset for domain-20 (power)**\n\n    - Files to touch: `data/distilled/power.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-power` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain power`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/power.jsonl --output data/distilled/power.jsonl`.\n    - Acceptance: `data/distilled/power.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 41.",
       "priority": 42,
       "passes": false
     },
     {
       "id": "story-43",
       "title": "Curate dataset for domain-21 (emc)",
-      "description": "**Curate dataset for domain-21 (emc)**\n\n- Files to touch: `data/distilled/emc.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-emc` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain emc`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/emc.jsonl --output data/distilled/emc.jsonl`.\n    - Acceptance: `data/distilled/emc.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 42.",
+      "description": "**Curate dataset for domain-21 (emc)**\n\n    - Files to touch: `data/distilled/emc.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-emc` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain emc`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/emc.jsonl --output data/distilled/emc.jsonl`.\n    - Acceptance: `data/distilled/emc.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 42.",
       "priority": 43,
       "passes": false
     },
     {
       "id": "story-44",
       "title": "Curate dataset for domain-22 (dsp)",
-      "description": "**Curate dataset for domain-22 (dsp)**\n\n- Files to touch: `data/distilled/dsp.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-dsp` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain dsp`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/dsp.jsonl --output data/distilled/dsp.jsonl`.\n    - Acceptance: `data/distilled/dsp.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 43.",
+      "description": "**Curate dataset for domain-22 (dsp)**\n\n    - Files to touch: `data/distilled/dsp.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-dsp` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain dsp`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/dsp.jsonl --output data/distilled/dsp.jsonl`.\n    - Acceptance: `data/distilled/dsp.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 43.",
       "priority": 44,
       "passes": false
     },
     {
       "id": "story-45",
       "title": "Curate dataset for domain-23 (spice-sim)",
-      "description": "**Curate dataset for domain-23 (spice-sim)**\n\n- Files to touch: `data/distilled/spice-sim.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-spice-sim` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain spice-sim`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/spice-sim.jsonl --output data/distilled/spice-sim.jsonl`.\n    - Acceptance: `data/distilled/spice-sim.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 44.",
+      "description": "**Curate dataset for domain-23 (spice-sim)**\n\n    - Files to touch: `data/distilled/spice-sim.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-spice-sim` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain spice-sim`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/spice-sim.jsonl --output data/distilled/spice-sim.jsonl`.\n    - Acceptance: `data/distilled/spice-sim.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 44.",
       "priority": 45,
       "passes": false
     },
     {
       "id": "story-46",
       "title": "Curate dataset for domain-24 (electronics)",
-      "description": "**Curate dataset for domain-24 (electronics)**\n\n- Files to touch: `data/distilled/electronics.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-electronics` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain electronics`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/electronics.jsonl --output data/distilled/electronics.jsonl`.\n    - Acceptance: `data/distilled/electronics.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 45.",
+      "description": "**Curate dataset for domain-24 (electronics)**\n\n    - Files to touch: `data/distilled/electronics.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-electronics` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain electronics`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/electronics.jsonl --output data/distilled/electronics.jsonl`.\n    - Acceptance: `data/distilled/electronics.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 45.",
       "priority": 46,
       "passes": false
     },
     {
       "id": "story-47",
       "title": "Curate dataset for domain-25 (kicad-pcb)",
-      "description": "**Curate dataset for domain-25 (kicad-pcb)**\n\n- Files to touch: `data/distilled/kicad-pcb.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-kicad-pcb` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain kicad-pcb`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/kicad-pcb.jsonl --output data/distilled/kicad-pcb.jsonl`.\n    - Acceptance: `data/distilled/kicad-pcb.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 46.",
+      "description": "**Curate dataset for domain-25 (kicad-pcb)**\n\n    - Files to touch: `data/distilled/kicad-pcb.jsonl`\n    - Source: `~/Documents/Projets/Factory 4 Life/KIKI-models-tuning/` (or HF mirror `L-electron-Rare/KIKI-models-tuning`) — specifically the `kiki-kicad-pcb` or related dataset.\n    - Run: `uv run scripts/import_kiki_datasets.py --domain kicad-pcb`\n    - After import, run dedup: `python -m src.distill.dedup --input data/raw/kicad-pcb.jsonl --output data/distilled/kicad-pcb.jsonl`.\n    - Acceptance: `data/distilled/kicad-pcb.jsonl` has ≥ 800 rows; dedup report shows < 5% cross-domain contamination.\n    - Dependencies: step 7; step 8; step 46.",
       "priority": 47,
       "passes": false
     },
     {
       "id": "story-48",
       "title": "Train stack-15 (embedded)",
-      "description": "**Train stack-15 (embedded)**\n\n- Files to touch: `configs/stack-15-embedded.yaml`, `data/eval/embedded.jsonl`, `outputs/stacks/stack-15-embedded/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-15-embedded.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 36, 37, 16.",
+      "description": "**Train stack-15 (embedded)**\n\n    - Files to touch: `configs/stack-15-embedded.yaml`, `data/eval/embedded.jsonl`, `outputs/stacks/stack-15-embedded/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-15-embedded.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 36, 37, 16.",
       "priority": 48,
       "passes": false
     },
     {
       "id": "story-49",
       "title": "Train stack-16 (stm32)",
-      "description": "**Train stack-16 (stm32)**\n\n- Files to touch: `configs/stack-16-stm32.yaml`, `data/eval/stm32.jsonl`, `outputs/stacks/stack-16-stm32/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-16-stm32.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 48, 38, 16.",
+      "description": "**Train stack-16 (stm32)**\n\n    - Files to touch: `configs/stack-16-stm32.yaml`, `data/eval/stm32.jsonl`, `outputs/stacks/stack-16-stm32/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-16-stm32.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 48, 38, 16.",
       "priority": 49,
       "passes": false
     },
     {
       "id": "story-50",
       "title": "Train stack-17 (iot)",
-      "description": "**Train stack-17 (iot)**\n\n- Files to touch: `configs/stack-17-iot.yaml`, `data/eval/iot.jsonl`, `outputs/stacks/stack-17-iot/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-17-iot.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 49, 39, 16.",
+      "description": "**Train stack-17 (iot)**\n\n    - Files to touch: `configs/stack-17-iot.yaml`, `data/eval/iot.jsonl`, `outputs/stacks/stack-17-iot/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-17-iot.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 49, 39, 16.",
       "priority": 50,
       "passes": false
     },
     {
       "id": "story-51",
       "title": "Train stack-18 (freecad)",
-      "description": "**Train stack-18 (freecad)**\n\n- Files to touch: `configs/stack-18-freecad.yaml`, `data/eval/freecad.jsonl`, `outputs/stacks/stack-18-freecad/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-18-freecad.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 50, 40, 16.",
+      "description": "**Train stack-18 (freecad)**\n\n    - Files to touch: `configs/stack-18-freecad.yaml`, `data/eval/freecad.jsonl`, `outputs/stacks/stack-18-freecad/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-18-freecad.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 50, 40, 16.",
       "priority": 51,
       "passes": false
     },
     {
       "id": "story-52",
       "title": "Train stack-19 (platformio)",
-      "description": "**Train stack-19 (platformio)**\n\n- Files to touch: `configs/stack-19-platformio.yaml`, `data/eval/platformio.jsonl`, `outputs/stacks/stack-19-platformio/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-19-platformio.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 51, 41, 16.",
+      "description": "**Train stack-19 (platformio)**\n\n    - Files to touch: `configs/stack-19-platformio.yaml`, `data/eval/platformio.jsonl`, `outputs/stacks/stack-19-platformio/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-19-platformio.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 51, 41, 16.",
       "priority": 52,
       "passes": false
     },
     {
       "id": "story-53",
       "title": "Train stack-20 (power)",
-      "description": "**Train stack-20 (power)**\n\n- Files to touch: `configs/stack-20-power.yaml`, `data/eval/power.jsonl`, `outputs/stacks/stack-20-power/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-20-power.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 52, 42, 16.",
+      "description": "**Train stack-20 (power)**\n\n    - Files to touch: `configs/stack-20-power.yaml`, `data/eval/power.jsonl`, `outputs/stacks/stack-20-power/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-20-power.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 52, 42, 16.",
       "priority": 53,
       "passes": false
     },
     {
       "id": "story-54",
       "title": "Group eval after stack 20",
-      "description": "**Group eval after stack 20**\n\n- Files to touch: `results/group-eval-after-20.json`\n    - Run router eval + forgetting check across ALL 20 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 53.",
+      "description": "**Group eval after stack 20**\n\n    - Files to touch: `results/group-eval-after-20.json`\n    - Run router eval + forgetting check across ALL 20 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 53.",
       "priority": 54,
       "passes": false
     },
     {
       "id": "story-55",
       "title": "Train stack-21 (emc)",
-      "description": "**Train stack-21 (emc)**\n\n- Files to touch: `configs/stack-21-emc.yaml`, `data/eval/emc.jsonl`, `outputs/stacks/stack-21-emc/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-21-emc.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 54, 43, 16.",
+      "description": "**Train stack-21 (emc)**\n\n    - Files to touch: `configs/stack-21-emc.yaml`, `data/eval/emc.jsonl`, `outputs/stacks/stack-21-emc/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-21-emc.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 54, 43, 16.",
       "priority": 55,
       "passes": false
     },
     {
       "id": "story-56",
       "title": "Train stack-22 (dsp)",
-      "description": "**Train stack-22 (dsp)**\n\n- Files to touch: `configs/stack-22-dsp.yaml`, `data/eval/dsp.jsonl`, `outputs/stacks/stack-22-dsp/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-22-dsp.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 55, 44, 16.",
+      "description": "**Train stack-22 (dsp)**\n\n    - Files to touch: `configs/stack-22-dsp.yaml`, `data/eval/dsp.jsonl`, `outputs/stacks/stack-22-dsp/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-22-dsp.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 55, 44, 16.",
       "priority": 56,
       "passes": false
     },
     {
       "id": "story-57",
       "title": "Train stack-23 (spice-sim)",
-      "description": "**Train stack-23 (spice-sim)**\n\n- Files to touch: `configs/stack-23-spice-sim.yaml`, `data/eval/spice-sim.jsonl`, `outputs/stacks/stack-23-spice-sim/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-23-spice-sim.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 56, 45, 16.",
+      "description": "**Train stack-23 (spice-sim)**\n\n    - Files to touch: `configs/stack-23-spice-sim.yaml`, `data/eval/spice-sim.jsonl`, `outputs/stacks/stack-23-spice-sim/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-23-spice-sim.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 56, 45, 16.",
       "priority": 57,
       "passes": false
     },
     {
       "id": "story-58",
       "title": "Train stack-24 (electronics)",
-      "description": "**Train stack-24 (electronics)**\n\n- Files to touch: `configs/stack-24-electronics.yaml`, `data/eval/electronics.jsonl`, `outputs/stacks/stack-24-electronics/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-24-electronics.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 57, 46, 16.",
+      "description": "**Train stack-24 (electronics)**\n\n    - Files to touch: `configs/stack-24-electronics.yaml`, `data/eval/electronics.jsonl`, `outputs/stacks/stack-24-electronics/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-24-electronics.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 57, 46, 16.",
       "priority": 58,
       "passes": false
     },
     {
       "id": "story-59",
       "title": "Group eval after stack 24",
-      "description": "**Group eval after stack 24**\n\n- Files to touch: `results/group-eval-after-24.json`\n    - Run router eval + forgetting check across ALL 24 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 58.",
+      "description": "**Group eval after stack 24**\n\n    - Files to touch: `results/group-eval-after-24.json`\n    - Run router eval + forgetting check across ALL 24 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 58.",
       "priority": 59,
       "passes": false
     },
     {
       "id": "story-60",
       "title": "Train stack-25 (kicad-pcb)",
-      "description": "**Train stack-25 (kicad-pcb)**\n\n- Files to touch: `configs/stack-25-kicad-pcb.yaml`, `data/eval/kicad-pcb.jsonl`, `outputs/stacks/stack-25-kicad-pcb/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-25-kicad-pcb.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 59, 47, 16.",
+      "description": "**Train stack-25 (kicad-pcb)**\n\n    - Files to touch: `configs/stack-25-kicad-pcb.yaml`, `data/eval/kicad-pcb.jsonl`, `outputs/stacks/stack-25-kicad-pcb/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-25-kicad-pcb.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 59, 47, 16.",
       "priority": 60,
       "passes": false
     },
     {
       "id": "story-61",
       "title": "Group eval after stack 25 (end of Phase VI)",
-      "description": "**Group eval after stack 25 (end of Phase VI)**\n\n- Files to touch: `results/group-eval-after-25.json`\n    - Run router eval + forgetting check across ALL 25 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 60.\n\n### Phase VII — Applications + complements (stacks 26–32)",
+      "description": "**Group eval after stack 25 (end of Phase VI)**\n\n    - Files to touch: `results/group-eval-after-25.json`\n    - Run router eval + forgetting check across ALL 25 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 60.",
       "priority": 61,
       "passes": false
     },
     {
       "id": "story-62",
       "title": "Generate distilled datasets for domains 26–32 (apps + complements)",
-      "description": "**Generate distilled datasets for domains 26–32 (apps + complements)**\n\n- Files to touch: `data/prompts/web-frontend.jsonl`, `data/prompts/web-backend.jsonl`, `data/prompts/music-audio.jsonl`, `data/prompts/devops.jsonl`, `data/prompts/llm-orch.jsonl`, `data/prompts/math.jsonl`, `data/prompts/security.jsonl`, plus the corresponding `data/distilled/*.jsonl`.\n    - For each domain: seed 300 prompts per domain via manual + HF sources noted in step 8's `data-sources.md`, then distill ~1.5K examples each via the appropriate teacher (Devstral for web/devops, Mistral-Large-Opus for math/security/llm-orch, kxkm Qwen35B for music-audio).\n    - Command: `uv run scripts/distill_apps_domains.py`\n    - Duration: ~3 h total (7 domains × 200 prompts × 2 s/call teacher avg).\n    - Acceptance: 7 jsonl files in `data/distilled/`, each ≥ 1500 rows; dedup pass applied.\n    - Dependencies: steps 6, 7, 8.",
+      "description": "**Generate distilled datasets for domains 26–32 (apps + complements)**\n\n    - Files to touch: `data/prompts/web-frontend.jsonl`, `data/prompts/web-backend.jsonl`, `data/prompts/music-audio.jsonl`, `data/prompts/devops.jsonl`, `data/prompts/llm-orch.jsonl`, `data/prompts/math.jsonl`, `data/prompts/security.jsonl`, plus the corresponding `data/distilled/*.jsonl`.\n    - For each domain: seed 300 prompts per domain via manual + HF sources noted in step 8's `data-sources.md`, then distill ~1.5K examples each via the appropriate teacher (Devstral for web/devops, Mistral-Large-Opus for math/security/llm-orch, kxkm Qwen35B for music-audio).\n    - Command: `uv run scripts/distill_apps_domains.py`\n    - Duration: ~3 h total (7 domains × 200 prompts × 2 s/call teacher avg).\n    - Acceptance: 7 jsonl files in `data/distilled/`, each ≥ 1500 rows; dedup pass applied.\n    - Dependencies: steps 6, 7, 8.",
       "priority": 62,
       "passes": false
     },
     {
       "id": "story-63",
       "title": "Train stack-26 (web-frontend)",
-      "description": "**Train stack-26 (web-frontend)**\n\n- Files to touch: `configs/stack-26-web-frontend.yaml`, `data/eval/web-frontend.jsonl`, `outputs/stacks/stack-26-web-frontend/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-26-web-frontend.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 61, 62, 16.",
+      "description": "**Train stack-26 (web-frontend)**\n\n    - Files to touch: `configs/stack-26-web-frontend.yaml`, `data/eval/web-frontend.jsonl`, `outputs/stacks/stack-26-web-frontend/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-26-web-frontend.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 61, 62, 16.",
       "priority": 63,
       "passes": false
     },
     {
       "id": "story-64",
       "title": "Train stack-27 (web-backend)",
-      "description": "**Train stack-27 (web-backend)**\n\n- Files to touch: `configs/stack-27-web-backend.yaml`, `data/eval/web-backend.jsonl`, `outputs/stacks/stack-27-web-backend/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-27-web-backend.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 63, 62, 16.",
+      "description": "**Train stack-27 (web-backend)**\n\n    - Files to touch: `configs/stack-27-web-backend.yaml`, `data/eval/web-backend.jsonl`, `outputs/stacks/stack-27-web-backend/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-27-web-backend.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 63, 62, 16.",
       "priority": 64,
       "passes": false
     },
     {
       "id": "story-65",
       "title": "Train stack-28 (music-audio)",
-      "description": "**Train stack-28 (music-audio)**\n\n- Files to touch: `configs/stack-28-music-audio.yaml`, `data/eval/music-audio.jsonl`, `outputs/stacks/stack-28-music-audio/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-28-music-audio.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 64, 62, 16.",
+      "description": "**Train stack-28 (music-audio)**\n\n    - Files to touch: `configs/stack-28-music-audio.yaml`, `data/eval/music-audio.jsonl`, `outputs/stacks/stack-28-music-audio/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-28-music-audio.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 64, 62, 16.",
       "priority": 65,
       "passes": false
     },
     {
       "id": "story-66",
       "title": "Train stack-29 (devops)",
-      "description": "**Train stack-29 (devops)**\n\n- Files to touch: `configs/stack-29-devops.yaml`, `data/eval/devops.jsonl`, `outputs/stacks/stack-29-devops/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-29-devops.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 65, 62, 16.",
+      "description": "**Train stack-29 (devops)**\n\n    - Files to touch: `configs/stack-29-devops.yaml`, `data/eval/devops.jsonl`, `outputs/stacks/stack-29-devops/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-29-devops.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 65, 62, 16.",
       "priority": 66,
       "passes": false
     },
     {
       "id": "story-67",
       "title": "Train stack-30 (llm-orch)",
-      "description": "**Train stack-30 (llm-orch)**\n\n- Files to touch: `configs/stack-30-llm-orch.yaml`, `data/eval/llm-orch.jsonl`, `outputs/stacks/stack-30-llm-orch/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-30-llm-orch.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 66, 62, 16.",
+      "description": "**Train stack-30 (llm-orch)**\n\n    - Files to touch: `configs/stack-30-llm-orch.yaml`, `data/eval/llm-orch.jsonl`, `outputs/stacks/stack-30-llm-orch/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-30-llm-orch.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 66, 62, 16.",
       "priority": 67,
       "passes": false
     },
     {
       "id": "story-68",
       "title": "Train stack-31 (math)",
-      "description": "**Train stack-31 (math)**\n\n- Files to touch: `configs/stack-31-math.yaml`, `data/eval/math.jsonl`, `outputs/stacks/stack-31-math/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-31-math.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 67, 62, 16.",
+      "description": "**Train stack-31 (math)**\n\n    - Files to touch: `configs/stack-31-math.yaml`, `data/eval/math.jsonl`, `outputs/stacks/stack-31-math/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-31-math.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 67, 62, 16.",
       "priority": 68,
       "passes": false
     },
     {
       "id": "story-69",
       "title": "Train stack-32 (security)",
-      "description": "**Train stack-32 (security)**\n\n- Files to touch: `configs/stack-32-security.yaml`, `data/eval/security.jsonl`, `outputs/stacks/stack-32-security/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-32-security.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 68, 62, 16.",
+      "description": "**Train stack-32 (security)**\n\n    - Files to touch: `configs/stack-32-security.yaml`, `data/eval/security.jsonl`, `outputs/stacks/stack-32-security/` (gitignored)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-32-security.yaml`\n    - Duration: ~45 min on 4090.\n    - Acceptance: win_rate_vs_base ≥ 0.55 on domain eval; forgetting check (step 16) passes against prior stacks.\n    - Dependencies: steps 10, 68, 62, 16.",
       "priority": 69,
       "passes": false
     },
     {
       "id": "story-70",
       "title": "Final meta-router retrain (v-final, 32 outputs)",
-      "description": "**Final meta-router retrain (v-final, 32 outputs)**\n\n- Files to touch: `outputs/router/v-final/router.pt`, `results/router-final.json`\n    - Full 32-domain training set; include 3K cross-domain multi-intent examples.\n    - Acceptance: macro-F1 ≥ 0.82 on held-out 32-class eval; p95 latency < 8 ms on RTX 4090.\n    - Dependencies: step 69.",
+      "description": "**Final meta-router retrain (v-final, 32 outputs)**\n\n    - Files to touch: `outputs/router/v-final/router.pt`, `results/router-final.json`\n    - Full 32-domain training set; include 3K cross-domain multi-intent examples.\n    - Acceptance: macro-F1 ≥ 0.82 on held-out 32-class eval; p95 latency < 8 ms on RTX 4090.\n    - Dependencies: step 69.",
       "priority": 70,
       "passes": false
     },
     {
       "id": "story-71",
       "title": "Full evaluation suite",
-      "description": "**Full evaluation suite**\n\n- Files to touch: `scripts/run_full_eval.sh`, `results/full-eval-v0.1.json`\n    - Run: HumanEval (+ pass@1), GSM8K, MMLU-Pro sample, 32 custom domain evals, latency benchmarks.\n    - Acceptance: consolidated JSON report; compare against base-Qwen3.5-4B numbers; each domain shows ≥ 0.55 win rate; aggregate score ≥ +15% over base.\n    - Dependencies: step 70.\n\n### Phase VIII — Aeon Memory Palace (neuro-symbolic memory)",
+      "description": "**Full evaluation suite**\n\n    - Files to touch: `scripts/run_full_eval.sh`, `results/full-eval-v0.1.json`\n    - Run: HumanEval (+ pass@1), GSM8K, MMLU-Pro sample, 32 custom domain evals, latency benchmarks.\n    - Acceptance: consolidated JSON report; compare against base-Qwen3.5-4B numbers; each domain shows ≥ 0.55 win rate; aggregate score ≥ +15% over base.\n    - Dependencies: step 70.",
       "priority": 71,
       "passes": false
     },
     {
       "id": "story-72",
       "title": "Aeon architecture spec (`docs/specs/aeon-memory-palace.md`)",
-      "description": "**Aeon architecture spec (`docs/specs/aeon-memory-palace.md`)**\n\n- Files to touch: `docs/specs/aeon-memory-palace.md`\n    - Document: Atlas SIMD Page-Clustered Vector Index (data layout, page size, clustering algorithm, SIMD kernels for AVX-512 / NEON), Trace neuro-symbolic episodic graph (node types, edge types, causality, temporal validity windows), API contract (`write_episode`, `recall`, `walk`, `query_by_time`, `compress`).\n    - Reference: arxiv 2601.15311 (Aeon, 2026).\n    - Acceptance: spec document reviewed against paper, covers 4 core operations.\n    - Dependencies: none.",
+      "description": "**Aeon architecture spec (`docs/specs/aeon-memory-palace.md`)**\n\n    - Files to touch: `docs/specs/aeon-memory-palace.md`\n    - Document: Atlas SIMD Page-Clustered Vector Index (data layout, page size, clustering algorithm, SIMD kernels for AVX-512 / NEON), Trace neuro-symbolic episodic graph (node types, edge types, causality, temporal validity windows), API contract (`write_episode`, `recall`, `walk`, `query_by_time`, `compress`).\n    - Reference: arxiv 2601.15311 (Aeon, 2026).\n    - Acceptance: spec document reviewed against paper, covers 4 core operations.\n    - Dependencies: none.",
       "priority": 72,
       "passes": false
     },
     {
       "id": "story-73",
       "title": "Atlas SIMD vector index (`src/memory/atlas.py` + `src/memory/atlas_simd.{c,rs}`)",
-      "description": "**Atlas SIMD vector index (`src/memory/atlas.py` + `src/memory/atlas_simd.{c,rs}`)**\n\n- Files to touch: `src/memory/atlas.py`, `src/memory/atlas_simd.c` (or .rs), `tests/test_atlas.py`, `setup.py` (cython/rust binding)\n    - Page-clustered layout: vectors stored in fixed-size pages (~4 KB), clusters via k-means. SIMD kernels for dot-product batched (AVX-512 on kxkm-ai, NEON on Mac Studio).\n    - Python bindings via cython (simple) or PyO3/rust (fast but more deps).\n    - Fallback: pure Python with numpy when SIMD not available (validity via CI).\n    - Acceptance: `test_atlas::test_insert_recall` — insert 10k 3072-dim vectors, recall top-10 latency < 5 ms on kxkm-ai CPU, accuracy vs naive ≥ 99 %.\n    - Dependencies: step 72.",
+      "description": "**Atlas SIMD vector index (`src/memory/atlas.py` + `src/memory/atlas_simd.{c,rs}`)**\n\n    - Files to touch: `src/memory/atlas.py`, `src/memory/atlas_simd.c` (or .rs), `tests/test_atlas.py`, `setup.py` (cython/rust binding)\n    - Page-clustered layout: vectors stored in fixed-size pages (~4 KB), clusters via k-means. SIMD kernels for dot-product batched (AVX-512 on kxkm-ai, NEON on Mac Studio).\n    - Python bindings via cython (simple) or PyO3/rust (fast but more deps).\n    - Fallback: pure Python with numpy when SIMD not available (validity via CI).\n    - Acceptance: `test_atlas::test_insert_recall` — insert 10k 3072-dim vectors, recall top-10 latency < 5 ms on kxkm-ai CPU, accuracy vs naive ≥ 99 %.\n    - Dependencies: step 72.",
       "priority": 73,
       "passes": false
     },
     {
       "id": "story-74",
       "title": "Trace episodic graph (`src/memory/trace.py`)",
-      "description": "**Trace episodic graph (`src/memory/trace.py`)**\n\n- Files to touch: `src/memory/trace.py`, `tests/test_trace.py`\n    - Graph store (Neo4j or in-process RustworkX) holding episodes = subgraphs with: `event` nodes, `causality` edges (directed, weighted), `temporal_validity` intervals, `source` provenance.\n    - Neuro-symbolic rules: simple Datalog-style rules for retrieval filtering (e.g., \"recall all `decision` events with `causality > 0.5` targeting `project=X` within last 30 days\").\n    - Acceptance: 100 synthetic episodes inserted, 5 rule queries return expected subsets, round-trip latency < 20 ms.\n    - Dependencies: step 72.",
+      "description": "**Trace episodic graph (`src/memory/trace.py`)**\n\n    - Files to touch: `src/memory/trace.py`, `tests/test_trace.py`\n    - Graph store (Neo4j or in-process RustworkX) holding episodes = subgraphs with: `event` nodes, `causality` edges (directed, weighted), `temporal_validity` intervals, `source` provenance.\n    - Neuro-symbolic rules: simple Datalog-style rules for retrieval filtering (e.g., \"recall all `decision` events with `causality > 0.5` targeting `project=X` within last 30 days\").\n    - Acceptance: 100 synthetic episodes inserted, 5 rule queries return expected subsets, round-trip latency < 20 ms.\n    - Dependencies: step 72.",
       "priority": 74,
       "passes": false
     },
     {
       "id": "story-75",
       "title": "Aeon unified API (`src/memory/aeon.py`)",
-      "description": "**Aeon unified API (`src/memory/aeon.py`)**\n\n- Files to touch: `src/memory/aeon.py`, `src/memory/__init__.py`, `tests/test_aeon_api.py`\n    - High-level class `AeonPalace` wrapping Atlas + Trace. Methods: `write(content, domain, timestamp, links)`, `recall(query, top_k, filters)`, `walk(from_node, max_depth)`, `query_by_time(interval)`, `compress(older_than)`.\n    - `compress` uses learned summarization (call teacher on chunk) to reduce tokens by 5-10× while preserving recoverable meaning.\n    - Acceptance: end-to-end test writes 1k episodes, recalls 50 queries, walks 10 hops, compresses half → token count 5×+ smaller.\n    - Dependencies: steps 73, 74.",
+      "description": "**Aeon unified API (`src/memory/aeon.py`)**\n\n    - Files to touch: `src/memory/aeon.py`, `src/memory/__init__.py`, `tests/test_aeon_api.py`\n    - High-level class `AeonPalace` wrapping Atlas + Trace. Methods: `write(content, domain, timestamp, links)`, `recall(query, top_k, filters)`, `walk(from_node, max_depth)`, `query_by_time(interval)`, `compress(older_than)`.\n    - `compress` uses learned summarization (call teacher on chunk) to reduce tokens by 5-10× while preserving recoverable meaning.\n    - Acceptance: end-to-end test writes 1k episodes, recalls 50 queries, walks 10 hops, compresses half → token count 5×+ smaller.\n    - Dependencies: steps 73, 74.",
       "priority": 75,
       "passes": false
     },
     {
       "id": "story-76",
       "title": "Aeon storage backends (Qdrant + Neo4j integration)",
-      "description": "**Aeon storage backends (Qdrant + Neo4j integration)**\n\n- Files to touch: `src/memory/backends/qdrant_atlas.py`, `src/memory/backends/neo4j_trace.py`, `configs/aeon-backends.yaml`\n    - Make backends pluggable — Atlas-native (SIMD local files) OR Qdrant remote; Trace-native (RustworkX in-memory) OR Neo4j remote (Tower or Graphiti).\n    - Config selects backend per environment (dev = local; prod = remote).\n    - Acceptance: both backend pairs pass the same test suite; switch via env var `AEON_BACKEND={native,remote}`.\n    - Dependencies: step 75.",
+      "description": "**Aeon storage backends (Qdrant + Neo4j integration)**\n\n    - Files to touch: `src/memory/backends/qdrant_atlas.py`, `src/memory/backends/neo4j_trace.py`, `configs/aeon-backends.yaml`\n    - Make backends pluggable — Atlas-native (SIMD local files) OR Qdrant remote; Trace-native (RustworkX in-memory) OR Neo4j remote (Tower or Graphiti).\n    - Config selects backend per environment (dev = local; prod = remote).\n    - Acceptance: both backend pairs pass the same test suite; switch via env var `AEON_BACKEND={native,remote}`.\n    - Dependencies: step 75.",
       "priority": 76,
       "passes": false
     },
     {
       "id": "story-77",
       "title": "Aeon integration in serving pipeline",
-      "description": "**Aeon integration in serving pipeline**\n\n- Files to touch: `src/serving/aeon_hook.py`, update `src/serving/vllm_server.py` (or mlx_server) to call Aeon pre-inference\n    - Pre-inference: call `AeonPalace.recall(prompt, top_k=8)` → inject top memories into system prompt.\n    - Post-inference: `AeonPalace.write(conversation_turn, domain=dispatch_result, links=[previous_turn_id])`.\n    - Acceptance: integration test — 10-turn conversation, turn 9 references info from turn 2, model correctly retrieves via Aeon.\n    - Dependencies: steps 76, 94 (vllm server) OR 95 (mlx server).",
+      "description": "**Aeon integration in serving pipeline**\n\n    - Files to touch: `src/serving/aeon_hook.py`, update `src/serving/vllm_server.py` (or mlx_server) to call Aeon pre-inference\n    - Pre-inference: call `AeonPalace.recall(prompt, top_k=8)` → inject top memories into system prompt.\n    - Post-inference: `AeonPalace.write(conversation_turn, domain=dispatch_result, links=[previous_turn_id])`.\n    - Acceptance: integration test — 10-turn conversation, turn 9 references info from turn 2, model correctly retrieves via Aeon.\n    - Dependencies: steps 76, 94 (vllm server) OR 95 (mlx server).",
       "priority": 77,
       "passes": false
     },
     {
       "id": "story-78",
       "title": "Aeon compression daemon",
-      "description": "**Aeon compression daemon**\n\n- Files to touch: `scripts/aeon_compress_daemon.py`, `deploy/systemd/aeon-compress.service`\n    - Background process that runs `compress` periodically on episodes older than N days. Reduces storage + recall noise.\n    - Acceptance: 1000 episodes older than N days shrunk by ≥ 5× in size, `recall` still finds the compressed versions with ≥ 95 % accuracy on a held-out query set.\n    - Dependencies: step 75.",
+      "description": "**Aeon compression daemon**\n\n    - Files to touch: `scripts/aeon_compress_daemon.py`, `deploy/systemd/aeon-compress.service`\n    - Background process that runs `compress` periodically on episodes older than N days. Reduces storage + recall noise.\n    - Acceptance: 1000 episodes older than N days shrunk by ≥ 5× in size, `recall` still finds the compressed versions with ≥ 95 % accuracy on a held-out query set.\n    - Dependencies: step 75.",
       "priority": 78,
       "passes": false
     },
     {
       "id": "story-79",
       "title": "Aeon eval + tuning",
-      "description": "**Aeon eval + tuning**\n\n- Files to touch: `scripts/eval_aeon.py`, `results/aeon-eval.json`\n    - Benchmark: MemoryBench (arxiv 2601.15311 supplementary) — 100 multi-turn conversations, measure recall@k, conversation coherence score, token budget saved via compression.\n    - Acceptance: recall@5 ≥ 0.85, coherence score ≥ 0.80, token savings ≥ 3× vs no-memory.\n    - Dependencies: step 77.\n\n### Phase IX — Negotiator (adaptive judge)",
+      "description": "**Aeon eval + tuning**\n\n    - Files to touch: `scripts/eval_aeon.py`, `results/aeon-eval.json`\n    - Benchmark: MemoryBench (arxiv 2601.15311 supplementary) — 100 multi-turn conversations, measure recall@k, conversation coherence score, token budget saved via compression.\n    - Acceptance: recall@5 ≥ 0.85, coherence score ≥ 0.80, token savings ≥ 3× vs no-memory.\n    - Dependencies: step 77.",
       "priority": 79,
       "passes": false
     },
     {
       "id": "story-80",
       "title": "Negotiator design (`docs/specs/negotiator.md`)",
-      "description": "**Negotiator design (`docs/specs/negotiator.md`)**\n\n- Files to touch: `docs/specs/negotiator.md`\n    - Document: CAMP-style evidence-based arbitration (arxiv 2604.00085) + Catfish dissent injection (arxiv 2505.21503). Pipeline: K=2-4 stack candidates → extract arguments → judge weights arguments (not votes) → if suspect consensus (>95 % agreement, weak arguments), inject Catfish prompt → re-judge.\n    - Acceptance: spec reviewed, decision thresholds (agreement %, argument quality score) defined.\n    - Dependencies: none.",
+      "description": "**Negotiator design (`docs/specs/negotiator.md`)**\n\n    - Files to touch: `docs/specs/negotiator.md`\n    - Document: CAMP-style evidence-based arbitration (arxiv 2604.00085) + Catfish dissent injection (arxiv 2505.21503). Pipeline: K=2-4 stack candidates → extract arguments → judge weights arguments (not votes) → if suspect consensus (>95 % agreement, weak arguments), inject Catfish prompt → re-judge.\n    - Acceptance: spec reviewed, decision thresholds (agreement %, argument quality score) defined.\n    - Dependencies: none.",
       "priority": 80,
       "passes": false
     },
     {
       "id": "story-81",
       "title": "Argument extraction (`src/cognitive/argument_extractor.py`)",
-      "description": "**Argument extraction (`src/cognitive/argument_extractor.py`)**\n\n- Files to touch: `src/cognitive/argument_extractor.py`, `tests/test_argument_extractor.py`\n    - For each of K stack candidate responses, extract: claim, evidence, reasoning chain. LLM-based (use base model with stack-reasoning active, or dedicated small judge).\n    - Acceptance: on 20 synthetic candidates, extraction returns structured `{claim, evidence, reasoning}` triples with schema validation.\n    - Dependencies: step 10 (trainer, base ready).",
+      "description": "**Argument extraction (`src/cognitive/argument_extractor.py`)**\n\n    - Files to touch: `src/cognitive/argument_extractor.py`, `tests/test_argument_extractor.py`\n    - For each of K stack candidate responses, extract: claim, evidence, reasoning chain. LLM-based (use base model with stack-reasoning active, or dedicated small judge).\n    - Acceptance: on 20 synthetic candidates, extraction returns structured `{claim, evidence, reasoning}` triples with schema validation.\n    - Dependencies: step 10 (trainer, base ready).",
       "priority": 81,
       "passes": false
     },
     {
       "id": "story-82",
       "title": "Adaptive judge (`src/cognitive/judge.py`)",
-      "description": "**Adaptive judge (`src/cognitive/judge.py`)**\n\n- Files to touch: `src/cognitive/judge.py`, `src/cognitive/judge_backends.py`, `configs/judge.yaml`\n    - Two backends:\n        - **fast**: Qwen3.5-35B-A3B Opus on kxkm-ai :8000 (~160 tok/s, default)\n        - **deep**: Mistral-Large-Opus on Studio (slow but stronger reasoning, used only if confidence low)\n    - Routing logic: agreement_score in (0, 1). If > 0.9 → skip judge (trust consensus). If 0.5–0.9 → fast judge. If < 0.5 → deep judge.\n    - Output: `{winner_idx, confidence, rationale}`.\n    - Acceptance: on 30 synthetic K=3 candidate sets (mix of easy/hard disagreements), routing selects the right backend and judge returns non-empty rationale.\n    - Dependencies: step 4 (teacher_client for endpoints), step 81.",
+      "description": "**Adaptive judge (`src/cognitive/judge.py`)**\n\n    - Files to touch: `src/cognitive/judge.py`, `src/cognitive/judge_backends.py`, `configs/judge.yaml`\n    - Two backends:\n        - **fast**: Qwen3.5-35B-A3B Opus on kxkm-ai :8000 (~160 tok/s, default)\n        - **deep**: Mistral-Large-Opus on Studio (slow but stronger reasoning, used only if confidence low)\n    - Routing logic: agreement_score in (0, 1). If > 0.9 → skip judge (trust consensus). If 0.5–0.9 → fast judge. If < 0.5 → deep judge.\n    - Output: `{winner_idx, confidence, rationale}`.\n    - Acceptance: on 30 synthetic K=3 candidate sets (mix of easy/hard disagreements), routing selects the right backend and judge returns non-empty rationale.\n    - Dependencies: step 4 (teacher_client for endpoints), step 81.",
       "priority": 82,
       "passes": false
     },
     {
       "id": "story-83",
       "title": "Catfish dissent module (`src/cognitive/catfish.py`)",
-      "description": "**Catfish dissent module (`src/cognitive/catfish.py`)**\n\n- Files to touch: `src/cognitive/catfish.py`, `tests/test_catfish.py`\n    - Inject a dissent agent when high-agreement but weak arguments detected. The Catfish re-generates a candidate with explicit \"devil's advocate\" system prompt using one of the active stacks.\n    - Trigger: agreement > 0.95 AND avg_argument_quality < 0.6.\n    - Acceptance: on 10 high-agreement weak-argument cases, Catfish produces a substantively different response (embedding similarity < 0.7 with consensus).\n    - Dependencies: step 10 (trainer), step 81.",
+      "description": "**Catfish dissent module (`src/cognitive/catfish.py`)**\n\n    - Files to touch: `src/cognitive/catfish.py`, `tests/test_catfish.py`\n    - Inject a dissent agent when high-agreement but weak arguments detected. The Catfish re-generates a candidate with explicit \"devil's advocate\" system prompt using one of the active stacks.\n    - Trigger: agreement > 0.95 AND avg_argument_quality < 0.6.\n    - Acceptance: on 10 high-agreement weak-argument cases, Catfish produces a substantively different response (embedding similarity < 0.7 with consensus).\n    - Dependencies: step 10 (trainer), step 81.",
       "priority": 83,
       "passes": false
     },
     {
       "id": "story-84",
       "title": "Negotiator integration + eval",
-      "description": "**Negotiator integration + eval**\n\n- Files to touch: `src/cognitive/negotiator.py`, update serving pipeline, `results/negotiator-eval.json`\n    - End-to-end: prompt → K candidates → argument extraction → judge → Catfish if triggered → final response.\n    - Eval: 50 prompts that are known to elicit stack disagreement. Measure: judge accuracy vs human-labeled ground truth, Catfish trigger rate, latency overhead.\n    - Acceptance: judge agrees with ground truth ≥ 75 %; Catfish triggers on ≥ 80 % of planted suspect-consensus cases; latency overhead ≤ 300 ms when fast, ≤ 2 s when deep.\n    - Dependencies: steps 82, 83.\n\n### Phase X — Anti-bias (KnowBias neurons + RBD)",
+      "description": "**Negotiator integration + eval**\n\n    - Files to touch: `src/cognitive/negotiator.py`, update serving pipeline, `results/negotiator-eval.json`\n    - End-to-end: prompt → K candidates → argument extraction → judge → Catfish if triggered → final response.\n    - Eval: 50 prompts that are known to elicit stack disagreement. Measure: judge accuracy vs human-labeled ground truth, Catfish trigger rate, latency overhead.\n    - Acceptance: judge agrees with ground truth ≥ 75 %; Catfish triggers on ≥ 80 % of planted suspect-consensus cases; latency overhead ≤ 300 ms when fast, ≤ 2 s when deep.\n    - Dependencies: steps 82, 83.",
       "priority": 84,
       "passes": false
     },
     {
       "id": "story-85",
       "title": "Bias dataset curation (`data/bias/bias_pairs.jsonl`)",
-      "description": "**Bias dataset curation (`data/bias/bias_pairs.jsonl`)**\n\n- Files to touch: `data/bias/bias_pairs.jsonl`, `scripts/curate_bias_dataset.py`\n    - ~5000 pair examples: (biased_prompt, fair_prompt, expected_behavior). Mix: confirmation, anchoring, authority, recency, framing, stereotyping. Sources: StereoSet, CrowS-Pairs, BBQ, DeFrame seed set.\n    - Acceptance: ≥ 5000 pairs, balanced across 6 bias types (≥ 500 each), 95 %+ valid JSONL.\n    - Dependencies: none.",
+      "description": "**Bias dataset curation (`data/bias/bias_pairs.jsonl`)**\n\n    - Files to touch: `data/bias/bias_pairs.jsonl`, `scripts/curate_bias_dataset.py`\n    - ~5000 pair examples: (biased_prompt, fair_prompt, expected_behavior). Mix: confirmation, anchoring, authority, recency, framing, stereotyping. Sources: StereoSet, CrowS-Pairs, BBQ, DeFrame seed set.\n    - Acceptance: ≥ 5000 pairs, balanced across 6 bias types (≥ 500 each), 95 %+ valid JSONL.\n    - Dependencies: none.",
       "priority": 85,
       "passes": false
     },
     {
       "id": "story-86",
       "title": "Neuron probing (`src/cognitive/bias_probe.py`)",
-      "description": "**Neuron probing (`src/cognitive/bias_probe.py`)**\n\n- Files to touch: `src/cognitive/bias_probe.py`, `tests/test_bias_probe.py`\n    - PyTorch hooks on activations of Qwen3.5-4B layers. For each pair in dataset, record activation delta across all neurons. Rank neurons by |Δ_biased - Δ_fair|.\n    - Output: `results/bias_neurons_base.json` (top N=200 bias neurons per layer).\n    - Acceptance: 200 bias neurons identified in base model; probe runs in < 30 min on 4090 with the 5K dataset.\n    - Dependencies: step 3 (loader), step 85.",
+      "description": "**Neuron probing (`src/cognitive/bias_probe.py`)**\n\n    - Files to touch: `src/cognitive/bias_probe.py`, `tests/test_bias_probe.py`\n    - PyTorch hooks on activations of Qwen3.5-4B layers. For each pair in dataset, record activation delta across all neurons. Rank neurons by |Δ_biased - Δ_fair|.\n    - Output: `results/bias_neurons_base.json` (top N=200 bias neurons per layer).\n    - Acceptance: 200 bias neurons identified in base model; probe runs in < 30 min on 4090 with the 5K dataset.\n    - Dependencies: step 3 (loader), step 85.",
       "priority": 86,
       "passes": false
     },
     {
       "id": "story-87",
-      "title": "KnowBias fine-tune on BASE (pre-stacks)",
-      "description": "**KnowBias fine-tune on BASE (pre-stacks)**\n\n- Files to touch: `scripts/knowbias_finetune_base.py`, `outputs/base-knowbias/` (gitignored), `configs/knowbias-base.yaml`\n    - LoRA fine-tune targeting ONLY the identified bias neurons (narrow training, r=8). Objective: reduce activation delta between biased/fair pairs → no behavior change on non-bias tasks.\n    - Reference: arxiv 2601.21864 (KnowBias, 2026).\n    - Duration: ~2h on 4090.\n    - Acceptance: bias score (StereoSet + CrowS-Pairs) drops ≥ 30 % vs base; MMLU-Pro + HumanEval capacity retention ≥ 95 % (no significant capacity loss).\n    - Dependencies: step 86.",
+      "title": "KnowBias fine-tune on BASE (post-hoc reference)",
+      "description": "**KnowBias fine-tune on BASE (post-hoc reference)**\n\n    - Files to touch: `scripts/knowbias_finetune_base.py`, `outputs/base-knowbias/` (gitignored), `configs/knowbias-base.yaml`\n    - LoRA fine-tune targeting ONLY the identified bias neurons (narrow training, r=8). Objective: reduce activation delta between biased/fair pairs → no behavior change on non-bias tasks.\n    - Reference: arxiv 2601.21864 (KnowBias, 2026).\n    - Duration: ~2h on 4090.\n    - Acceptance: bias score (StereoSet + CrowS-Pairs) drops ≥ 30 % vs base; MMLU-Pro + HumanEval capacity retention ≥ 95 % (no significant capacity loss).\n    - Dependencies: step 86.",
       "priority": 87,
       "passes": false
     },
     {
       "id": "story-88",
       "title": "Validate base debiased preserves capacity (`scripts/eval_base_knowbias.py`)",
-      "description": "**Validate base debiased preserves capacity (`scripts/eval_base_knowbias.py`)**\n\n- Files to touch: `scripts/eval_base_knowbias.py`, `results/base-knowbias-eval.json`\n    - Run full eval suite (HumanEval, GSM8K, MMLU-Pro) on base-knowbias vs base.\n    - Acceptance: no benchmark drops more than 2 pp.\n    - Dependencies: step 87.",
+      "description": "**Validate base debiased preserves capacity (`scripts/eval_base_knowbias.py`)**\n\n    - Files to touch: `scripts/eval_base_knowbias.py`, `results/base-knowbias-eval.json`\n    - Run full eval suite (HumanEval, GSM8K, MMLU-Pro) on base-knowbias vs base.\n    - Acceptance: no benchmark drops more than 2 pp.\n    - Dependencies: step 87.",
       "priority": 88,
       "passes": false
     },
     {
       "id": "story-89",
       "title": "Re-anchor all 32 stack training on debiased base",
-      "description": "**Re-anchor all 32 stack training on debiased base**\n\n- Files to touch: update training configs 11, 17-19, 23-35, 48-60, 63-69 (all stack configs) to use `outputs/base-knowbias/` as base path.\n    - NOTE: this is a refactor step — does NOT retrain stacks. It just updates config files so FUTURE training uses the debiased base. Stacks already trained keep their artifacts; if retrain is desired, do so manually.\n    - Acceptance: all stack config files have base_model_path → debiased base; ralph can validate with a grep.\n    - Dependencies: step 88.",
+      "description": "**Re-anchor all 32 stack training on debiased base**\n\n    - Files to touch: update training configs 11, 17-19, 23-35, 48-60, 63-69 (all stack configs) to use `outputs/base-knowbias/` as base path.\n    - NOTE: this is a refactor step — does NOT retrain stacks. It just updates config files so FUTURE training uses the debiased base. Stacks already trained keep their artifacts; if retrain is desired, do so manually.\n    - Acceptance: all stack config files have base_model_path → debiased base; ralph can validate with a grep.\n    - Dependencies: step 88.",
       "priority": 89,
       "passes": false
     },
     {
       "id": "story-90",
       "title": "KnowBias probing on MERGED model (post-stacks)",
-      "description": "**KnowBias probing on MERGED model (post-stacks)**\n\n- Files to touch: `scripts/knowbias_probe_merged.py`, `results/bias_neurons_merged.json`\n    - Re-run probing (step 86 logic) on the fully-merged model (base + 32 stacks fused). Stacks may have introduced new biases (domain-specific stereotypes).\n    - Acceptance: second bias neuron set identified; compare overlap with base's — expect 40-60 % overlap, 40-60 % new.\n    - Dependencies: step 86, step 70 (final router retrain post-all-stacks / merged model ready).",
+      "description": "**KnowBias probing on MERGED model (post-stacks)**\n\n    - Files to touch: `scripts/knowbias_probe_merged.py`, `results/bias_neurons_merged.json`\n    - Re-run probing (step 86 logic) on the fully-merged model (base + 32 stacks fused). Stacks may have introduced new biases (domain-specific stereotypes).\n    - Acceptance: second bias neuron set identified; compare overlap with base's — expect 40-60 % overlap, 40-60 % new.\n    - Dependencies: step 86, step 70 (final router retrain post-all-stacks / merged model ready).",
       "priority": 90,
       "passes": false
     },
     {
       "id": "story-91",
       "title": "KnowBias fine-tune on MERGED (post-stacks)",
-      "description": "**KnowBias fine-tune on MERGED (post-stacks)**\n\n- Files to touch: `scripts/knowbias_finetune_merged.py`, `outputs/final-knowbias/` (gitignored)\n    - Second KnowBias round on merged model using the post-stacks bias neurons.\n    - Acceptance: bias score drops ≥ 20 % further; domain capacities retained (per-stack win_rate_vs_base ≥ -2 %).\n    - Dependencies: step 90.",
+      "description": "**KnowBias fine-tune on MERGED (post-stacks)**\n\n    - Files to touch: `scripts/knowbias_finetune_merged.py`, `outputs/final-knowbias/` (gitignored)\n    - Second KnowBias round on merged model using the post-stacks bias neurons.\n    - Acceptance: bias score drops ≥ 20 % further; domain capacities retained (per-stack win_rate_vs_base ≥ -2 %).\n    - Dependencies: step 90.",
       "priority": 91,
       "passes": false
     },
     {
       "id": "story-92",
       "title": "RBD runtime plug-in (`src/cognitive/rbd.py`)",
-      "description": "**RBD runtime plug-in (`src/cognitive/rbd.py`)**\n\n- Files to touch: `src/cognitive/rbd.py`, `tests/test_rbd.py`\n    - Reasoning-based Bias Detector (arxiv 2505.17100). Post-inference check: given (prompt, response), a lightweight reasoning pass flags potential biases not caught by KnowBias (domain-specific, framing effects).\n    - Uses Qwen3.5-4B-debiased itself as detector (self-consistent) OR Qwen1.7B as cheaper alternative.\n    - Acceptance: on 100 responses (50 biased, 50 clean), RBD flags ≥ 80 % of biased, false-positive rate ≤ 15 %.\n    - Dependencies: step 91.",
+      "description": "**RBD runtime plug-in (`src/cognitive/rbd.py`)**\n\n    - Files to touch: `src/cognitive/rbd.py`, `tests/test_rbd.py`\n    - Reasoning-based Bias Detector (arxiv 2505.17100). Post-inference check: given (prompt, response), a lightweight reasoning pass flags potential biases not caught by KnowBias (domain-specific, framing effects).\n    - Uses Qwen3.5-4B-debiased itself as detector (self-consistent) OR Qwen1.7B as cheaper alternative.\n    - Acceptance: on 100 responses (50 biased, 50 clean), RBD flags ≥ 80 % of biased, false-positive rate ≤ 15 %.\n    - Dependencies: step 91.",
       "priority": 92,
       "passes": false
     },
     {
       "id": "story-93",
       "title": "Anti-bias integration + eval",
-      "description": "**Anti-bias integration + eval**\n\n- Files to touch: `src/cognitive/antibias.py` (orchestrator), update serving pipeline, `results/antibias-eval.json`\n    - Orchestration: RBD runs on every response; if flagged, trigger DeFrame-style re-generation with inverted framing (optional fallback).\n    - Full eval: StereoSet, CrowS-Pairs, BBQ, custom framing dataset. Compare pre vs post full antibias stack.\n    - Acceptance: aggregate bias score drops ≥ 50 % vs vanilla micro-kiki; capacity retention ≥ 95 %.\n    - Dependencies: step 92.\n\n### Phase XI — Serving deployment",
+      "description": "**Anti-bias integration + eval**\n\n    - Files to touch: `src/cognitive/antibias.py` (orchestrator), update serving pipeline, `results/antibias-eval.json`\n    - Orchestration: RBD runs on every response; if flagged, trigger DeFrame-style re-generation with inverted framing (optional fallback).\n    - Full eval: StereoSet, CrowS-Pairs, BBQ, custom framing dataset. Compare pre vs post full antibias stack.\n    - Acceptance: aggregate bias score drops ≥ 50 % vs vanilla micro-kiki; capacity retention ≥ 95 %.\n    - Dependencies: step 92.",
       "priority": 93,
       "passes": false
     },
     {
       "id": "story-94",
       "title": "vLLM server with dynamic LoRA (`src/serving/vllm_server.py`)",
-      "description": "**vLLM server with dynamic LoRA (`src/serving/vllm_server.py`)**\n\n- Files to touch: `src/serving/vllm_server.py`, `docker/vllm.Dockerfile`\n    - vLLM 0.6+ with `--enable-lora --max-loras 4 --max-lora-rank 16`; expose OpenAI-compatible endpoint on :8100.\n    - **Dynamic LoRA config**:\n      - Set env var `VLLM_ALLOW_RUNTIME_LORA_UPDATING=True` at startup.\n      - Use `/v1/load_lora_adapter` endpoint to dynamically load/unload adapters per request.\n      - Register a `LoRAResolver` plugin pointing at `outputs/stacks/` directory so adapters can be referenced by name in OpenAI-style `model` field.\n      - Caveat: this is a security risk in multi-tenant — keep service bound to localhost + tailscale only.\n      - Reference: vLLM docs, unsloth hot-swap guide.\n    - Router runs as a FastAPI sidecar on :8101 that rewrites incoming request with `lora_request` field.\n    - Acceptance: `curl :8100/v1/chat/completions` with \"write python factorial\" → correct response, logs show stacks 03 + 02 active; dynamic `/v1/load_lora_adapter` test loads an unseen stack and serves a query without restart.\n    - Dependencies: step 70.",
+      "description": "**vLLM server with dynamic LoRA (`src/serving/vllm_server.py`)**\n\n    - Files to touch: `src/serving/vllm_server.py`, `docker/vllm.Dockerfile`\n    - vLLM 0.6+ with `--enable-lora --max-loras 4 --max-lora-rank 16`; expose OpenAI-compatible endpoint on :8100.\n    - **Dynamic LoRA config**:\n      - Set env var `VLLM_ALLOW_RUNTIME_LORA_UPDATING=True` at startup.\n      - Use `/v1/load_lora_adapter` endpoint to dynamically load/unload adapters per request.\n      - Register a `LoRAResolver` plugin pointing at `outputs/stacks/` directory so adapters can be referenced by name in OpenAI-style `model` field.\n      - Caveat: this is a security risk in multi-tenant — keep service bound to localhost + tailscale only.\n      - Reference: vLLM docs, unsloth hot-swap guide.\n    - Router runs as a FastAPI sidecar on :8101 that rewrites incoming request with `lora_request` field.\n    - Acceptance: `curl :8100/v1/chat/completions` with \"write python factorial\" → correct response, logs show stacks 03 + 02 active; dynamic `/v1/load_lora_adapter` test loads an unseen stack and serves a query without restart.\n    - Dependencies: step 70.",
       "priority": 94,
       "passes": false
     },
     {
       "id": "story-95",
       "title": "mlx-lm server for Mac Studio (`src/serving/mlx_server.py`)",
-      "description": "**mlx-lm server for Mac Studio (`src/serving/mlx_server.py`)**\n\n- Files to touch: `src/serving/mlx_server.py`, `configs/mlx-server.json`\n    - mlx-lm with adapter switching via subprocess restart (mlx doesn't support hot-swap cleanly — accept ~200ms penalty per switch) OR via `mlx_lm.server --adapter-path` per-request.\n    - Acceptance: runs on Studio, serves 32 stacks (max 4 active), p95 first-token latency < 500 ms.\n    - Dependencies: step 70.",
+      "description": "**mlx-lm server for Mac Studio (`src/serving/mlx_server.py`)**\n\n    - Files to touch: `src/serving/mlx_server.py`, `configs/mlx-server.json`\n    - mlx-lm with adapter switching via subprocess restart (mlx doesn't support hot-swap cleanly — accept ~200ms penalty per switch) OR via `mlx_lm.server --adapter-path` per-request.\n    - Acceptance: runs on Studio, serves 32 stacks (max 4 active), p95 first-token latency < 500 ms.\n    - Dependencies: step 70.",
       "priority": 95,
       "passes": false
     },
     {
       "id": "story-96",
       "title": "Persistent service unit (staged only, no live install)",
-      "description": "**Persistent service unit (staged only, no live install)**\n\n- Files to touch: `deploy/launchd/cc.saillant.micro-kiki.plist` (Mac), `deploy/systemd/micro-kiki.service` (Linux), `deploy/README.md`.\n    - Launchd plist for Studio, systemd for kxkm-ai. Autostart on boot, restart on crash.\n    - NO live install. The CI/loop environment cannot `sudo` non-interactively. Unit files are STAGED in `deploy/` only.\n    - `deploy/README.md` documents the manual install commands for an operator with sudo:\n      - Mac: `cp deploy/launchd/cc.saillant.micro-kiki.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/cc.saillant.micro-kiki.plist`\n      - Linux: `sudo cp deploy/systemd/micro-kiki.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now micro-kiki`\n    - Acceptance: `deploy/launchd/cc.saillant.micro-kiki.plist` + `deploy/systemd/micro-kiki.service` exist and `plutil -lint` / `systemd-analyze verify` both pass on the staged files; `deploy/README.md` documents install commands; NO requirement that the service is actually running.\n    - Dependencies: steps 94, 95.",
+      "description": "**Persistent service unit (staged only, no live install)**\n\n    - Files to touch: `deploy/launchd/cc.saillant.micro-kiki.plist` (Mac), `deploy/systemd/micro-kiki.service` (Linux), `deploy/README.md`.\n    - Launchd plist for Studio, systemd for kxkm-ai. Autostart on boot, restart on crash.\n    - NO live install. The CI/loop environment cannot `sudo` non-interactively. Unit files are STAGED in `deploy/` only.\n    - `deploy/README.md` documents the manual install commands for an operator with sudo:\n      - Mac: `cp deploy/launchd/cc.saillant.micro-kiki.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/cc.saillant.micro-kiki.plist`\n      - Linux: `sudo cp deploy/systemd/micro-kiki.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now micro-kiki`\n    - Acceptance: `deploy/launchd/cc.saillant.micro-kiki.plist` + `deploy/systemd/micro-kiki.service` exist and `plutil -lint` / `systemd-analyze verify` both pass on the staged files; `deploy/README.md` documents install commands; NO requirement that the service is actually running.\n    - Dependencies: steps 94, 95.",
       "priority": 96,
       "passes": false
     },
     {
       "id": "story-97",
       "title": "Integration test (router HTTP)",
-      "description": "**Integration test (router HTTP)**\n\n- Files to touch: `tests/test_integration_http.py`\n    - Spawn router sidecar + vLLM (or mlx-server) in pytest fixture, send 20 queries spanning 10 domains, assert each hits correct top-2 stacks.\n    - Acceptance: 20/20 queries routed correctly; test completes in < 60 s.\n    - Dependencies: step 94 OR step 95.\n\n### Phase XII — ANE triple pipeline (Mac-only)",
+      "description": "**Integration test (router HTTP)**\n\n    - Files to touch: `tests/test_integration_http.py`\n    - Spawn router sidecar + vLLM (or mlx-server) in pytest fixture, send 20 queries spanning 10 domains, assert each hits correct top-2 stacks.\n    - Acceptance: 20/20 queries routed correctly; test completes in < 60 s.\n    - Dependencies: step 94 OR step 95.",
       "priority": 97,
       "passes": false
     },
     {
       "id": "story-98",
       "title": "ANE draft model (`src/serving/ane_draft.py`)",
-      "description": "**ANE draft model (`src/serving/ane_draft.py`)**\n\n- Files to touch: `src/serving/ane_draft.py`, `models/qwen3.5-0.8b.mlpackage`\n    - Convert Qwen3.5-0.8B to CoreML (ANE-targeted), use as speculative decoder for the 4B base running on GPU (Metal Performance Shaders).\n    - Target: 2-3× decode speedup on M3 Ultra.\n    - Acceptance: benchmark before/after on 100-token generation, speedup ≥ 1.8×.\n    - Dependencies: step 95.",
+      "description": "**ANE draft model (`src/serving/ane_draft.py`)**\n\n    - Files to touch: `src/serving/ane_draft.py`, `models/qwen3.5-0.8b.mlpackage`\n    - Convert Qwen3.5-0.8B to CoreML (ANE-targeted), use as speculative decoder for the 4B base running on GPU (Metal Performance Shaders).\n    - Target: 2-3× decode speedup on M3 Ultra.\n    - Acceptance: benchmark before/after on 100-token generation, speedup ≥ 1.8×.\n    - Dependencies: step 95.",
       "priority": 98,
       "passes": false
     },
     {
       "id": "story-99",
       "title": "ANE scorer for GRPO (`src/serving/ane_scorer.py`)",
-      "description": "**ANE scorer for GRPO (`src/serving/ane_scorer.py`)**\n\n- Files to touch: `src/serving/ane_scorer.py`\n    - CoreML-compiled scorer (reward model) running on ANE for RL fine-tuning pipelines (future GRPO stacks).\n    - Acceptance: scores 100 prompt-completion pairs in < 2 s on ANE; scores match GPU-ref within ±0.02.\n    - Dependencies: step 98.",
+      "description": "**ANE scorer for GRPO (`src/serving/ane_scorer.py`)**\n\n    - Files to touch: `src/serving/ane_scorer.py`\n    - CoreML-compiled scorer (reward model) running on ANE for RL fine-tuning pipelines (future GRPO stacks).\n    - Acceptance: scores 100 prompt-completion pairs in < 2 s on ANE; scores match GPU-ref within ±0.02.\n    - Dependencies: step 98.",
       "priority": 99,
       "passes": false
     },
     {
       "id": "story-100",
       "title": "ANE-resident meta-router (`src/serving/ane_router.py`)",
-      "description": "**ANE-resident meta-router (`src/serving/ane_router.py`)**\n\n- Files to touch: `src/serving/ane_router.py`\n    - Compile the 2M-param router to CoreML, run on ANE (not CPU) to free CPU for decode orchestration.\n    - Acceptance: latency drops from ~5 ms (CPU) to ~1 ms (ANE); identical outputs within fp16 tolerance.\n    - Dependencies: step 70.\n\n### Phase XIII — Quantum-inspired pre-release (classical only, no QPU)",
+      "description": "**ANE-resident meta-router (`src/serving/ane_router.py`)**\n\n    - Files to touch: `src/serving/ane_router.py`\n    - Compile the 2M-param router to CoreML, run on ANE (not CPU) to free CPU for decode orchestration.\n    - Acceptance: latency drops from ~5 ms (CPU) to ~1 ms (ANE); identical outputs within fp16 tolerance.\n    - Dependencies: step 70.",
       "priority": 100,
       "passes": false
     },
     {
       "id": "story-101",
       "title": "CompactifAI base compression",
-      "description": "**CompactifAI base compression**\n\n- Files to touch: `src/compress/compactifai.py`, `src/compress/__init__.py`, `scripts/compress_base.py`, `tests/test_compactifai.py`, `configs/compactifai.yaml`\n    - Implement tensor-network truncation over self-attn (Q/K/V/O projections) and MLP (gate/up/down) layers of the **debiased, post-stacks-fused** base checkpoint. Use `quimb` for MPS/MPO decomposition and `opt_einsum` for contraction paths.\n    - Expose CLI: `uv run python scripts/compress_base.py --bond-dim 32 --input models/qwen3.5-4b-fused/bf16 --output models/qwen3.5-4b-compact/chi32`.\n    - Progressive chi schedule: produce chi in {64, 32, 16, 8} artifacts; evaluate each on HumanEval-sample + MMLU-Pro-sample.\n    - Commands:\n      - `uv add quimb opt_einsum tensornetwork`\n      - `uv run pytest tests/test_compactifai.py`\n      - `uv run python scripts/compress_base.py --bond-dim 32`\n    - Acceptance: chi=32 artifact exists at `models/qwen3.5-4b-compact/chi32/`, on-disk size <= 1 GB, loader smoke test yields non-empty response, accuracy drop on HumanEval-sample < 5 pp vs BF16 baseline.\n    - Dependencies: step 91 (post-stacks debiased base).",
+      "description": "**CompactifAI base compression**\n\n    - Files to touch: `src/compress/compactifai.py`, `src/compress/__init__.py`, `scripts/compress_base.py`, `tests/test_compactifai.py`, `configs/compactifai.yaml`\n    - Implement tensor-network truncation over self-attn (Q/K/V/O projections) and MLP (gate/up/down) layers of the **debiased, post-stacks-fused** base checkpoint. Use `quimb` for MPS/MPO decomposition and `opt_einsum` for contraction paths.\n    - Expose CLI: `uv run python scripts/compress_base.py --bond-dim 32 --input models/qwen3.5-4b-fused/bf16 --output models/qwen3.5-4b-compact/chi32`.\n    - Progressive chi schedule: produce chi in {64, 32, 16, 8} artifacts; evaluate each on HumanEval-sample + MMLU-Pro-sample.\n    - Commands:\n      - `uv add quimb opt_einsum tensornetwork`\n      - `uv run pytest tests/test_compactifai.py`\n      - `uv run python scripts/compress_base.py --bond-dim 32`\n    - Acceptance: chi=32 artifact exists at `models/qwen3.5-4b-compact/chi32/`, on-disk size <= 1 GB, loader smoke test yields non-empty response, accuracy drop on HumanEval-sample < 5 pp vs BF16 baseline.\n    - Dependencies: step 91 (post-stacks debiased base).",
       "priority": 101,
       "passes": false
     },
     {
       "id": "story-102",
       "title": "QTHA adapter pilot on stack-02 (reasoning) — comparative study vs MoLoRA",
-      "description": "**QTHA adapter pilot on stack-02 (reasoning) — comparative study vs MoLoRA**\n\n- Files to touch: `src/stacks/qtha.py`, `src/stacks/__init__.py`, `scripts/train_qtha_stack.py`, `tests/test_qtha.py`, `configs/qtha-stack-02.yaml`\n    - Implement `QTHAAdapter(nn.Module)`: decomposes the frozen base weights into a tensor-network factor + a trainable low-bond-dim correction. Parameter count target: ~500 K (vs 2 M MoLoRA rank-16). Training hook compatible with PEFT-style attach/detach.\n    - Reuse the stack-02 reasoning dataset (`data/dedup/02-reasoning/`). Train on RTX 4090 via Unsloth-compatible path.\n    - Eval: `win_rate_vs_base` on reasoning eval slice; compare to the v0.1-class MoLoRA stack-02 baseline (step 17).\n    - Commands:\n      - `uv run pytest tests/test_qtha.py`\n      - `uv run python scripts/train_qtha_stack.py --config configs/qtha-stack-02.yaml`\n      - `uv run python scripts/eval_stack.py --stack stack-02-reasoning-qtha --compare stack-02-reasoning`\n    - Acceptance: adapter saved to `outputs/stacks/stack-02-reasoning-qtha/`, param count logged <= 600 K, `win_rate_vs_base` >= MoLoRA stack-02 - 1 pp, comparative report at `results/qtha-vs-molora.md` with a merge/fallback decision line.\n    - Dependencies: step 17 (MoLoRA stack-02 baseline); step 101 optional (for compact base path).",
+      "description": "**QTHA adapter pilot on stack-02 (reasoning) — comparative study vs MoLoRA**\n\n    - Files to touch: `src/stacks/qtha.py`, `src/stacks/__init__.py`, `scripts/train_qtha_stack.py`, `tests/test_qtha.py`, `configs/qtha-stack-02.yaml`\n    - Implement `QTHAAdapter(nn.Module)`: decomposes the frozen base weights into a tensor-network factor + a trainable low-bond-dim correction. Parameter count target: ~500 K (vs 2 M MoLoRA rank-16). Training hook compatible with PEFT-style attach/detach.\n    - Reuse the stack-02 reasoning dataset (`data/dedup/02-reasoning/`). Train on RTX 4090 via Unsloth-compatible path.\n    - Eval: `win_rate_vs_base` on reasoning eval slice; compare to the v0.1-class MoLoRA stack-02 baseline (step 17).\n    - Commands:\n      - `uv run pytest tests/test_qtha.py`\n      - `uv run python scripts/train_qtha_stack.py --config configs/qtha-stack-02.yaml`\n      - `uv run python scripts/eval_stack.py --stack stack-02-reasoning-qtha --compare stack-02-reasoning`\n    - Acceptance: adapter saved to `outputs/stacks/stack-02-reasoning-qtha/`, param count logged <= 600 K, `win_rate_vs_base` >= MoLoRA stack-02 - 1 pp, comparative report at `results/qtha-vs-molora.md` with a merge/fallback decision line.\n    - Dependencies: step 17 (MoLoRA stack-02 baseline); step 101 optional (for compact base path).",
       "priority": 102,
       "passes": false
     },
     {
       "id": "story-103",
       "title": "Tensor-network router prototype",
-      "description": "**Tensor-network router prototype**\n\n- Files to touch: `src/routing/tn_router.py`, `src/routing/__init__.py`, `scripts/train_tn_router.py`, `tests/test_tn_router.py`, `configs/tn-router.yaml`\n    - Implement `TNRouter(nn.Module)` gating function using matrix product states (MPS) over embedding input; produce per-domain scores via interference amplitudes.\n    - Train on the final 32-domain router eval set (step 70). Fallback guard: if macro-F1 drops > 2 pp vs sigmoid, flag in report and do not merge into the serving path.\n    - Commands:\n      - `uv run pytest tests/test_tn_router.py`\n      - `uv run python scripts/train_tn_router.py --config configs/tn-router.yaml`\n      - `uv run python scripts/eval_router.py --router tn --compare sigmoid`\n    - Acceptance: `outputs/routers/tn-v0/` artifact exists, comparative report at `results/tn-vs-sigmoid.md`, macro-F1 delta reported (+/- vs sigmoid), decision line (\"merge\" | \"fallback\") included.\n    - Dependencies: step 70 (final sigmoid router + 32-domain eval set).\n\n### Phase XIV — Release v0.2",
+      "description": "**Tensor-network router prototype**\n\n    - Files to touch: `src/routing/tn_router.py`, `src/routing/__init__.py`, `scripts/train_tn_router.py`, `tests/test_tn_router.py`, `configs/tn-router.yaml`\n    - Implement `TNRouter(nn.Module)` gating function using matrix product states (MPS) over embedding input; produce per-domain scores via interference amplitudes.\n    - Train on the final 32-domain router eval set (step 70). Fallback guard: if macro-F1 drops > 2 pp vs sigmoid, flag in report and do not merge into the serving path.\n    - Commands:\n      - `uv run pytest tests/test_tn_router.py`\n      - `uv run python scripts/train_tn_router.py --config configs/tn-router.yaml`\n      - `uv run python scripts/eval_router.py --router tn --compare sigmoid`\n    - Acceptance: `outputs/routers/tn-v0/` artifact exists, comparative report at `results/tn-vs-sigmoid.md`, macro-F1 delta reported (+/- vs sigmoid), decision line (\"merge\" | \"fallback\") included.\n    - Dependencies: step 70 (final sigmoid router + 32-domain eval set).",
       "priority": 103,
       "passes": false
     },
     {
       "id": "story-104",
-      "title": "Freeze config + migration guide",
-      "description": "**Freeze config + migration guide**\n\n- Files to touch: `MIGRATION.md`, `VERSION`, tag `v0.2.0`\n    - Document breaking changes, adapter format, router protocol, quantum-inspired overlay artifacts. Freeze `configs/` (hash-lock).\n    - Acceptance: `git tag v0.2.0` pushed; MIGRATION.md reviewed.\n    - Dependencies: step 97, step 103.",
+      "title": "End-to-end v0.2 acceptance test",
+      "description": "**End-to-end v0.2 acceptance test**\n\n    - Files to touch: `tests/test_e2e_v02_acceptance.py`, `results/e2e-v02-acceptance.json`\n    - 20 real-world prompts spanning the 7 meta-intents (quick-reply, coding, reasoning, creative, research, agentic, tool-use). Each prompt exercises the full pipeline: Dispatcher → Aeon recall → Meta-router → Base (DiffAttn + KnowBias) + top-2 stacks → Negotiator (if disagreement) → RBD anti-bias → response.\n    - Verify: (a) response produced for each, (b) Aeon writes the turn, (c) router correctly activates 2-4 stacks matching the prompt domain, (d) Negotiator triggers on the 3 pre-planted conflict prompts, (e) RBD flags the 2 pre-planted biased prompts and DeFrame re-gen triggers, (f) final response passes manual quality check (user-reviewed), (g) aggregate latency p95 < 3s (fast judge) / p95 < 6s (deep judge).\n    - Acceptance: 20/20 prompts produce a response; all 7 meta-intents covered; all component triggers fire when planted; no regression vs any individual component eval; user signs off on a sample of 5 responses.\n    - Dependencies: all prior phases (I through XIII).",
       "priority": 104,
       "passes": false
     },
     {
       "id": "story-105",
-      "title": "HuggingFace release",
-      "description": "**HuggingFace release**\n\n- Files to touch: `.github/workflows/hf-release.yml`, HF repo `electron-rare/micro-kiki-v0.2`\n    - Upload: base-model reference (link to Qwen), compact base chi=32 (optional), 32 MoLoRA adapter .safetensors, QTHA stack-02 (optional), router.pt (+ tn-router.pt if merged), model card, eval results.\n    - Acceptance: `huggingface-cli download electron-rare/micro-kiki-v0.2` works from clean env; model card renders.\n    - Dependencies: step 104.",
+      "title": "Freeze config + migration guide",
+      "description": "**Freeze config + migration guide**\n\n    - Files to touch: `MIGRATION.md`, `VERSION`, tag `v0.2.0`\n    - Document breaking changes, adapter format, router protocol, quantum-inspired overlay artifacts. Freeze `configs/` (hash-lock).\n    - Acceptance: `git tag v0.2.0` pushed; MIGRATION.md reviewed.\n    - Dependencies: step 104.",
       "priority": 105,
       "passes": false
     },
     {
       "id": "story-106",
-      "title": "Model card + cookbook",
-      "description": "**Model card + cookbook**\n\n- Files to touch: `MODEL_CARD.md`, `COOKBOOK.md`, `examples/` dir\n    - Document: intended use, limitations, training data, eval scores, quantum-inspired overlay results (CompactifAI / QTHA / TN-router), 5+ runnable examples (chat-fr, code, SPICE, KiCad, reasoning).\n    - Acceptance: all examples in COOKBOOK run green in CI; model card passes HF lint.\n    - Dependencies: step 105.\n\n---",
+      "title": "HuggingFace release",
+      "description": "**HuggingFace release**\n\n    - Files to touch: `.github/workflows/hf-release.yml`, HF repo `electron-rare/micro-kiki-v0.2`\n    - Upload: base-model reference (link to Qwen), compact base chi=32 (optional), 32 MoLoRA adapter .safetensors, QTHA stack-02 (optional), router.pt (+ tn-router.pt if merged), model card, eval results.\n    - Acceptance: `huggingface-cli download electron-rare/micro-kiki-v0.2` works from clean env; model card renders.\n    - Dependencies: step 105.",
       "priority": 106,
+      "passes": false
+    },
+    {
+      "id": "story-107",
+      "title": "Model card + cookbook",
+      "description": "**Model card + cookbook**\n\n    - Files to touch: `MODEL_CARD.md`, `COOKBOOK.md`, `examples/` dir\n    - Document: intended use, limitations, training data, eval scores, quantum-inspired overlay results (CompactifAI / QTHA / TN-router), 5+ runnable examples (chat-fr, code, SPICE, KiCad, reasoning).\n    - Acceptance: all examples in COOKBOOK run green in CI; model card passes HF lint.\n    - Dependencies: step 106.",
+      "priority": 107,
       "passes": false
     }
   ]

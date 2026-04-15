@@ -30,7 +30,8 @@
    - Apply **only to the 13 `full_attention` layers** of Qwen3.5-4B (leave the 36 `linear_attention` / GatedDeltaNet layers untouched). Rationale: Dragon LLM's empirical finding (substack post) is that DiffAttn applied to global attention only yields meaningful gains while per-layer application is marginal.
    - Approach: fork the Qwen3.5-4B weights; for each full_attn layer, duplicate Q and K projections (Q1/Q2, K1/K2); init Q2/K2 with small perturbation of Q1/K1 for warm start (avoid full re-train).
    - Short SkyLadder-style calibration pass on a small sample (~5K tokens) to stabilize λ — NOT a full retrain. Duration: ~30 min on 4090.
-   - Acceptance: `models/qwen3.5-4b-diffattn/` exists with same file structure as base; forward pass matches within 2% perplexity on a 1K-sample held-out set; activation outliers (max/mean ratio per layer) reduced by ≥ 30% on full-attn layers vs vanilla Qwen3.5-4B; write spec documenting the exact implementation choices.
+   - Acceptance: `models/qwen3.5-4b-diffattn/` exists with same file structure as base; perplexity delta vs vanilla base on 1K-sample held-out ≤ **2%**; activation outliers (max/mean ratio per layer) reduced by ≥ **30%** on full-attn layers vs vanilla Qwen3.5-4B; write spec documenting the exact implementation choices.
+   - **Rollback clause**: If perplexity delta > 3% OR activation outliers are NOT reduced, automatically fall back to vanilla Qwen3.5-4B for all downstream stack training. Modify every `configs/stack-NN-*.yaml` file to set `base_model: models/qwen3.5-4b/bf16` and emit `results/diffattn-rollback.json` documenting the decision + metrics. Do NOT proceed with stack training on a degraded base.
    - Dependencies: step 1.
 
 3. **Write base model loader (`src/base/loader.py`)**
@@ -648,7 +649,9 @@
     - Acceptance: judge agrees with ground truth ≥ 75 %; Catfish triggers on ≥ 80 % of planted suspect-consensus cases; latency overhead ≤ 300 ms when fast, ≤ 2 s when deep.
     - Dependencies: steps 82, 83.
 
-### Phase X — Anti-bias (KnowBias neurons + RBD)
+### Phase X — Post-hoc KnowBias double-application + RBD runtime
+
+> **Ordering note**: this phase runs AFTER all 32 stacks are trained (Phases III–VII). The KnowBias protocol is applied twice — once on the BASE to produce a debiased reference (step 87) and again on the MERGED model (step 91) to catch domain-specific biases introduced by the stacks. Step 89 updates stack configs so any FUTURE retrains anchor on the debiased base; already-trained adapters keep their artifacts. We do NOT retroactively retrain the 32 stacks on the debiased base — the plan accepts that the first pass is post-hoc and relies on the second merged-model pass + RBD runtime to close the loop. If a future version wants a truly pre-stacks debiased base, promote steps 85-88 into a new Phase II.5 and renumber downstream.
 
 85. **Bias dataset curation (`data/bias/bias_pairs.jsonl`)**
     - Files to touch: `data/bias/bias_pairs.jsonl`, `scripts/curate_bias_dataset.py`
@@ -663,7 +666,7 @@
     - Acceptance: 200 bias neurons identified in base model; probe runs in < 30 min on 4090 with the 5K dataset.
     - Dependencies: step 3 (loader), step 85.
 
-87. **KnowBias fine-tune on BASE (pre-stacks)**
+87. **KnowBias fine-tune on BASE (post-hoc reference)**
     - Files to touch: `scripts/knowbias_finetune_base.py`, `outputs/base-knowbias/` (gitignored), `configs/knowbias-base.yaml`
     - LoRA fine-tune targeting ONLY the identified bias neurons (narrow training, r=8). Objective: reduce activation delta between biased/fair pairs → no behavior change on non-bias tasks.
     - Reference: arxiv 2601.21864 (KnowBias, 2026).
@@ -806,23 +809,30 @@
 
 ### Phase XIV — Release v0.2
 
-104. **Freeze config + migration guide**
+104. **End-to-end v0.2 acceptance test**
+    - Files to touch: `tests/test_e2e_v02_acceptance.py`, `results/e2e-v02-acceptance.json`
+    - 20 real-world prompts spanning the 7 meta-intents (quick-reply, coding, reasoning, creative, research, agentic, tool-use). Each prompt exercises the full pipeline: Dispatcher → Aeon recall → Meta-router → Base (DiffAttn + KnowBias) + top-2 stacks → Negotiator (if disagreement) → RBD anti-bias → response.
+    - Verify: (a) response produced for each, (b) Aeon writes the turn, (c) router correctly activates 2-4 stacks matching the prompt domain, (d) Negotiator triggers on the 3 pre-planted conflict prompts, (e) RBD flags the 2 pre-planted biased prompts and DeFrame re-gen triggers, (f) final response passes manual quality check (user-reviewed), (g) aggregate latency p95 < 3s (fast judge) / p95 < 6s (deep judge).
+    - Acceptance: 20/20 prompts produce a response; all 7 meta-intents covered; all component triggers fire when planted; no regression vs any individual component eval; user signs off on a sample of 5 responses.
+    - Dependencies: all prior phases (I through XIII).
+
+105. **Freeze config + migration guide**
     - Files to touch: `MIGRATION.md`, `VERSION`, tag `v0.2.0`
     - Document breaking changes, adapter format, router protocol, quantum-inspired overlay artifacts. Freeze `configs/` (hash-lock).
     - Acceptance: `git tag v0.2.0` pushed; MIGRATION.md reviewed.
-    - Dependencies: step 97, step 103.
+    - Dependencies: step 104.
 
-105. **HuggingFace release**
+106. **HuggingFace release**
     - Files to touch: `.github/workflows/hf-release.yml`, HF repo `electron-rare/micro-kiki-v0.2`
     - Upload: base-model reference (link to Qwen), compact base chi=32 (optional), 32 MoLoRA adapter .safetensors, QTHA stack-02 (optional), router.pt (+ tn-router.pt if merged), model card, eval results.
     - Acceptance: `huggingface-cli download electron-rare/micro-kiki-v0.2` works from clean env; model card renders.
-    - Dependencies: step 104.
+    - Dependencies: step 105.
 
-106. **Model card + cookbook**
+107. **Model card + cookbook**
     - Files to touch: `MODEL_CARD.md`, `COOKBOOK.md`, `examples/` dir
     - Document: intended use, limitations, training data, eval scores, quantum-inspired overlay results (CompactifAI / QTHA / TN-router), 5+ runnable examples (chat-fr, code, SPICE, KiCad, reasoning).
     - Acceptance: all examples in COOKBOOK run green in CI; model card passes HF lint.
-    - Dependencies: step 105.
+    - Dependencies: step 106.
 
 ---
 
