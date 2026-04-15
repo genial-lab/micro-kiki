@@ -1,0 +1,49 @@
+# Meta-intent mapping: domain indices (0-31) -> 7 intents
+# Each domain appears in exactly one bucket
+
+intents:
+  quick-reply:
+    - 0   # chat-fr
+
+  reasoning:
+    - 1   # reasoning
+
+  coding:
+    - 2   # python
+    - 3   # typescript
+    - 4   # cpp
+    - 5   # rust
+    - 6   # html-css
+    - 7   # shell
+    - 8   # sql
+    - 9   # yaml-json
+    - 10  # docker
+    - 13  # lua-micropython
+
+  creative:
+    - 29  # doc-writing
+    - 30  # code-review
+    - 25  # system-design
+
+  research:
+    - 11  # kicad-dsl
+    - 12  # spice
+    - 14  # embedded-c
+    - 19  # pcb-review
+    - 22  # power-supply
+    - 23  # rf-antenna
+    - 24  # motor-control
+    - 31  # kicad-pcb
+
+  agentic:
+    - 15  # rtos
+    - 16  # i2c-spi
+    - 17  # can-bus
+    - 18  # gpio-adc
+    - 20  # bom-sourcing
+    - 21  # firmware-debug
+    - 26  # testing-qa
+    - 27  # ci-cd
+
+  tool-use:
+    - 28  # git-workflow
