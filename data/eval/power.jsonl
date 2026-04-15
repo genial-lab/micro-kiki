@@ -1,0 +1,5 @@
+{"prompt": "Design a buck converter for 12V to 3.3V at 2A."}
+{"prompt": "Explain the difference between LDO and switching regulators."}
+{"prompt": "How do you calculate inductor value for a boost converter?"}
+{"prompt": "Write a battery charging profile for LiPo cells."}
+{"prompt": "Explain thermal management for power MOSFETs."}

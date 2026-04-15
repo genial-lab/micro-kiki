@@ -1,0 +1,5 @@
+{"prompt": "Implement a FIR low-pass filter in C with fixed-point arithmetic."}
+{"prompt": "Explain the Nyquist theorem and aliasing."}
+{"prompt": "How do you compute an FFT on a microcontroller?"}
+{"prompt": "Write a simple IIR biquad filter implementation."}
+{"prompt": "Explain windowing functions and their trade-offs."}

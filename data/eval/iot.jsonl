@@ -1,0 +1,5 @@
+{"prompt": "Write an MQTT client that publishes sensor data every 10 seconds."}
+{"prompt": "Explain BLE GATT services and characteristics."}
+{"prompt": "How do you implement WiFi provisioning on ESP32?"}
+{"prompt": "Write a CoAP server that responds to GET requests."}
+{"prompt": "Explain the differences between MQTT, CoAP, and HTTP for IoT."}

@@ -1,0 +1,5 @@
+{"prompt": "Write an ngspice netlist for a common-emitter amplifier."}
+{"prompt": "Explain Monte Carlo simulation in SPICE."}
+{"prompt": "How do you model a real capacitor with ESR in SPICE?"}
+{"prompt": "Write a parametric sweep for resistor values in ngspice."}
+{"prompt": "Explain convergence issues in SPICE and how to fix them."}

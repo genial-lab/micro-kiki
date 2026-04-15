@@ -1,0 +1,5 @@
+{"prompt": "Configure TIM2 in PWM mode on STM32F4 using HAL."}
+{"prompt": "Explain the STM32 clock tree and how to set up HSE + PLL."}
+{"prompt": "Write a CubeMX-generated UART init for 115200 baud."}
+{"prompt": "How do you use DMA with ADC on STM32?"}
+{"prompt": "Implement a low-power STOP mode wake-up via RTC alarm."}

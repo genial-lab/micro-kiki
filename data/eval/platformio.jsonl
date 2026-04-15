@@ -1,0 +1,5 @@
+{"prompt": "Write a platformio.ini for ESP32 with Arduino framework."}
+{"prompt": "Explain PlatformIO library dependency management."}
+{"prompt": "How do you set up unit testing in PlatformIO?"}
+{"prompt": "Configure a custom board definition in PlatformIO."}
+{"prompt": "Write a PlatformIO build script that runs pre-build checks."}

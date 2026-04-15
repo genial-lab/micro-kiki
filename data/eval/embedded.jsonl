@@ -1,0 +1,5 @@
+{"prompt": "Write an ESP-IDF task that reads temperature from a DS18B20 sensor."}
+{"prompt": "Explain the difference between bare-metal and RTOS-based firmware."}
+{"prompt": "How do you configure a GPIO interrupt on ARM Cortex-M?"}
+{"prompt": "Write a DMA transfer setup for UART RX on STM32."}
+{"prompt": "Explain the boot process of an ESP32-S3."}

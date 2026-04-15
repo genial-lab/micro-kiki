@@ -1,0 +1,5 @@
+{"prompt": "Explain KiCad's layer stack for a 4-layer PCB."}
+{"prompt": "How do you set up design rules for 6 mil trace/space?"}
+{"prompt": "Write a KiCad footprint for a QFN-32 package."}
+{"prompt": "Explain differential pair routing in KiCad."}
+{"prompt": "How do you run DRC and fix common violations?"}

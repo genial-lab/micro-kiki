@@ -1,0 +1,17 @@
+base_model: models/qwen3.5-4b-diffattn/
+fallback_base: models/qwen3.5-4b/bf16
+num_experts: 4
+lora_rank: 16
+lora_alpha: 32
+top_k: 2
+learning_rate: 0.0002
+batch_size: 4
+grad_accum: 8
+epochs: 3
+seq_len: 4096
+dataset: data/distilled/emc.jsonl
+init_lora_weights: oplora
+pissa_niter: 4
+domain: emc
+curriculum_order: 21
+source_note: EMC compliance, shielding, grounding, filtering
