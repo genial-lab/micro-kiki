@@ -1,0 +1,10 @@
+Ralph Loop Progress
+===================
+Plan: micro-kiki v0.3 — neuroscience edition (SpikingBrain-76B + AeonSleep + neuromorphic edge)
+Source: .claude/plans/micro-kiki-v0.3-neuroscience.md
+Branch: neuroscience (cousin fork of v0.2 main, NOT an evolution)
+Started: 2026-04-15T22:55:00Z
+
+Stories: 0/26 complete
+
+---
