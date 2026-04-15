@@ -21,7 +21,7 @@
       "title": "Benchmark v0.2 Negotiator vs MAP state evaluator",
       "description": "**Benchmark v0.2 Negotiator vs MAP state evaluator**\n\n- Files to touch: `src/eval/map_negotiator_bench.py`, `results/map-negotiator.json`\n- Run MAP's state-evaluation benchmark against v0.2's Negotiator (CAMP arbitration + Catfish dissent, adaptive judge).\n- Score: Spearman correlation with MAP reference scores, escalation rate, judge cost.\n- Acceptance: emits `results/map-negotiator.json`. Goal is structural mapping, not supremacy.\n- Dependencies: step 1.",
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-4",

@@ -1,0 +1,18 @@
+{
+  "accuracy": 0.92,
+  "agent": "V02NegotiatorAgent",
+  "dissent_rate": 0.08,
+  "escalation_rate": 0.0,
+  "judge_cost_mean": 1.0,
+  "n": 50,
+  "notes": [
+    "Conceptual model of v0.2 Negotiator (CAMP + Catfish + adaptive judge); no runnable code on main.",
+    "CAMP winner = longer candidate (evidence proxy).",
+    "Catfish dissent = deterministic 10% contrarian flip.",
+    "Judge cost in Qwen35B-equivalent units; deep judge = 7x.",
+    "Goal is structural mapping, not beating MAP reference."
+  ],
+  "schema_version": "map-negotiator-bench/1.0",
+  "spearman_delta_vs_mock": -0.1413,
+  "spearman_rho": 0.8587
+}
