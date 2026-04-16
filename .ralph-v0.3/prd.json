@@ -92,7 +92,7 @@
       "title": "Studio env setup for SpikingBrain-7B",
       "description": "**Studio env setup for SpikingBrain-7B**\n\n    - Files to touch: `pyproject.toml` (optional `neuro` extra), `scripts/setup_neuro_env.sh`, `docs/setup-studio-neuro.md`\n    - SpikingBrain + Spikingformer are PyTorch-first. MLX not supported; document MPS vs CPU tradeoff on Studio M3 Ultra.\n    - Add optional extra `neuro` pulling `spikingjelly`, `torch>=2.5`, `transformers`, `accelerate`, `modelscope`.\n    - Memory targets (7B path): BF16 load ≤ 16 GB, peak inference ≤ 20 GB at 4k ctx on Studio unified memory.\n    - Acceptance: fresh clone + `uv sync --extra neuro` succeeds on Studio; `python -c \"import spikingjelly; import torch; print(torch.backends.mps.is_available())\"` prints `True`.\n    - Dependencies: step 12.",
       "priority": 13,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-14",
