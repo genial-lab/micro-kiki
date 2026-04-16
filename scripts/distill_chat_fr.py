@@ -19,6 +19,7 @@ produces 5 completions (with distinct ``sample_idx`` hashes).
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import logging
 import sys
@@ -56,18 +57,22 @@ class SyncTeacherAdapter:
     """Wrap :class:`TeacherClient` into the synchronous :class:`TeacherProtocol`.
 
     ``generate_examples`` calls ``teacher.complete(prompt, **params)``
-    synchronously.  This adapter translates each call into
-    ``TeacherClient.generate_sync``.
+    synchronously.  Uses a persistent event loop to avoid the
+    ``Event loop is closed`` error from ``asyncio.run()`` re-creating
+    loops on each call (httpx loses its connection pool).
     """
 
     def __init__(self, client: TeacherClient, model: str, params: GenerateParams) -> None:
         self._client = client
         self.model = model
         self._params = params
+        self._loop = asyncio.new_event_loop()
 
     def complete(self, prompt: str, **_params: Any) -> str:
         """Synchronous completion via the teacher HTTP endpoint."""
-        return self._client.generate_sync(prompt, self.model, params=self._params)
+        return self._loop.run_until_complete(
+            self._client.generate(prompt, self.model, params=self._params)
+        )
 
 
 # ---------------------------------------------------------------------------
