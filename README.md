@@ -7,48 +7,59 @@ A 32-domain expert system built on Qwen3.5-35B-A3B (native MoE, 256 experts, 3B 
 Five tightly integrated layers that turn a native MoE base into a specialist team:
 
 1. **Base**: Qwen3.5-35B-A3B (Apache 2.0, 262K ctx, 256 MoE experts, 3B active/token, native thinking mode). The model is already a MoE — no custom MoE-LoRA needed.
-2. **32 standard LoRA stacks**: one per domain, rank 16, targeting q/k/v/o attention projections only. ~74 GB BF16 for training on Mac Studio.
-3. **Domain router**: classifier-based adapter selection (max 4 active stacks) + training-free dispatcher (7 meta-intents)
+2. **10 niche LoRA stacks**: one per hardware/EDA domain where the base model has demonstrable gaps. Rank 16 (rank 8 for high-ratio domains), targeting q/k/v/o attention projections only. General-purpose domains (French, Python, TypeScript, etc.) are served by base model passthrough — fine-tuning those caused overfitting within 300 iterations.
+3. **Multi-model router**: 11-output domain classifier (10 niche domains + 1 passthrough) with confidence threshold 0.65 + multi-model tier routing (35B+LoRA / 35B passthrough / 480B teacher / devstral-v3)
 4. **Cognitive layer**:
    - **Aeon memory palace** (Atlas SIMD index + Trace neuro-symbolic graph) — persistent, spatial, temporal-aware memory
    - **Negotiator** (CAMP arbitration + Catfish dissent) — resolves conflicts between active stacks with adaptive judge (Qwen3.5-35B fast / Mistral-Large deep)
-   - **KnowBias + RBD anti-bias** — post-hoc neuron-level debiasing (applied twice on the merged model, after all 32 stacks are trained) + RBD runtime detector
+   - **KnowBias + RBD anti-bias** — post-hoc neuron-level debiasing + RBD runtime detector
 5. **Serving**: MLX primary (Mac Studio BF16), vLLM Q4 inference (kxkm-ai RTX 4090)
+6. **SNN conversion pipeline**: LAS (Latency-Aware Spiking) conversion of base and niche-adapted models to spiking neural networks (SpikingKiki-27B, SpikingKiki-35B, SpikingKiki-122B)
 
 ## Architecture
 
 ```
   user prompt
       ↓
-  [Dispatcher]    → 7 meta-intents (training-free, zero latency)
+  [Dispatcher]      → 7 meta-intents (training-free, zero latency)
       ↓
-  [Aeon recall]   → inject top memories into context
+  [Aeon recall]     → inject top memories into context
       ↓
-  [Domain router] → classifier → activate 2-4 stacks
+  [Domain router]   → 11-output classifier
+      ↓                  ↓
+  [confidence≥0.65] → [Base + niche stack(s)] → candidate response
+  [confidence<0.65] → [Base passthrough]      → response (22 dropped domains)
       ↓
-  [Base + stacks] → K candidate responses
+  [Negotiator]      → CAMP arbitration (35B) / Mistral-Large if deep needed
       ↓
-  [Negotiator]    → CAMP arbitration (35B) / Mistral-Large if deep needed
+  [Anti-bias]       → RBD flag → DeFrame re-gen if biased
       ↓
-  [Anti-bias]     → RBD flag → DeFrame re-gen if biased
-      ↓
-  [Aeon write]    → persist the turn
+  [Aeon write]      → persist the turn
       ↓
   response
 ```
 
-## Domains (32)
+## Domains (10 niche — hardware/EDA only)
 
-Organized in 6 curriculum phases:
+These are the 10 domains where Qwen3.5-35B-A3B has measurable capability gaps.
+All other domains (French, Python, TypeScript, math, etc.) are served by base passthrough.
 
-1. **Foundations** (chat-fr, reasoning)
-2. **Coding core** (python, typescript, cpp, rust)
-3. **Coding secondary** (html-css, shell, sql, yaml-json, docker, kicad-dsl, spice, lua-upy)
-4. **Technical** (embedded, stm32, iot, freecad, platformio, power, emc, dsp, spice-sim, electronics, kicad-pcb)
-5. **Applications** (web-frontend, web-backend, music-audio, devops, llm-orch)
-6. **Complements** (math, security)
+| # | Domain | Est. examples | Notes |
+|---|--------|---------------|-------|
+| 01 | `kicad-dsl` | ~4,625 | KIKI-Mac_tunner + mascarade-kicad |
+| 02 | `spice` | ~5,766 | KIKI-Mac_tunner + mascarade-spice |
+| 03 | `emc` | ~5,053 | KIKI-Mac_tunner + mascarade-emc |
+| 04 | `stm32` | ~2,723 | Marginal — early stopping monitored |
+| 05 | `embedded` | ~13,826 | 3 source streams — strongest case |
+| 06 | `freecad` | ~1,500* | Needs teacher augment, rank 8 |
+| 07 | `platformio` | ~1,500* | Needs teacher augment, rank 8 |
+| 08 | `power` | ~4,505 | KIKI-Mac_tunner + mascarade-power |
+| 09 | `dsp` | ~4,113 | KIKI-Mac_tunner + mascarade-dsp |
+| 10 | `electronics` | ~1,900 | High overfitting risk, rank 8 |
 
-Full list: `docs/specs/2026-04-15-micro-kiki-design.md`.
+*Post-augmentation target. Raw counts: 219 (freecad), 223 (platformio).
+
+Rationale for scope reduction from 32 to 10: see `docs/specs/2026-04-16-reorientation-rationale.md`.
 
 ## Base model: Qwen3.5-35B-A3B
 
@@ -139,30 +150,21 @@ micro-kiki/
 
 ## Status
 
-14 phases, 108 implementation stories. Tracked in `.ralph/prd.json`. **40/108 done (37%)**.
+7 phases, 40 implementation stories. Tracked in `.ralph/prd.json`. **7/40 done (18%)** — carried over from v0.2 work.
 
-- [x] Design (2026-04-15) — see `docs/specs/`
-- [x] Architecture pivot to 35B-A3B (2026-04-16) — see `docs/specs/2026-04-16-architecture-pivot-35b.md`
-- [x] MoE approach research — see `docs/research/`
-- [x] Implementation plan (108 stories, 14 phases)
-- [x] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
-- [~] Phase II — Data pipeline (chat-fr distilled, datasets classified + deduped)
-- [~] Phase III — First stack (chat-fr training active on Mac Studio)
-- [x] Phase IV — Router v0 + dispatcher (3 stacks) — code done, training pending
-- [ ] Phase V — Curriculum coding 04–14
-- [ ] Phase VI — Technical stacks 15–25
-- [ ] Phase VII — Apps + complements 26–32
-- [x] Phase VIII — Aeon memory palace (atlas + trace + aeon API + backends)
-- [x] Phase IX — Negotiator (judge + catfish + argument extractor)
-- [~] Phase X — KnowBias + RBD (code done, bias dataset in progress)
-- [x] Phase XI — Serving deployment (vLLM dynamic LoRA + MLX server)
-- [~] Phase XII — ANE triple pipeline (stubs present, CoreML conversion pending)
-- [x] Phase XIII — Quantum-inspired (classical simulators)
-- [~] Phase XIV — E2E acceptance + Release
+- [x] Design + architecture pivot (2026-04-15/16) — see `docs/specs/`
+- [x] Reorientation: 32 → 10 niche stacks (2026-04-16) — see `docs/specs/2026-04-16-reorientation-rationale.md`
+- [ ] Phase 1 — Validation (benchmark base, merge datasets, confirm 22 known domains)
+- [ ] Phase 2 — Niche Training (10 stacks + cross-stack forgetting check + eval)
+- [x] Phase 3 — Router + Multi-model (11-output router + multi-model routing — code done)
+- [ ] Phase 4 — Cognitive Layer (Aeon, Negotiator, anti-bias integration tests)
+- [ ] Phase 5 — SNN Conversions (SpikingKiki-27B, 35B, 122B + energy benchmark)
+- [x] Phase 6 — Serving + Deploy (MLX + vLLM + service units — code done)
+- [x] Phase 7 — Release (config freeze + model card + HF publish — templates done)
 
 ### Bottleneck
 
-37 sequential GPU training stories (32 stacks + router retrains). Estimated: ~1h/stack × 32 = ~32h of compute on Mac Studio (BF16 LoRA, 2000 iters). Code scaffolding is complete.
+10 sequential LoRA training runs. Estimated: ~45 min/stack × 10 = **~7.5 h** of compute on Mac Studio (BF16, 3-phase curriculum). SNN conversion adds ~70–170 h for SpikingKiki models (parallelizable with training).
 
 ## Execution
 
@@ -185,8 +187,9 @@ uv run python src/eval/forgetting.py --stack <domain>
 ## Roadmap
 
 - **v0.1** (shipped in plan history): 32 stacks + router + cognitive layer + serving
-- **v0.2** (current): 35B-A3B base, MLX training, local 480B teacher, quantum-inspired techniques (classical simulators)
-- **v0.3** (planned): temporal context + future-reasoner
+- **v0.2** (archived): 35B-A3B base, MLX training, local 480B teacher — superseded by reorientation
+- **v0.3** (current): 10 niche stacks + 11-output router + multi-model routing + SNN conversion pipeline
+- **v0.4** (planned): temporal context + future-reasoner
 
 ## License
 
