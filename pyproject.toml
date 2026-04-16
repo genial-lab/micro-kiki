@@ -46,6 +46,9 @@ build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = [
+    "integration: integration tests requiring real models or SSH (skipped by default)",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
@@ -54,9 +57,4 @@ packages = ["src"]
 test = [
     "httpx>=0.28.1",
     "pytest-asyncio>=1.3.0",
-]
-
-[tool.pytest.ini_options]
-markers = [
-    "integration: integration tests requiring real models or SSH (skipped by default)",
 ]
