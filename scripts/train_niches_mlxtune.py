@@ -236,13 +236,6 @@ def run_training(
     from mlx_tune import FastLanguageModel
 
     model_path = str(MODEL_PATH) if MODEL_PATH.exists() else "Qwen/Qwen3.5-35B-A3B"
-    logger.info("Loading base model from %s", model_path)
-
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_path,
-        max_seq_length=4096,
-        use_gradient_checkpointing=True,
-    )
 
     results: list[tuple[str, str]] = []
 
@@ -250,8 +243,18 @@ def run_training(
         logger.info("=" * 60)
         logger.info("Training domain: %s (%d/%d)", domain, pending.index(domain) + 1, len(pending))
         try:
+            # Reload model fresh per domain — LoRA can't stack on LoRA
+            logger.info("Loading base model from %s", model_path)
+            model, tokenizer = FastLanguageModel.from_pretrained(
+                model_path,
+                max_seq_length=4096,
+                use_gradient_checkpointing=True,
+            )
             train_domain(domain, model, tokenizer)
             results.append((domain, "OK"))
+            # Free model memory before next domain
+            del model, tokenizer
+            import gc; gc.collect()
         except Exception as exc:
             logger.error("FAILED %s: %s", domain, exc, exc_info=True)
             log_progress(f"FAIL  {domain}: {exc}")
