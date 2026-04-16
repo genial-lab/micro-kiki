@@ -25,3 +25,6 @@ Stories: 13/107 complete
 [2026-04-16T00:46:00Z] Completed: story-15 - Dispatcher mapping (src/routing/dispatcher.py + configs/meta_intents.yaml + test_dispatcher passing)
 [2026-04-16T00:46:00Z] Completed: story-19 - Meta-router module (src/routing/router.py + tests/routing/test_router_37 passing)
 [2026-04-16T00:46:00Z] Completed: story-21 - Runtime adapter switcher (src/serving/switchable.py + test_switchable passing)
+[2026-04-16T01:35:22+00:00] Completed: story-2 - Fork Qwen3.5-4B with Differential Attention
+[2026-04-16T01:35:22+00:00] Completed: story-9 - Generate first distilled dataset (chat-fr, 446 prompts + script)
+[2026-04-16T01:35:22+00:00] Completed: story-16 - Forgetting check framework

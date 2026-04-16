@@ -14,7 +14,7 @@
       "title": "Fork Qwen3.5-4B with Differential Attention on full-attn layers",
       "description": "**Fork Qwen3.5-4B with Differential Attention on full-attn layers**\n\n   - Files to touch: `scripts/fork_qwen_diffattn.py`, `src/base/diff_attention.py`, `models/qwen3.5-4b-diffattn/` (gitignored), `tests/test_diff_attention.py`, `docs/specs/diffattn-integration.md`\n   - Implement the differential attention mechanism from arxiv 2410.05258 (ICLR 2025, Microsoft): attention scores = softmax(Q1·K1) − λ·softmax(Q2·K2) where λ is a learnable scalar per head, initialized to reinit_lambda * (depth_pre_train).\n   - Apply **only to the 13 `full_attention` layers** of Qwen3.5-4B (leave the 36 `linear_attention` / GatedDeltaNet layers untouched). Rationale: Dragon LLM's empirical finding (substack post) is that DiffAttn applied to global attention only yields meaningful gains while per-layer application is marginal.\n   - Approach: fork the Qwen3.5-4B weights; for each full_attn layer, duplicate Q and K projections (Q1/Q2, K1/K2); init Q2/K2 with small perturbation of Q1/K1 for warm start (avoid full re-train).\n   - Short SkyLadder-style calibration pass on a small sample (~5K tokens) to stabilize λ — NOT a full retrain. Duration: ~30 min on 4090.\n   - Acceptance: `models/qwen3.5-4b-diffattn/` exists with same file structure as base; perplexity delta vs vanilla base on 1K-sample held-out ≤ **2%**; activation outliers (max/mean ratio per layer) reduced by ≥ **30%** on full-attn layers vs vanilla Qwen3.5-4B; write spec documenting the exact implementation choices.\n   - **Rollback clause**: If perplexity delta > 3% OR activation outliers are NOT reduced, automatically fall back to vanilla Qwen3.5-4B for all downstream stack training. Modify every `configs/stack-NN-*.yaml` file to set `base_model: models/qwen3.5-4b/bf16` and emit `results/diffattn-rollback.json` documenting the decision + metrics. Do NOT proceed with stack training on a degraded base.\n   - Dependencies: step 1.",
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-3",
@@ -63,7 +63,7 @@
       "title": "Generate first distilled dataset (chat-fr, 2K examples)",
       "description": "**Generate first distilled dataset (chat-fr, 2K examples)**\n\n   - Files to touch: `data/prompts/chat-fr.jsonl`, `data/distilled/chat-fr.jsonl`, `scripts/distill_chat_fr.py`\n   - Seed prompts (300–500) curated from the sources identified in step 8 for domain 1 (MTBench-FR, OpenAssistant-FR, manual).\n   - Teacher: Mistral-Large-Opus (Studio). Target: 2000 completed examples.\n   - Command: `uv run scripts/distill_chat_fr.py --teacher mistral-large-opus --n 2000 --out data/distilled/chat-fr.jsonl`\n   - Acceptance: `wc -l data/distilled/chat-fr.jsonl == 2000`, random-sample manual quality check (5/5 OK), French ratio ≥ 95%.\n   - Dependencies: steps 6, 8, Studio teacher reachable.",
       "priority": 9,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-10",
@@ -112,7 +112,7 @@
       "title": "Forgetting check framework (`src/eval/forgetting.py`)",
       "description": "**Forgetting check framework (`src/eval/forgetting.py`)**\n\n    - Files to touch: `src/eval/forgetting.py`, `scripts/run_forgetting.sh`\n    - For each already-trained stack, run its eval set with the NEW stack loaded (active-swap test). Flag delta > 0.03 in win_rate_vs_base.\n    - **Gradient subspace overlap metric** (2nd signal): in addition to win-rate delta, measure the geometric angle between the NEW stack's LoRA update gradient subspace and each prior stack's subspace. Small angle = high interference = forgetting risk. Reference: arxiv 2603.02224 (Subspace Geometry, 2026).\n    - Output JSON per prior stack includes both `win_rate_delta` and `gradient_subspace_angle_deg`.\n    - Meant to run automatically after EACH training step from now on (wrap `src.stacks.trainer` CLI or emit a shell hook).\n    - Acceptance: script runs after any trained stack and emits `results/forgetting-stack-XX.json`; no stack has `gradient_subspace_angle_deg < 30°` AND `win_rate_delta > 0.03` simultaneously (either one alone is tolerable).\n    - Dependencies: step 13.",
       "priority": 16,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-17",
