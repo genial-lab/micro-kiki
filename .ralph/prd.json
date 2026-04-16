@@ -756,7 +756,7 @@
       "title": "Wire code_review + forgetting_checker in AutonomousLoop.run_story",
       "description": "**Wire code_review + forgetting_checker in AutonomousLoop.run_story**\n\n   - Files to touch: `src/ralph/autonomous.py`, `tests/ralph/test_autonomous.py`.\n   - Problem: `AutonomousLoop` receives `CodeReview` and `ForgettingChecker` via DI but neither is ever invoked. `review_passes=1` and `forgetting_ok=True` are hardcoded (spec §4.2 and §4.3 inert in the live loop).\n   - Wire `self._review.review_code(code, context)` loop up to `config.max_review_passes` (=3); re-implement if critique finds issues; track actual pass count.\n   - When `_is_training_story(story)`, after tests pass invoke `self._forgetting.check(stack_id)` returning `(angle_deg, win_rate_drop)`. If `angle<30° AND drop>0.03` → mark outcome failed `\"forgetting rollback triggered\"`, do NOT commit.\n   - Extend `StoryOutcome` with `forgetting_angle: float | None` and `win_rate_drop: float | None` for observability.\n   - Acceptance: `uv run pytest tests/ralph/test_autonomous.py` green; `review_code` mock called ≥1 per story; `check` invoked only for training stories; rollback path tested.\n   - Dependencies: story-115, story-116, story-117.",
       "priority": 118,
-      "passes": false
+      "passes": true
     }
   ]
 }
