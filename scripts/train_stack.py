@@ -25,6 +25,10 @@ import logging
 import os
 import sys
 import time
+
+# Disable MPS completely — histogram_mps NotImplementedError on MoE routing
+import torch
+torch.backends.mps.is_available = lambda: False
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -136,6 +140,7 @@ def train(domain: str, config_overrides: dict | None = None) -> dict:
         num_train_epochs=config["epochs"],
         learning_rate=config["learning_rate"],
         bf16=True,
+        use_cpu=True,
         gradient_checkpointing=True,
         logging_steps=10,
         save_strategy="epoch",
