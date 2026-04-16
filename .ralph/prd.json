@@ -84,7 +84,7 @@
       "title": "Train stack-01 (chat-fr)",
       "description": "**Train stack-01 (chat-fr)**\n\n    - Files to touch: `outputs/stacks/stack-01-chat-fr/` (gitignored, artifact-only)\n    - Command: `uv run python -m src.stacks.trainer --config configs/stack-01-chat-fr.yaml`\n    - Target: ~30 min on 4090 or ~15 min on Studio MLX.\n    - Acceptance: final train loss < 1.5, eval loss (held-out 5% split) < 1.8, adapter files saved (< 200 MB).\n    - Dependencies: steps 9, 10, 11.",
       "priority": 12,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-13",

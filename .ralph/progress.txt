@@ -75,3 +75,4 @@ Stories: 13/107 complete
 [2026-04-16T02:43:00+00:00] Completed: story-104 - E2E v0.2 acceptance (17 tests)
 [2026-04-16T02:43:00+00:00] Completed: story-106 - HuggingFace release script
 [2026-04-16T02:43:00+00:00] Completed: story-107 - Model card + cookbook
+[2026-04-16T03:41:27+00:00] Completed: story-12 - Train stack-01 chat-fr (MLX LoRA, val_loss 6.90)
