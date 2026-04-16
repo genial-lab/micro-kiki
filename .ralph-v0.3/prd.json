@@ -113,7 +113,7 @@
       "title": "SpikingBrain-7B architecture spec deployed",
       "description": "**SpikingBrain-7B architecture spec deployed**\n\n    - Files to touch: `docs/specs/spikingbrain-7b.md`\n    - Technical reference doc for the 7B variant: layer structure, spiking neuron type (LIF? PLIF?), hybrid-linear attention details, integration points for SNN conversion, known gotchas from BICLab's released code.\n    - Note why the 76B variant is deferred (weights unreleased per Story 12 probe) and how the custom multi-base path in Phase N-IV compensates.\n    - Acceptance: spec committed, ≥ 300 lines, cites arxiv 2509.05276 and any released-code commits examined.\n    - Dependencies: steps 14, 15.",
       "priority": 16,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-17",
