@@ -5,7 +5,7 @@ Source: .claude/plans/micro-kiki-v0.3-neuroscience.md
 Branch: neuroscience (cousin fork of v0.2 main, NOT an evolution)
 Started: 2026-04-15T22:55:00Z
 
-Stories: 12/39 complete
+Stories: 16/39 complete
 
 ---
 
