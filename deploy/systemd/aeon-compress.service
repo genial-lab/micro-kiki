@@ -1,0 +1,15 @@
+[Unit]
+Description=Aeon Memory Compression Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=clems
+WorkingDirectory=/Users/clems/micro-kiki
+ExecStart=/Users/clems/.local/bin/uv run python scripts/aeon_compress_daemon.py --interval 3600 --max-age-days 30
+Restart=on-failure
+RestartSec=60
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

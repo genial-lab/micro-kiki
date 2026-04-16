@@ -40,3 +40,6 @@ Stories: 13/107 complete
 [2026-04-16T02:08:00+00:00] Validated: story-84 - Negotiator integration + eval (code existed from Studio Ralph)
 [2026-04-16T02:08:00+00:00] Validated: story-86 - Neuron probing (`src/cognitive/bias_probe.py`) (code existed from Studio Ralph)
 [2026-04-16T02:08:00+00:00] Validated: story-92 - RBD runtime plug-in (`src/cognitive/rbd.py`) (code existed from Studio Ralph)
+[2026-04-16T02:13:22+00:00] Completed: story-77 - Aeon integration in serving pipeline
+[2026-04-16T02:13:22+00:00] Completed: story-78 - Aeon compression daemon
+[2026-04-16T02:13:22+00:00] Completed: story-94 - vLLM server with dynamic LoRA

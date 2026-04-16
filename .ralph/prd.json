@@ -539,14 +539,14 @@
       "title": "Aeon integration in serving pipeline",
       "description": "**Aeon integration in serving pipeline**\n\n    - Files to touch: `src/serving/aeon_hook.py`, update `src/serving/vllm_server.py` (or mlx_server) to call Aeon pre-inference\n    - Pre-inference: call `AeonPalace.recall(prompt, top_k=8)` → inject top memories into system prompt.\n    - Post-inference: `AeonPalace.write(conversation_turn, domain=dispatch_result, links=[previous_turn_id])`.\n    - Acceptance: integration test — 10-turn conversation, turn 9 references info from turn 2, model correctly retrieves via Aeon.\n    - Dependencies: steps 76, 94 (vllm server) OR 95 (mlx server).",
       "priority": 77,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-78",
       "title": "Aeon compression daemon",
       "description": "**Aeon compression daemon**\n\n    - Files to touch: `scripts/aeon_compress_daemon.py`, `deploy/systemd/aeon-compress.service`\n    - Background process that runs `compress` periodically on episodes older than N days. Reduces storage + recall noise.\n    - Acceptance: 1000 episodes older than N days shrunk by ≥ 5× in size, `recall` still finds the compressed versions with ≥ 95 % accuracy on a held-out query set.\n    - Dependencies: step 75.",
       "priority": 78,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-79",
@@ -658,7 +658,7 @@
       "title": "vLLM server with dynamic LoRA (`src/serving/vllm_server.py`)",
       "description": "**vLLM server with dynamic LoRA (`src/serving/vllm_server.py`)**\n\n    - Files to touch: `src/serving/vllm_server.py`, `docker/vllm.Dockerfile`\n    - vLLM 0.6+ with `--enable-lora --max-loras 4 --max-lora-rank 16`; expose OpenAI-compatible endpoint on :8100.\n    - **Dynamic LoRA config**:\n      - Set env var `VLLM_ALLOW_RUNTIME_LORA_UPDATING=True` at startup.\n      - Use `/v1/load_lora_adapter` endpoint to dynamically load/unload adapters per request.\n      - Register a `LoRAResolver` plugin pointing at `outputs/stacks/` directory so adapters can be referenced by name in OpenAI-style `model` field.\n      - Caveat: this is a security risk in multi-tenant — keep service bound to localhost + tailscale only.\n      - Reference: vLLM docs, unsloth hot-swap guide.\n    - Router runs as a FastAPI sidecar on :8101 that rewrites incoming request with `lora_request` field.\n    - Acceptance: `curl :8100/v1/chat/completions` with \"write python factorial\" → correct response, logs show stacks 03 + 02 active; dynamic `/v1/load_lora_adapter` test loads an unseen stack and serves a query without restart.\n    - Dependencies: step 70.",
       "priority": 94,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-95",
