@@ -24,3 +24,4 @@ Stories: 12/39 complete
 [2026-04-16T00:14:00Z] Completed: story-13 - Studio env setup for SpikingBrain-7B
 [2026-04-16T00:21:56Z] Completed: story-15 - Q4 quantization of SpikingBrain-7B (script + spec; runtime blocked on llama.cpp spiking arch support, BF16 ships as v0.3 primary)
 [2026-04-16T00:23:13Z] Completed: story-16 - SpikingBrain-7B architecture spec deployed
+[2026-04-16T00:28:22Z] Completed: story-14 - Smoke inference SpikingBrain-7B BF16 (DONE_WITH_TODO: script + partial results JSON; ModelScope download running on Studio, smoke pending full shard download)

@@ -99,7 +99,7 @@
       "title": "Smoke inference SpikingBrain-7B BF16",
       "description": "**Smoke inference SpikingBrain-7B BF16**\n\n    - Files to touch: `scripts/smoke_spikingbrain.py`, `results/spikingbrain-smoke.json`\n    - Load the SpikingBrain-7B SFT checkpoint in BF16, run prompt \"hello, what are you?\" and verify non-empty, non-garbage output.\n    - Measure peak unified-memory footprint; target ≤ 16 GB load / ≤ 20 GB peak.\n    - Throughput target: ≥ 10 tok/s on Studio MLX/PyTorch (7B fits anywhere — even CPU path should clear this bar).\n    - Acceptance: `results/spikingbrain-smoke.json` contains `{prompt, response, peak_mem_gb, tokens_s}`; response ≥ 20 chars and not a repeat of the prompt.\n    - Dependencies: step 13.",
       "priority": 14,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-15",
