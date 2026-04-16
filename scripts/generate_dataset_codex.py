@@ -79,7 +79,9 @@ def generate_one(prompt: str, retries: int = MAX_RETRIES) -> str | None:
             result = subprocess.run(
                 ["codex", "exec",
                  "-o", str(out_tmp), prompt],
-                capture_output=True,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
                 timeout=timeout,
                 cwd=str(REPO_ROOT),
