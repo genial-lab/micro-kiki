@@ -9,7 +9,8 @@ Switched from Qwen3.5-4B + custom MoE-LoRA to Qwen3.5-35B-A3B (native MoE, 256 e
 ## Key decisions locked in
 
 - **Base model**: Qwen3.5-35B-A3B (Apache 2.0, 262K ctx, 256 MoE experts, 3B active/token)
-- **Adapter technique**: Standard LoRA rank 16, targeting q/k/v/o attention projections (NOT MoE FFN layers)
+- **Adapter technique**: Standard LoRA rank 64, scale 64, targeting q/k/v/o attention projections (NOT MoE FFN layers)
+- **Training**: 3-phase curriculum (seq 512→1280→4096), LR decay (8e-6→5e-6→3e-6), via MLX in KIKI-Mac_tunner
 - **Init strategy**: OPLoRA projection for forgetting prevention (stacks >= 04)
 - **Quantization**: Q4_K_M for inference, BF16 for training
 - **Router**: domain classifier for adapter selection, max 4 active stacks
