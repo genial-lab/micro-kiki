@@ -153,53 +153,82 @@ def load_dataset(data_path: Path) -> list[dict]:
     return records
 
 
-def train_domain(
-    domain: str,
-    model,
-    tokenizer,
-    *,
-    dry_run: bool = False,
-) -> None:
-    """Apply LoRA for domain, train, save adapter, then discard LoRA weights."""
-    from mlx_tune import FastLanguageModel, SFTTrainer
+def train_domain(domain: str) -> None:
+    """Train one niche domain via subprocess (proven recipe)."""
+    import subprocess
+    import yaml
 
     rank, epochs, lr, seq_len, dropout = NICHE_DOMAINS[domain]
-    output_dir = str(OUTPUTS_DIR / f"stack-{domain}")
-
-    log_progress(f"START {domain} r={rank} ep={epochs} lr={lr} seq={seq_len}")
+    output_dir = OUTPUTS_DIR / f"stack-{domain}"
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     data_path = find_training_data(domain)
-    dataset = load_dataset(data_path)
+    n_examples = sum(1 for _ in open(data_path))
+    iters = int(n_examples * epochs / 1)  # batch=1
 
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=rank,
-        lora_alpha=rank * 2,
-        target_modules=LORA_TARGETS,
-        lora_dropout=dropout,
-        max_seq_length=seq_len,
-    )
+    log_progress(f"START {domain} r={rank} ep={epochs} lr={lr} data={n_examples}")
 
-    trainer = SFTTrainer(
-        model=model,
-        train_dataset=dataset,
-        tokenizer=tokenizer,
-        max_seq_length=seq_len,
-        learning_rate=lr,
-        num_train_epochs=epochs,
-        per_device_train_batch_size=1,
-        gradient_accumulation_steps=4,
-        logging_steps=10,
-        save_steps=100,
-        output_dir=output_dir,
-        adapter_path=output_dir,
-    )
+    # Write per-domain YAML config
+    config = {
+        "model": str(MODEL_PATH) if MODEL_PATH.exists() else "Qwen/Qwen3.5-35B-A3B",
+        "fine_tune_type": "lora",
+        "lora_parameters": {
+            "rank": rank, "alpha": rank * 2,
+            "dropout": dropout, "scale": 2.0,
+            "keys": list(LORA_TARGETS),
+        },
+        "num_layers": 40,
+        "learning_rate": lr,
+        "batch_size": 1,
+        "grad_accumulation_steps": 4,
+        "iters": iters,
+        "max_seq_length": seq_len,
+        "grad_checkpoint": True,
+        "save_every": 100,
+        "steps_per_report": 10,
+        "steps_per_eval": 200,
+        "val_batches": 25,
+        "train": True,
+        "seed": 42,
+    }
+
+    config_path = output_dir / "train_config.yaml"
+    with open(config_path, "w") as f:
+        yaml.dump(config, f, default_flow_style=False)
+
+    # Build the training command as a Python script (not subprocess CLI)
+    train_script = f'''
+import mlx.core as mx
+mx.set_memory_limit(460 * 1024**3)
+mx.set_cache_limit(32 * 1024**3)
+import os, sys
+os.environ["PYTHONPATH"] = "/Users/clems/KIKI-Mac_tunner/lib"
+sys.path.insert(0, "/Users/clems/KIKI-Mac_tunner/lib")
+from mlx_lm_fork.lora import main as lora_main
+sys.argv = ["lora", "-c", "{config_path}",
+            "--data", "{data_path.parent}",
+            "--adapter-path", "{output_dir}"]
+lora_main()
+'''
+
+    script_path = output_dir / "_train.py"
+    script_path.write_text(train_script)
+
+    python = Path.home() / "KIKI-Mac_tunner" / ".venv" / "bin" / "python3"
 
     t0 = time.time()
-    trainer.train()
+    result = subprocess.run(
+        [str(python), str(script_path)],
+        cwd=str(Path.home() / "micro-kiki"),
+        capture_output=False,
+    )
     elapsed = time.time() - t0
 
-    log_progress(f"DONE  {domain} in {elapsed:.0f}s → {output_dir}")
+    adapter = output_dir / "adapters.safetensors"
+    if result.returncode != 0 or not adapter.exists():
+        raise RuntimeError(f"Training failed (exit {result.returncode})")
+
+    log_progress(f"DONE  {domain} in {elapsed/60:.1f}min → {output_dir}")
 
 
 def run_training(
@@ -232,29 +261,14 @@ def run_training(
         logger.info("All requested domains already trained. Nothing to do.")
         return
 
-    # Lazy import — only when actually training
-    from mlx_tune import FastLanguageModel
-
-    model_path = str(MODEL_PATH) if MODEL_PATH.exists() else "Qwen/Qwen3.5-35B-A3B"
-
     results: list[tuple[str, str]] = []
 
     for domain in pending:
         logger.info("=" * 60)
         logger.info("Training domain: %s (%d/%d)", domain, pending.index(domain) + 1, len(pending))
         try:
-            # Reload model fresh per domain — LoRA can't stack on LoRA
-            logger.info("Loading base model from %s", model_path)
-            model, tokenizer = FastLanguageModel.from_pretrained(
-                model_path,
-                max_seq_length=4096,
-                use_gradient_checkpointing=True,
-            )
-            train_domain(domain, model, tokenizer)
+            train_domain(domain)
             results.append((domain, "OK"))
-            # Free model memory before next domain
-            del model, tokenizer
-            import gc; gc.collect()
         except Exception as exc:
             logger.error("FAILED %s: %s", domain, exc, exc_info=True)
             log_progress(f"FAIL  {domain}: {exc}")
