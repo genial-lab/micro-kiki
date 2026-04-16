@@ -1,0 +1,182 @@
+[
+  {
+    "model": "baseline",
+    "prompt_idx": 0,
+    "prompt": "Explain quantum computing in 3 sentences.",
+    "output": "Explain quantum computing in 3 sentences.\n\n<think>\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   Topic: Quantum computing.\n    *   Constraint: Exactly 3 sentences.\n    *   Goal: Explain the concept clearly and concisely",
+    "gen_time_s": 20.98,
+    "new_tokens": 50,
+    "tok_per_sec": 2.38
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 1,
+    "prompt": "What causes the northern lights?",
+    "output": "What causes the northern lights?\n\nThe northern lights, or aurora borealis, are caused by the interaction between the solar wind and Earth's magnetic field. When charged particles from the solar wind collide with atoms in Earth's upper atmosphere, they excite these atoms, causing them",
+    "gen_time_s": 18.0,
+    "new_tokens": 50,
+    "tok_per_sec": 2.78
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 2,
+    "prompt": "Describe the water cycle in simple terms.",
+    "output": "Describe the water cycle in simple terms.\n\n<think>\n\n</think>\n\nThe **water cycle** is nature's way of recycling water. It's a continuous journey where water moves from the Earth to the sky and back again, changing its form along the way. Here is how it works in simple",
+    "gen_time_s": 16.86,
+    "new_tokens": 50,
+    "tok_per_sec": 2.96
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 3,
+    "prompt": "What is the difference between mitosis and meiosis?",
+    "output": "What is the difference between mitosis and meiosis?\n\nMitosis is a type of cell division that results in two daughter cells with the same number of chromosomes as the parent cell, while meiosis is a type of cell division that results in four daughter cells with half the number of chromosomes as the parent",
+    "gen_time_s": 12.0,
+    "new_tokens": 50,
+    "tok_per_sec": 4.17
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 4,
+    "prompt": "How does a transistor work?",
+    "output": "How does a transistor work?\n\nA transistor is a semiconductor device used to amplify or switch electronic signals and electrical power. It consists of three layers of semiconductor material, each capable of carrying a current. The three terminals are called the emitter, base, and collector. When a small",
+    "gen_time_s": 10.41,
+    "new_tokens": 50,
+    "tok_per_sec": 4.8
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 5,
+    "prompt": "Qu'est-ce que la photosynthèse ?",
+    "output": "Qu'est-ce que la photosynthèse ?\n\nLa photosynthèse est un processus biochimique par lequel les plantes, les algues et certaines bactéries convertissent l'énergie lumineuse en énergie chimique, stockée sous forme de glucides. Ce processus se déroule dans les chlor",
+    "gen_time_s": 11.57,
+    "new_tokens": 50,
+    "tok_per_sec": 4.32
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 6,
+    "prompt": "Expliquez le fonctionnement d'un moteur électrique.",
+    "output": "Expliquez le fonctionnement d'un moteur électrique.\n\n<think>\n\n</think>\n\nLe fonctionnement d'un moteur électrique repose sur un principe fondamental de l'électromagnétisme : **la conversion de l'énergie électrique en énergie mécanique**.\n\nVoici une explication détaillée du processus, étape",
+    "gen_time_s": 12.21,
+    "new_tokens": 50,
+    "tok_per_sec": 4.1
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 7,
+    "prompt": "Quelles sont les causes du réchauffement climatique ?",
+    "output": "Quelles sont les causes du réchauffement climatique ?\n\n<think>\n\n</think>\n\nLe réchauffement climatique actuel est principalement causé par l'augmentation de la concentration de **gaz à effet de serre (GES)** dans l'atmosphère, un phénomène amplifié de manière significative par les activités",
+    "gen_time_s": 14.93,
+    "new_tokens": 50,
+    "tok_per_sec": 3.35
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 8,
+    "prompt": "Décrivez le système solaire en 3 phrases.",
+    "output": "Décrivez le système solaire en 3 phrases.\n\n<think>\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   Topic: Solar System (système solaire).\n    *   Constraint: Exactly 3 sentences (3 phrases).\n    *   Language: French",
+    "gen_time_s": 18.13,
+    "new_tokens": 50,
+    "tok_per_sec": 2.76
+  },
+  {
+    "model": "baseline",
+    "prompt_idx": 9,
+    "prompt": "Comment fonctionne un réseau de neurones artificiels ?",
+    "output": "Comment fonctionne un réseau de neurones artificiels ?\n\nUn réseau de neurones artificiels est un système informatique qui imite le fonctionnement du cerveau humain. Il est composé de plusieurs couches de neurones artificiels, chacun ayant des poids et des biais. Les données d'entrée sont traitées par",
+    "gen_time_s": 11.74,
+    "new_tokens": 50,
+    "tok_per_sec": 4.26
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 0,
+    "prompt": "Explain quantum computing in 3 sentences.",
+    "output": "Explain quantum computing in 3 sentences.\n\n<think>\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   Topic: Quantum computing.\n    *   Constraint: Exactly 3 sentences.\n    *   Goal: Explain the concept clearly and concisely",
+    "gen_time_s": 13.81,
+    "new_tokens": 50,
+    "tok_per_sec": 3.62
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 1,
+    "prompt": "What causes the northern lights?",
+    "output": "What causes the northern lights?\n\nThe northern lights, or aurora borealis, are caused by the interaction between the solar wind and Earth's magnetic field. When charged particles from the solar wind collide with atoms in Earth's upper atmosphere, they excite these atoms, causing them",
+    "gen_time_s": 11.7,
+    "new_tokens": 50,
+    "tok_per_sec": 4.27
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 2,
+    "prompt": "Describe the water cycle in simple terms.",
+    "output": "Describe the water cycle in simple terms.\n\n<think>\n\n</think>\n\nThe **water cycle** is nature's way of recycling water. It's a continuous journey where water moves from the Earth to the sky and back again, changing its form along the way. Here is how it works in simple",
+    "gen_time_s": 15.55,
+    "new_tokens": 50,
+    "tok_per_sec": 3.22
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 3,
+    "prompt": "What is the difference between mitosis and meiosis?",
+    "output": "What is the difference between mitosis and meiosis?\n\nMitosis is a type of cell division that results in two daughter cells with the same number of chromosomes as the parent cell, while meiosis is a type of cell division that results in four daughter cells with half the number of chromosomes as the parent",
+    "gen_time_s": 16.13,
+    "new_tokens": 50,
+    "tok_per_sec": 3.1
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 4,
+    "prompt": "How does a transistor work?",
+    "output": "How does a transistor work?\n\nA transistor is a semiconductor device used to amplify or switch electronic signals and electrical power. It consists of three layers of semiconductor material, each capable of carrying a current. The three terminals are called the emitter, base, and collector. When a small",
+    "gen_time_s": 11.61,
+    "new_tokens": 50,
+    "tok_per_sec": 4.31
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 5,
+    "prompt": "Qu'est-ce que la photosynthèse ?",
+    "output": "Qu'est-ce que la photosynthèse ?\n\nLa photosynthèse est un processus biochimique par lequel les plantes, les algues et certaines bactéries convertissent l'énergie lumineuse en énergie chimique, stockée sous forme de glucides. Ce processus se déroule dans les chlor",
+    "gen_time_s": 14.5,
+    "new_tokens": 50,
+    "tok_per_sec": 3.45
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 6,
+    "prompt": "Expliquez le fonctionnement d'un moteur électrique.",
+    "output": "Expliquez le fonctionnement d'un moteur électrique.\n\n<think>\n\n</think>\n\nLe fonctionnement d'un moteur électrique repose sur un principe fondamental de l'électromagnétisme : **la conversion de l'énergie électrique en énergie mécanique**.\n\nVoici une explication détaillée du processus, étape",
+    "gen_time_s": 11.79,
+    "new_tokens": 50,
+    "tok_per_sec": 4.24
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 7,
+    "prompt": "Quelles sont les causes du réchauffement climatique ?",
+    "output": "Quelles sont les causes du réchauffement climatique ?\n\n<think>\n\n</think>\n\nLe réchauffement climatique actuel est principalement causé par l'augmentation de la concentration de **gaz à effet de serre (GES)** dans l'atmosphère, un phénomène amplifié de manière significative par les activités",
+    "gen_time_s": 13.39,
+    "new_tokens": 50,
+    "tok_per_sec": 3.73
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 8,
+    "prompt": "Décrivez le système solaire en 3 phrases.",
+    "output": "Décrivez le système solaire en 3 phrases.\n\n<think>\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   Topic: Solar System (système solaire).\n    *   Constraint: Exactly 3 sentences (3 phrases).\n    *   Language: French",
+    "gen_time_s": 16.22,
+    "new_tokens": 50,
+    "tok_per_sec": 3.08
+  },
+  {
+    "model": "spikingkiki",
+    "prompt_idx": 9,
+    "prompt": "Comment fonctionne un réseau de neurones artificiels ?",
+    "output": "Comment fonctionne un réseau de neurones artificiels ?\n\nUn réseau de neurones artificiels est un système informatique qui imite le fonctionnement du cerveau humain. Il est composé de plusieurs couches de neurones artificiels, chacun ayant des poids et des biais. Les données d'entrée sont traitées par",
+    "gen_time_s": 13.11,
+    "new_tokens": 50,
+    "tok_per_sec": 3.81
+  }
+]
