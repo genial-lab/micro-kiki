@@ -1,19 +1,19 @@
 # micro-kiki
 
-A 32-domain expert system built on Qwen3.5-4B with MoE-LoRA stacks, cognitive layer (memory palace, negotiator, anti-bias), and triple-device serving. Fits on RTX 4090 24 GB.
+A 32-domain expert system built on Qwen3.5-35B-A3B (native MoE, 256 experts, 3B active per token) with standard LoRA stacks, cognitive layer (memory palace, negotiator, anti-bias), and dual-machine serving. Trains on Mac Studio M3 Ultra 512 GB via MLX.
 
 ## What
 
-Five tightly integrated layers that turn a small base model into a specialist team:
+Five tightly integrated layers that turn a native MoE base into a specialist team:
 
-1. **Base**: Qwen3.5-4B (Apache 2.0, GatedDeltaNet hybrid, 262K ctx, 201 languages, thinking mode), with **Differential Attention** (arxiv 2410.05258) applied to the 13 full-attention layers for better long-context retrieval, lower hallucinations, and reduced activation outliers
-2. **32 MoE-LoRA stacks**: one per domain, 4 experts × rank 16 each, ~150 MB per stack, ~4.8 GB total
-3. **Meta-router**: sigmoid 32 outputs + training-free dispatcher (7 meta-intents)
+1. **Base**: Qwen3.5-35B-A3B (Apache 2.0, 262K ctx, 256 MoE experts, 3B active/token, native thinking mode). The model is already a MoE — no custom MoE-LoRA needed.
+2. **32 standard LoRA stacks**: one per domain, rank 16, targeting q/k/v/o attention projections only. ~74 GB BF16 for training on Mac Studio.
+3. **Domain router**: classifier-based adapter selection (max 4 active stacks) + training-free dispatcher (7 meta-intents)
 4. **Cognitive layer**:
    - **Aeon memory palace** (Atlas SIMD index + Trace neuro-symbolic graph) — persistent, spatial, temporal-aware memory
-   - **Negotiator** (CAMP arbitration + Catfish dissent) — resolves conflicts between active stacks with adaptive judge (Qwen3.5-35B fast ↔ Mistral-Large-Opus deep)
-   - **KnowBias + RBD anti-bias** — post-hoc neuron-level debiasing (applied twice on the merged model, after all 32 stacks are trained) + RBD runtime detector. Pre-stacks debiasing is deferred to v0.3; see `docs/specs/2026-04-15-cognitive-layer-design.md` for the tradeoff rationale and migration path.
-5. **Serving**: vLLM with dynamic LoRA (kxkm-ai RTX 4090) OR mlx-lm (Mac Studio), with Apple Neural Engine triple pipeline (draft, scorer, router) as an optional accelerator
+   - **Negotiator** (CAMP arbitration + Catfish dissent) — resolves conflicts between active stacks with adaptive judge (Qwen3.5-35B fast / Mistral-Large deep)
+   - **KnowBias + RBD anti-bias** — post-hoc neuron-level debiasing (applied twice on the merged model, after all 32 stacks are trained) + RBD runtime detector
+5. **Serving**: MLX primary (Mac Studio BF16), vLLM Q4 inference (kxkm-ai RTX 4090)
 
 ## Architecture
 
@@ -24,11 +24,11 @@ Five tightly integrated layers that turn a small base model into a specialist te
       ↓
   [Aeon recall]   → inject top memories into context
       ↓
-  [Meta-router]   → sigmoid 32 → activate 2-4 stacks
+  [Domain router] → classifier → activate 2-4 stacks
       ↓
   [Base + stacks] → K candidate responses
       ↓
-  [Negotiator]    → CAMP arbitration (Qwen35B) / Mistral-Large if deep needed
+  [Negotiator]    → CAMP arbitration (35B) / Mistral-Large if deep needed
       ↓
   [Anti-bias]     → RBD flag → DeFrame re-gen if biased
       ↓
@@ -50,58 +50,83 @@ Organized in 6 curriculum phases:
 
 Full list: `docs/specs/2026-04-15-micro-kiki-design.md`.
 
+## Base model: Qwen3.5-35B-A3B
+
+### Why the pivot from 4B
+
+The 4B base + custom MoE-LoRA approach was replaced after the 2026-04-16 pivot:
+
+- Qwen3.5-35B-A3B is natively MoE (256 experts, only 3B active per token) — custom MoE-LoRA adapters on top are redundant
+- Standard LoRA on attention projections is simpler, more reliable, and achieves better specialization
+- Mac Studio M3 Ultra 512 GB handles BF16 LoRA training at ~195 GB peak memory
+- Teacher is local: Qwen3-Coder-480B-A35B MLX 4bit (already on-machine, no network dependency)
+
+See `docs/specs/2026-04-16-architecture-pivot-35b.md` for full rationale.
+
 ## Teachers
 
-Used for distillation, preference pair generation, and the adaptive judge:
+Used for distillation and the adaptive judge:
 
-- **Mistral-Large-Opus** (123B, Studio) — reasoning, general, deep judge
-- **Qwen3.5-122B-A10B Opus-v3** (Studio, same family as base) — primary distill teacher
-- **Qwen3.5-35B-A3B Opus** (kxkm-ai) — fast teacher and default judge
-- **Devstral-v3/v4** (kxkm-ai) — coding-specific teacher
+- **Qwen3-Coder-480B-A35B** (MLX 4bit, local Mac Studio) — primary distillation teacher for all domains
+- **Mistral-Large-Opus** (123B, Studio) — deep judge
+- **Qwen3.5-35B-A3B Opus** (kxkm-ai) — fast judge and secondary teacher
+
+## Training
+
+Stacks are trained via MLX LoRA using the KIKI-Mac_tunner pipeline.
+
+```bash
+# Train a stack (from KIKI-Mac_tunner)
+./train.sh --config configs/mlx-lm-qwen35-35b-a3b-micro-kiki.yaml
+
+# Run forgetting check after each stack
+uv run python src/eval/forgetting.py --stack chat-fr
+```
+
+Config: `configs/mlx-lm-qwen35-35b-a3b-micro-kiki.yaml` in KIKI-Mac_tunner.
+
+- LR: 1e-5, batch_size: 2, grad_accumulation: 8, rank: 16, 2000 iters
+- Peak memory: ~195 GB, GPU Metal at 100%
+- Data: `~/KIKI-Mac_tunner/data/micro-kiki/<domain>/` (63K+ examples across 32 domains)
+
+See `docs/training/README.md` for the full training workflow.
 
 ## Hardware
 
 | Machine | Role |
 |---------|------|
-| Mac Studio M3 Ultra 512 GB | Teacher serving + primary training + deep judge + ANE pipeline |
-| RTX 4090 24 GB (kxkm-ai) | Inference + Unsloth training + fast judge |
+| Mac Studio M3 Ultra 512 GB | BF16 training (MLX), teacher serving (480B), MLX inference |
+| RTX 4090 24 GB (kxkm-ai) | Q4 inference only |
+| Tower | Aeon backends (Qdrant, Neo4j), Piper TTS |
 
 ## Research foundations
 
-The design is grounded in 2025–2026 published work:
-
-- **MoLoRA** (arxiv 2603.15965) — composable specialization via per-token routing; Qwen3-1.7B + MoLoRA beats Qwen3-8B on reasoning benchmarks
 - **OPLoRA** (arxiv 2510.13003) — orthogonal projection prevents catastrophic forgetting across sequential domains
 - **LoRA-Null** (arxiv 2503.02659) — null-space initialization preserves pre-trained knowledge
-- **Subspace Geometry** (arxiv 2603.02224) — forgetting is governed by gradient-subspace overlap, not rank
 - **Aeon** (arxiv 2601.15311) — neuro-symbolic memory palace for long-horizon agents
 - **CAMP** (arxiv 2604.00085) — evidence-based arbitration beats majority voting
 - **Catfish Agent** (arxiv 2505.21503) — structured dissent disrupts silent consensus
 - **KnowBias** (arxiv 2601.21864) — neuron-level debiasing via targeted fine-tuning
 - **RBD** (arxiv 2505.17100) — runtime reasoning-based bias detector
-- **Temporal limits** (arxiv 2601.10132) — why 4B LLM is naze at quantitative forecasting, tools layer preferred
-
-The post-hoc KnowBias ordering (applied twice on the merged model rather than once pre-stacks + once post) is a pragmatic tradeoff documented in `docs/specs/2026-04-15-cognitive-layer-design.md`; a future v0.3 can promote base debiasing to pre-stacks if eval data justifies the ~60-80 h of stack retraining.
 
 ## Structure
-
-> **Note:** this tree represents the implemented layout. All directories are populated — Phases I through XIV scaffolding is in place, with training stories pending GPU execution.
 
 ```
 micro-kiki/
 ├── docs/
 │   ├── specs/           # Design documents (frozen, source of truth)
-│   ├── research/        # MoE research, benchmarks
+│   ├── training/        # Training workflow documentation
+│   ├── research/        # Research references, benchmarks
 │   └── plans/           # Implementation plan (.ralph drives from here)
 ├── src/
 │   ├── base/            # Base model loading, quantization
-│   ├── stacks/          # MoE-LoRA trainer + OPLoRA utilities
+│   ├── stacks/          # LoRA trainer + OPLoRA utilities
 │   ├── routing/         # Router + dispatcher
 │   ├── distill/         # Teacher clients + dataset generator + dedup
 │   ├── memory/          # Aeon (atlas, trace, backends)
 │   ├── cognitive/       # Argument extractor, judge, catfish, RBD, bias probe
 │   ├── eval/            # Per-stack + forgetting + full suite
-│   └── serving/         # vLLM / mlx-lm / ANE pipeline
+│   └── serving/         # vLLM / mlx-lm pipeline
 ├── configs/             # YAML per stack + meta-intents + judge config
 ├── data/                # Gitignored: raw + distilled + bias pairs
 ├── scripts/             # Orchestrators + one-shot utilities
@@ -114,93 +139,62 @@ micro-kiki/
 
 ## Status
 
-14 phases, 108 implementation stories. Tracked in `.ralph/prd.json`. **52/108 done (48%)**.
+14 phases, 108 implementation stories. Tracked in `.ralph/prd.json`. **40/108 done (37%)**.
 
 - [x] Design (2026-04-15) — see `docs/specs/`
+- [x] Architecture pivot to 35B-A3B (2026-04-16) — see `docs/specs/2026-04-16-architecture-pivot-35b.md`
 - [x] MoE approach research — see `docs/research/`
 - [x] Implementation plan (108 stories, 14 phases)
 - [x] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
-- [x] Phase II — Data pipeline (32 domains via KIKI-Mac_tunner + chat-fr distilled 1784)
-- [ ] Phase III — First stack (chat-fr E2E) — **NEXT: training on Studio**
+- [~] Phase II — Data pipeline (chat-fr distilled, datasets classified + deduped)
+- [~] Phase III — First stack (chat-fr training active on Mac Studio)
 - [x] Phase IV — Router v0 + dispatcher (3 stacks) — code done, training pending
-- [~] Phase V — Curriculum coding 04–14 — configs ready, data available
-- [x] Phase VI — Technical stacks 15–25 — **datasets validated** (KIKI-Mac_tunner, 219-2700 examples each)
-- [x] Phase VII — Apps + complements 26–32 — **datasets validated** (KIKI-Mac_tunner)
-- [x] Phase VIII — Aeon memory palace (atlas + trace + aeon API + backends + serving hook + compression daemon)
-- [x] Phase IX — Negotiator (judge + catfish + argument extractor + integration)
-- [~] Phase X — KnowBias + RBD (code done, bias dataset in progress, fine-tune pending)
-- [x] Phase XI — Serving deployment (vLLM dynamic LoRA + MLX server + service units)
+- [ ] Phase V — Curriculum coding 04–14
+- [ ] Phase VI — Technical stacks 15–25
+- [ ] Phase VII — Apps + complements 26–32
+- [x] Phase VIII — Aeon memory palace (atlas + trace + aeon API + backends)
+- [x] Phase IX — Negotiator (judge + catfish + argument extractor)
+- [~] Phase X — KnowBias + RBD (code done, bias dataset in progress)
+- [x] Phase XI — Serving deployment (vLLM dynamic LoRA + MLX server)
 - [~] Phase XII — ANE triple pipeline (stubs present, CoreML conversion pending)
-- [x] Phase XIII — Quantum-inspired (CompactifAI + QTHA + TN router — all classical simulators)
-- [~] Phase XIV — E2E acceptance + Release (migration guide + VERSION done, tests pending)
+- [x] Phase XIII — Quantum-inspired (classical simulators)
+- [~] Phase XIV — E2E acceptance + Release
 
-### Training pipeline
+### Bottleneck
 
-All 32 domain datasets are available on Studio via `~/KIKI-Mac_tunner/data/micro-kiki/` (classified + deduped, 219-2700 examples per domain). The `scripts/train_stack.py` auto-discovers this data. Training uses the custom MLX fork at `~/KIKI-Mac_tunner/lib/mlx_lm_fork/` for LoRA hot-swap on MoE adapters.
-
-The remaining 56 stories are dominated by **37 GPU training stories**. Estimated: ~30 min/stack × 32 = ~16h of compute on Mac Studio M3 Ultra (BF16 LoRA, CPU device_map — MPS MoE histogram bug workaround). All code scaffolding is complete.
-
-### MLX fork
-
-A custom fork of `mlx-lm` lives on Studio at `/Users/clems/KIKI-Mac_tunner/lib/mlx_lm_fork/`. Modifications vs upstream:
-- Custom LoRA hot-swap for MoE adapters (standard mlx-lm doesn't handle MoE adapter switching)
-- Modified perplexity computation for spike outputs
-- Q4_K_M GGUF export with architecture-specific patches
-
-See `docs/specs/mlx-lm-fork-reference.md` for details.
+37 sequential GPU training stories (32 stacks + router retrains). Estimated: ~1h/stack × 32 = ~32h of compute on Mac Studio (BF16 LoRA, 2000 iters). Code scaffolding is complete.
 
 ## Execution
 
-Driven by the ralph loop skill + multi-machine orchestration:
+Driven by the ralph loop skill:
 
 ```bash
-# Ralph loop (single machine)
-cd /Users/electron/Documents/Projets/micro-kiki
+# Ralph loop
+cd /Users/clems/micro-kiki
 MAX_ITERATIONS=10 uv run .ralph/loop.py
 
-# Multi-machine orchestration (from GrosMac)
-./scripts/orchestrate_remote.sh status           # all machines status
-./scripts/orchestrate_remote.sh sync             # pull main everywhere
-./scripts/orchestrate_remote.sh distill chat-fr  # distill on Studio
-./scripts/orchestrate_remote.sh train stack-01   # train on Studio
-./scripts/orchestrate_remote.sh eval stack-01    # eval on kxkm-ai
+# Train a specific stack (from KIKI-Mac_tunner)
+cd ~/KIKI-Mac_tunner
+./train.sh --config configs/mlx-lm-qwen35-35b-a3b-micro-kiki.yaml
 
-# Generic domain distillation
-uv run python scripts/distill_domain.py --domain embedded --teacher-url http://kxkm-ai:8000
+# Forgetting check
+cd /Users/clems/micro-kiki
+uv run python src/eval/forgetting.py --stack <domain>
 ```
-
-### Machines
-
-| Machine | SSH | Role | Status |
-|---------|-----|------|--------|
-| GrosMac (M5) | local | Orchestration, code dev | Active |
-| Studio (M3 Ultra 512 GB) | `ssh studio` | BF16 training, teacher serving | Qwen3.5-35B-A3B downloaded (67 GB) |
-| kxkm-ai (RTX 4090 24 GB) | `ssh kxkm@kxkm-ai` | Q4 inference, eval, distillation | llama-server on :8000 |
-
-Each iteration picks one incomplete story, implements it, runs quality gates, commits, and exits.
-
-Phase I step 2 (Differential Attention fork) carries an automatic **rollback clause**: if the DiffAttn fork regresses perplexity by > 3% OR fails to reduce activation outliers on the full-attn layers, the pipeline falls back to vanilla Qwen3.5-4B and rewrites every `configs/stack-NN-*.yaml` to point at the vanilla base. See `docs/specs/diffattn-integration.md` for the full spec and acceptance criteria. A final end-to-end acceptance test (Phase XIV, step 104) exercises every component — base, stacks, router, cognitive layer, serving — before Release v0.2 is tagged.
 
 ## Roadmap
 
-- **v0.1** (shipped in plan history): 32 stacks + router + cognitive layer + serving + ANE
-- **v0.2** (scope of current consolidated plan): v0.1 + quantum-inspired techniques (HyQuT hybrid VQC, QMoE routing with classical fallback, Quantum-PEFT adapters — all run on classical simulators by default)
-- **v0.3** (planned): temporal context (real-time clock, location, news slice) + future-reasoner (CoT temporal chains, calendar-aware planning). Deferred because LLM 4B underperforms dedicated time-series ML on quantitative forecasting (arxiv 2601.10132); context-injection + tools approach is more appropriate than new stacks.
-
-## Branches
-
-- `main` — public v0.2 core (classical + quantum-inspired, runs on CPU/GPU simulators)
-- `quantum` — public hybrid classical/QPU staging area (Qiskit, PennyLane, AWS Braket, IBM Runtime); every experiment must have a classical-simulator fallback
-- `neuroscience` — v0.3 research branch (SpikingBrain-76B + AeonSleep + neuromorphic edge). See [BRANCH-neuroscience.md](https://github.com/electron-rare/micro-kiki/blob/neuroscience/BRANCH-neuroscience.md).
-- Private QPU-only research lives at [`electron-rare/micro-kiki-quantum`](https://github.com/electron-rare/micro-kiki-quantum) (PRIVATE, $250/experiment budget, no classical fallback requirement)
+- **v0.1** (shipped in plan history): 32 stacks + router + cognitive layer + serving
+- **v0.2** (current): 35B-A3B base, MLX training, local 480B teacher, quantum-inspired techniques (classical simulators)
+- **v0.3** (planned): temporal context + future-reasoner
 
 ## License
 
-Apache 2.0. Base model (Qwen3.5-4B) is also Apache 2.0.
+Apache 2.0. Base model (Qwen3.5-35B-A3B) is also Apache 2.0.
 
 ## Related
 
 Part of the KIKI family:
-- [KIKI-Mac_tunner](https://github.com/L-electron-Rare/KIKI-Mac_tunner) — MLX fine-tuning toolkit
+- [KIKI-Mac_tunner](https://github.com/L-electron-Rare/KIKI-Mac_tunner) — MLX fine-tuning toolkit (training pipeline)
 - [KIKI-models-tuning](https://github.com/L-electron-Rare/KIKI-models-tuning) — Unsloth/LoRA training registry
 - [kiki-forge](https://github.com/L-electron-Rare/kiki-forge) — multi-compute LLM training pipeline

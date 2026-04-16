@@ -1,3 +1,5 @@
+> **Architecture pivot — 2026-04-16**: The Qwen3.5-4B + custom MoE-LoRA design described in this document has been superseded. The active architecture uses Qwen3.5-35B-A3B (native MoE, 256 experts) with standard LoRA. See `docs/specs/2026-04-16-architecture-pivot-35b.md` for the pivot rationale and updated decisions. This document is preserved as historical reference.
+
 # Micro_KIKI — 32 Expert Brainstacks MoE
 
 ## Overview
