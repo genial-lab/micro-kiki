@@ -74,13 +74,21 @@ def generate_one(prompt: str, retries: int = MAX_RETRIES) -> str | None:
     for attempt in range(retries):
         timeout = BASE_TIMEOUT * (attempt + 1)  # 300, 600, 900
         try:
+            out_tmp = REPO_ROOT / "_codex_out.txt"
+            out_tmp.unlink(missing_ok=True)
             result = subprocess.run(
-                ["codex", "--quiet", "--full-auto", "-m", "o3-mini", prompt],
+                ["codex", "exec", "-m", "o3-mini",
+                 "-o", str(out_tmp), prompt],
                 capture_output=True,
                 text=True,
                 timeout=timeout,
                 cwd=str(REPO_ROOT),
             )
+            if out_tmp.exists():
+                text = out_tmp.read_text().strip()
+                out_tmp.unlink(missing_ok=True)
+                if text:
+                    return text
             if result.returncode == 0 and result.stdout.strip():
                 return result.stdout.strip()
 
