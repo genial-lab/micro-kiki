@@ -1,6 +1,6 @@
 {
   "plan_source": ".claude/plans/micro-kiki-v0.3-neuroscience.md",
-  "created_at": "2026-04-15T22:55:00+00:00",
+  "created_at": "2026-04-16T04:22:21.211402+00:00",
   "updated_at": "2026-04-16T00:08:20.564048+00:00",
   "stories": [
     {
@@ -127,84 +127,84 @@
       "title": "Download Qwen3.5-27B base",
       "description": "**Download Qwen3.5-27B base**\n\n    - Files to touch: `scripts/download_qwen3_27b.py`, `results/qwen3-27b-download.json`\n    - Fetch `Qwen/Qwen3.5-27B` from HuggingFace (~54 GB BF16) to Studio at `models/Qwen3.5-27B-BF16/`. Verify SHA256 for every shard.\n    - Acceptance: all shards present, SHA256 verified, `results/qwen3-27b-download.json` lists shard count + sizes + hashes.\n    - Dependencies: step 17.",
       "priority": 18,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-19",
       "title": "LAS conversion → SpikingKiki-27B",
       "description": "**LAS conversion → SpikingKiki-27B**\n\n    - Files to touch: `scripts/convert_spikingkiki_27b.py`, `results/spikingkiki-27b-convert.json`, `models/SpikingKiki-27B-BF16/` (gitignored)\n    - Run LAS on every layer of Qwen3.5-27B. Qwen3.5-27B is dense (no MoE) → straightforward per-layer conversion.\n    - Estimated wall time 30-40 h on Studio MLX/PyTorch.\n    - Acceptance: model loads, `generate(5 tokens)` returns non-empty output, on-disk size ~54 GB BF16, convert JSON captures layer map + activation-bound stats.\n    - Dependencies: steps 17, 18.",
       "priority": 19,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-20",
       "title": "Eval SpikingKiki-27B",
       "description": "**Eval SpikingKiki-27B**\n\n    - Files to touch: `scripts/eval_spikingkiki_27b.py`, `results/spikingkiki-27b-eval.json`, `docs/specs/spikingkiki-27b-eval.md`\n    - Compare SpikingKiki-27B against Qwen3.5-27B baseline on a 100-prompt reasoning subset (HumanEval 50 + GSM8K 50).\n    - Record per-prompt accuracy, aggregate accuracy delta, theoretical energy estimate (FLOPs → spikes via LAS spike count).\n    - Acceptance: no NaN responses, eval JSON + spec committed, accuracy delta documented.\n    - Dependencies: step 19.",
       "priority": 20,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-21",
       "title": "LAS adaptation for MoE routing",
       "description": "**LAS adaptation for MoE routing**\n\n    - Files to touch: `src/spiking/las_converter.py` (extended), `tests/test_las_moe.py`\n    - Extend `LASConverter` to handle Qwen3.5-122B-A10B's hybrid architecture: linear-attention layers, full-attention layers, and MoE experts with top-K routing (see `docs/specs/2026-04-15-micro-kiki-design.md` for hybrid arch details).\n    - LAS on routers must preserve expert selection semantics; LAS on experts must not collapse expert diversity.\n    - Verify on a 4-layer micro-MoE test case (4 experts × 128-d, 2 tokens top-2 routing).\n    - Acceptance: `pytest tests/test_las_moe.py` passes (ANN vs SNN expert selection agreement ≥ 99%, output MSE ≤ 1e-3).\n    - Dependencies: steps 17, 20.",
       "priority": 21,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-22",
       "title": "Verify Qwen3.5-122B-A10B-BF16 cached",
       "description": "**Verify Qwen3.5-122B-A10B-BF16 cached**\n\n    - Files to touch: `scripts/verify_qwen3_122b.py`, `results/qwen3-122b-verify.json`\n    - Per session memory, `models/Qwen3.5-122B-A10B-BF16/` is already cached on Studio (~244 GB, 39 shards × ~6 GB). Confirm presence and SHA256 integrity; if absent or corrupted, fetch from HF (wall time ~12-24 h residential).\n    - Acceptance: all 39 shards present on Studio, SHA256 clean, verify JSON records shard inventory.\n    - Dependencies: step 21.",
       "priority": 22,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-23",
       "title": "LAS conversion → SpikingKiki-122B-A10B",
       "description": "**LAS conversion → SpikingKiki-122B-A10B**\n\n    - Files to touch: `scripts/convert_spikingkiki_122b.py`, `results/spikingkiki-122b-convert.json`, `models/SpikingKiki-122B-A10B/` (gitignored)\n    - Run extended LAS (step 21) on Qwen3.5-122B-A10B. MoE preserved (128 experts, 8 active per token).\n    - Estimated wall time 100 h+ on Studio (3-5 days). Memory peak ≤ 480 GB BF16 (activation checkpointing mandatory).\n    - Studio must be dedicated — no concurrent SpikingKiki-LargeOpus run.\n    - Acceptance: model loads, `generate(5 tokens)` returns non-empty output, on-disk ~244 GB BF16, MoE routing stats logged.\n    - Dependencies: steps 21, 22.",
       "priority": 23,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-24",
       "title": "Eval SpikingKiki-122B-A10B",
       "description": "**Eval SpikingKiki-122B-A10B**\n\n    - Files to touch: `scripts/eval_spikingkiki_122b.py`, `results/spikingkiki-122b-eval.json`, `docs/specs/spikingkiki-122b-eval.md`\n    - Same 100-prompt reasoning subset (HumanEval 50 + GSM8K 50) vs Qwen3.5-122B-A10B baseline.\n    - Record accuracy delta + theoretical energy estimate + MoE expert activation sparsity.\n    - If ≥ 90% of baseline accuracy, document \"first SNN MoE at 100B+ scale, open-source\" claim in the spec.\n    - Acceptance: eval JSON + spec committed, comparison report complete.\n    - Dependencies: step 23.",
       "priority": 24,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-25",
       "title": "LAS adaptation for Mistral dense",
       "description": "**LAS adaptation for Mistral dense**\n\n    - Files to touch: `src/spiking/las_converter.py` (extended), `tests/test_las_mistral.py`\n    - Extend `LASConverter` to handle Mistral-Large-Opus dense architecture: full attention every layer (no linear-attn, no MoE), different MLP shape than Qwen.\n    - Verify on a 4-layer Mistral-style test block (4096-d, 8 heads, full attn + SwiGLU MLP).\n    - Acceptance: `pytest tests/test_las_mistral.py` passes (ANN vs SNN MSE ≤ 1e-3 on a random forward).\n    - Dependencies: steps 17, 24.",
       "priority": 25,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-26",
       "title": "Verify Mistral-Large-Opus fused",
       "description": "**Verify Mistral-Large-Opus fused**\n\n    - Files to touch: `scripts/verify_mistral_opus.py`, `results/mistral-opus-verify.json`\n    - Mistral-Large-Opus is already fused at `/Users/clems/KIKI-Mac_tunner/output/mistral-large-opus-fused/` on Studio (~233 GB BF16). Confirm path exists, shards readable, tokenizer + config present.\n    - If path missing, abort with a clear error and document the expected path-fix (this story does NOT attempt a fresh fuse — that is out of scope for v0.3).\n    - Acceptance: shard inventory logged + tokenizer round-trips on a sample prompt.\n    - Dependencies: step 25.",
       "priority": 26,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-27",
       "title": "LAS conversion → SpikingKiki-LargeOpus-123B",
       "description": "**LAS conversion → SpikingKiki-LargeOpus-123B**\n\n    - Files to touch: `scripts/convert_spikingkiki_largeopus.py`, `results/spikingkiki-largeopus-convert.json`, `models/SpikingKiki-LargeOpus-123B/` (gitignored)\n    - Run dense LAS (step 25) on Mistral-Large-Opus fused weights.\n    - Estimated wall time 80-100 h on Studio. Memory peak ≤ 470 GB BF16 (dense → every layer materialised).\n    - Studio dedicated — no concurrent runs.\n    - Acceptance: model loads, `generate(5 tokens)` returns non-empty output, on-disk ~233 GB BF16.\n    - Dependencies: steps 25, 26.",
       "priority": 27,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-28",
       "title": "Eval SpikingKiki-LargeOpus",
       "description": "**Eval SpikingKiki-LargeOpus**\n\n    - Files to touch: `scripts/eval_spikingkiki_largeopus.py`, `results/spikingkiki-largeopus-eval.json`, `docs/specs/spikingkiki-largeopus-eval.md`\n    - Same 100-prompt reasoning subset vs Mistral-Large-Opus baseline.\n    - Record accuracy delta + theoretical energy estimate.\n    - If accuracy holds, document \"SNN reproduction of Mistral-Large-class dense 123B, open-source\" claim.\n    - Acceptance: eval JSON + spec committed.\n    - Dependencies: step 27.",
       "priority": 28,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-29",
       "title": "Cross-eval + release-variant decision",
       "description": "**Cross-eval + release-variant decision**\n\n    - Files to touch: `scripts/cross_eval_spikingkikis.py`, `results/spikingkiki-cross-eval.json`, `docs/specs/spikingkiki-cross-eval.md`\n    - Aggregate eval results from stories 14 (SpikingBrain-7B baseline), 20 (SpikingKiki-27B), 24 (SpikingKiki-122B-A10B), 28 (SpikingKiki-LargeOpus). Add wall-clock inference latency at 4k and 32k contexts; add model-size footprint.\n    - Rank variants by composite score: accuracy retention × (1 / memory GB) × (1 / latency).\n    - Pick one variant as the production-release candidate for Story 38 freeze.\n    - Acceptance: cross-eval JSON + spec committed with a clear \"release variant = X\" statement and rationale (≥ 150 lines).\n    - Dependencies: steps 14, 20, 24, 28.",
       "priority": 29,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-30",
