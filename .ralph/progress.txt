@@ -5,7 +5,7 @@ Source: .claude/plans/micro-kiki-v0.2-implementation.md
 Started: 2026-04-15T19:53:42Z
 Consolidated: 2026-04-15T19:53:42Z (107 stories, 14 phases)
 
-Stories: 0/107 complete
+Stories: 13/107 complete
 
 ---
 
@@ -18,3 +18,10 @@ Stories: 0/107 complete
 [2026-04-15T23:42:21Z] Completed: story-5 - Smoke-test harness (tests/conftest.py + tests/test_smoke.py)
 [2026-04-15T23:48:30Z] Completed: story-1 - Download + verify Qwen3.5-4B base (BF16 8.8GB + Q4 2.52GB on kxkm-ai:/home/kxkm/models/qwen3.5-4b{,bf16,-q4.gguf}; smoke 'hello, I am a student' OK)
 [2026-04-15T23:56:56Z] Completed: story-3 - Write base model loader (src/base/loader.py)
+[2026-04-16T00:46:00Z] Synced Studio R&D workspace (scripts/micro_kiki, configs/micro_kiki, research/ane-hybrid, docs/plans sub-plans, sota-training-2026)
+[2026-04-16T00:46:00Z] Completed: story-10 - MoE-LoRA stack trainer (src/stacks/trainer.py exists, moe_lora/oplora/tests all passing)
+[2026-04-16T00:46:00Z] Completed: story-11 - First stack config (configs/stack-01-chat-fr.yaml with required fields)
+[2026-04-16T00:46:00Z] Completed: story-13 - Per-stack eval harness (src/eval/stack_eval.py + data/eval/chat-fr.jsonl + test_stack_eval passing)
+[2026-04-16T00:46:00Z] Completed: story-15 - Dispatcher mapping (src/routing/dispatcher.py + configs/meta_intents.yaml + test_dispatcher passing)
+[2026-04-16T00:46:00Z] Completed: story-19 - Meta-router module (src/routing/router.py + tests/routing/test_router_37 passing)
+[2026-04-16T00:46:00Z] Completed: story-21 - Runtime adapter switcher (src/serving/switchable.py + test_switchable passing)

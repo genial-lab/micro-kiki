@@ -1,0 +1,104 @@
+# Micro_KIKI Brainstacks — 32 MoE-LoRA stacks on Qwen3.5-4B
+# Trained sequentially with null-space projection + residual boosting
+
+model:
+  path: models/Qwen3.5-4B-BF16
+  h_dim: 3072
+  num_layers: 36
+  # 7 projections per layer to attach MoE-LoRA
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+moe_lora:
+  num_experts: 4
+  rank: 16
+  alpha: 32.0           # alpha/rank = 2
+  dropout: 0.01
+  top_k: 2              # top-2 expert routing
+  router_hidden: 64     # router MLP hidden dim
+  use_rs_lora: true     # rsLoRA scaling (rank-stabilized)
+
+null_space:
+  ns_top_k_dirs: 32     # directions to preserve per frozen stack
+  svd_oversampling: 10  # randomized SVD oversampling factor
+  svd_n_iter: 3         # power iterations for randomized SVD
+  projection_strength: 1.0  # 1.0 = full null-space projection
+
+residual_boost:
+  max_rounds: 2
+  min_improvement: 0.002    # skip round if delta loss < this
+  hard_example_quantile: 0.75  # top 25% loss examples = "hard"
+  boost_weight: 2.0         # loss multiplier for hard examples
+  boost_steps: 100           # steps per boost round
+  boost_lr_scale: 0.5        # LR multiplied by this during boost
+
+training:
+  batch_size: 1
+  grad_accumulation_steps: 4
+  max_seq_length: 2048
+  learning_rate: 2e-4
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  max_steps: 500           # ~500 steps per domain
+  steps_per_eval: 50
+  steps_per_save: 100
+  val_batches: 10
+  seed: 42
+
+forgetting:
+  max_delta: 0.03          # abort if any previous domain degrades > 3%
+  eval_domains: all        # "all" or "last_5" for faster checks
+
+data:
+  base_dir: data/micro-kiki
+  # Each domain has train.jsonl + valid.jsonl in data/micro-kiki/<domain>/
+
+output:
+  base_dir: output/micro-kiki/stacks
+  # Each stack saved as output/micro-kiki/stacks/<domain>/adapters.safetensors
+
+curriculum:
+  # Phase 1 — Foundations
+  - chat-fr
+  - reasoning
+  # Phase 2 — Coding core
+  - python
+  - typescript
+  - cpp
+  - rust
+  # Phase 3 — Coding secondary
+  - html-css
+  - shell
+  - sql
+  - yaml-json
+  - docker
+  - kicad-dsl
+  - spice
+  - lua-upy
+  # Phase 4 — Technical domains
+  - embedded
+  - stm32
+  - iot
+  - freecad
+  - platformio
+  - power
+  - emc
+  - dsp
+  - spice-sim
+  - electronics
+  - kicad-pcb
+  # Phase 5 — Applications
+  - web-frontend
+  - web-backend
+  - music-audio
+  - devops
+  - llm-orch
+  # Phase 6 — Complements
+  - math
+  - security

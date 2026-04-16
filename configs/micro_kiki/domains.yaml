@@ -1,0 +1,688 @@
+# Micro_KIKI — 32 Expert Domain Configuration
+# Each domain has:
+#   keywords: list of strings for heuristic matching (case-insensitive substring)
+#   patterns: list of regex patterns for stronger signal
+#   teacher: primary teacher model for synthetic generation
+#   teacher_secondary: fallback teacher (optional)
+#   target: target number of examples
+#   phase: curriculum training phase (1-6)
+#   existing_sources: paths to existing datasets that map to this domain
+
+version: 1
+target_per_domain: 2000
+valid_ratio: 0.1
+chat_format: "messages"
+thinking_tags: ["<thinking>", "</thinking>"]
+
+domains:
+  chat-fr:
+    phase: 1
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "français"
+      - "bonjour"
+      - "merci"
+      - "s'il vous plaît"
+      - "expliquer"
+      - "résumé"
+      - "répondre en français"
+      - "traduire"
+      - "rédiger"
+      - "conversation"
+    patterns:
+      - "\\b(en français|répon[ds]|expliqu|tradui|résume)\\b"
+      - "\\b(bonjour|bonsoir|merci|svp)\\b"
+    existing_sources:
+      - "data/final-opus-v3-1"
+
+  reasoning:
+    phase: 1
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    teacher_secondary: "opus-api"
+    target: 2000
+    keywords:
+      - "step by step"
+      - "reasoning"
+      - "think through"
+      - "logical"
+      - "proof"
+      - "deduce"
+      - "analyze"
+      - "explain why"
+      - "what if"
+      - "chain of thought"
+    patterns:
+      - "\\b(step.by.step|chain.of.thought|reasoning|deduc|logical)\\b"
+      - "<thinking>"
+    existing_sources:
+      - "data/final-opus-v3-1"
+      - "data/Opus-4.6-reasoning-sft-12k"
+
+  python:
+    phase: 2
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "python"
+      - "def "
+      - "import "
+      - "class "
+      - "pytest"
+      - "pip"
+      - "pandas"
+      - "numpy"
+      - "flask"
+      - "django"
+      - "fastapi"
+    patterns:
+      - "```python"
+      - "\\b(def |import |class |from .+ import)\\b"
+      - "\\.py\\b"
+    public_datasets:
+      - "nvidia/OpenCodeReasoning"
+      - "ise-uiuc/Magicoder-OSS-Instruct-75K"
+
+  typescript:
+    phase: 2
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "typescript"
+      - "interface "
+      - "type "
+      - "React"
+      - "tsx"
+      - "Angular"
+      - "Vite"
+      - "npm"
+      - "Node.js"
+      - "Express"
+      - "Hono"
+    patterns:
+      - "```typescript"
+      - "```tsx"
+      - "\\b(interface |type |const .+:.+=|React\\.|tsx)\\b"
+      - "\\.ts\\b"
+    public_datasets:
+      - "m-a-p/CodeFeedback-Filtered-Instruction"
+
+  cpp:
+    phase: 2
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "c++"
+      - "cpp"
+      - "#include"
+      - "std::"
+      - "template"
+      - "namespace"
+      - "cmake"
+      - "pointer"
+      - "RAII"
+      - "constexpr"
+    patterns:
+      - "```cpp"
+      - "```c\\+\\+"
+      - "\\b(#include|std::|template<|namespace |class .+\\{)\\b"
+      - "\\.cpp\\b|\\.hpp\\b"
+
+  rust:
+    phase: 2
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "rust"
+      - "cargo"
+      - "fn "
+      - "let mut"
+      - "impl "
+      - "trait "
+      - "ownership"
+      - "borrow"
+      - "lifetime"
+      - "tokio"
+    patterns:
+      - "```rust"
+      - "\\b(fn |impl |trait |use |pub |let mut|cargo)\\b"
+      - "\\.rs\\b"
+
+  html-css:
+    phase: 3
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "html"
+      - "css"
+      - "flexbox"
+      - "grid"
+      - "responsive"
+      - "tailwind"
+      - "bootstrap"
+      - "selector"
+      - "media query"
+      - "scss"
+    patterns:
+      - "```html"
+      - "```css"
+      - "\\b(<div|<section|<header|display:\\s*flex|display:\\s*grid)\\b"
+
+  shell:
+    phase: 3
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "bash"
+      - "shell"
+      - "zsh"
+      - "#!/bin"
+      - "grep"
+      - "awk"
+      - "sed"
+      - "pipe"
+      - "chmod"
+      - "cron"
+    patterns:
+      - "```bash"
+      - "```sh"
+      - "\\b(#!/bin/|\\$\\(|\\|\\s*grep|awk |sed |chmod)\\b"
+
+  sql:
+    phase: 3
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "sql"
+      - "SELECT"
+      - "INSERT"
+      - "JOIN"
+      - "PostgreSQL"
+      - "MySQL"
+      - "SQLite"
+      - "database"
+      - "query"
+      - "index"
+    patterns:
+      - "```sql"
+      - "\\b(SELECT |INSERT |UPDATE |DELETE |CREATE TABLE|ALTER TABLE|JOIN )\\b"
+
+  yaml-json:
+    phase: 3
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "yaml"
+      - "json"
+      - "schema"
+      - "OpenAPI"
+      - "swagger"
+      - "config"
+      - "toml"
+      - "JSON Schema"
+      - "validation"
+    patterns:
+      - "```yaml"
+      - "```json"
+      - "\\b(apiVersion:|kind:|openapi:|\\{\"[a-z]+\":|\\$ref)\\b"
+
+  docker:
+    phase: 3
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "docker"
+      - "Dockerfile"
+      - "container"
+      - "docker-compose"
+      - "image"
+      - "volume"
+      - "FROM "
+      - "kubernetes"
+      - "k8s"
+      - "podman"
+    patterns:
+      - "```dockerfile"
+      - "\\b(FROM |COPY |RUN |EXPOSE |docker compose|docker build)\\b"
+
+  kicad-dsl:
+    phase: 3
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "kicad"
+      - "schematic"
+      - "netlist"
+      - "footprint"
+      - "symbol"
+      - "eeschema"
+      - "s-expression"
+      - "kicad_sch"
+      - "kicad_sym"
+      - "kicad_mod"
+    patterns:
+      - "\\b(kicad_sch|kicad_sym|kicad_mod|fp_name|pad |module )\\b"
+      - "\\(kicad_"
+    existing_sources:
+      - "clemsail/kiki-kicad"
+
+  spice:
+    phase: 3
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "spice"
+      - "ngspice"
+      - "ltspice"
+      - "netlist"
+      - ".subckt"
+      - ".tran"
+      - ".ac"
+      - ".dc"
+      - "MOSFET"
+      - "transistor"
+    patterns:
+      - "\\b(\\.subckt|\\.tran|\\.ac |\\.dc |\\.model |V[0-9]+|R[0-9]+)\\b"
+    existing_sources:
+      - "clemsail/kiki-spice"
+
+  lua-upy:
+    phase: 3
+    teacher: "devstral-2-123b"
+    teacher_secondary: "gemma-4-31b"
+    target: 2000
+    keywords:
+      - "lua"
+      - "micropython"
+      - "upython"
+      - "machine.Pin"
+      - "function"
+      - "local "
+      - "require"
+      - "coroutine"
+      - "uos"
+      - "ujson"
+    patterns:
+      - "```lua"
+      - "```micropython"
+      - "\\b(local |function |require\\(|machine\\.Pin|uos\\.)\\b"
+
+  embedded:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "embedded"
+      - "firmware"
+      - "ESP-IDF"
+      - "ESP32"
+      - "GPIO"
+      - "interrupt"
+      - "RTOS"
+      - "FreeRTOS"
+      - "HAL"
+      - "bare metal"
+      - "DMA"
+      - "SPI"
+      - "I2C"
+      - "UART"
+    patterns:
+      - "\\b(esp_err_t|gpio_config|xTaskCreate|HAL_GPIO|idf\\.py|menuconfig)\\b"
+      - "\\b(FreeRTOS|vTaskDelay|xQueue|xSemaphore)\\b"
+    existing_sources:
+      - "clemsail/kiki-embedded"
+      - "clemsail/kiki-esp32"
+
+  stm32:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "STM32"
+      - "CubeMX"
+      - "HAL_"
+      - "LL_"
+      - "stm32f"
+      - "stm32h"
+      - "stm32g"
+      - "ARM Cortex"
+      - "CMSIS"
+      - "OpenOCD"
+    patterns:
+      - "\\b(STM32[FGHL]|HAL_[A-Z]+_|LL_[A-Z]+_|CubeMX|CMSIS|__HAL)\\b"
+    existing_sources:
+      - "clemsail/kiki-stm32"
+
+  iot:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "MQTT"
+      - "BLE"
+      - "Bluetooth"
+      - "WiFi"
+      - "LoRa"
+      - "Zigbee"
+      - "Matter"
+      - "Thread"
+      - "CoAP"
+      - "Home Assistant"
+      - "ESP-NOW"
+      - "OTA"
+    patterns:
+      - "\\b(mqtt|ble_|esp_wifi|lora_|zigbee|matter_|esp_now)\\b"
+    existing_sources:
+      - "clemsail/kiki-iot"
+
+  freecad:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "FreeCAD"
+      - "Part.make"
+      - "Sketcher"
+      - "PartDesign"
+      - "mesh"
+      - "STEP"
+      - "IGES"
+      - "3D print"
+      - "BRep"
+      - "parametric"
+    patterns:
+      - "\\b(FreeCAD|Part\\.|Sketcher\\.|PartDesign|App\\.ActiveDocument)\\b"
+
+  platformio:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "PlatformIO"
+      - "platformio.ini"
+      - "pio"
+      - "lib_deps"
+      - "board"
+      - "framework"
+      - "monitor_speed"
+      - "upload_port"
+      - "build_flags"
+    patterns:
+      - "\\b(platformio\\.ini|\\[env:|lib_deps|board =|pio run|pio test)\\b"
+    existing_sources:
+      - "clemsail/kiki-platformio"
+
+  power:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "power supply"
+      - "regulator"
+      - "buck"
+      - "boost"
+      - "LDO"
+      - "battery"
+      - "voltage"
+      - "current limit"
+      - "efficiency"
+      - "MPPT"
+      - "charge"
+      - "discharge"
+    patterns:
+      - "\\b(LDO|buck|boost|MPPT|V[io]n|V[io]ut|LM317|TPS|MCP73)\\b"
+    existing_sources:
+      - "clemsail/kiki-power"
+
+  emc:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "EMC"
+      - "EMI"
+      - "CEM"
+      - "filtering"
+      - "shielding"
+      - "common mode"
+      - "differential mode"
+      - "ferrite"
+      - "decoupling"
+      - "ground plane"
+      - "radiated"
+      - "conducted"
+    patterns:
+      - "\\b(EMC|EMI|CEM|common.mode|differential.mode|ferrite|decoupling)\\b"
+
+  dsp:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "DSP"
+      - "FFT"
+      - "filter"
+      - "convolution"
+      - "sampling"
+      - "Nyquist"
+      - "FIR"
+      - "IIR"
+      - "signal processing"
+      - "spectrogram"
+      - "windowing"
+    patterns:
+      - "\\b(FFT|FIR|IIR|Nyquist|spectrogram|convolution|CMSIS.DSP)\\b"
+
+  spice-sim:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "simulation"
+      - "transient"
+      - "AC analysis"
+      - "DC sweep"
+      - "Monte Carlo"
+      - "parametric"
+      - "convergence"
+      - "step response"
+      - "Bode plot"
+      - "waveform"
+    patterns:
+      - "\\b(transient|AC.analysis|DC.sweep|Monte.Carlo|Bode|convergence)\\b"
+    existing_sources:
+      - "clemsail/kiki-spice-sim"
+
+  electronics:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "analog"
+      - "op-amp"
+      - "capacitor"
+      - "resistor"
+      - "inductor"
+      - "transistor"
+      - "diode"
+      - "amplifier"
+      - "oscillator"
+      - "PCB"
+      - "component"
+      - "RF"
+    patterns:
+      - "\\b(op.amp|capacitor|resistor|inductor|transistor|diode|amplifier|RF)\\b"
+    existing_sources:
+      - "clemsail/kiki-electronics"
+
+  kicad-pcb:
+    phase: 4
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "PCB"
+      - "routing"
+      - "DRC"
+      - "copper"
+      - "layer"
+      - "via"
+      - "trace"
+      - "clearance"
+      - "stackup"
+      - "impedance"
+      - "differential pair"
+      - "gerber"
+    patterns:
+      - "\\b(kicad_pcb|DRC|clearance|stackup|impedance|differential.pair|gerber)\\b"
+    existing_sources:
+      - "clemsail/kiki-kicad-pcb"
+
+  web-frontend:
+    phase: 5
+    teacher: "gemma-4-31b"
+    teacher_secondary: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "React"
+      - "Vue"
+      - "Svelte"
+      - "Next.js"
+      - "Vite"
+      - "component"
+      - "state management"
+      - "hook"
+      - "SSR"
+      - "hydration"
+      - "Tailwind"
+    patterns:
+      - "\\b(useState|useEffect|React\\.|Vue\\.|Svelte|Next\\.js|Vite)\\b"
+
+  web-backend:
+    phase: 5
+    teacher: "gemma-4-31b"
+    teacher_secondary: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "API"
+      - "REST"
+      - "GraphQL"
+      - "FastAPI"
+      - "Express"
+      - "Hono"
+      - "middleware"
+      - "endpoint"
+      - "authentication"
+      - "rate limiting"
+      - "database"
+    patterns:
+      - "\\b(FastAPI|Express|Hono|app\\.get|app\\.post|@app\\.route|middleware)\\b"
+
+  music-audio:
+    phase: 5
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "audio"
+      - "music"
+      - "MIDI"
+      - "synthesizer"
+      - "DAW"
+      - "sample rate"
+      - "TTS"
+      - "Piper"
+      - "Web Audio"
+      - "waveform"
+      - "instrument"
+      - "oscillator"
+    patterns:
+      - "\\b(MIDI|AudioContext|sample.rate|synthesizer|TTS|Piper|DAW|wav)\\b"
+
+  devops:
+    phase: 5
+    teacher: "gemma-4-31b"
+    teacher_secondary: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "CI/CD"
+      - "GitHub Actions"
+      - "Terraform"
+      - "Ansible"
+      - "nginx"
+      - "Tailscale"
+      - "SSL"
+      - "monitoring"
+      - "Prometheus"
+      - "Grafana"
+      - "deploy"
+    patterns:
+      - "\\b(GitHub.Actions|Terraform|Ansible|nginx|Tailscale|Prometheus|deploy)\\b"
+
+  llm-orch:
+    phase: 5
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "LLM"
+      - "RAG"
+      - "agent"
+      - "embedding"
+      - "vector"
+      - "Qdrant"
+      - "LangChain"
+      - "prompt"
+      - "fine-tuning"
+      - "LoRA"
+      - "routing"
+      - "orchestration"
+    patterns:
+      - "\\b(RAG|LLM|embedding|Qdrant|LangChain|LoRA|fine.tun|vector.store)\\b"
+
+  math:
+    phase: 6
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    teacher_secondary: "opus-api"
+    target: 2000
+    keywords:
+      - "mathematics"
+      - "equation"
+      - "integral"
+      - "derivative"
+      - "matrix"
+      - "probability"
+      - "statistics"
+      - "physics"
+      - "calculus"
+      - "linear algebra"
+      - "optimization"
+    patterns:
+      - "\\b(integral|derivative|matrix|probability|calculus|equation|theorem)\\b"
+      - "\\$.*\\$"
+
+  security:
+    phase: 6
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "security"
+      - "vulnerability"
+      - "OWASP"
+      - "authentication"
+      - "encryption"
+      - "XSS"
+      - "CSRF"
+      - "SQL injection"
+      - "certificate"
+      - "JWT"
+      - "OAuth"
+      - "penetration"
+    patterns:
+      - "\\b(OWASP|XSS|CSRF|SQL.injection|CVE-|JWT|OAuth|TLS|encryption)\\b"
