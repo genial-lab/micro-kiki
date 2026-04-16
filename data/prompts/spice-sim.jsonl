@@ -1,0 +1,200 @@
+{"prompt": "Write an ngspice netlist for a basic RC low-pass filter and run a transient analysis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the difference between transient, AC, and DC analysis in SPICE simulation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a buck converter in ngspice with realistic MOSFET models?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice script that performs an AC sweep from 1Hz to 10MHz and plots the Bode diagram.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to set up a Monte Carlo analysis in ngspice for component tolerance evaluation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a common-emitter amplifier in SPICE and measure gain and bandwidth?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice schematic directive for a voltage regulator circuit with load step transient.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to import and use manufacturer SPICE models for transistors and ICs.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you perform a parametric sweep in ngspice to optimize a filter corner frequency?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for an op-amp inverting amplifier using a subcircuit model.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the concept of SPICE convergence issues and how to troubleshoot them.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a flyback converter transformer in SPICE using coupled inductors?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice control script that measures rise time and overshoot of a step response.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the difference between .tran, .ac, .dc, .op, and .noise SPICE analysis commands.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate EMI filter performance in SPICE with parasitic element models?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice Monte Carlo simulation that evaluates the spread of op-amp gain-bandwidth product.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model a MOSFET in SPICE using Level 1, Level 3, and BSIM models.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you set up a noise analysis in ngspice for an audio preamplifier circuit?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice simulation for a half-bridge driver with dead-time control.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE behavioral sources (B sources) for modeling custom transfer functions.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a PLL (Phase-Locked Loop) circuit in ngspice?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice script to extract the 3dB bandwidth of a filter from AC analysis data.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .subckt directive and how to create hierarchical circuit models.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a crystal oscillator startup in SPICE transient analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a differential pair amplifier with current mirror load.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model parasitic elements (ESR, ESL) of capacitors in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you perform worst-case analysis in SPICE using corner models?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice simulation for a boost converter with current-mode control loop.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .meas command for automated measurement extraction.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a transmission line in SPICE for signal integrity analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a Wien bridge oscillator and verify the frequency.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to set initial conditions (.ic) in SPICE for proper startup simulation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a voltage reference circuit in SPICE with temperature sweep?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice control script that performs sensitivity analysis on component values.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .model statement for diode, BJT, MOSFET, and JFET devices.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a class-D audio amplifier in SPICE with PWM generation?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice FFT analysis of a power supply output ripple.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE controlled sources (VCVS, VCCS, CCVS, CCCS) for modeling.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a LED driver circuit in SPICE with thermal effects?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of an LC tank resonant circuit and measure Q factor.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the concept of SPICE node naming conventions and how to reference internal nodes.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate an ESD protection network response to an IEC 61000-4-2 waveform?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a Schmitt trigger circuit and verify the hysteresis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to export SPICE simulation data to CSV for post-processing in Python.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a multi-phase interleaved converter in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice simulation for a SEPIC converter with average current control.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .lib and .include directives for organizing model libraries.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a CAN bus transceiver circuit in SPICE for signal integrity?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice script that computes the loop gain and phase margin of a feedback system.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model a transformer with leakage inductance and winding capacitance in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a charge pump circuit in SPICE with flying capacitor?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a Colpitts oscillator and analyze the output spectrum.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to handle SPICE simulation speed vs accuracy trade-offs using options.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a DAC output filter in SPICE with reconstruction effects?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice Monte Carlo analysis of a voltage divider with 1% resistor tolerances.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .options statement (reltol, abstol, vntol, gmin) and their effects.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a motor H-bridge driver in SPICE with inductive load and freewheeling diodes?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation that compares ideal vs real op-amp behavior.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use piecewise linear (PWL) sources for custom waveform generation in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a PI filter for power supply decoupling and measure insertion loss?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice .step param directive for sweeping a component value across a range.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the concept of small-signal analysis in SPICE and extracting AC parameters.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a voltage-controlled oscillator (VCO) in ngspice?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a Sallen-Key active filter with AC response plot.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model a diode's reverse recovery effect in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a power supply under load transient conditions and measure voltage droop?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a Zener diode voltage regulator with load variation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .four command for Fourier analysis and harmonic content measurement.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate crosstalk between two adjacent PCB traces in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a relaxation oscillator using a comparator and RC network.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to create a behavioral model of an ADC in SPICE for mixed-signal simulation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate inrush current limiting circuit behavior in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice control block that runs multiple simulations and collects statistics.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the difference between ngspice, LTspice, and Xyce SPICE simulators.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a current sense amplifier circuit in SPICE with common-mode rejection?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a 555 timer in astable mode and measure frequency.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use subcircuit parameters in SPICE for creating configurable models.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a ferrite bead impedance characteristic in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice simulation for a synchronous buck converter with efficiency calculation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the concept of SPICE convergence: Newton-Raphson iteration and damping.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a thermal shutdown circuit in SPICE with temperature-dependent elements?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a power MOSFET gate driver with bootstrap capacitor.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE to verify stability of a feedback amplifier (loop gain analysis).", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a piezoelectric sensor interface circuit in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a full-wave bridge rectifier with filter capacitor.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model temperature coefficients of components in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a digital-to-analog converter (R-2R ladder) in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice script that measures THD (Total Harmonic Distortion) of an amplifier.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE for pre-layout and post-layout signal integrity verification.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a switched-capacitor filter in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a voltage multiplier (Cockcroft-Walton) circuit.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .save and .print commands for controlling output data.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a snubber circuit effectiveness in reducing voltage ringing?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice Monte Carlo simulation for a bandpass filter center frequency spread.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to automate ngspice simulations from Python using PySpice or subprocess.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a super-capacitor charge/discharge profile in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a current mirror with output impedance analysis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE .alter directive for running multiple configurations in one simulation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate electromagnetic coupling between two circuits on the same PCB?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an LTspice simulation for an active EMI filter using analog cancellation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to create a SPICE model from datasheet parameters (diode, MOSFET).", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a sample-and-hold circuit in SPICE with aperture time analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a phase-shift oscillator with frequency verification.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE .global and .param for parameterized circuit design.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a battery model in SPICE with internal resistance and capacity effects?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation that extracts the input impedance of a circuit vs frequency.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE BSIM3/BSIM4 model parameters for deep-submicron MOSFET simulation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a GaN transistor switching behavior using manufacturer SPICE models?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Debug this: ngspice transient simulation fails with 'timestep too small' error.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Debug this: SPICE AC analysis shows a gain peak that doesn't match the expected response.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Debug this: ngspice Monte Carlo simulation produces identical results for all runs.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Debug this: SPICE simulation of a power converter shows unrealistic efficiency above 100%.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Debug this: ngspice operating point analysis fails to converge for a circuit with feedback.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Design a complete SPICE simulation testbench for a buck converter with control loop.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Design a SPICE simulation workflow for validating an analog front-end circuit.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Design a parametric SPICE simulation suite for a product line with multiple voltage variants.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you set up a mixed-mode simulation combining digital and analog circuits in ngspice?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a transimpedance amplifier for a photodiode.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use ngspice shared library mode for integrating SPICE into custom applications.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate power supply rejection ratio (PSRR) of a linear regulator in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation that models an ADC quantization process with noise floor.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to perform pole-zero analysis (.pz) in SPICE for stability evaluation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a surge protector (MOV + TVS) response to a lightning waveform?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation for a Cuk converter with continuous inductor current.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the concept of SPICE warm-up (skip initial transient) for periodic steady-state analysis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a multi-output power supply with cross-regulation effects?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a sigma-delta modulator with SNR measurement.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a CMOS inverter transfer characteristic and measure switching threshold?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a voltage-controlled filter with tunable corner frequency.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model an ideal transformer with turns ratio in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate power dissipation in individual components using SPICE .meas?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a class-AB push-pull amplifier with crossover distortion analysis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to set up a SPICE testbench for verifying op-amp stability with capacitive load.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a buck converter with load regulation sweep in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a bandgap voltage reference and verify temperature coefficient.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE behavioral voltage sources for implementing lookup tables.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a common-mode filter insertion loss using SPICE AC analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice Monte Carlo analysis for op-amp offset voltage variation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model a lithium-ion battery using a Thevenin equivalent in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a PFC boost converter with power factor measurement in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a Darlington pair with gain and bandwidth analysis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE .step command for sweeping temperature across a range.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate crosstalk between two differential pairs on a PCB in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for an astable multivibrator using two BJTs.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to validate a SPICE model against measured component data.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a half-bridge LLC converter startup sequence in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation that measures power supply output impedance vs frequency.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use ngspice nutmeg scripts for post-processing simulation data.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a low-noise amplifier noise figure using SPICE .noise analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a 3-phase inverter driving an RL load.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model PCB trace impedance as a transmission line in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a Class-E power amplifier for RF applications in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a peak detector circuit with decay time analysis.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE XSPICE code models for mixed analog-digital simulation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a TVS diode clamping response to an ESD waveform in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice control script that runs a parametric sweep and exports results to CSV.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model a coupled inductor (transformer) with K statement in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a voltage doubler charge pump with load regulation in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a monostable multivibrator using a 555 timer.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE .sens command for sensitivity analysis of output to component values.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a thermocouple amplifier with noise analysis in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a Gilbert cell multiplier and verify linearity.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to set convergence hints (rshunt, gmin, off) for difficult SPICE circuits.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a synchronous rectifier timing analysis in a flyback converter?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a precision current source with output impedance measurement.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE .tf command for computing DC transfer function, input, and output resistance.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a PWM dimming circuit for LED drivers in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a twin-T notch filter with Q factor verification.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to simulate component aging effects using parameter variation in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a phase-shift full-bridge converter with ZVS verification in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a Howland current source and measure output impedance.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain the SPICE transient analysis time step algorithms (trapezoidal, Gear) and their implications.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a digital isolator interface (capacitive coupling) in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice Monte Carlo simulation for a Sallen-Key filter with 5% component tolerances.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE for verifying EMI filter attenuation against conducted emissions limits.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a Kelvin bridge measurement circuit in SPICE for low-resistance sensing?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a Schmitt trigger oscillator with frequency and duty cycle measurement.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to create a parameterized SPICE subcircuit for a generic N-channel MOSFET.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a multi-resonant converter (MRC) with multiple resonant tanks in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation that verifies the step response of a closed-loop control system.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE for pre-silicon verification of analog IC designs.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a crystal oscillator Pierce topology with startup time analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of an active inductor using a gyrator circuit.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model non-ideal capacitor behavior (ESR, ESL, leakage) in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a 4-20mA current loop transmitter and receiver in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a differential amplifier CMRR vs frequency.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE for designing compensation networks for power supply control loops.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a varactor-tuned VCO with tuning range verification in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation that compares different op-amp models for a specific application.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to handle SPICE model compatibility between ngspice, LTspice, and PSpice.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a GaN-based totem-pole PFC converter switching waveforms in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a current-mode PWM controller with slope compensation.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to use SPICE to predict output voltage transient response to a load step.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a Wheatstone bridge with signal conditioning amplifier in SPICE?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of an instrumentation amplifier with gain sweep.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Explain how to model thermal coupling between components on the same PCB in SPICE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a power supply rejection ratio (PSRR) of a buck converter vs frequency?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice netlist for a cascode amplifier and measure the gain improvement over CE.", "domain": "spice-sim", "source": "manual"}
+{"prompt": "How do you simulate a multi-loop control system stability using SPICE AC analysis?", "domain": "spice-sim", "source": "manual"}
+{"prompt": "Write an ngspice simulation of a bootstrap gate driver and verify charge pump voltage.", "domain": "spice-sim", "source": "manual"}

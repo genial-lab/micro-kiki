@@ -154,7 +154,7 @@
       "title": "End-to-end smoke test (3 stacks)",
       "description": "**End-to-end smoke test (3 stacks)**\n\n    - Files to touch: `tests/test_e2e_3stacks.py`, `scripts/demo_e2e.py`\n    - Prompt → router → top-2 sigmoid scores → SwitchableModel.apply_stacks → generate → print.\n    - Test cases: \"écris un haïku\" → chat-fr dominant; \"factor 231 into primes\" → reasoning dominant; \"python fastapi hello world\" → python dominant.\n    - Acceptance: all 3 test cases have expected domain in top-2 router picks; generation coherent (no garbled tokens).\n    - Dependencies: steps 20, 21.",
       "priority": 22,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-23",
@@ -378,7 +378,7 @@
       "title": "Group eval after stack 20",
       "description": "**Group eval after stack 20**\n\n    - Files to touch: `results/group-eval-after-20.json`\n    - Run router eval + forgetting check across ALL 20 stacks.\n    - Acceptance: global macro-F1 ≥ 0.75; no stack-forgetting > 3%.\n    - Dependencies: step 53.",
       "priority": 54,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-55",
@@ -497,7 +497,7 @@
       "title": "Full evaluation suite",
       "description": "**Full evaluation suite**\n\n    - Files to touch: `scripts/run_full_eval.sh`, `results/full-eval-v0.1.json`\n    - Run: HumanEval (+ pass@1), GSM8K, MMLU-Pro sample, 32 custom domain evals, latency benchmarks.\n    - Acceptance: consolidated JSON report; compare against base-Qwen3.5-4B numbers; each domain shows ≥ 0.55 win rate; aggregate score ≥ +15% over base.\n    - Dependencies: step 70.",
       "priority": 71,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-72",
@@ -553,7 +553,7 @@
       "title": "Aeon eval + tuning",
       "description": "**Aeon eval + tuning**\n\n    - Files to touch: `scripts/eval_aeon.py`, `results/aeon-eval.json`\n    - Benchmark: MemoryBench (arxiv 2601.15311 supplementary) — 100 multi-turn conversations, measure recall@k, conversation coherence score, token budget saved via compression.\n    - Acceptance: recall@5 ≥ 0.85, coherence score ≥ 0.80, token savings ≥ 3× vs no-memory.\n    - Dependencies: step 77.",
       "priority": 79,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-80",
@@ -595,7 +595,7 @@
       "title": "Bias dataset curation (`data/bias/bias_pairs.jsonl`)",
       "description": "**Bias dataset curation (`data/bias/bias_pairs.jsonl`)**\n\n    - Files to touch: `data/bias/bias_pairs.jsonl`, `scripts/curate_bias_dataset.py`\n    - ~5000 pair examples: (biased_prompt, fair_prompt, expected_behavior). Mix: confirmation, anchoring, authority, recency, framing, stereotyping. Sources: StereoSet, CrowS-Pairs, BBQ, DeFrame seed set.\n    - Acceptance: ≥ 5000 pairs, balanced across 6 bias types (≥ 500 each), 95 %+ valid JSONL.\n    - Dependencies: none.",
       "priority": 85,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-86",
@@ -616,7 +616,7 @@
       "title": "Validate base debiased preserves capacity (`scripts/eval_base_knowbias.py`)",
       "description": "**Validate base debiased preserves capacity (`scripts/eval_base_knowbias.py`)**\n\n    - Files to touch: `scripts/eval_base_knowbias.py`, `results/base-knowbias-eval.json`\n    - Run full eval suite (HumanEval, GSM8K, MMLU-Pro) on base-knowbias vs base.\n    - Acceptance: no benchmark drops more than 2 pp.\n    - Dependencies: step 87.",
       "priority": 88,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-89",
@@ -651,7 +651,7 @@
       "title": "Anti-bias integration + eval",
       "description": "**Anti-bias integration + eval**\n\n    - Files to touch: `src/cognitive/antibias.py` (orchestrator), update serving pipeline, `results/antibias-eval.json`\n    - Orchestration: RBD runs on every response; if flagged, trigger DeFrame-style re-generation with inverted framing (optional fallback).\n    - Full eval: StereoSet, CrowS-Pairs, BBQ, custom framing dataset. Compare pre vs post full antibias stack.\n    - Acceptance: aggregate bias score drops ≥ 50 % vs vanilla micro-kiki; capacity retention ≥ 95 %.\n    - Dependencies: step 92.",
       "priority": 93,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-94",
@@ -679,7 +679,7 @@
       "title": "Integration test (router HTTP)",
       "description": "**Integration test (router HTTP)**\n\n    - Files to touch: `tests/test_integration_http.py`\n    - Spawn router sidecar + vLLM (or mlx-server) in pytest fixture, send 20 queries spanning 10 domains, assert each hits correct top-2 stacks.\n    - Acceptance: 20/20 queries routed correctly; test completes in < 60 s.\n    - Dependencies: step 94 OR step 95.",
       "priority": 97,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-98",
@@ -728,7 +728,7 @@
       "title": "End-to-end v0.2 acceptance test",
       "description": "**End-to-end v0.2 acceptance test**\n\n    - Files to touch: `tests/test_e2e_v02_acceptance.py`, `results/e2e-v02-acceptance.json`\n    - 20 real-world prompts spanning the 7 meta-intents (quick-reply, coding, reasoning, creative, research, agentic, tool-use). Each prompt exercises the full pipeline: Dispatcher → Aeon recall → Meta-router → Base (DiffAttn + KnowBias) + top-2 stacks → Negotiator (if disagreement) → RBD anti-bias → response.\n    - Verify: (a) response produced for each, (b) Aeon writes the turn, (c) router correctly activates 2-4 stacks matching the prompt domain, (d) Negotiator triggers on the 3 pre-planted conflict prompts, (e) RBD flags the 2 pre-planted biased prompts and DeFrame re-gen triggers, (f) final response passes manual quality check (user-reviewed), (g) aggregate latency p95 < 3s (fast judge) / p95 < 6s (deep judge).\n    - Acceptance: 20/20 prompts produce a response; all 7 meta-intents covered; all component triggers fire when planted; no regression vs any individual component eval; user signs off on a sample of 5 responses.\n    - Dependencies: all prior phases (I through XIII).",
       "priority": 104,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-105",
@@ -742,14 +742,14 @@
       "title": "HuggingFace release",
       "description": "**HuggingFace release**\n\n    - Files to touch: `.github/workflows/hf-release.yml`, HF repo `electron-rare/micro-kiki-v0.2`\n    - Upload: base-model reference (link to Qwen), compact base chi=32 (optional), 32 MoLoRA adapter .safetensors, QTHA stack-02 (optional), router.pt (+ tn-router.pt if merged), model card, eval results.\n    - Acceptance: `huggingface-cli download electron-rare/micro-kiki-v0.2` works from clean env; model card renders.\n    - Dependencies: step 105.",
       "priority": 106,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-107",
       "title": "Model card + cookbook",
       "description": "**Model card + cookbook**\n\n    - Files to touch: `MODEL_CARD.md`, `COOKBOOK.md`, `examples/` dir\n    - Document: intended use, limitations, training data, eval scores, quantum-inspired overlay results (CompactifAI / QTHA / TN-router), 5+ runnable examples (chat-fr, code, SPICE, KiCad, reasoning).\n    - Acceptance: all examples in COOKBOOK run green in CI; model card passes HF lint.\n    - Dependencies: step 106.",
       "priority": 107,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-118",

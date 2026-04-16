@@ -135,3 +135,66 @@
 {"prompt": "Design an active OR circuit for high-side power path selection between two supply sources.", "domain": "power", "source": "manual"}
 {"prompt": "Explain the concept of ceramic capacitor voltage derating and its impact on filter design.", "domain": "power", "source": "manual"}
 {"prompt": "How do you design a power supply for automotive applications meeting ISO 7637 transient requirements?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for a half-bridge LLC resonant converter gain characteristic.", "domain": "power", "source": "manual"}
+{"prompt": "Design a dual-active-bridge (DAB) converter for bidirectional energy storage.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of valley switching in quasi-resonant flyback converters.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a coupled inductor for a multiphase buck converter?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for calculating output voltage ripple including ESR and capacitance contributions.", "domain": "power", "source": "manual"}
+{"prompt": "Design a high-side current sense circuit using a differential amplifier.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of duty cycle loss in bridge converters due to leakage inductance.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a solid-state relay driver circuit with zero-crossing detection?", "domain": "power", "source": "manual"}
+{"prompt": "Write the small-signal model of a current-mode controlled buck converter.", "domain": "power", "source": "manual"}
+{"prompt": "Design a battery management system (BMS) front-end with cell balancing and protection.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of EMI common-mode noise generation in isolated converters.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a voltage multiplier for generating high voltage from a low-voltage source?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for optimal dead-time calculation in a synchronous buck converter.", "domain": "power", "source": "manual"}
+{"prompt": "Design a resonant gate driver for GaN FETs to reduce gate drive losses.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of valley current control vs peak current control.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a passive balancing circuit for a 4-series lithium battery pack?", "domain": "power", "source": "manual"}
+{"prompt": "Write the analysis for output impedance of a buck converter with closed-loop control.", "domain": "power", "source": "manual"}
+{"prompt": "Design a power factor correction (PFC) stage using a totem-pole bridgeless topology.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of Volt-second balance in inductor design for steady-state operation.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a switched-capacitor voltage divider for high-efficiency conversion?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for estimating conduction loss in a rectifier diode including forward voltage and resistance.", "domain": "power", "source": "manual"}
+{"prompt": "Design an isolated gate driver power supply using a bootstrap or charge pump.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of input current harmonics in single-phase rectifiers.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a power supply that regulates both voltage and current for lab bench use?", "domain": "power", "source": "manual"}
+{"prompt": "Write the transformer design equations for a full-bridge converter with center-tapped secondary.", "domain": "power", "source": "manual"}
+{"prompt": "Design a USB-C PD source that provides 5V/9V/15V/20V programmable output.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of high-side vs low-side current sensing and their trade-offs.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a motor brake circuit using regenerative energy recovery?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for calculating MOSFET switching loss from datasheet parameters.", "domain": "power", "source": "manual"}
+{"prompt": "Design a power supply with output voltage tracking for controlled sequencing.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of equivalent series resistance (ESR) and its temperature dependence.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a magnetic amplifier for post-regulation in multi-output converters?", "domain": "power", "source": "manual"}
+{"prompt": "Write the efficiency calculation for a synchronous buck including gate drive, conduction, and switching losses.", "domain": "power", "source": "manual"}
+{"prompt": "Design a wireless charging receiver coil matching network for 6.78MHz.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of capacitor ripple current rating and lifetime estimation.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design an active bridge rectifier using MOSFETs for improved efficiency?", "domain": "power", "source": "manual"}
+{"prompt": "Write the loop compensation design for a voltage-mode buck converter with Type-II compensator.", "domain": "power", "source": "manual"}
+{"prompt": "Design a solar panel IV curve tracer circuit for characterizing photovoltaic modules.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of minimum load requirement in SMPS and how to handle no-load conditions.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a TVS diode protection circuit for a 48V bus?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for resonant frequency and characteristic impedance of an LLC converter.", "domain": "power", "source": "manual"}
+{"prompt": "Design a battery charger with temperature-compensated voltage for lead-acid batteries.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of audible noise in MLCC capacitors and piezoelectric effects.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a power combiner for merging outputs of parallel power modules?", "domain": "power", "source": "manual"}
+{"prompt": "Write the thermal analysis for a power MOSFET including junction-to-case and case-to-ambient resistances.", "domain": "power", "source": "manual"}
+{"prompt": "Design a high-voltage DC-DC converter for photovoltaic inverter applications (400V to 48V).", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of input impedance interaction between cascaded power converters.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a current-limited soft-start for hot-swappable power modules?", "domain": "power", "source": "manual"}
+{"prompt": "Write the selection criteria for choosing between ceramic, electrolytic, and polymer capacitors in SMPS.", "domain": "power", "source": "manual"}
+{"prompt": "Design a power monitoring system that measures voltage, current, and power factor in real-time.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of control loop crossover frequency selection and its impact on transient response.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a fault-tolerant power supply with N+1 redundancy?", "domain": "power", "source": "manual"}
+{"prompt": "Write the equations for inductor core loss including frequency and flux density dependence.", "domain": "power", "source": "manual"}
+{"prompt": "Design a precision laboratory power supply with 1mV resolution and remote programming.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of PCB layout best practices for the switching node in a buck converter.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a linear post-regulator after a switching converter for ultra-low noise?", "domain": "power", "source": "manual"}
+{"prompt": "Write the design procedure for a coupled inductor used in a two-phase interleaved converter.", "domain": "power", "source": "manual"}
+{"prompt": "Design a power supply for an audio amplifier with separate analog and digital ground domains.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of current sharing using droop method vs active current sharing.", "domain": "power", "source": "manual"}
+{"prompt": "How do you design a MOSFET-based ideal diode for reverse polarity protection?", "domain": "power", "source": "manual"}
+{"prompt": "Write the analysis for a boost converter operating at the boundary of CCM/DCM.", "domain": "power", "source": "manual"}
+{"prompt": "Design a power supply for an LED matrix display with constant current regulation per string.", "domain": "power", "source": "manual"}
+{"prompt": "Explain the concept of Kelvin sensing for accurate output voltage measurement in regulators.", "domain": "power", "source": "manual"}

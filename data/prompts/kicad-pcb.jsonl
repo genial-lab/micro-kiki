@@ -1,0 +1,200 @@
+{"prompt": "How do you create a custom schematic symbol in KiCad 8 for a new IC with 48 pins?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad PCB design workflow from schematic capture to Gerber generation.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a QFP-48 package with thermal pad following IPC-7351 standards.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you set up design rules (DRC) in KiCad for a 4-layer PCB with 6/6 mil trace/space?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use hierarchical sheets in KiCad for organizing a complex schematic.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you generate Gerber files and drill files from KiCad for PCB fabrication?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad BOM (Bill of Materials) export script using the Python scripting interface.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create differential pair traces in KiCad with controlled impedance?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad footprint wizard system and how to create parametric footprints.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you set up a 4-layer PCB stackup in KiCad with proper layer assignments?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that adjusts all resistor footprints to a different size.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad 3D viewer and assign 3D models to footprints.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you route a USB differential pair in KiCad with proper impedance matching?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write the steps for creating a custom PCB outline shape in KiCad with mounting holes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad net class system for defining different trace widths and clearances.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a copper pour (ground plane) with thermal relief pads in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad plugin that checks component placement against a placement template.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad length matching tool for high-speed parallel buses.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you import a netlist from another EDA tool into KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a BGA-256 package with proper pad and solder mask definitions.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad interactive router with push-and-shove routing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a panelized PCB design in KiCad for production?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates a position (pick-and-place) file for assembly.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad variant management for building multiple configurations.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you add fiducial markers for machine vision alignment in a KiCad PCB layout?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad DRC custom rule for checking trace width based on current carrying requirements.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad library management system: global vs project-specific libraries.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a flex PCB design in KiCad with proper bend radius constraints?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for an edge-mount SMA connector with proper pad geometry.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad SPICE integration for simulating schematic circuits.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you configure KiCad for designing an RF PCB with proper ground plane and shielding?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad schematic symbol for a multi-unit IC (e.g., quad op-amp) with power pins.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad zone fill algorithm and how to optimize copper pour for thermal management.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a via stitching pattern in KiCad for improved ground plane connectivity?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that exports a netlist and compares it with a reference for regression testing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad pad properties for custom pad shapes and solder paste openings.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you route impedance-controlled traces in KiCad using the built-in calculator?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad design review checklist for a 6-layer mixed-signal PCB.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to create a custom KiCad library with proper naming conventions (KLC).", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you add keepout zones and restricted areas in a KiCad PCB layout?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that checks all components have assigned footprints.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad's scripting console for automating repetitive PCB tasks.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a thermal pad pattern with vias for QFN/DFN packages in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a castellated module with edge-plated half-holes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad annotation and back-annotation workflow between schematic and PCB.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a multi-channel design in KiCad using repeated hierarchical blocks?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for minimum annular ring on vias.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to export KiCad PCB designs to STEP format for mechanical integration.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a teardrops on trace-to-pad connections in KiCad for improved reliability?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates a manufacturing documentation PDF.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad ERC (Electrical Rules Check) error types and how to resolve them.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create an embedded component footprint (component buried in PCB) in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad library footprint for a USB-C receptacle with proper pin mapping.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad for designing a PCB antenna (trace antenna, chip antenna matching).", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you manage revisions and version control for KiCad projects with Git?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule that checks copper-to-edge clearance for V-score panels.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad field editor and how to bulk-edit component properties.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a coplanar waveguide (CPW) trace in KiCad with ground coplanar return?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that extracts all unique component values and quantities.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad track length tuning feature with meander patterns.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a PCB with both SMD and through-hole components in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a card-edge connector with beveled PCB edge.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad custom pad shapes for irregular land patterns.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a split ground plane in KiCad with proper connection between analog and digital sections?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad plugin for generating a test point report from the PCB design.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad pad-to-mask and pad-to-paste clearance settings for different assembly processes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a PCB for a power supply with proper thermal relief and current-carrying traces?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for high-voltage creepage and clearance distances.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad groups for organizing and moving related components together.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a multi-board project in KiCad with inter-board connections?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates a comprehensive DFM (Design for Manufacturing) report.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad interactive router settings for differential pairs and tuning.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you add logo and silkscreen artwork to a KiCad PCB from an image file?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a heatsink with mounting hardware and thermal interface.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to configure KiCad for JLCPCB or PCBWay manufacturing requirements.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you use the KiCad PCB editor measurement tool for verifying dimensions?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad schematic that includes power flags and proper power symbols for clean ERC.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad bus definitions in schematic for organized multi-bit connections.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a PCB design with blind and buried vias in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that checks all vias have proper net assignments.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad footprint courtyard rules and their impact on component spacing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a high-current PCB trace with proper width calculation in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for checking minimum via-to-via spacing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to import Eagle designs into KiCad and resolve compatibility issues.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create assembly drawings and fabrication notes in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a press-fit connector that requires precise hole tolerances.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad differential pair router for DDR memory routing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a PCB heater element using trace resistance in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that validates the stackup against manufacturer capabilities.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad CLI export commands for automating Gerber and BOM generation.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a PCB with controlled impedance traces verified by the stack-up calculator?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad schematic template with standard decoupling and protection circuits.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad's zone priority system for overlapping copper pours.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a PCB with both rigid and flex sections in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that checks for unconnected pads after routing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad grid system and how to use different grids for placement and routing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create solder mask openings for exposed copper features in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for checking component-to-board-edge clearance.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad footprint assignment tool for efficient component mapping.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a test jig PCB (bed of nails) in KiCad for production testing?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Debug this: KiCad DRC reports 'unconnected items' but all nets appear routed visually.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Debug this: KiCad copper pour doesn't fill around certain pads despite proper settings.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Debug this: KiCad 3D model appears rotated incorrectly on a footprint.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Debug this: KiCad differential pair router refuses to route between specific pads.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Debug this: KiCad ERC shows false errors on power pins with proper power flags.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Design a complete KiCad project template for a 4-layer IoT sensor board.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Design a KiCad library management workflow for a team of hardware engineers.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Design a KiCad CI/CD pipeline that validates schematics and generates outputs automatically.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you set up KiCad for automotive PCB design with IATF 16949 requirements?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python action plugin that auto-places bypass capacitors near their associated ICs.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to create a reusable design block in KiCad (schematic + layout) for common subcircuits.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you use KiCad's electrical rules to detect missing pull-up resistors on I2C lines?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates a wiring diagram from the schematic.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad simulation model assignment and how to run AC/DC/transient analysis.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create copper text and graphics on a KiCad PCB for branding or identification?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad plugin that checks component availability from JLCPCB's parts library.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad IPC footprint naming convention for component libraries.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a PCB coil/inductor using spiral traces in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a complete KiCad output job file for generating all manufacturing deliverables.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to handle KiCad schematic power symbols for multi-voltage designs.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you use KiCad's built-in PCB calculator for trace width, via current, and impedance?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint with custom solder paste aperture patterns for QFN thermal pads.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad for designing a DDR3/DDR4 memory interface PCB layout.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad schematic with proper net labels and global labels for complex designs?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that exports component coordinates for automated optical inspection.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad PCB layer usage: copper layers, technical layers, and user layers.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad footprint for a through-hole connector with polarization key?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that highlights all traces shorter than a minimum length.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad text variable system for dynamic fields in schematics and PCBs.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create staggered vias for BGA breakout routing in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for checking solder paste coverage percentage on pads.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad's pad connection type (solid, thermal relief, none) for different applications.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad footprint with multiple pad shapes on a single pin?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates a testpad grid for bare-board testing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad ERC pin types (input, output, bidirectional, passive, power) and their connections.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad schematic symbol with alternate body styles (De Morgan)?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad plugin that generates a wire-bonding diagram for chip-on-board designs.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad constraints for minimum track width on specific net classes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a panelization layout with breakaway tabs and V-scores in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that validates all component references follow a naming convention.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad footprint anchor and reference point conventions.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad footprint for a module with components on both sides?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for checking silkscreen-to-pad clearance.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use the KiCad cross-probing between schematic editor and PCB editor.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create thermal spokes configuration for different pad sizes in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that exports a clickable HTML BOM with component links.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad pad stack definition for through-hole pads with different layer shapes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create rounded rectangular pads and custom polygonal pads in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a TO-263 (D2PAK) power package with proper thermal pad.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to configure KiCad for generating IPC-2581 manufacturing data.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad schematic with multiple power domains and proper net naming?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad plugin that performs automatic via stitching along a zone boundary.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad interactive router difference between walkaround and shove modes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create test coupons (impedance, via daisy chain) on a panel in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that extracts and reports the total trace length per net.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad custom design rules for creepage distance in high-voltage designs.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a back-drilled via definition in KiCad for high-speed designs?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a spring-loaded pogo pin connector array.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad plot settings for generating fabrication outputs (Gerber, Excellon, PDF).", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you route a high-speed serial interface (USB 3.0, PCIe) in KiCad with proper length matching?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that checks for DFM violations like acid traps and slivers.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad netlist export for integration with external PDN analysis tools.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad board outline from a DXF file imported from mechanical CAD?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule that checks trace-to-mounting-hole clearance.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad origin and grid alignment for maintaining mechanical accuracy.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a meander line for single-ended length matching in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a surface-mount crystal oscillator with ground pad.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad PCB editor measurement and dimensioning tools for fab documentation.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad component with multiple footprint options selectable at assignment time?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates a graphical layer stackup diagram.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to configure KiCad for designing PCBs with metal-core or IMS substrates.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad footprint for a QFN package with corner thermal pads?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for checking minimum copper area for current-carrying polygons.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad revision system and how to track design changes.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a PCB with slots and complex board cutouts in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad plugin that generates thermal relief patterns based on current requirements.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad for designing PCBs with castellated edge pads for module designs.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you route a high-pin-count BGA with dog-bone via fanout in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that generates component placement density statistics.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to configure KiCad drill pairs for blind and buried vias in an HDI stackup.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad schematic template with reusable power supply sub-sheets?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule that validates pad-to-courtyard spacing.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad component fields system and how to use custom fields for BOM data.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a KiCad footprint with embedded passive component pads?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that auto-generates silkscreen reference designators avoiding pad overlap.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad diff tools for comparing schematic and PCB revisions.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a guard trace and guard ring in KiCad for high-impedance analog signals?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a micro-BGA package with 0.4mm pitch.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad action plugin API and how to extend the PCB editor with custom tools.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you configure KiCad for generating ODB++ manufacturing output format?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad Python script that validates via sizes against the current stackup capabilities.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to create a KiCad footprint library from manufacturer-provided EDA data.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you design a stitching capacitor placement strategy in KiCad for high-speed decoupling?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for checking maximum via aspect ratio.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain the KiCad net inspector and how to use it for analyzing net connectivity.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a PCB design with embedded antenna matching network in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad footprint for a SOT-23-6 package with correct pin numbering.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Explain how to use KiCad schematic simulation directives for SPICE simulation.", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "How do you create a PCB with gold fingers for card-edge contacts in KiCad?", "domain": "kicad-pcb", "source": "manual"}
+{"prompt": "Write a KiCad custom DRC rule for minimum copper feature width on outer layers.", "domain": "kicad-pcb", "source": "manual"}

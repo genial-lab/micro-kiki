@@ -148,3 +148,54 @@
 {"prompt": "Write code for an MQTT-based device command queue with guaranteed delivery and ordering.", "domain": "iot", "source": "manual"}
 {"prompt": "Explain the Zigbee frequency agility mechanism for avoiding interference.", "domain": "iot", "source": "manual"}
 {"prompt": "How do you implement a continuous integration pipeline for IoT firmware with hardware-in-the-loop testing?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a lightweight CBOR-based telemetry protocol for bandwidth-constrained IoT links.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a mesh self-healing algorithm that reroutes when a Zigbee node fails?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for an MQTT topic ACL system that restricts devices to their own namespace.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement store-and-forward messaging for intermittently connected IoT devices.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design a LoRaWAN-based water meter reading system with Class A endpoints?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a BLE connection manager that handles reconnection, bonding cache, and MTU exchange.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the MQTT Will Delay Interval in v5.0 and how it prevents false disconnection alerts.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement certificate pinning on constrained IoT devices for TLS communication?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a LoRa-based alarm system that sends alerts with acknowledgment and retry.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement data deduplication on an IoT gateway to avoid duplicate cloud writes.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design a BLE-based door lock with secure bonding and anti-replay protection?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a CoAP server with observable resources that notifies on value change only.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement device twin reconciliation when an IoT device reconnects after long offline.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design a Zigbee-based smart lighting system with scene control and group dimming?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a GPS-equipped IoT tracker that optimizes fix rate based on motion detection.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the LoRaWAN MAC commands for link check, duty cycle, and ADR negotiation.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a lightweight message queuing system on an IoT edge gateway?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a BLE health thermometer service compliant with Bluetooth SIG profile.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement end-to-end encryption for MQTT payloads independent of TLS.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design a Zigbee-to-cloud bridge with local buffering and batch uploads?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for an IoT device that negotiates MTU and connection interval for optimal BLE throughput.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement a LoRaWAN network server that handles join requests and session keys.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design an MQTT-based event sourcing architecture for IoT state management?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a CoAP resource that returns sensor data in both JSON and CBOR formats.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the WiFi provisioning protocols (SmartConfig, SoftAP, BLE provisioning) for IoT devices.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a rolling key authentication system for IoT devices without a secure element?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a BLE-based proximity alert system using RSSI filtering.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement adaptive sampling rate on an IoT sensor based on signal variability.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design a multi-tenant MQTT broker architecture for IoT SaaS products?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a LoRa relay node that retransmits packets for range extension.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the Zigbee install code mechanism for secure device commissioning.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a local decision engine on an IoT gateway that acts without cloud connectivity?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a BLE GATT client that reads characteristics from multiple services on a peripheral.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement firmware rollback on an IoT device after a failed OTA update.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design an MQTT-based telemetry pipeline with Apache Kafka for high-throughput ingestion?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a CoAP server that implements block-wise transfer for firmware updates.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the Matter (formerly CHIP) commissioning flow and device onboarding.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a device health scoring system based on uptime, battery, and signal quality?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a BLE notification-based real-time data streaming service.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement geo-fencing on an IoT tracker with low-power wake-on-motion.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design a LoRaWAN-based parking sensor network with occupancy detection?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for an MQTT client library wrapper with automatic serialization and type safety.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the Zigbee binding table and how it enables direct device-to-device communication.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a distributed IoT system that continues operating during network partitions?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a BLE scanner whitelist that only connects to pre-authorized devices.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain how to implement power budgeting for a battery-powered IoT device with multiple radios.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you design an IoT data pipeline with real-time anomaly detection using stream processing?", "domain": "iot", "source": "manual"}
+{"prompt": "Write code for a LoRaWAN device that implements confirmed uplinks with retry backoff.", "domain": "iot", "source": "manual"}
+{"prompt": "Explain the BLE 5.4 features: PAwR (Periodic Advertising with Responses) for electronic shelf labels.", "domain": "iot", "source": "manual"}
+{"prompt": "How do you implement a secure device identity management system for large-scale IoT deployments?", "domain": "iot", "source": "manual"}
+{"prompt": "Design an indoor environmental monitoring IoT system with CO2, temperature, humidity, and air pressure sensors.", "domain": "iot", "source": "manual"}

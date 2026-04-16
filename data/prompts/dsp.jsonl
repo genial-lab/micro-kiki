@@ -1,0 +1,200 @@
+{"prompt": "Write a C implementation of a FIR low-pass filter with 32 taps using fixed-point Q15 arithmetic.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the difference between FIR and IIR filters and when to use each type.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement an FFT (Fast Fourier Transform) using the Cooley-Tukey radix-2 algorithm in C?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a second-order IIR biquad filter with configurable low-pass, high-pass, and band-pass modes.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the sampling theorem and what happens when a signal is undersampled (aliasing).", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you design a digital PID controller with anti-windup for a motor speed control application?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a fixed-point implementation of the CORDIC algorithm for computing sine and cosine.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of windowing functions (Hamming, Hanning, Blackman) and their spectral properties.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a real-time audio equalizer using a bank of biquad IIR filters?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a moving average filter optimized for embedded implementation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the z-transform and how to use it to analyze discrete-time systems.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a decimation filter for reducing the sample rate of an ADC signal?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a Goertzel algorithm implementation for detecting a specific frequency (DTMF tone detection).", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of linear convolution vs circular convolution and the overlap-add method.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you design a notch filter to remove a specific frequency (e.g., 50Hz hum) from a signal?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a sample rate converter (interpolation + filtering + decimation) in C.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of quantization noise and signal-to-noise ratio in ADC systems.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Kalman filter for sensor data smoothing on a microcontroller?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a real-time spectrum analyzer using FFT with magnitude and phase output.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of filter stability and how to verify IIR filter pole locations.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement an adaptive noise cancellation filter using the LMS algorithm?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a DDS (Direct Digital Synthesis) sine wave generator with phase accumulator.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of oversampling and noise shaping in sigma-delta ADC.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a phase-locked loop (PLL) in software for frequency tracking?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a fixed-point Q15 multiplication function with proper rounding and saturation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Discrete Cosine Transform (DCT) and its applications.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you design a CIC (Cascaded Integrator-Comb) filter for sample rate conversion?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a peak detector algorithm for audio level metering with attack and release times.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of group delay and why it matters for audio processing.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a cross-correlation function for detecting signal similarity?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a polyphase FIR filter implementation for efficient multi-rate signal processing.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of transfer function representation (poles and zeros) for digital filters.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a power spectral density (PSD) estimation using Welch's method?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an echo/delay audio effect with feedback and wet/dry mix controls.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the bilinear transform method for converting analog filter designs to digital.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a real-time pitch detection algorithm (autocorrelation or YIN method)?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a compressor/limiter audio processor with configurable threshold and ratio.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of digital filter coefficient sensitivity and finite word length effects.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Hilbert transform for computing the analytic signal and envelope?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a chirp signal generator (linear frequency sweep) for system identification.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of all-pass filters and their use in phase equalization.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a median filter for impulse noise removal from sensor data?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a voice activity detector (VAD) using energy and zero-crossing rate.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of spectral leakage in FFT and how windowing mitigates it.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you design a multiband compressor for audio mastering with crossover filters?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a real-time audio resampler using polyphase sinc interpolation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of minimum phase vs linear phase filters and their trade-offs.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital oscillator that avoids amplitude drift over time?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a noise gate audio processor with hysteresis.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Z-transform region of convergence (ROC) for system analysis.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a chorus audio effect using modulated delay lines?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a decimation-in-frequency FFT implementation optimized for ARM Cortex-M4 with SIMD.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the Parks-McClellan algorithm for designing optimal equiripple FIR filters.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital AM/FM demodulator for software-defined radio?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a reverb audio effect using a feedback delay network (FDN).", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Discrete Wavelet Transform (DWT) and its multiresolution analysis.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a frequency domain FIR filter using overlap-save method?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a tone generator that produces DTMF signals for telephone dialing.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of circular addressing and bit-reversal for FFT on DSP processors.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you design a digital crossover network for a multi-way speaker system?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a fractional delay line using linear interpolation for audio effects.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the short-time Fourier transform (STFT) and the spectrogram.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a recursive FFT for streaming data processing?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a pitch shifter algorithm using time-domain overlap-add (TD-OLA) method.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of matched filtering and its application in radar signal processing.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital AGC (Automatic Gain Control) for maintaining constant signal level?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a cascaded second-order sections (SOS) IIR filter for numerical stability.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of control theory transfer functions and how to implement them digitally.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a state-space controller with observer on a microcontroller?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a frequency estimation algorithm using zero-crossing detection.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Gibbs phenomenon in truncated Fourier series and filter design.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you design a feedback controller for a closed-loop motor control system?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a harmonics analyzer that measures THD (Total Harmonic Distortion).", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of sigma-delta modulation for DAC output with noise shaping.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a beamforming algorithm for a microphone array?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a phase vocoder for time-stretching audio without changing pitch.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of fixed-point arithmetic overflow and saturation strategies.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital parametric equalizer with adjustable center frequency, Q, and gain?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a real-time audio FFT with magnitude display using dB scale.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of IIR filter design using Butterworth, Chebyshev, and Elliptic approximations.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital phase detector for measuring phase difference between two signals?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a convolution reverb engine that applies impulse responses to audio signals.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of lattice filter structures and their advantages for adaptive filtering.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Cepstrum analysis for echo detection and removal?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a waveform table oscillator with anti-aliased wavetable synthesis.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Discrete Hilbert Transform and its use in single-sideband modulation.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital integrator and differentiator with proper DC blocking?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a bode plot generator that computes magnitude and phase of a digital filter.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of interpolation (upsampling) and its relationship to anti-imaging filters.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a recursive least squares (RLS) adaptive filter for echo cancellation?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a fixed-point 256-point FFT optimized for ARM CMSIS-DSP library.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of dithering and noise shaping for improving DAC resolution.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a comb filter for creating flanger and phaser audio effects?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a signal envelope follower with configurable attack and release times.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of multirate signal processing and polyphase decomposition.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital lock-in amplifier for extracting weak signals from noise?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a fast convolution implementation using FFT with overlap-add for long FIR filters.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the impulse invariance method for IIR filter design.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Wiener filter for optimal noise reduction?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a real-time noise reduction algorithm using spectral subtraction.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the discrete-time Lyapunov stability for digital control systems.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement an NLMS (Normalized LMS) adaptive filter for system identification?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a vocoder (channel vocoder) for audio synthesis and voice transformation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of coefficient quantization effects on IIR filter frequency response.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a zero-phase filtering technique using forward-backward filtering?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a digital wah-wah effect using a swept bandpass filter.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of ergodicity and stationarity in the context of signal statistics.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a vibrato effect using a modulated delay line?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a real-time spectral analysis tool using the sliding DFT algorithm.", "domain": "dsp", "source": "manual"}
+{"prompt": "Debug this: FIR filter produces output with DC offset even though the input has no DC component.", "domain": "dsp", "source": "manual"}
+{"prompt": "Debug this: IIR filter output grows unbounded after running for several minutes.", "domain": "dsp", "source": "manual"}
+{"prompt": "Debug this: FFT magnitude shows incorrect frequency values for known test signals.", "domain": "dsp", "source": "manual"}
+{"prompt": "Debug this: Audio compressor creates audible clicking artifacts at high compression ratios.", "domain": "dsp", "source": "manual"}
+{"prompt": "Debug this: Fixed-point filter implementation gives different results than the floating-point reference.", "domain": "dsp", "source": "manual"}
+{"prompt": "Design a real-time audio processing pipeline with noise reduction, EQ, and dynamic compression.", "domain": "dsp", "source": "manual"}
+{"prompt": "Design a digital control system for a DC motor with position and velocity feedback.", "domain": "dsp", "source": "manual"}
+{"prompt": "Design a vibration monitoring system with FFT analysis and alarm thresholds.", "domain": "dsp", "source": "manual"}
+{"prompt": "Design a multi-channel audio mixer with per-channel EQ and effects processing.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Mel-Frequency Cepstral Coefficients (MFCC) feature extractor for speech?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a digital distortion/clipping effect with configurable waveshaping curves.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Hilbert-Huang Transform and Empirical Mode Decomposition.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a block-based convolution engine for real-time audio processing?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a stereo panning algorithm with constant-power crossfade.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Goertzel algorithm vs FFT for detecting individual frequencies.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you optimize DSP algorithms for SIMD (NEON/SSE) instruction sets?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write a de-emphasis filter implementation for processing FM audio or vinyl records.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of latency in real-time DSP systems and how to minimize it.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a frequency domain pitch shifter using phase vocoder techniques?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a DC removal filter using a first-order high-pass IIR filter.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the bilinear transform frequency warping and pre-warping correction.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a tremolo effect using amplitude modulation with an LFO?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an auto-tuner that detects pitch and applies correction in real time.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Gabor transform and its time-frequency resolution trade-off.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Leslie speaker simulation with rotating horn and baffle effects?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a half-band FIR filter for efficient 2x decimation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of anti-aliasing in audio sample rate conversion.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a spectral gate noise reduction algorithm?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a parametric shelving EQ filter with adjustable gain and frequency.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the minimum phase reconstruction from magnitude spectrum.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a ring modulator effect for audio synthesis?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an octave band spectrum analyzer with proper filter bank design.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the STFT overlap ratio and its effect on reconstruction quality.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a Linkwitz-Riley crossover filter for multi-way speaker systems?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an automatic level control (ALC) with slow attack and fast release.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the analytic signal and instantaneous frequency estimation.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a de-esser for reducing sibilance in vocal recordings?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a frequency shifter using Hilbert transform and SSB modulation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Prony method for exponential signal analysis.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a loudness meter conforming to ITU-R BS.1770?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a granular synthesis engine with adjustable grain size and density.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Goertzel algorithm computational complexity vs full FFT.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a true peak meter for detecting inter-sample peaks?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a feedback delay network reverb with energy-preserving mixing matrix.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of phase unwrapping and its importance in phase-based signal processing.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a sub-bass synthesizer that generates harmonics from a low-frequency input?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a stereo width control using mid-side processing.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of convolution theorem and how it enables frequency-domain filtering.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital servo controller with feedforward compensation?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a click and pop detection algorithm for audio restoration.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Goertzel filter bank for multi-tone detection.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a dynamic EQ that adjusts filter gain based on input level?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a formant synthesis engine for vowel sound generation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of cascading biquad sections for higher-order filter implementation.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a transient shaper for emphasizing or suppressing attack transients?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a real-time autocorrelation pitch detector optimized for monophonic signals.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of impulse response measurement using swept sine and deconvolution.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a sidechain compressor for ducking music under voice?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a digital delay line with tap outputs and feedback routing.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of linear prediction coding (LPC) for speech compression.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a harmonic exciter that adds controlled distortion for brightness?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an A-weighting filter implementation for sound level measurement.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the discrete prolate spheroidal sequences (DPSS) for spectral estimation.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a multi-band dynamics processor with per-band threshold and ratio?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a pitch-synchronous overlap-add (PSOLA) algorithm for voice modification.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of spectral centroid and other audio feature descriptors.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a real-time convolution processor that handles long impulse responses?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an interpolated look-up table oscillator with cubic interpolation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of block processing vs sample-by-sample processing and latency trade-offs.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a digital pre-emphasis and de-emphasis filter pair for FM audio?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a 2D FFT for image processing on embedded hardware.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the Haar wavelet and its application in signal denoising.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement an IIR filter using direct form I vs direct form II transposed structures?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a digital crossover network with time-aligned outputs.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of adaptive equalization for channel compensation in communications.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a bark-scale filterbank for perceptual audio analysis?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a stereo balance control with constant-power panning law.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of aliasing in nonlinear audio processing and how to prevent it.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a smoothing filter for reducing quantization noise in control systems?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a real-time onset detection algorithm for percussion trigger.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of time-frequency masking for source separation.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a brickwall limiter for preventing digital clipping?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for an LFO (Low Frequency Oscillator) with multiple waveshapes for effect modulation.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the sampling rate and bit depth trade-offs in digital audio quality.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a state-variable filter with simultaneous LP, HP, BP, and notch outputs?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a dither generator with TPDF (triangular probability density function) noise.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of the matched Z-transform for converting analog prototypes to digital filters.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a pitch tracking algorithm that handles polyphonic audio?", "domain": "dsp", "source": "manual"}
+{"prompt": "Write code for a spring reverb model using a dispersive delay line.", "domain": "dsp", "source": "manual"}
+{"prompt": "Explain the concept of perceptual weighting in audio codec design.", "domain": "dsp", "source": "manual"}
+{"prompt": "How do you implement a multirate polyphase channelizer for wideband signal processing?", "domain": "dsp", "source": "manual"}

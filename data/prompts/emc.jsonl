@@ -1,0 +1,200 @@
+{"prompt": "Explain the difference between conducted and radiated emissions and how each is measured.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a proper ground plane on a 4-layer PCB to minimize EMI?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a checklist for EMC pre-compliance testing of an embedded system before going to a test lab.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of common-mode chokes in reducing conducted emissions and how to select one.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a shielded enclosure with proper seam treatment for radiated emissions control?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for calculating the resonant frequency of a decoupling capacitor including ESL.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of ground loops and how they cause EMI problems in multi-board systems.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a PCB layout to minimize the loop area of high-frequency switching currents?", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the EMC test requirements for CE marking under EN 55032 and EN 55035.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you select and place ferrite beads for EMI filtering on power supply lines?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a procedure for conducted emissions pre-compliance measurement using an oscilloscope and LISN.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of shielding effectiveness and how to calculate it for different materials.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design an EMI filter for a switching power supply input to meet CISPR 32 limits?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for transmission line impedance on a PCB microstrip and stripline.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of antenna theory applied to PCB traces and cable emissions.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a cable shield termination that provides good EMI performance?", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of ESD protection devices and how to select TVS diodes for digital I/O.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you perform radiated emissions pre-compliance testing using a near-field probe set?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a grounding strategy for a mixed-signal PCB with analog, digital, and power sections.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of crosstalk between PCB traces and how to calculate coupling.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a Pi-filter for suppressing conducted emissions at specific frequencies?", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the EMC immunity test levels for IEC 61000-4-2 (ESD), IEC 61000-4-3 (radiated), and IEC 61000-4-4 (EFT).", "domain": "emc", "source": "manual"}
+{"prompt": "How do you select a proper PCB stackup for a 6-layer board with good EMC performance?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for using spread-spectrum clocking to reduce conducted and radiated emissions.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of return current path and why it matters for EMC.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design slot filtering and shielding gaskets for enclosure openings?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for far-field radiation from a small loop antenna (PCB trace loop).", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how power plane splits affect EMC and when they should or should not be used.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design ESD protection for USB, HDMI, and Ethernet interfaces?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a pre-compliance test plan for FCC Part 15 Class B certification.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of mode conversion (differential to common-mode) in cables and connectors.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a connector filter for suppressing EMI on I/O lines?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for determining whether a PCB trace acts as an unintentional antenna.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the difference between Class A and Class B emission limits and their applications.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a ground stitching via strategy for a multi-layer PCB?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a troubleshooting guide for identifying the source of radiated emissions on a PCB.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of transfer impedance in shielded cables and connectors.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a surge protection circuit to meet IEC 61000-4-5 Level 4?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for calculating the attenuation of a feedthrough capacitor filter.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how clock harmonics contribute to radiated emissions and mitigation strategies.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a guard ring around sensitive analog circuits for EMC protection?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for performing bulk current injection (BCI) immunity testing.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of decoupling capacitor placement strategy and impedance budgeting.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a PCB for automotive EMC compliance under CISPR 25?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for common-mode current on a cable and its radiation mechanism.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how MOSFET switching speed affects EMI and how to optimize gate resistance.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a Faraday cage for sensitive electronic assemblies?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a procedure for measuring power supply ripple and noise per JESD22-A114.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of bypass and bulk capacitors in maintaining power integrity for EMC.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design differential pair routing on a PCB for minimizing EMI from high-speed signals?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the calculation for required shielding attenuation based on emissions test margin.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of aperture theory and how openings in shields leak electromagnetic energy.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you select EMI filter components (inductors, capacitors) for a 3-phase motor drive?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for using a spectrum analyzer with near-field probes for EMI debugging.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of electromagnetic compatibility zoning in a system-level design.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a proper DC power entry filter for meeting conducted emissions limits?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for skin depth at different frequencies and materials for shield design.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the EFT/burst immunity test (IEC 61000-4-4) and how to protect digital inputs.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a controlled impedance trace routing strategy for high-speed digital buses?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for using a current clamp to measure common-mode current on cables.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of partial inductance and how to calculate loop inductance of PCB traces.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a power supply layout that minimizes both conducted and radiated emissions?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for determining if a PCB requires a shielding can for compliance.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of edge rate control in reducing EMI from digital signals.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a bonding and grounding scheme for a rack-mounted electronic system?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a procedure for conducted immunity testing per IEC 61000-4-6.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of far-field vs near-field EMI and the transition distance.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you select a suitable LISN (Line Impedance Stabilization Network) for conducted emissions testing?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the design rules for routing clock signals to minimize radiated emissions.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of mutual inductance between PCB traces and how it affects crosstalk.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a filter for suppressing switching frequency harmonics on a DC bus?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for interpreting EMC test results and determining corrective actions.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of resonance in EMI filters and how to avoid filter peaking.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a via fence around a high-speed signal for field containment?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the procedure for magnetic field immunity testing per IEC 61000-4-8.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how connector pin assignment affects EMC performance for multi-pin connectors.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a voltage dip and interruption ride-through circuit per IEC 61000-4-11?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for estimating radiated emissions from a PCB trace using the segment model.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of pigtail vs 360-degree shield termination and the EMC impact.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a multi-stage EMI filter for meeting stringent military EMC requirements?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for using time-domain techniques for EMI measurement and analysis.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of ground impedance and how it affects both emissions and immunity.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a circuit board that passes both radiated susceptibility and radiated emissions?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for cable radiation efficiency as a function of frequency and length.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of intermodulation distortion in EMC context and how it creates spurious emissions.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design an EMC-compliant LED lighting driver circuit?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for performing ringwave immunity testing per IEC 61000-4-12.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of surface transfer impedance for evaluating cable shield quality.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a filtering strategy for high-frequency I/O interfaces (USB 3.0, HDMI 2.0)?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the procedure for power frequency magnetic field immunity testing.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how PCB layer assignment affects EMC: signal layers vs power/ground planes.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design an EMC-compliant wireless module integration (WiFi, BLE, cellular)?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for using an EMI receiver vs a spectrum analyzer for compliance testing.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of transient immunity and how to design for voltage surge survival.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a damped input filter for a DC-DC converter to prevent oscillation?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for determining the dominant EMI source in a multi-converter power system.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of PCB trace width and spacing in controlling EMI coupling.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a capacitive coupling plane for reducing EMI from power converters?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for interpreting CISPR 32/35 test results with quasi-peak and average detectors.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of electrostatic discharge (ESD) coupling mechanisms: contact vs air discharge.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design an ESD-robust PCB layout with proper component placement and routing?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for estimating the Q factor of a PCB trace resonance.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how thermal vias and ground vias interact and their combined EMC impact.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a choke common-mode filter for a 3-wire AC power entry?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for using SPICE simulation to predict EMI filter performance.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of galvanic isolation and its effect on EMC performance.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a proper star ground topology for a mixed-signal system?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for parasitic capacitance and inductance effects on EMI filter performance.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of edge rate vs EMI bandwidth and the 1/(pi*tr) rule.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design for EMC when using switching regulators near sensitive RF receivers?", "domain": "emc", "source": "manual"}
+{"prompt": "Debug this: Product passes radiated emissions at 1 meter but fails at 3 meters.", "domain": "emc", "source": "manual"}
+{"prompt": "Debug this: Conducted emissions fail only above 10MHz with a broadband noise floor.", "domain": "emc", "source": "manual"}
+{"prompt": "Debug this: ESD test causes system reset at Level 2 contact discharge.", "domain": "emc", "source": "manual"}
+{"prompt": "Debug this: Radiated emissions show narrow peaks at clock harmonics.", "domain": "emc", "source": "manual"}
+{"prompt": "Debug this: Adding a shield can to a module actually worsens radiated emissions.", "domain": "emc", "source": "manual"}
+{"prompt": "Debug this: EMI filter works on the bench but fails in the final product assembly.", "domain": "emc", "source": "manual"}
+{"prompt": "Design a comprehensive EMC test plan for a consumer IoT product targeting CE and FCC certification.", "domain": "emc", "source": "manual"}
+{"prompt": "Design an EMC-compliant power converter layout for an automotive ECU.", "domain": "emc", "source": "manual"}
+{"prompt": "Design a cable harness with proper shielding and grounding for an industrial control system.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of immunity margin and how to design products with margin above test levels.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a circuit that withstands IEC 61000-4-5 surge at 4kV without damage?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for selecting and applying EMC gaskets for enclosure seam treatment.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of power line harmonic current limits per IEC 61000-3-2.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a PCB for EMC when using high-speed DDR memory interfaces?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the procedure for measuring shield effectiveness using the reverberation chamber method.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of common-mode rejection ratio (CMRR) in the context of EMC immunity.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a board-level shield (BLS) with proper grounding and ventilation?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for EMC risk assessment during the product design phase.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of field coupling vs conducted coupling in system-level EMC.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you select the proper cable type (shielded, twisted pair, coax) for EMC performance?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the design rules for placing decoupling capacitors to minimize inductance to power pins.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of radiated susceptibility and how to design for immunity to external RF fields.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a filter for suppressing harmonic emissions from a variable frequency drive?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for EMC design review of a schematic before PCB layout.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how component parasitic inductance affects high-frequency decoupling performance.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a PCB with embedded capacitance layers for improved power integrity and EMC?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a procedure for ESD susceptibility testing using the Human Body Model (HBM).", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of cable common-mode choke selection for USB and Ethernet interfaces.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a multi-point ground strategy for a chassis-mounted PCB?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for harmonic emission compliance testing per EN 61000-3-2.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how PCB trace routing over split planes creates EMI problems.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a suppression circuit for transient voltage on signal cables per IEC 61000-4-5?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for selecting shielding materials (mu-metal, copper, aluminum) based on frequency.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of displacement current and how it couples noise between PCB layers.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a proper cable entry point with EMI filtering for a shielded enclosure?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the procedure for voltage dip immunity testing per IEC 61000-4-11.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of Y-capacitors in EMI filters and safety considerations.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a common-mode filter for a differential signal pair (USB, HDMI)?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a procedure for measuring magnetic field emissions from a power converter.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of PCB edge radiation and how to mitigate it with guard traces.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a grounding system for a multi-board rack system to minimize ground loops?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for estimating conducted emissions from a known switching waveform.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of EMI from high-speed digital interfaces (DDR, PCIe, USB 3.x).", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a filter for reducing switching noise on analog sensor lines?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for performing ESD immunity testing on different ports (power, signal, communication).", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of coupling path identification: radiated, conducted, capacitive, inductive.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design an EMC-compliant reset circuit that is immune to EFT bursts?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the specification for a pre-compliance EMC test setup including equipment list.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the role of safety capacitors (X1, X2, Y1, Y2) in EMI filter design.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a shielding strategy for a PCB with multiple RF transmitters and receivers?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for interpreting radiated emissions scan results and identifying dominant sources.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of frequency-dependent shielding effectiveness and resonance effects.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a ferrite clamp solution for reducing cable emissions in the field?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the equations for characteristic impedance of a PCB stripline and its EMC implications.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how to use a TEM cell for pre-compliance radiated emissions and immunity testing.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a filtered D-sub connector for EMC-critical I/O interfaces?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for EMC debugging using an oscilloscope with current probes.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of PCB via impedance discontinuity and its effect on signal integrity and EMI.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design EMC protection for a Ethernet PHY interface (magnetics, ESD, common-mode filter)?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a procedure for ringwave surge immunity testing per IEC 61000-4-12.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of antenna factor and how to convert field strength to voltage measurements.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a circuit that passes both conducted and radiated emissions for a motor driver?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for choosing between a common-mode choke and separate differential/CM filters.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of EMI from clock buffer distribution and fanout.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a low-EMI LED driver that meets EN 55015 lighting EMC standards?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for interpreting CISPR 22/32 quasi-peak vs average measurement results.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how to use absorber-lined shielded rooms (ALSE) vs open area test sites (OATS) for testing.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a PCB that minimizes EMI from a buck converter operating at 2MHz?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the procedure for conducted RF immunity testing at specific frequencies per IEC 61000-4-6.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of wave impedance and its transition from near-field to far-field.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a pre-compliance test setup using near-field probes and a spectrum analyzer?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for documenting EMC test results and creating a Technical Construction File (TCF).", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how software techniques (spread spectrum, randomized switching) complement hardware EMI filtering.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a grounding scheme for an IoT device with external antenna and USB connection?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for determining the optimal number of decoupling capacitors per IC.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of resonant coupling between PCB traces and shield apertures.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design for EMC compliance when the product contains both switched-mode and linear power supplies?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for performing pre-compliance flicker testing per IEC 61000-3-3.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of current return path discontinuity and its EMI impact at high frequencies.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a snap-on ferrite selection procedure based on impedance vs frequency curves?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the analysis for shield can resonance frequencies and how to avoid them.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how to create an EMC management plan for a product development project.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a PCB that meets both radiated emissions and radiated immunity simultaneously?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for selecting the correct antenna for radiated emissions measurements (biconical, log-periodic).", "domain": "emc", "source": "manual"}
+{"prompt": "Explain the concept of power line communication (PLC) and its EMC implications.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a multi-layer PCB stackup optimized for both signal integrity and EMC?", "domain": "emc", "source": "manual"}
+{"prompt": "Write the procedure for damped oscillatory magnetic field immunity testing per IEC 61000-4-10.", "domain": "emc", "source": "manual"}
+{"prompt": "Explain how automotive CISPR 25 limits differ from consumer CISPR 32 and the design implications.", "domain": "emc", "source": "manual"}
+{"prompt": "How do you design a BLE antenna matching network that also meets radiated emissions limits?", "domain": "emc", "source": "manual"}
+{"prompt": "Write a guide for designing a PCB that meets medical device EMC standards IEC 60601-1-2.", "domain": "emc", "source": "manual"}

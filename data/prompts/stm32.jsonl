@@ -175,3 +175,26 @@
 {"prompt": "Write code to implement a USB MIDI device on STM32 for musical instrument applications.", "domain": "stm32", "source": "manual"}
 {"prompt": "Design an STM32-based audio effects processor using ADC, DSP, and DAC with DMA.", "domain": "stm32", "source": "manual"}
 {"prompt": "How do you implement a multi-channel voltage monitor using STM32 ADC with automatic sequencing?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a watchdog timer with windowed refresh on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure STM32 TIM in center-aligned PWM mode for motor control?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 backup registers for preserving state across resets.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to handle DMA half-transfer and transfer-complete interrupts for double buffering on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a multi-UART communication manager on STM32 using DMA for all ports?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 ADC with external trigger synchronization from a timer.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 GPIO BSRR register and why it's preferred over ODR for atomic pin setting.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a real-time FFT on STM32 using the CMSIS-DSP library?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 USART with RS-485 direction control using DE pin.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use STM32 flash page erase and write for storing calibration data.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a Modbus RTU slave on STM32 using UART with DMA?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to measure STM32 MCU temperature and VBAT voltage using internal ADC channels.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 SPI NSS management modes (hardware vs software) and their use cases.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a CAN bootloader on STM32 that receives firmware updates over CAN bus?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 I2C with 10-bit addressing mode.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use STM32 timer slave mode reset for measuring pulse width.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a USB HID keyboard device on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 DMA memory-to-peripheral transfer with FIFO threshold.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 clock tree prescalers (AHB, APB1, APB2) and their effect on peripheral clocks.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a software-based I2C master using GPIO bit-banging on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 EXTI for both rising and falling edge detection with debouncing.", "domain": "stm32", "source": "manual"}
+{"prompt": "Design a complete STM32-based PID motor controller with encoder feedback and UART tuning interface.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement power consumption optimization on STM32 using peripheral clock gating?", "domain": "stm32", "source": "manual"}

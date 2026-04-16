@@ -1,0 +1,200 @@
+{"prompt": "Design an instrumentation amplifier using three op-amps with adjustable gain.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the operating principle of a successive approximation ADC and its timing diagram.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a linear voltage regulator using a pass transistor and error amplifier?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for BJT transistor biasing in common-emitter configuration with voltage divider.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the difference between inverting and non-inverting op-amp configurations and their input impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a Wheatstone bridge circuit for strain gauge measurements?", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a 12-bit R-2R ladder DAC and calculate the output voltage resolution.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of op-amp virtual ground and how it applies to summing amplifiers.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you select a voltage reference IC based on accuracy, temperature coefficient, and noise?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the small-signal model of a common-source MOSFET amplifier and derive the voltage gain.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a 4-20mA current loop transmitter for industrial sensor applications.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of op-amp slew rate and how it limits large-signal bandwidth.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an active filter using Sallen-Key topology for a second-order Butterworth response?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for calculating the noise figure of a multi-stage amplifier (Friis formula).", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a precision rectifier circuit that works for millivolt signals.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the Miller effect in transistor amplifiers and its impact on bandwidth.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a transimpedance amplifier for a photodiode with specific bandwidth?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the transfer function of a state-variable active filter and describe its outputs.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a sample-and-hold circuit with specified acquisition time and droop rate.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of common-mode rejection ratio (CMRR) and how to improve it in differential amplifiers.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an oscillator circuit using a crystal resonator for accurate timing?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a Colpitts oscillator and calculate the oscillation frequency.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a level shifter circuit for interfacing 3.3V and 5V logic systems.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of thermal runaway in BJT circuits and how to prevent it.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a precision current source using an op-amp and a sense resistor?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for an integrator circuit and explain the effect of finite op-amp gain.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a differential amplifier with specific gain and CMRR using discrete components.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of bandwidth-gain product and its significance in op-amp circuit design.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a Schmitt trigger using an op-amp with adjustable hysteresis?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a voltage-to-frequency converter using an op-amp and comparator.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a thermocouple amplifier with cold junction compensation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of input bias current and offset voltage in op-amps and compensation techniques.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a logarithmic amplifier using the exponential characteristic of a BJT?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a Butterworth filter and compare with Chebyshev characteristics.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a voltage follower (buffer) with high input impedance using a JFET input op-amp.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of phase margin and gain margin for op-amp stability analysis.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an analog multiplexer circuit for switching between multiple sensor inputs?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the design equations for a Wien bridge oscillator with automatic gain control.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a peak detector circuit with adjustable decay time constant.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of noise in electronic circuits: thermal, shot, flicker (1/f) noise.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a programmable gain amplifier (PGA) using a digital potentiometer?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a second-order bandpass filter center frequency, Q, and gain.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a triangle wave generator using op-amps (integrator + comparator).", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of power supply decoupling for analog circuits and proper capacitor placement.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a bridge amplifier for driving a speaker or motor?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the design procedure for an LC bandpass filter with specified center frequency and bandwidth.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a voltage clamping circuit to protect ADC inputs from overvoltage.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of operational transconductance amplifier (OTA) and its applications.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a charge amplifier for piezoelectric sensor interfacing?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a MOSFET common-source amplifier gain including channel-length modulation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a window comparator circuit that detects when a voltage is within a specified range.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of CMOS logic levels, noise margins, and fan-out.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a constant current LED driver for multiple LEDs in series?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for calculating the impedance of a parallel RLC circuit at resonance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a push-pull output stage using complementary BJTs with crossover distortion reduction.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of feedback in amplifiers: negative, positive, and their effects on bandwidth.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a voltage supervisor circuit that monitors multiple supply rails?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the Thevenin equivalent of a resistor network and use it to simplify circuit analysis.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design an analog temperature measurement circuit using an NTC thermistor and linearization.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of impedance matching and its importance in RF and signal processing circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a half-bridge MOSFET gate driver circuit with bootstrap power supply?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a differential pair transconductance and common-mode gain.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a sine wave oscillator that maintains stable amplitude over temperature.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of parasitic elements in PCB components and their impact at high frequencies.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a current mirror using matched transistors for biasing?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for calculating the thermal resistance of a transistor from junction to ambient.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design an analog multiplier circuit using the Gilbert cell topology.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of frequency compensation in multi-stage amplifiers.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a protection circuit against reverse polarity, overvoltage, and overcurrent?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a phase-locked loop (PLL) loop filter design.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a low-noise audio preamplifier for a condenser microphone.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of MOSFET threshold voltage and how it affects circuit design.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a precision voltage divider with temperature compensation?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a cascode amplifier showing improved gain and bandwidth.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a square wave to sine wave converter using a filter circuit.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of ground bounce in digital circuits and its effect on analog sections.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a 4-bit flash ADC using comparators and a priority encoder?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for transformer turns ratio, voltage transformation, and impedance matching.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a relay driver circuit with flyback diode protection and status indication.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of Barkhausen stability criterion for oscillator design.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a resistive touch screen interface circuit with position detection?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the design equations for a T-network attenuator with specified attenuation and impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design an analog switch circuit using a MOSFET with charge injection compensation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of Early effect in BJT transistors and its impact on amplifier output resistance.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a low-dropout (LDO) regulator using a PNP pass transistor?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a second-order active filter quality factor and damping ratio.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a PWM-to-analog voltage converter using a low-pass filter.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of slew-rate induced distortion in op-amp circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a bootstrap circuit for driving high-side N-channel MOSFETs?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a Wilson current mirror showing improved output impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a power-on reset circuit that generates a clean reset pulse.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of decibel (dB) units in electronics: dBm, dBV, dBu, dBFS.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a capacitive sensing circuit for proximity detection?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a voltage-controlled current source using an op-amp.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a bidirectional level shifter for I2C communication between different voltage domains.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of frequency response of common amplifier configurations (CE, CB, CC).", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an auto-zero amplifier circuit to eliminate offset voltage?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the transfer function and design equations for an elliptic (Cauer) filter.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a Hall effect sensor interface circuit with signal conditioning.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of total harmonic distortion (THD) and how to measure it.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a voltage-to-current converter for driving a 4-20mA loop?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a common-base amplifier showing its high-frequency performance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a digital potentiometer circuit for software-controlled gain adjustment.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of dynamic range in analog signal processing chains.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an isolation amplifier for measuring high-voltage signals safely?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a notch (twin-T) filter frequency and quality factor.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a programmable gain instrumentation amplifier using a multiplexed resistor network.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of kickback noise in ADC multiplexed inputs and guard techniques.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a negative voltage generator from a positive supply using an inverting charge pump?", "domain": "electronics", "source": "manual"}
+{"prompt": "Debug this: Op-amp circuit oscillates when configured as a voltage follower.", "domain": "electronics", "source": "manual"}
+{"prompt": "Debug this: ADC readings show noise that is correlated with the switching power supply frequency.", "domain": "electronics", "source": "manual"}
+{"prompt": "Debug this: Instrumentation amplifier output drifts over time and temperature.", "domain": "electronics", "source": "manual"}
+{"prompt": "Debug this: MOSFET gate driver circuit has excessive ringing on the gate voltage.", "domain": "electronics", "source": "manual"}
+{"prompt": "Debug this: Precision voltage reference output is noisier than expected from the datasheet.", "domain": "electronics", "source": "manual"}
+{"prompt": "Debug this: Active filter has a resonant peak that causes oscillation at the corner frequency.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a complete analog front-end for a biomedical ECG measurement system.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a multi-channel data acquisition system with 16-bit resolution and anti-aliasing filters.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a class-AB audio power amplifier with 20W output and thermal protection.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of a Kelvin connection for low-resistance measurement.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an AC-coupled amplifier with proper DC bias point?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the design equations for a gyrator circuit that simulates an inductor using capacitors.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a ratiometric measurement circuit for sensor bridge applications.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of electromigration in PCB traces and its reliability impact.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a deglitching circuit for a DAC output using a sample-and-hold?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for analyzing a common-drain (source follower) MOSFET amplifier.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a precision half-wave rectifier for AC signal measurement.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of thermal noise voltage and how to calculate it for a given resistor.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a constant-gm bias circuit for maintaining amplifier linearity over temperature?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the complete analysis of an emitter-follower circuit including input/output impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a chopper-stabilized amplifier for measuring DC signals with low offset drift.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of ENOB (Effective Number of Bits) and how ADC performance is characterized.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a track-and-hold circuit for improving ADC performance?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a Howland current source and its output impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a dual-slope integrating ADC and explain its noise rejection properties.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of PSRR (Power Supply Rejection Ratio) in analog circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a guard ring for preventing leakage currents in high-impedance circuits?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a folded cascode amplifier with its advantages over simple cascode.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a class-D audio amplifier output filter with proper damping.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of settling time in op-amp circuits and factors that affect it.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a 4-wire Kelvin connection for precision resistance measurement?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a gyrator circuit that simulates inductance using capacitors and op-amps.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a precision full-wave rectifier for RMS-to-DC conversion.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of dielectric absorption in capacitors and its impact on sample-and-hold circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an auto-zero technique for eliminating DC offset in amplifier chains?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis for a multi-stage amplifier with inter-stage coupling considerations.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a voltage-controlled attenuator using analog multiplier or VCA.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of transconductance amplifier (OTA) and its use in variable filters.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a sync separator circuit for extracting horizontal and vertical sync from composite video?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for calculating transmission line reflections and termination impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a bootstrap circuit for extending op-amp input impedance beyond its native specification.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of guard bands in ADC systems for preventing noise contamination.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a precision timer circuit with adjustable pulse width from 1us to 1s?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a common-gate amplifier showing its impedance matching properties.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a phase detector circuit using an exclusive-OR gate and low-pass filter.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of right-half-plane zero in feedback amplifiers and its stability impact.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a comparator circuit with controlled hysteresis for noise-immune switching?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a Baxandall tone control circuit with bass and treble adjustment.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a JFET-input buffer for high-impedance sensor interfacing.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of EMF back-voltage in relay and motor circuits and protection methods.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a four-quadrant analog multiplier using transconductance technique?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of an active inductor using a gyrator and its frequency limitations.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design an optical encoder interface circuit with quadrature decoding and direction detection.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of MOSFET subthreshold conduction and its use in low-power circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a resistance-to-voltage converter for RTD temperature measurement?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a twin-T notch filter with adjustable Q factor.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a voltage reference circuit using a Zener diode with temperature compensation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of latch-up in CMOS circuits and how to prevent it.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a precision frequency-to-voltage converter?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a Widlar current source showing improved output impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a high-frequency crystal test oscillator for checking crystal parameters.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of intermodulation distortion in amplifiers and how to minimize it.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a photovoltaic mode transimpedance amplifier for light measurement?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a active notch filter using a twin-T network with buffered output.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a programmable delay circuit using a monostable multivibrator.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of a voltage-to-frequency converter and its application in data acquisition.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design an adjustable voltage regulator with external pass transistor for high current?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis for noise performance of a resistor feedback network in a precision amplifier.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a constant current sink using a MOSFET and reference voltage.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of charge injection in CMOS analog switches and compensation techniques.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a balanced audio output driver with low output impedance?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a voltage-mode Wheatstone bridge with single-ended output.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a clipping indicator circuit that detects amplifier saturation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of noise spectral density and how to integrate it for total noise.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a capacitor-multiplier circuit for improving power supply filtering?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a MOSFET source follower including body effect.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a low-side current sense circuit with ground-referenced output.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of dV/dt immunity in optocoupler and digital isolator circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a voltage limiter circuit that clips to a precise voltage?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a summing amplifier with multiple weighted inputs.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design an envelope detector for AM radio demodulation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of output swing limitations in rail-to-rail op-amps.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a class-AB output stage with VBE multiplier bias?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the analysis of a cascode current mirror with improved output impedance.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a frequency doubler circuit using a full-wave rectifier approach.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of power amplifier classes (A, B, AB, D, G, H) and their efficiency.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a negative impedance converter (NIC) circuit?", "domain": "electronics", "source": "manual"}
+{"prompt": "Write the equations for a differentiator circuit with bandwidth limiting for noise control.", "domain": "electronics", "source": "manual"}
+{"prompt": "Design a linear optocoupler circuit for analog signal isolation.", "domain": "electronics", "source": "manual"}
+{"prompt": "Explain the concept of voltage coefficient of resistance and its impact on precision circuits.", "domain": "electronics", "source": "manual"}
+{"prompt": "How do you design a constant temperature anemometer bridge for airflow measurement?", "domain": "electronics", "source": "manual"}
