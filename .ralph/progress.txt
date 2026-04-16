@@ -29,3 +29,4 @@ Stories: 17/39 complete
 [2026-04-16T02:59:07+00:00] Completed: story-25 - LAS adaptation for Mistral dense (tests pass)
 [2026-04-16T02:59:07+00:00] Completed: story-30 - Spikingformer library integration (adapter + tests)
 [2026-04-16T02:59:07+00:00] Completed: story-32 - Energy benchmark framework (script + methodology doc)
+[2026-04-16T03:00:29+00:00] Completed: story-39 - HF release + model card + cookbook v0.3

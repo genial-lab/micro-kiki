@@ -273,7 +273,7 @@
       "title": "HuggingFace release + model card + cookbook",
       "description": "",
       "priority": 39,
-      "passes": false
+      "passes": true
     }
   ]
 }
