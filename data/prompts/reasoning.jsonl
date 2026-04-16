@@ -1,0 +1,359 @@
+{"prompt": "If all roses are flowers and some flowers fade quickly, can we conclude that some roses fade quickly?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A farmer has 17 sheep. All but 9 die. How many are left?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Three friends split a hotel bill of $30, each paying $10. The receptionist realizes the bill is only $25 and gives $5 to the bellboy to return. The bellboy keeps $2 and gives $1 back to each friend. Now each friend paid $9, totaling $27, plus the $2 the bellboy kept equals $29. Where is the missing dollar?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?", "domain": "reasoning", "source": "manual"}
+{"prompt": "You have two ropes. Each rope takes exactly 1 hour to burn from one end to the other, but they burn at non-uniform rates. How can you measure exactly 45 minutes?", "domain": "reasoning", "source": "manual"}
+{"prompt": "There are three boxes: one contains only apples, one contains only oranges, and one contains both. All labels are wrong. You can pick one fruit from one box. How do you determine the correct labels?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If A is taller than B, B is taller than C, and C is taller than D, is A necessarily taller than D? Explain your reasoning step by step.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A lily pad doubles in size every day. If it takes 48 days to cover a lake completely, on what day does it cover half the lake?", "domain": "reasoning", "source": "manual"}
+{"prompt": "You have 12 balls, one of which is either heavier or lighter than the rest. Using a balance scale exactly 3 times, how do you find the odd ball and determine if it is heavier or lighter?", "domain": "reasoning", "source": "manual"}
+{"prompt": "All mammals are warm-blooded. All whales are mammals. Therefore, all whales are warm-blooded. Is this a valid syllogism? Why or why not?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If no politicians are honest and some honest people are kind, can we conclude that some kind people are not politicians?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A train leaves station A at 9:00 AM traveling at 60 km/h. Another train leaves station B (300 km away) at 10:00 AM traveling at 90 km/h toward station A. When and where do they meet?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve step by step: Janet earns $8 per hour babysitting and $10 per hour tutoring. She babysits 4 hours and tutors 3 hours each week. How much does she earn in 6 weeks?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A store offers a 20% discount on a $50 item, then an additional 10% off the discounted price. What is the final price? Is this the same as a 30% discount?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If 3 cats catch 3 mice in 3 minutes, how many cats are needed to catch 100 mice in 100 minutes?", "domain": "reasoning", "source": "manual"}
+{"prompt": "There are 100 lockers in a hallway, all closed. 100 students walk by. The first student opens every locker. The second student toggles every 2nd locker. The third student toggles every 3rd locker, and so on. After all 100 students have passed, which lockers are open?", "domain": "reasoning", "source": "manual"}
+{"prompt": "In a room of 23 people, what is the probability that at least two people share a birthday? Walk through the reasoning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Prove that the square root of 2 is irrational.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why there must be at least two people in London with exactly the same number of hairs on their head (pigeonhole principle).", "domain": "reasoning", "source": "manual"}
+{"prompt": "A snail climbs 3 meters up a wall during the day but slips 2 meters down at night. How many days does it take to climb a 10-meter wall?", "domain": "reasoning", "source": "manual"}
+{"prompt": "You have a 3-gallon jug and a 5-gallon jug. How do you measure exactly 4 gallons of water?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If today is Monday, what day of the week will it be 100 days from now? Show your reasoning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Five pirates must divide 100 gold coins. They vote on proposals in order of seniority. A proposal passes if at least half agree. What should the most senior pirate propose?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A king places one grain of rice on the first square of a chessboard, two on the second, four on the third, doubling each time. How many total grains are on the board? Express in powers of 2.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Two doors: one leads to freedom, one to death. Two guards: one always lies, one always tells the truth. You can ask one question to one guard. What do you ask?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Monty Hall problem and why switching doors increases your probability of winning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A clock chimes 6 times at 6 o'clock, taking 5 seconds total. How long does it take to chime 12 times at noon?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If you flip a fair coin 10 times and get heads every time, what is the probability that the next flip is heads? Explain the gambler's fallacy.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Prove by mathematical induction that 1 + 2 + 3 + ... + n = n(n+1)/2.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between necessary and sufficient conditions with concrete examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If P implies Q, and Q is false, what can we conclude about P? Name this logical rule.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Analyze this argument: 'If it rains, the ground is wet. The ground is wet. Therefore, it rained.' Is this valid? Name the fallacy if any.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between correlation and causation? Give three examples where correlation does not imply causation.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A car travels the first half of a distance at 30 km/h and the second half at 60 km/h. What is the average speed for the entire trip?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: A tank can be filled by pipe A in 4 hours and pipe B in 6 hours. If both pipes open together, how long to fill the tank?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If 6 workers can build a wall in 10 days, how many workers are needed to build the same wall in 4 days? Assume constant rate.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A number is divisible by 3 if and only if the sum of its digits is divisible by 3. Explain why this rule works.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Prove that the sum of angles in any triangle is 180 degrees.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between deductive and inductive reasoning with examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a proof by contradiction? Demonstrate with an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of logical equivalence. Are 'If P then Q' and 'If not Q then not P' logically equivalent?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A rope is stretched around the equator of the Earth (assume a perfect sphere, circumference 40,000 km). If you add 1 meter to the rope's length and raise it uniformly, how high above the surface would it be?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why 0.999... (repeating) equals exactly 1.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is Zeno's paradox of Achilles and the Tortoise? How does modern mathematics resolve it?", "domain": "reasoning", "source": "manual"}
+{"prompt": "You have 25 horses and can race 5 at a time (no stopwatch). What is the minimum number of races to find the 3 fastest horses?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of a base case and recursive step in mathematical induction. Why are both necessary?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If all swans I have ever seen are white, is it valid to conclude that all swans are white? Discuss the problem of induction.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A has 3 children. The product of their ages is 36. The sum of their ages equals the house number next door. A says this isn't enough info. The oldest plays piano. What are their ages?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between a statement and its converse, inverse, and contrapositive.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Is the following argument valid? 'All dogs are animals. All animals are living things. Therefore, all dogs are living things.'", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Simpson's paradox with a concrete numerical example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the halting problem and why is it unsolvable? Explain intuitively.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: Maria has 3 times as many stickers as Tom. Together they have 120 stickers. How many does each have?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A rectangular garden is 3 meters longer than it is wide. Its perimeter is 26 meters. Find its dimensions.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: If 2^x = 64, what is x? Explain the reasoning.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "What is the next number in the sequence: 1, 1, 2, 3, 5, 8, 13, ...? Explain the pattern.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Find the next term: 2, 6, 12, 20, 30, ...? Show your reasoning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A palindrome reads the same forwards and backwards. How many 4-digit palindromes exist? Show your counting method.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Birthday Paradox: why does the probability reach 50% with only 23 people, not ~183?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If you have a standard deck of 52 cards, what is the probability of drawing two aces in a row (without replacement)?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is Bayesian reasoning? A medical test is 99% accurate. If 1% of the population has a disease, what is the probability that a positive test means you actually have the disease?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the sunk cost fallacy with a real-world example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the straw man fallacy? Give an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the ad hominem fallacy and why attacking the person doesn't refute their argument.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a false dichotomy? Give an example where more than two options exist.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the appeal to authority fallacy and when citing authorities IS valid.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is circular reasoning? Provide an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the slippery slope fallacy with an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is confirmation bias and how does it affect logical reasoning?", "domain": "reasoning", "source": "manual"}
+{"prompt": "You see a sign: 'If you can read this, you are too close.' Formalize this as a logical statement and find its contrapositive.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain De Morgan's Laws using a concrete example with sets.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between 'for all' (universal) and 'there exists' (existential) quantifiers? Give examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why 'absence of evidence is not evidence of absence' using a logical framework.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve the following using algebra: The sum of two consecutive odd numbers is 44. What are the numbers?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A boat travels upstream at 10 km/h and downstream at 20 km/h. What is the speed of the current and the boat's speed in still water?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If 4 apples and 3 bananas cost $5.50, and 2 apples and 5 bananas cost $5.30, find the cost of each fruit.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the concept of expected value in probability. If a lottery ticket costs $2 and has a 1/1000 chance of winning $500, is it a good bet?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Prisoner's Dilemma? Explain why rational self-interest can lead to a worse outcome for both players.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of Nash equilibrium with a simple game theory example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A is the brother of B. B is the sister of C. C is the father of D. What is the relationship between A and D?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If it is true that 'not all birds can fly', which of these must also be true: (a) no birds can fly, (b) some birds cannot fly, (c) all birds cannot fly?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between sound and valid arguments in logic.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is an analogy? Evaluate this one: 'The brain is like a computer.' In what ways is this analogy helpful and in what ways is it misleading?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the trolley problem and the ethical reasoning behind each choice.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If a counterfactual 'If I had studied harder, I would have passed' is true, does it mean not studying was the only reason for failing? Analyze.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Occam's Razor and its role in reasoning. When can it mislead?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between inductive strength and deductive validity?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: In how many ways can 8 people sit around a circular table?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the principle of mathematical strong induction and how it differs from weak induction.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a tautology in logic? Give three examples of tautological statements.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A fox, a chicken, and a sack of grain must cross a river. The boat holds the farmer and one item. The fox eats the chicken if left alone; the chicken eats the grain. How to cross safely?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between a lemma, a theorem, and a corollary.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is proof by construction? Give an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the well-ordering principle and give a proof that uses it.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If P(A) = 0.3, P(B) = 0.5, and P(A and B) = 0.15, are A and B independent? Show your work.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A factory produces 2% defective items. A test detects defectives with 95% accuracy and non-defectives with 90% accuracy. If an item tests positive, what is the probability it is actually defective?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: A cyclist travels at 15 km/h for the first hour, 20 km/h for the next 2 hours, and 10 km/h for the last 30 minutes. What is the total distance and average speed?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Three coins are flipped. What is the probability of getting exactly two heads? List all outcomes.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the law of large numbers in plain language with a coin-flipping example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the central limit theorem and why is it important in statistics?", "domain": "reasoning", "source": "manual"}
+{"prompt": "If you roll two six-sided dice, what is the probability the sum is 7? What sum is most likely?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between permutations and combinations with an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "How many ways can you choose 3 books from a shelf of 10? Show both the formula and the calculation.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A class has 10 boys and 15 girls. A committee of 5 must have at least 2 boys. How many ways can it be formed?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: What is the remainder when 2^100 is divided by 7? Use modular arithmetic.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Euclidean algorithm for finding the GCD of two numbers. Find GCD(252, 105).", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Fundamental Theorem of Arithmetic? Why is it important?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Prove that there are infinitely many prime numbers (Euclid's proof).", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why 1 is not considered a prime number.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a constructive proof vs. a non-constructive (existence) proof? Give an example of each.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A shop sells 3 types of ice cream and you can pick 2 scoops (same or different). How many combinations are there?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the handshaking lemma: in any graph, the sum of vertex degrees is even.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Can you walk through the seven bridges of Konigsberg exactly once each? Explain why or why not using graph theory.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the four-color theorem in simple terms.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a bijection? Prove that the set of even natural numbers has the same cardinality as the set of all natural numbers.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Cantor's diagonal argument proving the reals are uncountable.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is Russell's paradox? Explain in simple terms.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If f(x) = 2x + 3 and g(x) = x^2, find f(g(3)) and g(f(3)). Are they equal?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the concept of function composition and why it is generally not commutative.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A group of people shakes hands. If there were 45 handshakes total, how many people were in the group?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: The nth triangular number is n(n+1)/2. What is the 100th triangular number?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the difference between 'if', 'only if', and 'if and only if' in mathematical logic.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A woman says: 'I always lie.' Is this statement true or false? Analyze the paradox.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Godel's incompleteness theorem at a high level. What does it mean for mathematics?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between 'at most', 'at least', and 'exactly' in mathematical reasoning? Give examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If all A are B and all B are C, what can we conclude? What if 'some A are B' instead?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve using systems of equations: 2x + y = 7, x - y = 2. Show all steps.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A car depreciates 15% each year. If it starts at $20,000, what is it worth after 5 years?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain compound interest vs simple interest with a numerical example over 3 years.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: log_2(x) + log_2(x-2) = 3. Show all reasoning steps.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If a pizza is cut into n straight slices (lines), what is the maximum number of pieces? Derive the formula.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why the product of two negative numbers is positive, using logical reasoning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between necessary and sufficient conditions for a quadrilateral to be a square?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the pump lemma for regular languages at a high level. Why does it matter for reasoning about computation?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A person is either lying or telling the truth. They say 'I am a liar.' What can you deduce?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain what a recursive definition is, using the Fibonacci sequence as an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Tower of Hanoi problem? Derive the minimum number of moves for n disks.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why any map can be colored with at most 4 colors such that no two adjacent regions share a color.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A 6% annual interest rate compounded monthly. What is the effective annual rate?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If you arrange the letters in MISSISSIPPI, how many distinct arrangements are possible?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the inclusion-exclusion principle with an example involving two sets.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a truth table? Construct one for (P AND Q) OR (NOT P).", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain modus ponens and modus tollens with examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A statement says: 'If it snows, then schools close.' It snowed but schools stayed open. What can we conclude?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between a logical contradiction and a contingent statement.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is reductio ad absurdum? Provide a mathematical example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "There are 5 red and 3 blue marbles in a bag. You draw 2 without replacement. What is the probability both are red?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain conditional probability with a concrete example. What is P(A|B)?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A test has 10 true/false questions. If you guess randomly, what is the probability of getting at least 8 correct?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: A shop has a buy 2, get 1 free offer. If each item costs $15, how much do 7 items cost?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain why division by zero is undefined, not zero or infinity.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If you fold a piece of paper in half 42 times, how thick would it be? Explain with powers of 2.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A stone is thrown upward at 20 m/s. Using h = 20t - 5t^2, when does it hit the ground and what is its maximum height?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain why the angles of a polygon with n sides sum to (n-2) x 180 degrees.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A right triangle has legs of 5 and 12. Find the hypotenuse and explain the Pythagorean theorem.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the difference between a theorem and a conjecture. Give an example of each.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Goldbach conjecture? Why hasn't it been proven despite seeming obviously true?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve using the pigeonhole principle: In a group of 13 people, prove that at least 2 were born in the same month.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why every positive integer greater than 1 can be uniquely factored into primes.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between a graph and a tree in discrete mathematics?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A social network has 6 people. Prove that either 3 of them mutually know each other, or 3 mutually don't know each other (Ramsey theory).", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is Big-O notation? Explain why O(n log n) is better than O(n^2) for sorting.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the dining philosophers problem and what it teaches about deadlocks.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A man has to cross a desert. He can carry enough water for 5 days. The desert takes 8 days to cross. He can stash water along the way. What is the minimum water needed?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many subsets does a set with n elements have? Prove it.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between 'and' and 'or' in logic, including inclusive vs exclusive or.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If P(rain tomorrow) = 0.6 and P(rain day after) = 0.4 independently, what is P(rain at least one of the two days)?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is survivorship bias? Give an example from history or business.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the anchoring bias and how it affects numerical estimates.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the availability heuristic? How does it distort risk perception?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why 'correlation does not imply causation' using the ice cream and drowning example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the ecological fallacy? Give an example where group-level statistics don't apply to individuals.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If the probability of event A is 0.7 and event B is 0.8, and they are independent, what is P(A and B)?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of entropy in information theory. Why is a fair coin flip maximum entropy for a binary source?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between a necessary condition and a sufficient condition? Give examples for fire.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A committee of 4 must be formed from 6 men and 4 women with at least 1 woman. How many ways?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why every even number greater than 2 being expressible as the sum of two primes is still a conjecture.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the gambler's ruin problem? If you start with $10 and bet $1 per round against a casino with infinite money, what happens?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: A train 150m long passes a pole in 15 seconds. How fast is it going in km/h?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If A can do a job in 6 days and B in 8 days, how long will they take working together?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Two candles of equal height burn at different rates: one in 4 hours, one in 5 hours. After how long is one twice the height of the other?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: 5 people stand in line. In how many ways can they arrange themselves?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between enumeration and proof in discrete mathematics.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Chinese Remainder Theorem? Give a simple example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why a proof by exhaustion is valid but often impractical.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between a direct proof and an indirect proof? Give examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Find the number of integer solutions to x + y + z = 10 where x, y, z >= 0.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of mathematical duality with an example from geometry or graph theory.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between a finite and an infinite set? Can infinite sets have different sizes?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of countable vs uncountable infinity.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Continuum Hypothesis? Why is it special in mathematics?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that in any group of 6 people, either 3 know each other mutually or 3 are mutual strangers.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between average, median, and mode. When is each most appropriate?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a geometric series? Find the sum of 1 + 1/2 + 1/4 + 1/8 + ... to infinity.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A coin is biased with P(heads) = 0.6. What is the expected number of flips to get 3 heads in a row?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Bayes theorem with a spam filter example: if 80% of spam emails contain the word 'free' and 10% of legitimate emails do, and 30% of all emails are spam, what is P(spam | contains 'free')?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between type I and type II errors in hypothesis testing?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the p-value in statistics. Why is p < 0.05 often used as a threshold?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is regression to the mean? Give a real-world example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many different 5-letter passwords can be made from the 26 lowercase letters if repetition is allowed?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A survey shows 60% of people like chocolate. If you pick 5 random people, what is the probability that exactly 3 like chocolate?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the St. Petersburg paradox and what it reveals about expected value vs utility.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Kelly criterion? How does it apply to betting strategy?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Arrow's impossibility theorem in simple terms.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that the sum of the first n odd numbers equals n^2.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the relationship between the arithmetic mean and the geometric mean? When is each used?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the coupon collector problem: if there are n different coupons and you get one random coupon per day, how many days on average to collect all n?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Monty Hall variant with 100 doors (1 car, 99 goats)? The host opens 98 doors. Should you switch?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A bag has 5 red balls and 7 blue balls. You draw 3 without replacement. What is P(all 3 are blue)?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between joint probability, marginal probability, and conditional probability.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the law of total probability? Give a worked example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: A rectangle's length is increased by 10% and width decreased by 10%. How does the area change?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "If you increase a number by 20% and then decrease the result by 20%, do you get back the original number? Prove it.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain why the harmonic series 1 + 1/2 + 1/3 + 1/4 + ... diverges.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between convergence and divergence of a series? Give examples.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: In a race, A beats B by 10 meters. B beats C by 20 meters. The race is 100 meters. By how much does A beat C?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the difference between velocity and speed in physics and why the distinction matters mathematically.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is dimensional analysis? Use it to check if the formula v = sqrt(2gh) is dimensionally correct.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A ladder leans against a wall at 60 degrees. If the ladder is 10 meters long, how high does it reach? Use trigonometry.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the concept of limit in calculus using the function f(x) = (x^2 - 1)/(x - 1) as x approaches 1.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is L'Hopital's rule? When can and can't you apply it?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Find the derivative of f(x) = x^3 + 2x^2 - 5x + 1 and explain each step.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the relationship between derivatives and integrals (Fundamental Theorem of Calculus).", "domain": "reasoning", "source": "manual"}
+{"prompt": "A tank drains at a rate proportional to the amount of water in it. If it starts with 100 liters and has 50 liters after 1 hour, when will it have 10 liters?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the concept of contraposition in logic and give a proof using this technique.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the principle of explosion (ex falso quodlibet)? Why does a contradiction imply anything?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If the roots of x^2 - 5x + k = 0 are in the ratio 2:3, find k.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain why the quadratic formula works by completing the square on ax^2 + bx + c = 0.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the discriminant of a quadratic equation and what does it tell us about the roots?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Find all integer values of x such that |2x - 3| < 7.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the triangle inequality theorem and give a proof.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the AM-GM inequality? Prove it for two positive numbers.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A code lock has 4 digits (0-9). How many codes have no repeated digits?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why the number of derangements of n objects is approximately n!/e.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Catalan number? Give its first few values and an application.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many paths exist from the bottom-left to the top-right of a 4x4 grid, moving only up or right?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between deterministic and probabilistic reasoning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is fuzzy logic? How does it differ from classical Boolean logic?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of a Markov chain with a simple weather example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a random walk? Describe the 1D random walk and its expected distance from the origin.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If the probability of rain on any given day is 0.3 (independent), what is the probability of no rain for an entire week?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Poisson distribution. When is it appropriate to use?", "domain": "reasoning", "source": "manual"}
+{"prompt": "A factory produces items with a 5% defect rate. In a batch of 20 items, what is the expected number of defectives?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "What is the normal distribution? Why does it appear so often in nature?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the 68-95-99.7 rule for the normal distribution.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If the mean height of a population is 170 cm with standard deviation 10 cm, what percentage of people are between 150 cm and 190 cm?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between population and sample in statistics? Why does it matter?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of a confidence interval. What does '95% confident' really mean?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the fallacy of the single cause? Why are most real-world phenomena multi-causal?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between abductive, deductive, and inductive reasoning.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is an existential proof? Prove that there exists an irrational number raised to an irrational power that is rational.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many trailing zeros does 100! have?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Fermat's little theorem and give a computational example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between a bijection, injection, and surjection?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that the set of rational numbers between 0 and 1 is countable.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of a fixed point. Give an example using the function f(x) = cos(x).", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Banach-Tarski paradox in simple terms? What does it say about our intuition of volume?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A clock shows 3:15. What is the angle between the hour and minute hands?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain how GPS uses trilateration (not triangulation) to determine position.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If you randomly break a stick into 3 pieces, what is the probability the pieces can form a triangle?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that for any integer n, n^3 - n is divisible by 6.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why no simple closed curve in the plane can intersect itself and still be a simple closed curve (Jordan curve theorem, informal).", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between NP-hard and NP-complete problems?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the traveling salesman problem and why it is computationally difficult.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the P vs NP problem? Why is it one of the most important open problems?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: You have coins of 1, 5, 10, and 25 cents. In how many ways can you make change for 50 cents?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of invariants in problem-solving. Give an example where an invariant helps solve a puzzle.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the pigeonhole principle? If 5 points are placed inside a unit square, prove that at least two are within sqrt(2)/2 of each other.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A and B together have $100. A has $30 more than B. How much does each have?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Three friends — Alex, Blake, and Casey — each have a different pet (cat, dog, fish). Alex doesn't have a cat. Blake doesn't have a dog. Casey has a fish. Who has which pet?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Four people must cross a bridge at night with one flashlight. They take 1, 2, 5, and 10 minutes. Only 2 can cross at once. What is the minimum time?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Towers of Hanoi recursive solution and its time complexity.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If today 5 years ago was Thursday, what day of the week was it 3 years ago? Consider leap years.", "domain": "reasoning", "source": "manual"}
+{"prompt": "A farmer wants to fence a rectangular area with one side against a river (no fence needed). He has 200m of fencing. What dimensions maximize the area?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "What is an isometry? Give examples of geometric transformations that preserve distance.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why there are exactly 5 Platonic solids.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many diagonals does a convex polygon with 12 sides have?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of mathematical symmetry with examples from algebra and geometry.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is group theory? Give a simple example of a group and verify the group axioms.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: 3 machines make 3 widgets in 3 days. How many widgets do 9 machines make in 9 days?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A water tank is 1/3 full. After adding 40 liters it is 3/4 full. What is the tank's capacity?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: If log(x) + log(x+3) = 1, find x.", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the difference between proof by cases and proof by contradiction.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What are the axioms of probability? List them and explain why each is needed.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A mixture of 40% alcohol solution and 70% alcohol solution yields 60% solution. If you need 300ml of 60% solution, how much of each do you mix?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the concept of a mathematical model. When is simplification acceptable and when dangerous?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the utility function in decision theory? How does it differ from raw expected value?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that sqrt(3) is irrational.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why the infinite monkey theorem is technically true but practically meaningless.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between a paradox and a contradiction?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Sorites paradox (paradox of the heap). What does it teach about vagueness?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Two trains travel toward each other from 500 km apart at 60 km/h and 40 km/h. A bird flies between them at 80 km/h. How far does the bird fly before the trains meet?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A cell divides every 2 hours. Starting with 1 cell, how many cells are there after 24 hours?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Explain the concept of proof by the extremal principle. Give an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Cauchy-Schwarz inequality? State it and give a geometric interpretation.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: In how many ways can you place 8 non-attacking rooks on a chessboard?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of parity in problem solving. Give a problem where parity determines the answer.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a decision tree? Draw one (describe it) for deciding whether to go outside based on weather and schedule.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between forwards and backwards reasoning (working from goal to premises).", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Find the smallest number that leaves remainder 1 when divided by 2, 3, 4, 5, and 6.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of a generating function in combinatorics. Give a simple example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Master theorem for solving recurrence relations? When does it apply?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Two unbiased dice are rolled. What is the probability that the product of the two numbers is even?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the Secretary Problem (optimal stopping). If you are interviewing 100 candidates, how many should you reject before choosing?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the concept of NP-completeness and why is the Cook-Levin theorem important?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove by contradiction that there is no largest prime number.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the connection between logic gates (AND, OR, NOT) and Boolean algebra.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is a Turing machine? Explain why it is a fundamental model of computation.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A number n satisfies n mod 3 = 1 and n mod 5 = 3. Find the smallest positive n.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between open and closed intervals in real analysis. Why does it matter for proofs?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Intermediate Value Theorem? Give an intuitive explanation and a practical use.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many distinct binary strings of length 8 contain exactly 3 ones?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why brute-force search is O(2^n) for the subset sum problem.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is dynamic programming? Explain with the Fibonacci sequence example and compare to naive recursion.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that the product of any 3 consecutive integers is divisible by 6.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of amortized analysis. Give an example with dynamic arrays.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between worst-case, average-case, and best-case complexity?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve step by step: If f(x) = 3x - 1, find f^(-1)(x) (the inverse function).", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "What is a partial order? Give an example from everyday life.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of topological sorting. When is it possible and when not?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A prime number p satisfies p^2 + 2 is also prime. Find all such primes.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What does it mean for a problem to be 'well-posed'? Give an example of an ill-posed problem.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of a counterexample and why one counterexample disproves a universal claim.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Three dice are rolled. What is the probability of getting a sum of 10?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Collatz conjecture? Why is it so hard to prove despite being easy to state?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain why induction proves a statement for all natural numbers but cannot prove it for all real numbers.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A virus doubles every 3 hours. Starting with 1000 viruses, how many are there after 24 hours?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "What is the difference between a heuristic and an algorithm? Give an example of each.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of graph coloring. What is the chromatic number?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many 3-digit numbers have digits that sum to 10?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Halting Problem and why does it imply there are problems computers cannot solve?", "domain": "reasoning", "source": "arc"}
+{"prompt": "Explain the relationship between P, NP, co-NP, and PSPACE.", "domain": "reasoning", "source": "arc"}
+{"prompt": "Solve: In a round-robin tournament with 8 players, how many games are played?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the concept of a fixed-point theorem? State the Brouwer fixed-point theorem informally.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between a complete graph and a bipartite graph.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Prove that 2^n > n for all positive integers n using induction.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the difference between an axiom and a postulate?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain Ockham's Razor in the context of scientific hypothesis selection.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: If the sum of interior angles of a polygon is 1440 degrees, how many sides does it have?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "What is the connection between the Fibonacci sequence and the golden ratio?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the principle of double counting (counting in two ways) with an example.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: A 3x3 magic square uses numbers 1-9. Find a valid arrangement and explain the constraints.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the concept of a mathematical proof? Why are proofs important even when something seems obvious?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between classical and intuitionistic logic.", "domain": "reasoning", "source": "manual"}
+{"prompt": "If all cats are animals and all animals need water, what can you conclude about cats? What type of reasoning is this?", "domain": "reasoning", "source": "arc"}
+{"prompt": "An analog clock shows 8:00. What is the angle between the hands? What about at 8:20?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "A person walks 3 km north, then 4 km east. How far are they from the starting point?", "domain": "reasoning", "source": "gsm8k"}
+{"prompt": "Solve: Is the number 2^67 - 1 prime? Explain how you would approach this problem.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the sieve of Eratosthenes? Use it to find all primes up to 50.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of graph isomorphism. How do you check if two graphs are isomorphic?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: In a group of 100 people, 70 like coffee and 80 like tea. At least how many like both?", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the maximum number of edges in a simple graph with n vertices? Why?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the concept of reachability in a directed graph.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: How many distinct necklaces can be made from 5 different colored beads?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the difference between a permutation group and a symmetry group.", "domain": "reasoning", "source": "manual"}
+{"prompt": "What is the Monty Hall problem with a Bayesian approach? Show the prior and posterior probabilities.", "domain": "reasoning", "source": "manual"}
+{"prompt": "Solve: Three cards face-down: one ace, two kings. You pick one. The dealer reveals a king from the remaining. Should you switch?", "domain": "reasoning", "source": "manual"}
+{"prompt": "Explain the friendship theorem: if every pair of friends has exactly one mutual friend, then there is a person who is friends with everyone.", "domain": "reasoning", "source": "manual"}

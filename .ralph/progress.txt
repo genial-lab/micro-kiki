@@ -28,3 +28,15 @@ Stories: 13/107 complete
 [2026-04-16T01:35:22+00:00] Completed: story-2 - Fork Qwen3.5-4B with Differential Attention
 [2026-04-16T01:35:22+00:00] Completed: story-9 - Generate first distilled dataset (chat-fr, 446 prompts + script)
 [2026-04-16T01:35:22+00:00] Completed: story-16 - Forgetting check framework
+[2026-04-16T02:08:00+00:00] Validated: story-72 - Aeon architecture spec (`docs/specs/aeon-memory-palace.md`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-73 - Atlas SIMD vector index (`src/memory/atlas.py` + `src/memory (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-74 - Trace episodic graph (`src/memory/trace.py`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-75 - Aeon unified API (`src/memory/aeon.py`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-76 - Aeon storage backends (Qdrant + Neo4j integration) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-80 - Negotiator design (`docs/specs/negotiator.md`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-81 - Argument extraction (`src/cognitive/argument_extractor.py`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-82 - Adaptive judge (`src/cognitive/judge.py`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-83 - Catfish dissent module (`src/cognitive/catfish.py`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-84 - Negotiator integration + eval (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-86 - Neuron probing (`src/cognitive/bias_probe.py`) (code existed from Studio Ralph)
+[2026-04-16T02:08:00+00:00] Validated: story-92 - RBD runtime plug-in (`src/cognitive/rbd.py`) (code existed from Studio Ralph)

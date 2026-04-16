@@ -1,0 +1,339 @@
+{"prompt": "Write a function that checks if a string is a palindrome, ignoring spaces and punctuation.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a binary search algorithm that returns the index of a target element in a sorted list.", "domain": "python", "source": "manual"}
+{"prompt": "Write a Python function to compute the nth Fibonacci number using memoization.", "domain": "python", "source": "manual"}
+{"prompt": "Create a decorator that logs the execution time of any function.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that flattens a nested list of arbitrary depth.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a stack using a Python list with push, pop, peek, and is_empty methods.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds all prime numbers up to n using the Sieve of Eratosthenes.", "domain": "python", "source": "manual"}
+{"prompt": "Create a context manager that temporarily changes the working directory.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that merges two sorted lists into a single sorted list without using sort().", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple LRU cache from scratch using OrderedDict.", "domain": "python", "source": "manual"}
+{"prompt": "Write a Python class that represents a linked list with insert, delete, and search methods.", "domain": "python", "source": "manual"}
+{"prompt": "Create a generator that yields the Fibonacci sequence indefinitely.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts a Roman numeral string to an integer.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement merge sort on a list of integers. Explain the time complexity.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that groups anagrams from a list of strings.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a dataclass for a Point with x, y coordinates and a method to compute distance to another point.", "domain": "python", "source": "manual"}
+{"prompt": "Write a Python function to check if two strings are anagrams of each other.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a queue using two stacks.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that returns the most frequent element in a list.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a retry decorator that retries a function up to n times with exponential backoff.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that validates an email address using regex.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a trie (prefix tree) with insert, search, and starts_with methods.", "domain": "python", "source": "manual"}
+{"prompt": "Write a Python function that reads a CSV file and returns a list of dictionaries.", "domain": "python", "source": "manual"}
+{"prompt": "Create an async function that fetches multiple URLs concurrently using aiohttp.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the quicksort algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a min-heap from scratch with insert and extract_min operations.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds the longest common subsequence of two strings.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a simple command-line argument parser using argparse for a file conversion tool.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that counts the number of islands in a 2D grid (connected 1s surrounded by 0s).", "domain": "python", "source": "manual"}
+{"prompt": "Implement a thread-safe counter class using threading.Lock.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that reverses a linked list in-place.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that monitors a directory for new files using watchdog.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the power set of a given set.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement Dijkstra's shortest path algorithm using a priority queue.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that serializes and deserializes a binary tree.", "domain": "python", "source": "manual"}
+{"prompt": "Create a metaclass that automatically registers all subclasses of a base class.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds the kth largest element in an unsorted list without fully sorting it.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a producer-consumer pattern using asyncio.Queue.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that checks if a binary tree is balanced.", "domain": "python", "source": "manual"}
+{"prompt": "Create a custom exception hierarchy for a REST API with specific error codes.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Levenshtein (edit) distance between two strings.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple HTTP server using only the socket module (no frameworks).", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that detects cycles in a directed graph using DFS.", "domain": "python", "source": "manual"}
+{"prompt": "Create a descriptor class that validates that an attribute is always a positive integer.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that compresses a string using run-length encoding.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a binary search tree with insert, search, delete, and in-order traversal.", "domain": "python", "source": "manual"}
+{"prompt": "Write an async context manager that manages a database connection pool.", "domain": "python", "source": "manual"}
+{"prompt": "Create a function that parses a mathematical expression string and evaluates it (supporting +, -, *, /).", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates all valid combinations of n pairs of parentheses.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement the observer pattern in Python using a simple event system.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds all permutations of a string.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a simple task scheduler that runs functions at specified intervals using threading.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements matrix multiplication without numpy.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a circular buffer (ring buffer) with fixed capacity.", "domain": "python", "source": "manual"}
+{"prompt": "Write a Python function that converts a nested dictionary to a flat dictionary with dot-separated keys.", "domain": "python", "source": "manual"}
+{"prompt": "Create a function that generates a random password meeting complexity requirements.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements topological sort of a directed acyclic graph.", "domain": "python", "source": "manual"}
+{"prompt": "Implement the strategy pattern for different sorting algorithms.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that reads a JSON file, validates its schema, and returns typed objects.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python class that implements __enter__ and __exit__ for file transaction (write to temp, rename on success).", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that solves the N-Queens problem using backtracking.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a rate limiter using the token bucket algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds the longest palindromic substring in a string.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a simple plugin system where plugins are discovered and loaded from a directory.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts an integer to its binary, octal, and hexadecimal representations.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a graph class with adjacency list representation and BFS/DFS traversal.", "domain": "python", "source": "manual"}
+{"prompt": "Write a decorator that caches function results with a TTL (time-to-live) expiration.", "domain": "python", "source": "manual"}
+{"prompt": "Create a function that parses a cron expression and returns the next execution time.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Knuth-Morris-Pratt string matching algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple state machine for parsing a URL.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds the median of two sorted arrays in O(log(m+n)) time.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a typing-compatible generic container class (like a typed list).", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that checks if a sudoku board is valid.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a connection pool for database connections with max size and timeout.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts a list of edges to an adjacency matrix.", "domain": "python", "source": "manual"}
+{"prompt": "Create a mixin class that adds JSON serialization to any dataclass.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements reservoir sampling for selecting k items from a stream.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple dependency injection container in Python.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that solves a maze represented as a 2D grid using BFS.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that processes log files, extracts error patterns, and generates a summary report.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the A* pathfinding algorithm on a grid.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple publish-subscribe messaging system.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that detects if a linked list has a cycle and returns the start of the cycle.", "domain": "python", "source": "manual"}
+{"prompt": "Create a class hierarchy for geometric shapes with area and perimeter calculations using abstract base classes.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that performs depth-limited search on a tree.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple bloom filter with configurable false positive rate.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds all bridges in an undirected graph.", "domain": "python", "source": "manual"}
+{"prompt": "Create a pipeline class that chains multiple data transformations together.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Floyd-Warshall algorithm for all-pairs shortest paths.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple expression evaluator using the shunting-yard algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts between different number bases (2 to 36).", "domain": "python", "source": "manual"}
+{"prompt": "Create an async generator that paginates through an API, yielding results page by page.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements consistent hashing for distributed systems.", "domain": "python", "source": "manual"}
+{"prompt": "Fix this code: `def avg(lst): return sum(lst) / len(lst)` — it crashes on empty lists.", "domain": "python", "source": "manual"}
+{"prompt": "Fix this code that has a closure bug: `funcs = [lambda: i for i in range(5)]` — all functions return 4.", "domain": "python", "source": "manual"}
+{"prompt": "Fix this code: `d = {}; d['key'] += 1` — it raises KeyError.", "domain": "python", "source": "manual"}
+{"prompt": "Fix this code that mutates a default argument: `def append_to(item, lst=[]): lst.append(item); return lst`", "domain": "python", "source": "manual"}
+{"prompt": "Explain why `is` and `==` behave differently for small vs large integers in Python.", "domain": "python", "source": "manual"}
+{"prompt": "Fix this code: the function modifies the original list when it shouldn't. `def process(data): data.sort(); return data[:5]`", "domain": "python", "source": "manual"}
+{"prompt": "Debug this code: `json.loads('{key: value}')` raises an error. What's wrong and how to fix it?", "domain": "python", "source": "manual"}
+{"prompt": "Fix the race condition in this code: two threads incrementing a shared counter without locks.", "domain": "python", "source": "manual"}
+{"prompt": "Explain why this code deadlocks: thread A acquires lock1 then lock2, thread B acquires lock2 then lock1.", "domain": "python", "source": "manual"}
+{"prompt": "Fix this memory leak: a class stores references to all instances in a class variable list.", "domain": "python", "source": "manual"}
+{"prompt": "Write a Python type stub (.pyi) for a function that accepts either a string or list of strings and returns the same type.", "domain": "python", "source": "manual"}
+{"prompt": "Add proper type hints to this function: `def merge_dicts(*dicts): result = {}; [result.update(d) for d in dicts]; return result`", "domain": "python", "source": "manual"}
+{"prompt": "Write a TypedDict for a configuration that has required and optional fields.", "domain": "python", "source": "manual"}
+{"prompt": "Explain the difference between typing.Protocol and abstract base classes. When should you use each?", "domain": "python", "source": "manual"}
+{"prompt": "Write a generic function using TypeVar that works for any comparable type.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Pydantic model for a User with email validation and optional fields.", "domain": "python", "source": "manual"}
+{"prompt": "Write a comprehensive pytest test suite for a Calculator class with add, subtract, multiply, divide.", "domain": "python", "source": "manual"}
+{"prompt": "Create a pytest fixture that sets up and tears down a temporary database.", "domain": "python", "source": "manual"}
+{"prompt": "Write parametrized tests for a function that converts temperatures between Celsius, Fahrenheit, and Kelvin.", "domain": "python", "source": "manual"}
+{"prompt": "Implement property-based testing using hypothesis for a function that reverses a list.", "domain": "python", "source": "manual"}
+{"prompt": "Write a mock for an HTTP client to test a function that calls an external API.", "domain": "python", "source": "manual"}
+{"prompt": "Create a test that checks for proper exception handling and error messages.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function and its tests using TDD: a URL shortener that generates unique short codes.", "domain": "python", "source": "manual"}
+{"prompt": "Write a FastAPI endpoint that accepts a JSON body, validates it, and returns a response.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple REST API with CRUD operations for a Todo list using FastAPI.", "domain": "python", "source": "manual"}
+{"prompt": "Write middleware for a FastAPI app that logs request duration and adds a request ID header.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a WebSocket echo server using asyncio.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that handles file uploads, validates file type and size, and saves to disk.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple CLI tool using click that converts between JSON and YAML.", "domain": "python", "source": "manual"}
+{"prompt": "Write a CLI tool using argparse that batch-renames files in a directory based on a pattern.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple key-value store backed by a JSON file with get, set, delete operations.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that walks a directory tree and finds duplicate files by content hash.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple SQLite wrapper class with context manager support and parameterized queries.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that safely reads a YAML configuration file with schema validation.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple template engine that replaces {{variable}} placeholders in strings.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that downloads a file with a progress bar using urllib and tqdm.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that sends email with attachments using smtplib.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that parses command-line arguments for a database migration tool.", "domain": "python", "source": "manual"}
+{"prompt": "Implement the singleton pattern in Python. Show both the metaclass and decorator approaches.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes a rolling average over a stream of numbers with a window size.", "domain": "python", "source": "manual"}
+{"prompt": "Create an immutable configuration class using __slots__ and property decorators.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the builder pattern for constructing complex objects.", "domain": "python", "source": "manual"}
+{"prompt": "Implement the chain of responsibility pattern for handling different log levels.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses functools.reduce to compose multiple functions.", "domain": "python", "source": "manual"}
+{"prompt": "Create a class that uses __getattr__ and __setattr__ to implement a proxy/wrapper pattern.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function using itertools to generate all combinations of items from multiple lists.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple event-driven architecture with an event bus, event handlers, and event types.", "domain": "python", "source": "manual"}
+{"prompt": "Write a coroutine that processes items from multiple async iterators concurrently using asyncio.as_completed.", "domain": "python", "source": "manual"}
+{"prompt": "Create a semaphore-based rate limiter for async code that limits concurrent requests.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses multiprocessing.Pool to parallelize a CPU-bound computation.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple MapReduce framework in Python using multiprocessing.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses concurrent.futures to run IO-bound tasks with a thread pool.", "domain": "python", "source": "manual"}
+{"prompt": "Create an asyncio-based TCP server that handles multiple simultaneous client connections.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements exponential backoff with jitter for retrying failed operations.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a circuit breaker pattern for external service calls.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses the struct module to pack and unpack binary data.", "domain": "python", "source": "manual"}
+{"prompt": "Create a custom JSON encoder that handles datetime, Decimal, and set objects.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a simple regex engine supporting '.', '*', and literal characters.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a persistent undo/redo system using the command pattern.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that validates a JSON Web Token (JWT) without using external libraries.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple middleware pipeline where each middleware can modify request and response objects.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the SHA-256 hash of a file in chunks to handle large files.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple in-memory cache with LFU (Least Frequently Used) eviction.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that deep-copies a complex nested data structure without using copy.deepcopy.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that converts a directory of Markdown files to HTML.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements Huffman coding for text compression.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple spell checker using edit distance and a word frequency dictionary.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that extracts all URLs from an HTML string using regex.", "domain": "python", "source": "manual"}
+{"prompt": "Create a data pipeline class that supports map, filter, and reduce operations on iterables.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Union-Find (Disjoint Set Union) data structure.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple REPL (Read-Eval-Print Loop) for a basic calculator.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that parses and evaluates a simple Lisp-like expression: (+ 1 (* 2 3)).", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python class that implements the iterator protocol for a custom range with step.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that monitors system resource usage (CPU, memory, disk) and logs alerts.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple finite state machine for a traffic light controller.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates a dependency graph from Python import statements in a project.", "domain": "python", "source": "manual"}
+{"prompt": "Create a context manager that suppresses specific exceptions and logs them.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Rabin-Karp string matching algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a skip list data structure with insert, search, and delete.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts a flat list with parent references into a tree structure.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple ORM-like class that maps Python objects to SQLite table rows.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a bounded thread pool executor from scratch.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple diff algorithm that shows added, removed, and changed lines between two texts.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates a random graph with n nodes and m edges, ensuring connectivity.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python module that provides atomic file writes (write to temp, then rename).", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the convex hull of a set of 2D points.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple cron-like scheduler that runs tasks based on cron expressions.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements counting sort and explain when it is preferable to comparison-based sorts.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python class for a weighted graph with methods for Prim's minimum spanning tree.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements an interval tree for overlapping range queries.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple virtual file system in memory with mkdir, touch, ls, and cat operations.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts a nested Python object to a TOML string.", "domain": "python", "source": "manual"}
+{"prompt": "Create an abstract factory pattern implementation for creating different database adapters.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that reads a large file line by line with minimal memory usage using generators.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple protocol buffer-like serializer/deserializer for a fixed schema.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the longest increasing subsequence in O(n log n) time.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a custom logging handler that sends log messages to a remote HTTP endpoint.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Boyer-Moore voting algorithm for finding the majority element.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple load balancer that distributes requests across servers using round-robin.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that safely merges multiple YAML configuration files with override precedence.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that generates a UML-like class diagram from Python source files.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements Tarjan's algorithm for finding strongly connected components.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple object pool pattern for reusing expensive resources.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that performs natural language number parsing ('twenty-three' -> 23).", "domain": "python", "source": "manual"}
+{"prompt": "Create a decorator that validates function arguments against type annotations at runtime.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a simple tokenizer for a programming language.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a segment tree for range sum queries with point updates.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts between different date formats using strptime and strftime.", "domain": "python", "source": "manual"}
+{"prompt": "Create a class that implements __hash__ and __eq__ correctly for use in sets and dict keys.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the knapsack problem using dynamic programming.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple web scraper using requests and BeautifulSoup that extracts structured data.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates Markdown tables from a list of dictionaries.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple task queue with priorities using heapq.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the coin change problem: minimum coins to make a given amount.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple CORS middleware for a Python web server.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses __init_subclass__ to automatically register handler classes.", "domain": "python", "source": "manual"}
+{"prompt": "Create a dataclass with a custom __post_init__ that validates field constraints.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Aho-Corasick algorithm for multi-pattern string matching.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple feature flag system backed by a JSON config file.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that performs topological sorting on a DAG and detects cycles.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that profiles code and identifies the slowest functions.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a Fenwick tree (Binary Indexed Tree) for prefix sum queries.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple health check endpoint system that monitors multiple service dependencies.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts an arithmetic expression from infix to postfix notation.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple migration system that tracks and applies schema changes in order.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements radix sort for a list of non-negative integers.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple routing table for a web framework using a trie.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes all shortest paths in a graph using BFS.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that generates API client code from an OpenAPI specification.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Bellman-Ford algorithm and detects negative cycles.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple actor model using asyncio tasks and queues.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses mmap to efficiently search for a pattern in a large file.", "domain": "python", "source": "manual"}
+{"prompt": "Create a decorator factory that accepts parameters and can be used with or without parentheses.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the maximum subarray problem (Kadane's algorithm).", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple content-addressable storage system using SHA-256 hashes.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts between snake_case, camelCase, and PascalCase.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple configuration management system that supports environment variable overrides.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a thread-safe lazy initialization pattern.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple B-tree with insert and search operations.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates a random maze using the recursive backtracking algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that monitors a log file in real-time (like tail -f) and filters by pattern.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Kruskal algorithm for minimum spanning tree.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple pub/sub system using asyncio with topic-based filtering.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that validates a credit card number using the Luhn algorithm.", "domain": "python", "source": "mbpp"}
+{"prompt": "Create a simple dependency resolver that handles version constraints.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the longest common prefix among a list of strings.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple object serialization format that is more compact than JSON.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the edit distance matrix and reconstructs the alignment.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python context manager that captures stdout and stderr during execution.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a concurrent web crawler with depth limiting.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple DAG (Directed Acyclic Graph) executor that runs tasks respecting dependencies.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses __class_getitem__ to create a generic container type.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple test runner that discovers and executes test functions in a directory.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a sparse matrix using a dictionary of keys.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple versioned key-value store that supports get-at-timestamp queries.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates all valid IP addresses from a string of digits.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a simple message broker that routes messages based on topic patterns with wildcards.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a thread-safe singleton using double-checked locking.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple CRDT (Conflict-free Replicated Data Type) for a counter.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the minimum window substring containing all characters of a pattern.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a simple ETL pipeline class that supports extract, transform, and load stages.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Sieve of Atkin for finding prime numbers.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple CLI framework with subcommands, help generation, and argument parsing.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses functools.singledispatch for type-based dispatch.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that generates a flamegraph from profiling data.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a simple garbage collector using reference counting.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple regex to NFA to DFA converter.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that solves the word ladder problem (transform one word to another by changing one letter at a time).", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python class that wraps subprocess to provide a fluent API for running shell commands.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Manacher algorithm for finding the longest palindromic substring in linear time.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple write-ahead log (WAL) for crash recovery in a key-value store.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates Python code from an AST using the ast module.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple code formatter that indents Python-like code correctly.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that checks if a given graph is bipartite using BFS coloring.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple caching proxy server using asyncio and aiohttp.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the maximum flow in a network using the Ford-Fulkerson method.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python decorator that converts generator functions into async generators.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements a simple text search engine with TF-IDF scoring.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple LSM tree (Log-Structured Merge Tree) with in-memory buffer and disk segments.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that solves the subset sum problem using dynamic programming.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a simple Python ASGI application from scratch without using any framework.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the patience sorting algorithm.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple conflict resolver for concurrent edits using operational transformation.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses weakref to create a cache that doesn't prevent garbage collection.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple Python package structure with __init__.py, setup.cfg, and pyproject.toml.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements iterative deepening depth-first search (IDDFS).", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple lock-free queue using compare-and-swap semantics (simulated in Python).", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that converts a Python dictionary to XML and back.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple benchmark runner that times functions, computes statistics, and compares results.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds all articulation points in an undirected graph.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple backpressure mechanism for an async data pipeline.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the minimax algorithm for a tic-tac-toe AI.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python script that auto-generates __init__.py files that re-export public symbols.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Dutch National Flag problem (3-way partitioning).", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple event sourcing system that stores events and rebuilds state from them.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses the ast module to analyze Python source code and find all function definitions.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple data validation library with composable validators and error aggregation.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Euclidean algorithm for GCD and extended GCD.", "domain": "python", "source": "mbpp"}
+{"prompt": "Implement a simple structured logging system with JSON output and context propagation.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that generates all possible valid expressions by inserting +, -, * between digits to reach a target.", "domain": "python", "source": "manual"}
+{"prompt": "Create a Python class that implements a double-ended priority queue.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the reservoir sampling algorithm for randomly selecting k items from a stream of unknown size.", "domain": "python", "source": "manual"}
+{"prompt": "Implement a simple type inference engine for a basic expression language.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that checks if a string of brackets is balanced, supporting (), [], and {}.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a Python script that generates a static site from Markdown files with front matter.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the Fisher-Yates shuffle algorithm.", "domain": "python", "source": "mbpp"}
+{"prompt": "Implement a simple distributed counter using CRDTs with merge semantics.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that extracts structured data from semi-structured text using named regex groups.", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple Python-based job scheduler with cron-like syntax and persistent job state.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that computes the nth Catalan number using dynamic programming.", "domain": "python", "source": "mbpp"}
+{"prompt": "Implement a simple actor-based concurrency model using multiprocessing and queues.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that performs matrix exponentiation for computing Fibonacci numbers in O(log n).", "domain": "python", "source": "manual"}
+{"prompt": "Create a simple Python linter that checks for common anti-patterns using the ast module.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that finds the longest substring without repeating characters.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple publish-subscribe system using Python descriptors.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the 0/1 knapsack problem and returns the selected items.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a Python module for color manipulation: RGB to HSL conversion, color blending, and contrast ratio.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses the bisect module to implement a sorted container with O(log n) insertion.", "domain": "python", "source": "manual"}
+{"prompt": "Explain the Global Interpreter Lock (GIL) in CPython. When does it matter and when doesn't it?", "domain": "python", "source": "manual"}
+{"prompt": "What are slots in Python classes? When should you use __slots__ and when shouldn't you?", "domain": "python", "source": "manual"}
+{"prompt": "Explain the difference between shallow copy and deep copy. When does each cause problems?", "domain": "python", "source": "manual"}
+{"prompt": "What is the MRO (Method Resolution Order) in Python? Explain C3 linearization with a diamond inheritance example.", "domain": "python", "source": "manual"}
+{"prompt": "Explain how Python's garbage collector works, including reference counting and generational GC.", "domain": "python", "source": "manual"}
+{"prompt": "What are the differences between threading, multiprocessing, and asyncio in Python? When to use each?", "domain": "python", "source": "manual"}
+{"prompt": "Explain how Python descriptors work (__get__, __set__, __delete__) with a practical example.", "domain": "python", "source": "manual"}
+{"prompt": "What is the difference between @staticmethod, @classmethod, and a regular method?", "domain": "python", "source": "manual"}
+{"prompt": "Explain how Python's import system works: finder, loader, sys.path, __init__.py.", "domain": "python", "source": "manual"}
+{"prompt": "What are Python's data model methods (dunder methods)? List the most important ones and their purposes.", "domain": "python", "source": "manual"}
+{"prompt": "Explain how async/await works under the hood in Python. What is the event loop doing?", "domain": "python", "source": "manual"}
+{"prompt": "What is a Python wheel vs sdist? Explain the modern packaging ecosystem (pyproject.toml, build, twine).", "domain": "python", "source": "manual"}
+{"prompt": "Explain Python's memory management: how objects are allocated, reference counting, and the small object allocator.", "domain": "python", "source": "manual"}
+{"prompt": "What is structural pattern matching (match/case) in Python 3.10+? Give examples of each pattern type.", "domain": "python", "source": "manual"}
+{"prompt": "Explain the Walrus operator (:=) with practical use cases where it improves readability.", "domain": "python", "source": "manual"}
+{"prompt": "What are exception groups and except* in Python 3.11+? When are they useful?", "domain": "python", "source": "manual"}
+{"prompt": "Explain how to properly structure a Python project: src layout, tests, configuration, and CI.", "domain": "python", "source": "manual"}
+{"prompt": "What is the difference between __new__ and __init__? When would you override __new__?", "domain": "python", "source": "manual"}
+{"prompt": "Refactor this function to be more Pythonic: `result = []; for i in range(len(lst)): if lst[i] > 0: result.append(lst[i] * 2); return result`", "domain": "python", "source": "manual"}
+{"prompt": "Refactor this nested loop into a more readable form using itertools and comprehensions.", "domain": "python", "source": "manual"}
+{"prompt": "Optimize this function that checks for duplicates: `def has_dup(lst): for i in range(len(lst)): for j in range(i+1, len(lst)): if lst[i] == lst[j]: return True; return False`", "domain": "python", "source": "manual"}
+{"prompt": "Refactor a class with 20+ methods into smaller, cohesive classes following the Single Responsibility Principle.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the two-pointer technique to find pairs that sum to a target.", "domain": "python", "source": "humaneval"}
+{"prompt": "Create a Python script that generates a requirements.txt from import statements in source files.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that implements the sliding window technique to find the maximum sum subarray of size k.", "domain": "python", "source": "humaneval"}
+{"prompt": "Implement a simple interpreter for a stack-based language with push, pop, add, mul, and print.", "domain": "python", "source": "manual"}
+{"prompt": "Write a function that uses the collections.Counter to find the top-k most common elements.", "domain": "python", "source": "manual"}
+{"prompt": "Create a comprehensive __repr__ and __str__ for a complex data class that is both human-readable and eval()-able.", "domain": "python", "source": "manual"}

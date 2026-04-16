@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Distill chat-fr dataset (2K examples) from a teacher LLM.
+"""Distill reasoning dataset (2K examples) from a teacher LLM.
 
-Reads seed prompts from ``data/prompts/chat-fr.jsonl``, sends each to the
+Reads seed prompts from ``data/prompts/reasoning.jsonl``, sends each to the
 teacher via the OpenAI-compatible HTTP endpoint, and writes completed
-examples to ``data/distilled/chat-fr.jsonl``.  Supports checkpoint resume
+examples to ``data/distilled/reasoning.jsonl``.  Supports checkpoint resume
 (handled by ``generate_examples``).
 
 Usage::
 
-    uv run python scripts/distill_chat_fr.py \\
+    uv run python scripts/distill_reasoning.py \\
         --teacher-url http://localhost:8000 \\
-        --teacher-model mistral-large-opus
+        --teacher-model qwen3.5-35b-opus
 
 The script multiplies seed prompts via ``n_per_prompt`` to reach the
-target example count.  For 400 seeds targeting 2000 examples, each prompt
-produces 5 completions (with distinct ``sample_idx`` hashes).
+target example count.  For 300 seeds targeting 2000 examples, each prompt
+produces ~7 completions (with distinct ``sample_idx`` hashes).
 """
 from __future__ import annotations
 
@@ -26,8 +26,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-# Allow direct invocation (uv run python scripts/distill_chat_fr.py) in
-# addition to module invocation (uv run python -m scripts.distill_chat_fr).
+# Allow direct invocation (uv run python scripts/distill_reasoning.py) in
+# addition to module invocation (uv run python -m scripts.distill_reasoning).
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
@@ -41,10 +41,10 @@ logger = logging.getLogger(__name__)
 # Defaults
 # ---------------------------------------------------------------------------
 
-DEFAULT_TEACHER_URL = "http://kxkm-ai:8000"
-DEFAULT_TEACHER_MODEL = "qwen3.5-35b-a3b-opus"
-DEFAULT_PROMPTS = Path("data/prompts/chat-fr.jsonl")
-DEFAULT_OUTPUT = Path("data/distilled/chat-fr.jsonl")
+DEFAULT_TEACHER_URL = "http://localhost:8000"
+DEFAULT_TEACHER_MODEL = "qwen3.5-35b-opus"
+DEFAULT_PROMPTS = Path("data/prompts/reasoning.jsonl")
+DEFAULT_OUTPUT = Path("data/distilled/reasoning.jsonl")
 DEFAULT_MAX_EXAMPLES = 2000
 
 
@@ -67,17 +67,12 @@ class SyncTeacherAdapter:
         self.model = model
         self._params = params
         self._loop = asyncio.new_event_loop()
-        self._call_count = 0
 
     def complete(self, prompt: str, **_params: Any) -> str:
         """Synchronous completion via the teacher HTTP endpoint."""
-        result = self._loop.run_until_complete(
+        return self._loop.run_until_complete(
             self._client.generate(prompt, self.model, params=self._params)
         )
-        self._call_count += 1
-        if self._call_count % 50 == 0:
-            logger.info("Progress: %d completions done", self._call_count)
-        return result
 
 
 # ---------------------------------------------------------------------------
@@ -123,7 +118,7 @@ def load_seed_prompts(path: Path) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Distill chat-fr dataset from a teacher LLM.",
+        description="Distill reasoning dataset from a teacher LLM.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
@@ -163,7 +158,7 @@ def main() -> None:
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=1024,
+        default=2048,
         help="Max tokens per teacher completion.",
     )
     args = parser.parse_args()
@@ -192,7 +187,6 @@ def main() -> None:
     gen_params = GenerateParams(
         temperature=args.temperature,
         max_tokens=args.max_tokens,
-        thinking=False,
     )
     teacher = SyncTeacherAdapter(client, args.teacher_model, gen_params)
 
@@ -201,7 +195,7 @@ def main() -> None:
         n_per_prompt=n_per_prompt,
         max_retries=3,
         retry_backoff_s=1.0,
-        domain="chat-fr",
+        domain="reasoning",
         params=gen_params.to_dict(),
     )
 

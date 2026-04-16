@@ -504,35 +504,35 @@
       "title": "Aeon architecture spec (`docs/specs/aeon-memory-palace.md`)",
       "description": "**Aeon architecture spec (`docs/specs/aeon-memory-palace.md`)**\n\n    - Files to touch: `docs/specs/aeon-memory-palace.md`\n    - Document: Atlas SIMD Page-Clustered Vector Index (data layout, page size, clustering algorithm, SIMD kernels for AVX-512 / NEON), Trace neuro-symbolic episodic graph (node types, edge types, causality, temporal validity windows), API contract (`write_episode`, `recall`, `walk`, `query_by_time`, `compress`).\n    - Reference: arxiv 2601.15311 (Aeon, 2026).\n    - Acceptance: spec document reviewed against paper, covers 4 core operations.\n    - Dependencies: none.",
       "priority": 72,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-73",
       "title": "Atlas SIMD vector index (`src/memory/atlas.py` + `src/memory/atlas_simd.{c,rs}`)",
       "description": "**Atlas SIMD vector index (`src/memory/atlas.py` + `src/memory/atlas_simd.{c,rs}`)**\n\n    - Files to touch: `src/memory/atlas.py`, `src/memory/atlas_simd.c` (or .rs), `tests/test_atlas.py`, `setup.py` (cython/rust binding)\n    - Page-clustered layout: vectors stored in fixed-size pages (~4 KB), clusters via k-means. SIMD kernels for dot-product batched (AVX-512 on kxkm-ai, NEON on Mac Studio).\n    - Python bindings via cython (simple) or PyO3/rust (fast but more deps).\n    - Fallback: pure Python with numpy when SIMD not available (validity via CI).\n    - Acceptance: `test_atlas::test_insert_recall` — insert 10k 3072-dim vectors, recall top-10 latency < 5 ms on kxkm-ai CPU, accuracy vs naive ≥ 99 %.\n    - Dependencies: step 72.",
       "priority": 73,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-74",
       "title": "Trace episodic graph (`src/memory/trace.py`)",
       "description": "**Trace episodic graph (`src/memory/trace.py`)**\n\n    - Files to touch: `src/memory/trace.py`, `tests/test_trace.py`\n    - Graph store (Neo4j or in-process RustworkX) holding episodes = subgraphs with: `event` nodes, `causality` edges (directed, weighted), `temporal_validity` intervals, `source` provenance.\n    - Neuro-symbolic rules: simple Datalog-style rules for retrieval filtering (e.g., \"recall all `decision` events with `causality > 0.5` targeting `project=X` within last 30 days\").\n    - Acceptance: 100 synthetic episodes inserted, 5 rule queries return expected subsets, round-trip latency < 20 ms.\n    - Dependencies: step 72.",
       "priority": 74,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-75",
       "title": "Aeon unified API (`src/memory/aeon.py`)",
       "description": "**Aeon unified API (`src/memory/aeon.py`)**\n\n    - Files to touch: `src/memory/aeon.py`, `src/memory/__init__.py`, `tests/test_aeon_api.py`\n    - High-level class `AeonPalace` wrapping Atlas + Trace. Methods: `write(content, domain, timestamp, links)`, `recall(query, top_k, filters)`, `walk(from_node, max_depth)`, `query_by_time(interval)`, `compress(older_than)`.\n    - `compress` uses learned summarization (call teacher on chunk) to reduce tokens by 5-10× while preserving recoverable meaning.\n    - Acceptance: end-to-end test writes 1k episodes, recalls 50 queries, walks 10 hops, compresses half → token count 5×+ smaller.\n    - Dependencies: steps 73, 74.",
       "priority": 75,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-76",
       "title": "Aeon storage backends (Qdrant + Neo4j integration)",
       "description": "**Aeon storage backends (Qdrant + Neo4j integration)**\n\n    - Files to touch: `src/memory/backends/qdrant_atlas.py`, `src/memory/backends/neo4j_trace.py`, `configs/aeon-backends.yaml`\n    - Make backends pluggable — Atlas-native (SIMD local files) OR Qdrant remote; Trace-native (RustworkX in-memory) OR Neo4j remote (Tower or Graphiti).\n    - Config selects backend per environment (dev = local; prod = remote).\n    - Acceptance: both backend pairs pass the same test suite; switch via env var `AEON_BACKEND={native,remote}`.\n    - Dependencies: step 75.",
       "priority": 76,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-77",
@@ -560,35 +560,35 @@
       "title": "Negotiator design (`docs/specs/negotiator.md`)",
       "description": "**Negotiator design (`docs/specs/negotiator.md`)**\n\n    - Files to touch: `docs/specs/negotiator.md`\n    - Document: CAMP-style evidence-based arbitration (arxiv 2604.00085) + Catfish dissent injection (arxiv 2505.21503). Pipeline: K=2-4 stack candidates → extract arguments → judge weights arguments (not votes) → if suspect consensus (>95 % agreement, weak arguments), inject Catfish prompt → re-judge.\n    - Acceptance: spec reviewed, decision thresholds (agreement %, argument quality score) defined.\n    - Dependencies: none.",
       "priority": 80,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-81",
       "title": "Argument extraction (`src/cognitive/argument_extractor.py`)",
       "description": "**Argument extraction (`src/cognitive/argument_extractor.py`)**\n\n    - Files to touch: `src/cognitive/argument_extractor.py`, `tests/test_argument_extractor.py`\n    - For each of K stack candidate responses, extract: claim, evidence, reasoning chain. LLM-based (use base model with stack-reasoning active, or dedicated small judge).\n    - Acceptance: on 20 synthetic candidates, extraction returns structured `{claim, evidence, reasoning}` triples with schema validation.\n    - Dependencies: step 10 (trainer, base ready).",
       "priority": 81,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-82",
       "title": "Adaptive judge (`src/cognitive/judge.py`)",
       "description": "**Adaptive judge (`src/cognitive/judge.py`)**\n\n    - Files to touch: `src/cognitive/judge.py`, `src/cognitive/judge_backends.py`, `configs/judge.yaml`\n    - Two backends:\n        - **fast**: Qwen3.5-35B-A3B Opus on kxkm-ai :8000 (~160 tok/s, default)\n        - **deep**: Mistral-Large-Opus on Studio (slow but stronger reasoning, used only if confidence low)\n    - Routing logic: agreement_score in (0, 1). If > 0.9 → skip judge (trust consensus). If 0.5–0.9 → fast judge. If < 0.5 → deep judge.\n    - Output: `{winner_idx, confidence, rationale}`.\n    - Acceptance: on 30 synthetic K=3 candidate sets (mix of easy/hard disagreements), routing selects the right backend and judge returns non-empty rationale.\n    - Dependencies: step 4 (teacher_client for endpoints), step 81.",
       "priority": 82,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-83",
       "title": "Catfish dissent module (`src/cognitive/catfish.py`)",
       "description": "**Catfish dissent module (`src/cognitive/catfish.py`)**\n\n    - Files to touch: `src/cognitive/catfish.py`, `tests/test_catfish.py`\n    - Inject a dissent agent when high-agreement but weak arguments detected. The Catfish re-generates a candidate with explicit \"devil's advocate\" system prompt using one of the active stacks.\n    - Trigger: agreement > 0.95 AND avg_argument_quality < 0.6.\n    - Acceptance: on 10 high-agreement weak-argument cases, Catfish produces a substantively different response (embedding similarity < 0.7 with consensus).\n    - Dependencies: step 10 (trainer), step 81.",
       "priority": 83,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-84",
       "title": "Negotiator integration + eval",
       "description": "**Negotiator integration + eval**\n\n    - Files to touch: `src/cognitive/negotiator.py`, update serving pipeline, `results/negotiator-eval.json`\n    - End-to-end: prompt → K candidates → argument extraction → judge → Catfish if triggered → final response.\n    - Eval: 50 prompts that are known to elicit stack disagreement. Measure: judge accuracy vs human-labeled ground truth, Catfish trigger rate, latency overhead.\n    - Acceptance: judge agrees with ground truth ≥ 75 %; Catfish triggers on ≥ 80 % of planted suspect-consensus cases; latency overhead ≤ 300 ms when fast, ≤ 2 s when deep.\n    - Dependencies: steps 82, 83.",
       "priority": 84,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-85",
@@ -602,7 +602,7 @@
       "title": "Neuron probing (`src/cognitive/bias_probe.py`)",
       "description": "**Neuron probing (`src/cognitive/bias_probe.py`)**\n\n    - Files to touch: `src/cognitive/bias_probe.py`, `tests/test_bias_probe.py`\n    - PyTorch hooks on activations of Qwen3.5-4B layers. For each pair in dataset, record activation delta across all neurons. Rank neurons by |Δ_biased - Δ_fair|.\n    - Output: `results/bias_neurons_base.json` (top N=200 bias neurons per layer).\n    - Acceptance: 200 bias neurons identified in base model; probe runs in < 30 min on 4090 with the 5K dataset.\n    - Dependencies: step 3 (loader), step 85.",
       "priority": 86,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-87",
@@ -644,7 +644,7 @@
       "title": "RBD runtime plug-in (`src/cognitive/rbd.py`)",
       "description": "**RBD runtime plug-in (`src/cognitive/rbd.py`)**\n\n    - Files to touch: `src/cognitive/rbd.py`, `tests/test_rbd.py`\n    - Reasoning-based Bias Detector (arxiv 2505.17100). Post-inference check: given (prompt, response), a lightweight reasoning pass flags potential biases not caught by KnowBias (domain-specific, framing effects).\n    - Uses Qwen3.5-4B-debiased itself as detector (self-consistent) OR Qwen1.7B as cheaper alternative.\n    - Acceptance: on 100 responses (50 biased, 50 clean), RBD flags ≥ 80 % of biased, false-positive rate ≤ 15 %.\n    - Dependencies: step 91.",
       "priority": 92,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-93",
