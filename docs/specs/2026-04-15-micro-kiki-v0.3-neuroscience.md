@@ -85,6 +85,47 @@ v0.2 is near production (107 stories, tested architecture, papers all published 
 - MAP — Nature Communications 2025 (s41467-025-63804-5)
 - SleepGate — arxiv 2603.14517 (March 2026)
 - SpikingBrain — arxiv 2509.05276 (September 2025)
+- LAS (Lossless ANN→SNN) — arxiv 2505.09659 (2025)
 - BriLLM — OpenReview 2026 (D4xSuGvLZA)
 - Spikingformer — AAAI 2026
 - Akida hardware — BrainChip product line
+
+## Addendum 2026-04-16 — pivot to 7B + multi-base custom reproduction
+
+Story 12's acquisition probe confirmed that BICLab has **not released
+the SpikingBrain-76B weights** (only the 7B SFT checkpoint on
+ModelScope: `Panyuqi/V1-7B-sft-s3-reasoning`). User decision on
+2026-04-16 adopts a **mixed path**:
+
+1. **Production path** — SpikingBrain-7B SFT as the fast, shippable
+   backbone. Phase N-III scaled down from 76B to 7B targets (BF16
+   ≤ 16 GB load / ≤ 20 GB peak; Q4_K_M ~3.5 GB; ≥ 10 tok/s on Studio).
+2. **Custom reproduction path** — three parallel SNN reproductions via
+   LAS (arxiv 2505.09659, lossless ANN→SNN, replacing Spikingformer
+   as the primary tool):
+   - `SpikingKiki-27B` from Qwen3.5-27B (dense)
+   - `SpikingKiki-122B-A10B` from Qwen3.5-122B-A10B (hybrid attn + MoE,
+     already cached on Studio at ~244 GB BF16)
+   - `SpikingKiki-LargeOpus-123B` from Mistral-Large-Opus fused
+     (~233 GB BF16, already on Studio)
+3. Sequential execution on Studio (122B and 123B each peak 240+ GB
+   unified memory, cannot coexist).
+4. Cross-eval at Story 29 picks the best variant for the Story 38
+   freeze. SpikingBrain-7B remains a legitimate candidate if its
+   efficiency-per-accuracy wins the composite score.
+
+Phase structure becomes:
+
+| Phase | Stories | Focus                                            |
+|-------|---------|--------------------------------------------------|
+| N-I   | 1-4     | MAP retrospective validation (DONE)              |
+| N-II  | 5-11    | AeonSleep fusion (DONE)                          |
+| N-III | 12-16   | SpikingBrain-7B production path                  |
+| N-IV  | 17-29   | Multi-base LAS reproduction + cross-eval         |
+| N-V   | 30-32   | General ANN→SNN tooling (Spikingformer, energy)  |
+| N-VI  | 33-37   | Hardware edge (Loihi sim, Akida sim/PCIe, ESP32) |
+| N-VII | 38-39   | E2E acceptance + variant freeze + HF release     |
+
+Total story count: **39** (was 26). Details in
+`.claude/plans/micro-kiki-v0.3-neuroscience.md` and the new
+`docs/specs/las-conversion-framework.md`.

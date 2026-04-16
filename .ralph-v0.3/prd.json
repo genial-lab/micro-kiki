@@ -1,187 +1,279 @@
 {
   "plan_source": ".claude/plans/micro-kiki-v0.3-neuroscience.md",
   "created_at": "2026-04-15T22:55:00+00:00",
+  "updated_at": "2026-04-16T00:08:20.564048+00:00",
   "stories": [
     {
       "id": "story-1",
       "title": "MAP paper spec + metrics harness",
-      "description": "**MAP paper spec + metrics harness**\n\n- Files to touch: `docs/specs/map-paper-spec.md`, `src/eval/map_harness.py`, `tests/test_map_harness.py`\n- Distill MAP (Nature Communications 2025, s41467-025-63804-5) into a spec: 5 modules (conflict monitor, state predictor, evaluator, decomposer, coordinator), inputs/outputs, canonical benchmarks.\n- Build a metric harness that runs the same cognitive benchmarks the MAP paper uses (or closest public equivalents) and emits a JSON report with per-module scores.\n- Acceptance: spec committed; `pytest tests/test_map_harness.py` passes; harness runs end-to-end on a mock agent and produces a valid JSON report.\n- Dependencies: none.",
+      "description": "**MAP paper spec + metrics harness**\n\n   - Files to touch: `docs/specs/map-paper-spec.md`, `src/eval/map_harness.py`, `tests/test_map_harness.py`\n   - Distill the MAP paper (Nature Communications 2025, s41467-025-63804-5) into a spec: 5 modules (conflict monitor, state predictor, evaluator, decomposer, coordinator), inputs/outputs, canonical benchmarks.\n   - Build a metric harness that runs the same cognitive benchmarks the MAP paper uses (or closest public equivalents) and emits a JSON report with per-module scores.\n   - Acceptance: spec committed; `pytest tests/test_map_harness.py` passes; harness runs end-to-end on a mock agent and produces a valid JSON report.\n   - Dependencies: none.",
       "priority": 1,
       "passes": true
     },
     {
       "id": "story-2",
       "title": "Benchmark v0.2 Dispatcher vs MAP conflict monitor",
-      "description": "**Benchmark v0.2 Dispatcher vs MAP conflict monitor**\n\n- Files to touch: `src/eval/map_dispatcher_bench.py`, `results/map-dispatcher.json`\n- Run MAP's conflict-monitor benchmark against v0.2's Dispatcher (7 meta-intents, training-free YAML mapping).\n- Score: agreement rate with MAP reference conflict labels; false-positive rate; latency.\n- Acceptance: script runs, emits `results/map-dispatcher.json` with \u2265 3 metrics. Descriptive, not pass/fail.\n- Dependencies: step 1.",
+      "description": "**Benchmark v0.2 Dispatcher vs MAP conflict monitor**\n\n   - Files to touch: `src/eval/map_dispatcher_bench.py`, `results/map-dispatcher.json`\n   - Run MAP's conflict-monitor benchmark against v0.2's Dispatcher (7 meta-intents, training-free YAML mapping).\n   - Score: agreement rate with MAP paper's reference conflict labels; false-positive rate; latency.\n   - Acceptance: script runs, emits `results/map-dispatcher.json` with ≥ 3 metrics. No threshold — this is descriptive, not pass/fail.\n   - Dependencies: step 1.",
       "priority": 2,
       "passes": true
     },
     {
       "id": "story-3",
       "title": "Benchmark v0.2 Negotiator vs MAP state evaluator",
-      "description": "**Benchmark v0.2 Negotiator vs MAP state evaluator**\n\n- Files to touch: `src/eval/map_negotiator_bench.py`, `results/map-negotiator.json`\n- Run MAP's state-evaluation benchmark against v0.2's Negotiator (CAMP arbitration + Catfish dissent, adaptive judge).\n- Score: Spearman correlation with MAP reference scores, escalation rate, judge cost.\n- Acceptance: emits `results/map-negotiator.json`. Goal is structural mapping, not supremacy.\n- Dependencies: step 1.",
+      "description": "**Benchmark v0.2 Negotiator vs MAP state evaluator**\n\n   - Files to touch: `src/eval/map_negotiator_bench.py`, `results/map-negotiator.json`\n   - Run MAP's state-evaluation benchmark against v0.2's Negotiator (CAMP arbitration + Catfish dissent, adaptive judge).\n   - Score: ranking correlation with MAP reference scores (Spearman), escalation rate, judge cost.\n   - Acceptance: script runs, emits `results/map-negotiator.json`. Note: v0.2 Negotiator is NOT required to beat MAP — goal is structural mapping, not supremacy.\n   - Dependencies: step 1.",
       "priority": 3,
       "passes": true
     },
     {
       "id": "story-4",
       "title": "Technical report: v0.2 as MAP implementation",
-      "description": "**Technical report: v0.2 as MAP implementation**\n\n- Files to touch: `docs/specs/map-validation-report.md`\n- Retrospective technical note: for each of MAP's 5 modules, identify the v0.2 component that implements the same function (Dispatcher \u2194 conflict monitor, Negotiator \u2194 state evaluator + coordinator, Aeon \u2194 state predictor memory, etc.).\n- Include numeric results from steps 2-3.\n- Acceptance: report committed, ~500-800 lines, references steps 2-3 results, no unresolved TODOs.\n- Dependencies: steps 2, 3.",
+      "description": "**Technical report: v0.2 as MAP implementation**\n\n   - Files to touch: `docs/specs/map-validation-report.md`\n   - Retrospective technical note: for each of MAP's 5 modules, identify the v0.2 component that implements the same function (Dispatcher ↔ conflict monitor, Negotiator ↔ state evaluator + coordinator, Aeon ↔ state predictor memory, etc.).\n   - Include the numeric results from steps 2-3.\n   - Conclusion: either (a) v0.2 is a MAP-compatible architecture (expected outcome, validates design choices) or (b) gaps exist, list them for v0.4 planning.\n   - Acceptance: report committed, ~500-800 lines, references steps 2-3 results, no unresolved TODOs.\n   - Dependencies: steps 2, 3.",
       "priority": 4,
       "passes": true
     },
     {
       "id": "story-5",
       "title": "AeonSleep architecture spec",
-      "description": "**AeonSleep architecture spec**\n\n- Files to touch: `docs/specs/aeonsleep-architecture.md`\n- Design doc for the unified module: spatial (Atlas SIMD), episodic (Trace graph), temporal consolidation (SleepGate conflict-aware tagger), forgetting gate (learned MLP selective eviction), consolidation module (summarization-based episode merge).\n- Public API: `AeonSleep.write(episode)`, `.recall(query)`, `.sleep_cycle()`, `.query_time(range)`, `.stats()`.\n- Include migration mapping from v0.2 Aeon (what code transfers, what gets replaced, what's new).\n- Acceptance: spec committed, all 5 public methods documented with pre/post conditions, data-flow diagram included.\n- Dependencies: none.",
+      "description": "**AeonSleep architecture spec**\n\n   - Files to touch: `docs/specs/aeonsleep-architecture.md`\n   - Design doc for the unified module: spatial (Atlas SIMD), episodic (Trace graph), temporal consolidation (SleepGate conflict-aware tagger), forgetting gate (learned MLP selective eviction), consolidation module (summarization-based episode merge).\n   - Public API: `AeonSleep.write(episode)`, `.recall(query)`, `.sleep_cycle()`, `.query_time(range)`, `.stats()`.\n   - Include migration mapping from v0.2 Aeon (what code transfers, what gets replaced, what's new).\n   - Acceptance: spec committed, all 5 public methods documented with pre/post conditions, data-flow diagram included.\n   - Dependencies: none (v0.2 main's Aeon spec referenced, not required as input).",
       "priority": 5,
       "passes": true
     },
     {
       "id": "story-6",
       "title": "Port Atlas SIMD index from v0.2",
-      "description": "**Port Atlas SIMD index from v0.2**\n\n- Files to touch: `src/memory/atlas.py`, `tests/test_atlas.py`\n- Implement the SIMD vector index per v0.2 spec (`docs/specs/2026-04-15-cognitive-layer-design.md`). Pure classical hash-based vector search.\n- Acceptance: `pytest tests/test_atlas.py::test_roundtrip` passes (write 1000 vectors, recall top-10 by cosine, latency < 5 ms on Mac Studio).\n- Dependencies: step 5.",
+      "description": "**Port Atlas SIMD index from v0.2**\n\n   - Files to touch: `src/memory/atlas.py`, `tests/test_atlas.py`\n   - Copy the SIMD vector index implementation from v0.2 main (`src/memory/atlas.py` will be rebuilt here since it is not yet implemented on main either, but the v0.2 spec in `docs/specs/2026-04-15-cognitive-layer-design.md` is the source of truth).\n   - No architectural change. Pure classical hash-based vector search over memory embeddings.\n   - Acceptance: `pytest tests/test_atlas.py::test_roundtrip` passes (write 1000 vectors, recall top-10 by cosine, latency < 5 ms on Mac Studio).\n   - Dependencies: step 5.",
       "priority": 6,
       "passes": true
     },
     {
       "id": "story-7",
       "title": "Port Trace neuro-symbolic graph from v0.2",
-      "description": "**Port Trace neuro-symbolic graph from v0.2**\n\n- Files to touch: `src/memory/trace.py`, `tests/test_trace.py`\n- Implement the Aeon Trace graph: episode nodes + typed edges (temporal, causal, topical), NetworkX backend.\n- Acceptance: `pytest tests/test_trace.py` passes \u2014 create episode chain, query ancestors, verify graph invariants.\n- Dependencies: step 5.",
+      "description": "**Port Trace neuro-symbolic graph from v0.2**\n\n   - Files to touch: `src/memory/trace.py`, `tests/test_trace.py`\n   - Implement (or port) the Aeon Trace graph: episode nodes + typed edges (temporal, causal, topical), NetworkX backend.\n   - Acceptance: `pytest tests/test_trace.py` passes — create episode chain, query ancestors, verify graph invariants.\n   - Dependencies: step 5.",
       "priority": 7,
       "passes": true
     },
     {
       "id": "story-8",
       "title": "SleepGate conflict-aware temporal tagger",
-      "description": "**SleepGate conflict-aware temporal tagger**\n\n- Files to touch: `src/cognitive/sleep_tagger.py`, `tests/test_sleep_tagger.py`\n- Implement the conflict tagger from arxiv 2603.14517: for each new episode, compute a conflict score vs recent episodes; tag `conflict_level \u2208 [0,1]` and `reason` (topic, contradiction, stale).\n- Scorer uses small sentence-transformer similarity + rule-based logic (no LLM call in hot path).\n- Acceptance: `pytest tests/test_sleep_tagger.py` passes on synthetic planted conflicts; precision \u2265 0.8, recall \u2265 0.7.\n- Dependencies: step 7.",
+      "description": "**SleepGate conflict-aware temporal tagger**\n\n   - Files to touch: `src/cognitive/sleep_tagger.py`, `tests/test_sleep_tagger.py`\n   - Implement the conflict tagger from arxiv 2603.14517: for each new episode, compute a conflict score against recent episodes in the Trace graph; tag episode with `conflict_level ∈ [0, 1]` and `reason` (topic, contradiction, stale).\n   - Scorer can be a small sentence-transformer similarity + rule-based logic (no LLM call in the hot path).\n   - Acceptance: `pytest tests/test_sleep_tagger.py` passes on a synthetic set with planted conflicts; precision ≥ 0.8, recall ≥ 0.7.\n   - Dependencies: step 7.",
       "priority": 8,
       "passes": true
     },
     {
       "id": "story-9",
       "title": "Forgetting gate network",
-      "description": "**Forgetting gate network**\n\n- Files to touch: `src/cognitive/forgetting_gate.py`, `scripts/train_forgetting_gate.py`, `data/forgetting-pairs.jsonl`, `tests/test_forgetting_gate.py`\n- Small MLP (2 hidden layers) taking features (age, access count, conflict level, embedding norm) \u2192 P(keep).\n- Train on 2k synthetic PI-style pairs.\n- Acceptance: test set F1 \u2265 0.85; training reproducible from script.\n- Dependencies: step 8.",
+      "description": "**Forgetting gate network**\n\n   - Files to touch: `src/cognitive/forgetting_gate.py`, `scripts/train_forgetting_gate.py`, `data/forgetting-pairs.jsonl`, `tests/test_forgetting_gate.py`\n   - Small MLP (2 hidden layers) that takes an episode's features (age, access count, conflict level, embedding norm) and outputs P(keep ∈ [0, 1]).\n   - Train on 2k synthetic PI-style pairs (positive: episodes still referenced at depth 10; negative: stale episodes never recalled).\n   - Acceptance: test set F1 ≥ 0.85; scripted training reproducible from `scripts/train_forgetting_gate.py`.\n   - Dependencies: step 8.",
       "priority": 9,
       "passes": true
     },
     {
       "id": "story-10",
       "title": "Consolidation module",
-      "description": "**Consolidation module**\n\n- Files to touch: `src/cognitive/consolidation.py`, `tests/test_consolidation.py`\n- Cluster similar episodes by topic + temporal proximity, summarize each cluster via teacher LLM into a single consolidated episode, preserve backrefs (originals not destroyed).\n- Use Qwen3.5-35B-A3B (kxkm-ai :8000 via tunnel) for summarization.\n- Acceptance: 100 episodes across 10 topics \u2192 \u2264 20 summary nodes; recall via summary node \u2265 0.9 on held-out QA probes.\n- Dependencies: steps 7, 8.",
+      "description": "**Consolidation module**\n\n    - Files to touch: `src/cognitive/consolidation.py`, `tests/test_consolidation.py`\n    - Summarization-based merge: cluster similar episodes in the Trace graph by topic + temporal proximity, summarize each cluster via teacher LLM into a single consolidated episode, preserve backrefs so originals are reachable (not destroyed).\n    - Use Qwen3.5-35B-A3B (kxkm-ai :8000 via tunnel) for summarization.\n    - Acceptance: given 100 episodes across 10 topics, consolidation produces ≤ 20 summary nodes; recall of original facts via summary node ≥ 0.9 on held-out QA probes.\n    - Dependencies: steps 7, 8.",
       "priority": 10,
       "passes": true
     },
     {
       "id": "story-11",
       "title": "Unified AeonSleep API",
-      "description": "**Unified AeonSleep API**\n\n- Files to touch: `src/memory/aeonsleep.py`, `src/memory/__init__.py`, `tests/test_aeonsleep.py`\n- Single entry-point class wrapping Atlas, Trace, SleepTagger, ForgettingGate, Consolidation.\n- Methods: `write`, `recall(query, k=10)`, `sleep_cycle()`, `query_time(range)`, `stats()`.\n- Acceptance: integration test \u2014 write 500 episodes, run 3 sleep cycles, achieve **\u2265 95% retrieval accuracy at PI depth 10** on SleepGate-paper benchmark.\n- Dependencies: steps 6, 7, 8, 9, 10.",
+      "description": "**Unified AeonSleep API**\n\n    - Files to touch: `src/memory/aeonsleep.py`, `src/memory/__init__.py`, `tests/test_aeonsleep.py`\n    - Single entry-point class wrapping Atlas (step 6), Trace (step 7), SleepTagger (step 8), ForgettingGate (step 9), Consolidation (step 10).\n    - Methods: `write(episode)`, `recall(query, k=10)`, `sleep_cycle()` (runs tagger → gate eviction → consolidation), `query_time(range)`, `stats()`.\n    - Acceptance: integration test — write 500 episodes, run 3 sleep cycles, verify AeonSleep achieves **≥ 95% retrieval accuracy at PI depth 10** on the SleepGate-paper benchmark (success criterion from v0.3 spec).\n    - Dependencies: steps 6, 7, 8, 9, 10.",
       "priority": 11,
       "passes": true
     },
     {
       "id": "story-12",
-      "title": "SpikingBrain-76B acquisition plan",
-      "description": "**SpikingBrain-76B acquisition plan**\n\n- Files to touch: `docs/specs/spikingbrain-acquisition.md`, `scripts/probe_spikingbrain_hf.py`\n- Probe HuggingFace for an official or community SpikingBrain-76B checkpoint (BICLab, paper authors, arxiv-linked repos).\n- Three paths: (a) official checkpoint \u2192 download; (b) community checkpoint \u2192 verify license + provenance; (c) no checkpoint \u2192 fallback: Spikingformer training-free conversion of Qwen2.5-7B as SpikingBrain-7B.\n- Acceptance: spec committed; probe script emits `results/spikingbrain-probe.json` with decision.\n- Dependencies: none.",
+      "title": "SpikingBrain-7B acquisition plan",
+      "description": "**SpikingBrain-7B acquisition plan**\n\n    - Files to touch: `docs/specs/spikingbrain-acquisition.md`, `scripts/probe_spikingbrain_hf.py`\n    - Probe HuggingFace + ModelScope for an official or community SpikingBrain checkpoint (BICLab organisation, paper authors).\n    - Document three paths: (a) official 76B checkpoint found → use it; (b) only 7B SFT (`Panyuqi/V1-7B-sft-s3-reasoning`) found → adopt as production artefact; (c) no checkpoint → fallback Spikingformer conversion of Qwen2.5-7B.\n    - 2026-04-14 probe outcome recorded: 76B unreleased, 7B SFT available on ModelScope. Path (b) becomes the default; Phase N-IV covers the custom multi-base reproduction in parallel.\n    - Acceptance: spec committed; `scripts/probe_spikingbrain_hf.py` runs and emits `results/spikingbrain-probe.json` with path decision.\n    - Dependencies: none.",
       "priority": 12,
       "passes": true
     },
     {
       "id": "story-13",
-      "title": "Studio environment setup (PyTorch path)",
-      "description": "**Studio environment setup (PyTorch path)**\n\n- Files to touch: `pyproject.toml` (optional `neuro` extra), `scripts/setup_neuro_env.sh`, `docs/setup-studio-neuro.md`\n- SpikingBrain + Spikingformer are PyTorch-first. MLX not supported. Document MPS vs CPU tradeoff on Studio M3 Ultra.\n- Add optional extra `neuro` pulling `spikingjelly`, `torch>=2.5`, `transformers`, `accelerate`.\n- Acceptance: `uv sync --extra neuro` succeeds; `python -c \"import spikingjelly; import torch; print(torch.backends.mps.is_available())\"` prints `True`.\n- Dependencies: step 12.",
+      "title": "Studio env setup for SpikingBrain-7B",
+      "description": "**Studio env setup for SpikingBrain-7B**\n\n    - Files to touch: `pyproject.toml` (optional `neuro` extra), `scripts/setup_neuro_env.sh`, `docs/setup-studio-neuro.md`\n    - SpikingBrain + Spikingformer are PyTorch-first. MLX not supported; document MPS vs CPU tradeoff on Studio M3 Ultra.\n    - Add optional extra `neuro` pulling `spikingjelly`, `torch>=2.5`, `transformers`, `accelerate`, `modelscope`.\n    - Memory targets (7B path): BF16 load ≤ 16 GB, peak inference ≤ 20 GB at 4k ctx on Studio unified memory.\n    - Acceptance: fresh clone + `uv sync --extra neuro` succeeds on Studio; `python -c \"import spikingjelly; import torch; print(torch.backends.mps.is_available())\"` prints `True`.\n    - Dependencies: step 12.",
       "priority": 13,
       "passes": false
     },
     {
       "id": "story-14",
-      "title": "Smoke inference on BF16 SpikingBrain checkpoint",
-      "description": "**Smoke inference on BF16 SpikingBrain checkpoint**\n\n- Files to touch: `scripts/smoke_spikingbrain.py`, `results/spikingbrain-smoke.json`\n- Load SpikingBrain-76B (or 7B fallback per step 12) in BF16, run prompt `hello, what are you?`, verify non-empty non-garbage output.\n- Measure peak unified-memory footprint; target \u2264 480 GB BF16 for 76B, \u2264 20 GB for 7B fallback.\n- Acceptance: smoke JSON contains `{prompt, response, peak_mem_gb, tokens_s}`; response \u2265 20 chars.\n- Dependencies: step 13.",
+      "title": "Smoke inference SpikingBrain-7B BF16",
+      "description": "**Smoke inference SpikingBrain-7B BF16**\n\n    - Files to touch: `scripts/smoke_spikingbrain.py`, `results/spikingbrain-smoke.json`\n    - Load the SpikingBrain-7B SFT checkpoint in BF16, run prompt \"hello, what are you?\" and verify non-empty, non-garbage output.\n    - Measure peak unified-memory footprint; target ≤ 16 GB load / ≤ 20 GB peak.\n    - Throughput target: ≥ 10 tok/s on Studio MLX/PyTorch (7B fits anywhere — even CPU path should clear this bar).\n    - Acceptance: `results/spikingbrain-smoke.json` contains `{prompt, response, peak_mem_gb, tokens_s}`; response ≥ 20 chars and not a repeat of the prompt.\n    - Dependencies: step 13.",
       "priority": 14,
       "passes": false
     },
     {
       "id": "story-15",
-      "title": "Q4 quantization of SpikingBrain",
-      "description": "**Q4 quantization of SpikingBrain**\n\n- Files to touch: `scripts/quantize_spikingbrain.py`, `models/spikingbrain-q4.gguf` (gitignored), `docs/specs/spikingbrain-quant.md`\n- Try llama.cpp + Q4_K_M. If SNN layers break op set (expected), fall back to `bitsandbytes` 4-bit inside PyTorch (no GGUF).\n- Target: \u2265 10 tok/s on quantized model on Studio.\n- Acceptance: `results/spikingbrain-quant.json` with `{quant_method, size_gb, tokens_s}`; if llama.cpp fails, spec documents error + fallback result.\n- Dependencies: step 14.",
+      "title": "Q4 quantization of SpikingBrain-7B",
+      "description": "**Q4 quantization of SpikingBrain-7B**\n\n    - Files to touch: `scripts/quantize_spikingbrain.py`, `models/spikingbrain-7b-q4.gguf` (gitignored), `docs/specs/spikingbrain-quant.md`\n    - Attempt llama.cpp conversion + Q4_K_M. If the spiking-specific layers break the conversion (expected: SNN layers are not in llama.cpp's op set), document the blocker and fall back to `bitsandbytes` 4-bit quant inside PyTorch (no GGUF).\n    - Target artefact size ~3.5 GB Q4_K_M (7B × 0.5 B/param).\n    - Target throughput: ≥ 10 tok/s inference on the quantized model on Studio.\n    - Acceptance: `results/spikingbrain-quant.json` with `{quant_method, size_gb, tokens_s}`; if llama.cpp fails, spec includes the specific error + fallback result.\n    - Dependencies: step 14.",
       "priority": 15,
       "passes": false
     },
     {
       "id": "story-16",
-      "title": "SpikingBrain-76B architecture spec",
-      "description": "**SpikingBrain-76B architecture spec**\n\n- Files to touch: `docs/specs/spikingbrain-76b.md`\n- Technical reference: layer structure, spiking neuron type (LIF/PLIF), MoE routing mechanism (differs from Qwen MoE), integration points for SNN conversion, known gotchas from released code.\n- Acceptance: spec committed, \u2265 300 lines, cites arxiv 2509.05276 and code commits examined.\n- Dependencies: steps 14, 15.",
+      "title": "SpikingBrain-7B architecture spec deployed",
+      "description": "**SpikingBrain-7B architecture spec deployed**\n\n    - Files to touch: `docs/specs/spikingbrain-7b.md`\n    - Technical reference doc for the 7B variant: layer structure, spiking neuron type (LIF? PLIF?), hybrid-linear attention details, integration points for SNN conversion, known gotchas from BICLab's released code.\n    - Note why the 76B variant is deferred (weights unreleased per Story 12 probe) and how the custom multi-base path in Phase N-IV compensates.\n    - Acceptance: spec committed, ≥ 300 lines, cites arxiv 2509.05276 and any released-code commits examined.\n    - Dependencies: steps 14, 15.",
       "priority": 16,
       "passes": false
     },
     {
       "id": "story-17",
-      "title": "Spikingformer library integration",
-      "description": "**Spikingformer library integration**\n\n- Files to touch: `src/spiking/__init__.py`, `src/spiking/formatter.py`, `tests/test_spikingformer.py`\n- Integrate Spikingformer (AAAI 2026) for training-free ANN \u2192 SNN conversion.\n- Test on Qwen2-0.5B first to verify pipeline before touching 76B.\n- Acceptance: conversion of Qwen2-0.5B preserves \u2265 95% base accuracy on HellaSwag subset (100 samples); activation sparsity \u2265 70%.\n- Dependencies: step 13.",
+      "title": "LAS framework setup on Studio",
+      "description": "**LAS framework setup on Studio**\n\n    - Files to touch: `src/spiking/las_converter.py`, `src/spiking/__init__.py`, `tests/test_las_smoke.py`, `docs/specs/las-conversion-framework.md`\n    - Implement (or port) the LAS conversion algorithm from arxiv 2505.09659: lossless ANN→SNN via time-coded quantisation + activation alignment. Modern alternative to Spikingformer (2023–24).\n    - Start from a minimal reference implementation: single `nn.Linear` → spiking version with surrogate gradient; verify identity on a toy 128→64 layer.\n    - Wire a `LASConverter` class that accepts a `torch.nn.Module`, returns its spiking counterpart + metadata (spike timesteps, activation bounds).\n    - Acceptance: `pytest tests/test_las_smoke.py::test_linear_identity` passes (ANN vs SNN outputs match within 1e-4 on a random input); conversion tooling documented in `docs/specs/las-conversion-framework.md`.\n    - Dependencies: step 13.",
       "priority": 17,
       "passes": false
     },
     {
       "id": "story-18",
-      "title": "Training-free conversion of SpikingBrain layer subset",
-      "description": "**Training-free conversion of SpikingBrain layer subset**\n\n- Files to touch: `scripts/convert_spikingbrain_subset.py`, `results/spikingbrain-snn-convert.json`\n- Convert MoE router + 2-3 attention heads of SpikingBrain from ANN-style to full SNN via Spikingformer.\n- Target: match dense baseline PPL within \u00b15% on 1K held-out tokens.\n- Acceptance: convert JSON with PPL delta, spike rate, layer map; delta \u2264 5%.\n- Dependencies: steps 16, 17.",
+      "title": "Download Qwen3.5-27B base",
+      "description": "**Download Qwen3.5-27B base**\n\n    - Files to touch: `scripts/download_qwen3_27b.py`, `results/qwen3-27b-download.json`\n    - Fetch `Qwen/Qwen3.5-27B` from HuggingFace (~54 GB BF16) to Studio at `models/Qwen3.5-27B-BF16/`. Verify SHA256 for every shard.\n    - Acceptance: all shards present, SHA256 verified, `results/qwen3-27b-download.json` lists shard count + sizes + hashes.\n    - Dependencies: step 17.",
       "priority": 18,
       "passes": false
     },
     {
       "id": "story-19",
-      "title": "Energy benchmark (theoretical + measured)",
-      "description": "**Energy benchmark (theoretical + measured)**\n\n- Files to touch: `scripts/energy_bench.py`, `results/energy-bench.json`, `docs/specs/energy-methodology.md`\n- Theoretical: FLOPs for dense inference vs spike operations for converted subset.\n- Measured: if Akida hw available (step 22+) run on hw; otherwise simulator-only.\n- Acceptance: JSON with theoretical FLOPs\u2192spikes ratio AND measured/simulated watt-hour; methodology doc committed.\n- Dependencies: step 18.",
+      "title": "LAS conversion → SpikingKiki-27B",
+      "description": "**LAS conversion → SpikingKiki-27B**\n\n    - Files to touch: `scripts/convert_spikingkiki_27b.py`, `results/spikingkiki-27b-convert.json`, `models/SpikingKiki-27B-BF16/` (gitignored)\n    - Run LAS on every layer of Qwen3.5-27B. Qwen3.5-27B is dense (no MoE) → straightforward per-layer conversion.\n    - Estimated wall time 30-40 h on Studio MLX/PyTorch.\n    - Acceptance: model loads, `generate(5 tokens)` returns non-empty output, on-disk size ~54 GB BF16, convert JSON captures layer map + activation-bound stats.\n    - Dependencies: steps 17, 18.",
       "priority": 19,
       "passes": false
     },
     {
       "id": "story-20",
-      "title": "Loihi 2 simulator setup",
-      "description": "**Loihi 2 simulator setup**\n\n- Files to touch: `scripts/setup_loihi2_sim.sh`, `docs/setup-loihi.md`, `tests/test_loihi_sim_smoke.py`\n- Install Intel KAPOHO SDK or `lava-nc` open-source fallback.\n- Run a `hello spike` example to validate install.\n- Acceptance: `pytest tests/test_loihi_sim_smoke.py::test_blink` passes \u2014 drives canonical spike pattern through simulator.\n- Dependencies: step 17.",
+      "title": "Eval SpikingKiki-27B",
+      "description": "**Eval SpikingKiki-27B**\n\n    - Files to touch: `scripts/eval_spikingkiki_27b.py`, `results/spikingkiki-27b-eval.json`, `docs/specs/spikingkiki-27b-eval.md`\n    - Compare SpikingKiki-27B against Qwen3.5-27B baseline on a 100-prompt reasoning subset (HumanEval 50 + GSM8K 50).\n    - Record per-prompt accuracy, aggregate accuracy delta, theoretical energy estimate (FLOPs → spikes via LAS spike count).\n    - Acceptance: no NaN responses, eval JSON + spec committed, accuracy delta documented.\n    - Dependencies: step 19.",
       "priority": 20,
       "passes": false
     },
     {
       "id": "story-21",
-      "title": "BrainChip Akida simulator setup",
-      "description": "**BrainChip Akida simulator setup**\n\n- Files to touch: `scripts/setup_akida_sim.sh`, `docs/setup-akida.md`, `tests/test_akida_sim_smoke.py`\n- Install Akida SDK (pip `akida`) + MetaTF + quantization toolkit.\n- Run reference MNIST/CIFAR example. Deploy step-18 MoE router on simulator.\n- Acceptance: reference passes AND MoE router simulator routing matches Spikingformer baseline \u00b12% accuracy.\n- Dependencies: step 18.",
+      "title": "LAS adaptation for MoE routing",
+      "description": "**LAS adaptation for MoE routing**\n\n    - Files to touch: `src/spiking/las_converter.py` (extended), `tests/test_las_moe.py`\n    - Extend `LASConverter` to handle Qwen3.5-122B-A10B's hybrid architecture: linear-attention layers, full-attention layers, and MoE experts with top-K routing (see `docs/specs/2026-04-15-micro-kiki-design.md` for hybrid arch details).\n    - LAS on routers must preserve expert selection semantics; LAS on experts must not collapse expert diversity.\n    - Verify on a 4-layer micro-MoE test case (4 experts × 128-d, 2 tokens top-2 routing).\n    - Acceptance: `pytest tests/test_las_moe.py` passes (ANN vs SNN expert selection agreement ≥ 99%, output MSE ≤ 1e-3).\n    - Dependencies: steps 17, 20.",
       "priority": 21,
       "passes": false
     },
     {
       "id": "story-22",
-      "title": "Order Akida Mini PCIe + driver setup on kxkm-ai",
-      "description": "**Order Akida Mini PCIe + driver setup on kxkm-ai**\n\n- Files to touch: `docs/hardware/akida-pcie-setup.md`, `scripts/akida_pcie_probe.py`\n- **Cost gate**: only proceed if step 21 simulator is green.\n- Order BrainChip Akida Mini PCIe (~$300). Install in kxkm-ai. Install Linux drivers. Verify with `akida devices` CLI.\n- Acceptance: probe script runs on kxkm-ai, prints card info (firmware, cores, mem), enrolls into SDK.\n- Dependencies: step 21. **Budget: $300 one-time.**",
+      "title": "Verify Qwen3.5-122B-A10B-BF16 cached",
+      "description": "**Verify Qwen3.5-122B-A10B-BF16 cached**\n\n    - Files to touch: `scripts/verify_qwen3_122b.py`, `results/qwen3-122b-verify.json`\n    - Per session memory, `models/Qwen3.5-122B-A10B-BF16/` is already cached on Studio (~244 GB, 39 shards × ~6 GB). Confirm presence and SHA256 integrity; if absent or corrupted, fetch from HF (wall time ~12-24 h residential).\n    - Acceptance: all 39 shards present on Studio, SHA256 clean, verify JSON records shard inventory.\n    - Dependencies: step 21.",
       "priority": 22,
       "passes": false
     },
     {
       "id": "story-23",
-      "title": "Deploy SpikingBrain subset on Akida physical",
-      "description": "**Deploy SpikingBrain subset on Akida physical**\n\n- Files to touch: `scripts/deploy_akida_physical.py`, `results/akida-deploy.json`\n- Flash step-21 simulator-validated MoE router subset to physical Akida Mini PCIe.\n- Measure: wall-clock latency, watt draw, throughput (tokens/s for routing decision).\n- Acceptance: latency \u2264 10 ms per routing decision, watt draw logged, agreement with simulator \u2265 98%.\n- Dependencies: step 22.",
+      "title": "LAS conversion → SpikingKiki-122B-A10B",
+      "description": "**LAS conversion → SpikingKiki-122B-A10B**\n\n    - Files to touch: `scripts/convert_spikingkiki_122b.py`, `results/spikingkiki-122b-convert.json`, `models/SpikingKiki-122B-A10B/` (gitignored)\n    - Run extended LAS (step 21) on Qwen3.5-122B-A10B. MoE preserved (128 experts, 8 active per token).\n    - Estimated wall time 100 h+ on Studio (3-5 days). Memory peak ≤ 480 GB BF16 (activation checkpointing mandatory).\n    - Studio must be dedicated — no concurrent SpikingKiki-LargeOpus run.\n    - Acceptance: model loads, `generate(5 tokens)` returns non-empty output, on-disk ~244 GB BF16, MoE routing stats logged.\n    - Dependencies: steps 21, 22.",
       "priority": 23,
       "passes": false
     },
     {
       "id": "story-24",
-      "title": "STRETCH \u2014 ESP32-S3 custom SNN port",
-      "description": "**STRETCH \u2014 ESP32-S3 custom SNN port**\n\n- Files to touch: `firmware/esp32-snn/` (new), `docs/specs/esp32-snn-port.md`\n- **OPTIONAL, marked stretch goal.** Port minimal SNN inference kernel to ESP32-S3 Xtensa. Base on Zacus firmware tooling.\n- Scope: one small spiking layer (64 neurons LIF) on pre-computed input pattern.\n- Expected effort: 2-3 weeks Xtensa dev. Skip if time-boxed.\n- Acceptance (if attempted): `idf.py build` succeeds, firmware prints spike output on UART, energy logged via INA probe if available.\n- Dependencies: none hard. **OPTIONAL \u2014 v0.3 ships without this if unfinished.**",
+      "title": "Eval SpikingKiki-122B-A10B",
+      "description": "**Eval SpikingKiki-122B-A10B**\n\n    - Files to touch: `scripts/eval_spikingkiki_122b.py`, `results/spikingkiki-122b-eval.json`, `docs/specs/spikingkiki-122b-eval.md`\n    - Same 100-prompt reasoning subset (HumanEval 50 + GSM8K 50) vs Qwen3.5-122B-A10B baseline.\n    - Record accuracy delta + theoretical energy estimate + MoE expert activation sparsity.\n    - If ≥ 90% of baseline accuracy, document \"first SNN MoE at 100B+ scale, open-source\" claim in the spec.\n    - Acceptance: eval JSON + spec committed, comparison report complete.\n    - Dependencies: step 23.",
       "priority": 24,
       "passes": false
     },
     {
       "id": "story-25",
-      "title": "End-to-end acceptance test",
-      "description": "**End-to-end acceptance test**\n\n- Files to touch: `tests/test_e2e_neuro.py`, `scripts/run_e2e_neuro.py`, `results/e2e-neuro.json`\n- Integration: AeonSleep + SpikingBrain-76B (or 7B fallback) + Akida routing.\n- Canonical scenario: inject 200 planted memories, run 1 sleep cycle, recall prompt, route through SpikingBrain with Akida-assisted MoE routing; check response non-empty + coherent.\n- Acceptance targets: AeonSleep PI-depth-10 accuracy \u2265 95%, SpikingBrain latency \u2264 10 s/token on Studio Q4, Akida agreement with baseline \u2265 98%. All three must pass.\n- Dependencies: steps 11, 14, 23.",
+      "title": "LAS adaptation for Mistral dense",
+      "description": "**LAS adaptation for Mistral dense**\n\n    - Files to touch: `src/spiking/las_converter.py` (extended), `tests/test_las_mistral.py`\n    - Extend `LASConverter` to handle Mistral-Large-Opus dense architecture: full attention every layer (no linear-attn, no MoE), different MLP shape than Qwen.\n    - Verify on a 4-layer Mistral-style test block (4096-d, 8 heads, full attn + SwiGLU MLP).\n    - Acceptance: `pytest tests/test_las_mistral.py` passes (ANN vs SNN MSE ≤ 1e-3 on a random forward).\n    - Dependencies: steps 17, 24.",
       "priority": 25,
       "passes": false
     },
     {
       "id": "story-26",
-      "title": "HuggingFace release + model card + cookbook",
-      "description": "**HuggingFace release + model card + cookbook**\n\n- Files to touch: `docs/release-v0.3.md`, `docs/cookbook-v0.3.md`, `MODEL_CARD-v0.3.md`\n- Publish as `electron-rare/micro-kiki-v0.3-neuroscience`: SpikingBrain weights, AeonSleep code, model card declaring caveats (research-grade, 2026 preprint-based, hardware requirement for Akida).\n- Cookbook: 3 worked examples \u2014 (a) AeonSleep standalone, (b) SpikingBrain-7B CPU inference, (c) Akida-accelerated routing.\n- Acceptance: HF repo exists + downloadable; model card has standard sections; cookbook notebooks execute end-to-end on fresh Studio env.\n- Dependencies: step 25.",
+      "title": "Verify Mistral-Large-Opus fused",
+      "description": "**Verify Mistral-Large-Opus fused**\n\n    - Files to touch: `scripts/verify_mistral_opus.py`, `results/mistral-opus-verify.json`\n    - Mistral-Large-Opus is already fused at `/Users/clems/KIKI-Mac_tunner/output/mistral-large-opus-fused/` on Studio (~233 GB BF16). Confirm path exists, shards readable, tokenizer + config present.\n    - If path missing, abort with a clear error and document the expected path-fix (this story does NOT attempt a fresh fuse — that is out of scope for v0.3).\n    - Acceptance: shard inventory logged + tokenizer round-trips on a sample prompt.\n    - Dependencies: step 25.",
       "priority": 26,
+      "passes": false
+    },
+    {
+      "id": "story-27",
+      "title": "LAS conversion → SpikingKiki-LargeOpus-123B",
+      "description": "**LAS conversion → SpikingKiki-LargeOpus-123B**\n\n    - Files to touch: `scripts/convert_spikingkiki_largeopus.py`, `results/spikingkiki-largeopus-convert.json`, `models/SpikingKiki-LargeOpus-123B/` (gitignored)\n    - Run dense LAS (step 25) on Mistral-Large-Opus fused weights.\n    - Estimated wall time 80-100 h on Studio. Memory peak ≤ 470 GB BF16 (dense → every layer materialised).\n    - Studio dedicated — no concurrent runs.\n    - Acceptance: model loads, `generate(5 tokens)` returns non-empty output, on-disk ~233 GB BF16.\n    - Dependencies: steps 25, 26.",
+      "priority": 27,
+      "passes": false
+    },
+    {
+      "id": "story-28",
+      "title": "Eval SpikingKiki-LargeOpus",
+      "description": "**Eval SpikingKiki-LargeOpus**\n\n    - Files to touch: `scripts/eval_spikingkiki_largeopus.py`, `results/spikingkiki-largeopus-eval.json`, `docs/specs/spikingkiki-largeopus-eval.md`\n    - Same 100-prompt reasoning subset vs Mistral-Large-Opus baseline.\n    - Record accuracy delta + theoretical energy estimate.\n    - If accuracy holds, document \"SNN reproduction of Mistral-Large-class dense 123B, open-source\" claim.\n    - Acceptance: eval JSON + spec committed.\n    - Dependencies: step 27.",
+      "priority": 28,
+      "passes": false
+    },
+    {
+      "id": "story-29",
+      "title": "Cross-eval + release-variant decision",
+      "description": "**Cross-eval + release-variant decision**\n\n    - Files to touch: `scripts/cross_eval_spikingkikis.py`, `results/spikingkiki-cross-eval.json`, `docs/specs/spikingkiki-cross-eval.md`\n    - Aggregate eval results from stories 14 (SpikingBrain-7B baseline), 20 (SpikingKiki-27B), 24 (SpikingKiki-122B-A10B), 28 (SpikingKiki-LargeOpus). Add wall-clock inference latency at 4k and 32k contexts; add model-size footprint.\n    - Rank variants by composite score: accuracy retention × (1 / memory GB) × (1 / latency).\n    - Pick one variant as the production-release candidate for Story 38 freeze.\n    - Acceptance: cross-eval JSON + spec committed with a clear \"release variant = X\" statement and rationale (≥ 150 lines).\n    - Dependencies: steps 14, 20, 24, 28.",
+      "priority": 29,
+      "passes": false
+    },
+    {
+      "id": "story-30",
+      "title": "Spikingformer library integration",
+      "description": "**Spikingformer library integration**\n\n    - Files to touch: `src/spiking/spikingformer_adapter.py`, `tests/test_spikingformer.py`\n    - Integrate Spikingformer (AAAI 2026) as an alternative ANN → SNN tool alongside LAS for cross-validation.\n    - Test on a small pretrained ANN (e.g., Qwen2-0.5B) to verify the pipeline before relying on it for larger work.\n    - Acceptance: conversion of Qwen2-0.5B succeeds; output quality preserves ≥ 95% of base accuracy on HellaSwag subset (100 samples); activation sparsity ≥ 70%.\n    - Dependencies: step 17.",
+      "priority": 30,
+      "passes": false
+    },
+    {
+      "id": "story-31",
+      "title": "Training-free conversion of SpikingBrain-7B layer subset",
+      "description": "**Training-free conversion of SpikingBrain-7B layer subset**\n\n    - Files to touch: `scripts/convert_spikingbrain_subset.py`, `results/spikingbrain-snn-convert.json`\n    - Convert a subset of layers (hybrid-linear attn + dense attn sample) of SpikingBrain-7B from ANN-style inference to full SNN execution via Spikingformer. Cross-check vs LAS on the same layers.\n    - Target: match dense baseline PPL within ±5% on 1K held-out tokens.\n    - Acceptance: `results/spikingbrain-snn-convert.json` with PPL delta, spike rate, layer map, tool comparison (LAS vs Spikingformer); delta ≤ 5% accepted.\n    - Dependencies: steps 16, 30.",
+      "priority": 31,
+      "passes": false
+    },
+    {
+      "id": "story-32",
+      "title": "Energy benchmark (theoretical + measured)",
+      "description": "**Energy benchmark (theoretical + measured)**\n\n    - Files to touch: `scripts/energy_bench.py`, `results/energy-bench.json`, `docs/specs/energy-methodology.md`\n    - Theoretical: compute FLOPs for dense inference vs spike operations for the step-31 subset + the Story 29 release variant (SNN paper formulas).\n    - Measured: if Akida hardware available (step 35+), measure actual energy on hw; otherwise simulator-only.\n    - Acceptance: `results/energy-bench.json` with both theoretical FLOPs→spikes ratio AND a measured or simulated watt-hour figure; methodology doc committed.\n    - Dependencies: step 31.",
+      "priority": 32,
+      "passes": false
+    },
+    {
+      "id": "story-33",
+      "title": "Loihi 2 simulator setup",
+      "description": "**Loihi 2 simulator setup**\n\n    - Files to touch: `scripts/setup_loihi2_sim.sh`, `docs/setup-loihi.md`, `tests/test_loihi_sim_smoke.py`\n    - Install Intel KAPOHO SDK or open alternative (NxSDK if accessible, otherwise `lava-nc` open-source fallback).\n    - Run a \"hello spike\" example to validate the install.\n    - Acceptance: `pytest tests/test_loihi_sim_smoke.py::test_blink` passes — drives a canonical spike pattern through the simulator and verifies expected output.\n    - Dependencies: step 30.",
+      "priority": 33,
+      "passes": false
+    },
+    {
+      "id": "story-34",
+      "title": "BrainChip Akida simulator setup",
+      "description": "**BrainChip Akida simulator setup**\n\n    - Files to touch: `scripts/setup_akida_sim.sh`, `docs/setup-akida.md`, `tests/test_akida_sim_smoke.py`\n    - Install Akida SDK (pip `akida`) + MetaTF + quantization toolkit.\n    - Run Akida's reference MNIST/CIFAR example to validate. Deploy the step-31 converted subset on simulator.\n    - Acceptance: reference example passes AND the subset simulator run produces decisions that match the baseline within ±2% accuracy.\n    - Dependencies: step 31.",
+      "priority": 34,
+      "passes": false
+    },
+    {
+      "id": "story-35",
+      "title": "Order Akida Mini PCIe + driver setup on kxkm-ai",
+      "description": "**Order Akida Mini PCIe + driver setup on kxkm-ai**\n\n    - Files to touch: `docs/hardware/akida-pcie-setup.md`, `scripts/akida_pcie_probe.py`\n    - **Cost gate**: only proceed if step 34 (simulator) is green.\n    - Order BrainChip Akida Mini PCIe (~$300) from official distributor. Install in kxkm-ai desktop. Install Linux drivers. Verify with `akida devices` CLI that the card enumerates.\n    - Acceptance: `scripts/akida_pcie_probe.py` runs on kxkm-ai, prints card info (firmware version, cores, mem), and enrolls it into the Akida SDK.\n    - Dependencies: step 34. **Budget: $300 one-time.**",
+      "priority": 35,
+      "passes": false
+    },
+    {
+      "id": "story-36",
+      "title": "Deploy SpikingBrain subset on Akida physical",
+      "description": "**Deploy SpikingBrain subset on Akida physical**\n\n    - Files to touch: `scripts/deploy_akida_physical.py`, `results/akida-deploy.json`\n    - Take the step-34 simulator-validated subset and flash it to the physical Akida Mini PCIe card.\n    - Measure: wall-clock latency, watt draw, throughput (tokens/s for the routing/attention decision, not full forward pass).\n    - Acceptance: `results/akida-deploy.json` with measured latency ≤ 10 ms per decision, watt draw logged, and agreement with simulator ≥ 98%.\n    - Dependencies: step 35.",
+      "priority": 36,
+      "passes": false
+    },
+    {
+      "id": "story-37",
+      "title": "STRETCH — ESP32-S3 custom SNN port",
+      "description": "**STRETCH — ESP32-S3 custom SNN port**\n\n    - Files to touch: `firmware/esp32-snn/` (new), `docs/specs/esp32-snn-port.md`\n    - **OPTIONAL, marked stretch goal.** Port a minimal SNN inference kernel to ESP32-S3 Xtensa. Base design on Zacus firmware tooling as starting point for the ESP-IDF build system.\n    - Scope: one small spiking layer (say, 64 neurons LIF) running inference on a pre-computed input pattern. Do NOT attempt full SpikingBrain on ESP32-S3.\n    - Expected effort: 2-3 weeks of custom Xtensa dev. Skip if time-boxed and N-VII release is in sight.\n    - Acceptance (if attempted): `idf.py build` succeeds for the target, flashed firmware prints spike output on UART, energy logged via on-board INA current probe if available.\n    - Dependencies: none hard (N-VI simulator work is useful background). **Marked OPTIONAL — release v0.3 ships without this if unfinished.**",
+      "priority": 37,
+      "passes": false
+    },
+    {
+      "id": "story-38",
+      "title": "End-to-end acceptance test + release-variant freeze",
+      "description": "**End-to-end acceptance test + release-variant freeze**\n\n    - Files to touch: `tests/test_e2e_neuro.py`, `scripts/run_e2e_neuro.py`, `results/e2e-neuro.json`, `docs/release-v0.3.md`\n    - Integration test exercising the full v0.3 stack for the Story 29 release variant: AeonSleep + chosen SpikingKiki (or SpikingBrain-7B if cross-eval picks it) + Akida routing.\n    - Canonical scenario: inject 200 planted memories into AeonSleep, run 1 sleep cycle, prompt \"recall X from cluster Y\" and verify correct recall; route through the SNN backbone with Akida-assisted MoE/attn decision; check response non-empty and coherent.\n    - Freeze the picked variant: write a migration guide capturing which SpikingKiki variant ships in the release, which are research-only artefacts, and how users switch backbones.\n    - Acceptance targets: AeonSleep PI-depth-10 accuracy ≥ 95%, SNN response latency meets the per-variant target from Story 29, Akida routing agreement with baseline ≥ 98%. All three must pass.\n    - Dependencies: steps 11, 29, 36.",
+      "priority": 38,
+      "passes": false
+    },
+    {
+      "id": "story-39",
+      "title": "HuggingFace release + model card + cookbook",
+      "description": "**HuggingFace release + model card + cookbook**\n\n    - Files to touch: `docs/cookbook-v0.3.md`, `MODEL_CARD-v0.3.md`\n    - Publish as `electron-rare/micro-kiki-v0.3-neuroscience` on HuggingFace: the Story 38 frozen SNN backbone + AeonSleep code (NOT the training data), model card declaring caveats (research-grade, 2026 preprint-based, hardware requirement for Akida component).\n    - Cookbook: 3 worked examples — (a) AeonSleep standalone memory palace, (b) SNN backbone CPU inference, (c) Akida-accelerated routing (requires hardware).\n    - Model card links to the research-only SpikingKiki variants on a separate HF collection so readers can reproduce the multi-base study.\n    - Acceptance: HF repo exists and is downloadable; model card has all standard sections (intended use, limitations, citations); cookbook notebooks execute end-to-end on a fresh Studio environment.\n    - Dependencies: step 38.",
+      "priority": 39,
       "passes": false
     }
   ]

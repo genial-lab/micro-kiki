@@ -151,7 +151,7 @@ Phase I step 2 (Differential Attention fork) carries an automatic **rollback cla
 
 - **v0.1** (shipped in plan history): 32 stacks + router + cognitive layer + serving + ANE
 - **v0.2** (scope of current consolidated plan): v0.1 + quantum-inspired techniques (HyQuT hybrid VQC, QMoE routing with classical fallback, Quantum-PEFT adapters — all run on classical simulators by default)
-- **v0.3** (planned): temporal context (real-time clock, location, news slice) + future-reasoner (CoT temporal chains, calendar-aware planning). Deferred because LLM 4B underperforms dedicated time-series ML on quantitative forecasting (arxiv 2601.10132); context-injection + tools approach is more appropriate than new stacks.
+- **v0.3** (active, `neuroscience` branch, 39-story plan): research-grade cousin fork combining a **SpikingBrain-7B production path** (BICLab's 7B SFT checkpoint from ModelScope) with a **custom multi-base SNN reproduction** via LAS (arxiv 2505.09659, lossless ANN→SNN, 2026 SOTA) on three bases — Qwen3.5-27B dense (`SpikingKiki-27B`), Qwen3.5-122B-A10B MoE (`SpikingKiki-122B-A10B`), and Mistral-Large-Opus 123B dense (`SpikingKiki-LargeOpus-123B`). Cross-eval picks the best variant for release. Also includes AeonSleep unified memory (Aeon + SleepGate), MAP retrospective validation, and neuromorphic edge targets (BrainChip Akida Mini PCIe + Intel Loihi 2 simulator). SpikingBrain-76B path was abandoned after the Story 12 acquisition probe confirmed weights are not public. See `docs/specs/2026-04-15-micro-kiki-v0.3-neuroscience.md` + `docs/specs/las-conversion-framework.md`.
 
 ## Branches
 

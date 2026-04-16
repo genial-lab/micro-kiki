@@ -73,7 +73,34 @@ modelscope download \
 - Peak RAM on load (BF16): ~16 GB — trivial on Studio 512 GB.
 - Peak RAM on load (W8ASpike quantised): ~8 GB — suitable for MPS.
 
-## 4. Fallback A — 76B via author request
+### Decision 2026-04-16 — 7B adopted as production path
+
+User approved the primary path above. Phase N-III targets SpikingBrain-7B
+SFT as the shippable backbone. In parallel, Phase N-IV runs a **custom
+multi-base SNN reproduction** via LAS (arxiv 2505.09659, lossless
+ANN→SNN conversion — more modern than Spikingformer) on three bases:
+Qwen3.5-27B (dense), Qwen3.5-122B-A10B (MoE), and Mistral-Large-Opus
+123B (dense, already fused on Studio). Sections 4-5 below remain as
+reference fallbacks; §3 + §4-bis together are the operative plan.
+
+## 4-bis. Custom multi-base reproduction (Phase N-IV, stories 17-29)
+
+Rather than wait on BICLab's 76B release, v0.3 reproduces the spiking
+transformer principle across three large bases we already have compute
+for:
+
+| Base                       | Arch           | Studio state             | SpikingKiki output        |
+|----------------------------|----------------|---------------------------|----------------------------|
+| Qwen3.5-27B                | dense          | ~54 GB to fetch from HF   | `SpikingKiki-27B`          |
+| Qwen3.5-122B-A10B          | hybrid + MoE   | cached (~244 GB BF16)     | `SpikingKiki-122B-A10B`    |
+| Mistral-Large-Opus 123B    | dense          | fused (~233 GB BF16)      | `SpikingKiki-LargeOpus-123B` |
+
+Compute (sequential on Studio, 240+ GB peaks forbid parallel runs):
+~210-240 h wall time total. Story 29 cross-evaluates all three + the
+7B baseline and picks the release variant. Full design in
+`docs/specs/las-conversion-framework.md`.
+
+## 5. Fallback A — 76B via author request
 
 If BICLab releases 76B later (expected window: 2026 Q2-Q3 based on
 paper's roadmap language "will be released"), path is:
@@ -96,7 +123,7 @@ Gate: re-run the probe script monthly; open an issue on
 `BICLab/SpikingBrain-7B` asking for 76B release; email authors
 (pan.yuqi@ia.ac.cn referenced in paper).
 
-## 5. Fallback B — Spikingformer training-free conversion
+## 6. Fallback B — Spikingformer training-free conversion
 
 Last-resort path if 76B never ships and even 7B BICLab weights become
 unreachable. Spikingformer (Zhou et al., 2023; extended 2024) supports
@@ -116,7 +143,7 @@ For v0.3 this fallback is marked "research-only" — it keeps the SNN
 pipeline exercisable without the BICLab weights but does not ship in
 the release artefact.
 
-## 6. Studio environment requirements
+## 7. Studio environment requirements
 
 Python extras (see story 13 for `pyproject.toml` wiring):
 
@@ -151,7 +178,7 @@ RAM peaks (Studio M3 Ultra, 512 GB unified):
 All scenarios fit. The 76B 128k-context case is the tightest at ~50% of
 unified memory — safe when macOS has nothing else running.
 
-## 7. Decision matrix
+## 8. Decision matrix
 
 | Condition                             | Path        | Story 14 target                         |
 |---------------------------------------|-------------|-----------------------------------------|
@@ -165,7 +192,7 @@ Stories 14-16 acceptance criteria (memory, latency, energy) must be
 rewritten against 7B numbers — see `docs/specs/micro-kiki-v0.3-neuroscience.md`
 for follow-up amendment.
 
-## 8. Open questions
+## 9. Open questions
 
 1. ModelScope ToS / licence for re-hosting the 7B SFT weights inside
    the micro-kiki release artefact on HF? Needs legal check before
@@ -180,7 +207,7 @@ for follow-up amendment.
 5. Energy benchmark (story 19) assumes true spikes. W8ASpike only
    emulates — record the caveat in N-IV report.
 
-## 9. Probe script
+## 10. Probe script
 
 `scripts/probe_spikingbrain_hf.py` queries:
 
