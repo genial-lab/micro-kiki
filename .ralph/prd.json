@@ -126,7 +126,7 @@
       "title": "Download Qwen3.5-27B base",
       "description": "",
       "priority": 18,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-19",
