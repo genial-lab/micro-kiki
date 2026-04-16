@@ -1,0 +1,142 @@
+{"prompt": "Write a platformio.ini file for an ESP32 project with Arduino framework and custom partition table.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO build system and how it differs from Arduino IDE.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure a multi-environment platformio.ini for ESP32, STM32, and ATmega328P?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO unit test for an embedded sensor driver using Unity test framework.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO library dependency manager and how lib_deps resolution works.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you set up remote debugging with PlatformIO and a J-Link or ST-Link probe?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini that uses a custom board definition JSON for a non-standard MCU.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO build flags system and how to pass custom defines and compiler options.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to use ESP-IDF framework instead of Arduino for ESP32?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO pre-build script that auto-generates a version header from git tags.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO project structure: src, lib, include, test directories.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you install a library from a specific Git repository with PlatformIO?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO unit test that runs on the native platform for testing pure logic without hardware.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO handles framework and platform versioning and pinning.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO upload options for different upload protocols (JTAG, SWD, serial)?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for STM32 with HAL framework, HSE clock, and SWD upload.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO filesystem (SPIFFS/LittleFS) upload for ESP32 projects.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you set up PlatformIO CI/CD with GitHub Actions for automated building and testing?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO extra_script.py that modifies the build environment based on conditions.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO monitor filters and how to add custom serial output processing.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for OTA (Over The Air) firmware upload on ESP32?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini with conditional build flags based on the target environment.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO with VS Code including IntelliSense configuration.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you create a custom PlatformIO platform for an unsupported microcontroller family?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO test that validates I2C communication with a mock peripheral.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO library.json manifest and how to publish a library to the registry.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO advanced scripting to post-process the firmware binary?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for a Zephyr RTOS project targeting a custom board.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO debug configuration options: tool, init_break, speed, server.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to generate a firmware binary with CRC appended?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO library that is compatible with both Arduino and ESP-IDF frameworks.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO resolves library dependencies when there are version conflicts.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO Inspect for static code analysis of embedded projects?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO configuration for building a bootloader and application as separate targets.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO board definition format and required fields for custom boards.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO serial monitor baud rate and encoding for different platforms?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO project that uses a shared library across multiple environments.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO with Docker for reproducible embedded builds.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to use a custom linker script for memory layout?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO test suite that tests on both native (PC) and embedded (ESP32) environments.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO Home web interface and its project management features.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you migrate an Arduino IDE project to PlatformIO preserving all libraries?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini with custom upload command for programming via a custom programmer.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO handles multiple serial ports for upload and monitoring.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for memory usage analysis (RAM/Flash) after build?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO extra_script that creates a binary with a header containing metadata.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO build_type option (debug vs release) and its compiler flag implications.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO with CLion IDE for embedded development?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for a multi-board project that shares source code with board-specific overrides.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO lib_archive and lib_ldf_mode settings for library discovery.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to run clang-tidy or cppcheck as part of the build process?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO project template for rapid prototyping with common IoT libraries.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO handles board-specific partition tables for ESP32.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO Device Monitor for real-time serial data visualization?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO test that validates the firmware binary size is within flash limits.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO check command for running static analysis tools.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for ESP32-S3 with USB CDC and JTAG debugging?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for an STM32 project using mbed OS framework.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO's built-in file system image builder for SPIFFS/LittleFS.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to generate both .bin and .hex output files?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO pre-build script that checks for required environment variables.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO registry and how to search for compatible libraries.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO Remote for building and uploading to a remote development board?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini that configures WiFi credentials via build flags from environment variables.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO handles compiler toolchain installation and updates.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you create a PlatformIO library with examples that appear in the Library Manager?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO post-build script that uploads the binary to a remote server via SCP.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO unified debugger architecture and supported debug probes.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for a RISC-V target (e.g., ESP32-C3 or GD32V)?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO integration test that validates hardware peripheral responses.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO with Makefiles for projects that need both build systems.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you troubleshoot PlatformIO build failures due to library compatibility issues?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for a project using FreeRTOS with custom heap implementation.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO package.json specification for custom development platforms.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to use a specific version of the GCC ARM toolchain?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO script that generates a compile_commands.json for external tools.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO's Trusted Publishing works for library releases.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO to manage monorepo projects with shared libraries?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO configuration for dual-core ESP32 with core affinity for tasks.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO board_upload settings for custom flash and RAM sizes.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to output verbose build logs for debugging compilation errors?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO test runner configuration that reports results in JUnit XML format.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO with PlatformIO Labs features (Remote, Inspect, etc.).", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you handle PlatformIO library version conflicts between two dependent libraries?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for ATtiny85 with Arduino framework and manual fuse configuration.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO test transport options for different target boards.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for continuous integration with Jenkins?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO extra script that generates a firmware manifest JSON with build info.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO handles Arduino core overrides for custom board variants.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO's built-in serial plotter for visualizing sensor data?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for a Teensy 4.1 project with external PSRAM and USB host.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO build middleware concept for intercepting build nodes.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for power profiling with Nordic PPK2?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO project that uses protocol buffers (nanopb) for IoT communication.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO global libraries vs project-local libraries.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for ESP32 secure boot and flash encryption?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO configuration for a LoRa node using the RadioLib library.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO project dependency declaration using lib_deps semantic versioning.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you create a PlatformIO project wizard/template for your team's standard setup?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for an nRF52840 project with BLE stack and SoftDevice.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO integrates with code coverage tools for embedded testing.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to flash both bootloader and application in one command?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO library that supports conditional compilation for different frameworks.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO board manifest: build MCU, F_CPU, flash, and RAM fields.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO with ESP32 mesh networking (ESP-MDF/ESP-MESH)?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO configuration for a project using CAN bus on STM32 with HAL.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to lock PlatformIO platform and package versions for reproducible builds.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for hardware-in-the-loop (HIL) testing?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO post-build script that signs the firmware binary with a private key.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the differences between PlatformIO upload_protocol options (esptool, stlink, jlink, cmsis-dap).", "domain": "platformio", "source": "manual"}
+{"prompt": "Debug this: PlatformIO build succeeds but upload fails with 'No serial port found'.", "domain": "platformio", "source": "manual"}
+{"prompt": "Debug this: PlatformIO library works on ESP32 but fails to compile on STM32.", "domain": "platformio", "source": "manual"}
+{"prompt": "Debug this: PlatformIO IntelliSense shows errors but the project compiles successfully.", "domain": "platformio", "source": "manual"}
+{"prompt": "Debug this: PlatformIO unit tests pass on native but crash on the embedded target.", "domain": "platformio", "source": "manual"}
+{"prompt": "Debug this: PlatformIO upload via ST-Link intermittently fails with connection error.", "domain": "platformio", "source": "manual"}
+{"prompt": "Design a PlatformIO project structure for a product with 5 hardware revisions and 3 firmware variants.", "domain": "platformio", "source": "manual"}
+{"prompt": "Design a PlatformIO CI pipeline that builds, tests, and deploys firmware for multiple targets.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for mixed C and C++ projects with different standard versions?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO configuration for an RP2040 project using the Raspberry Pi Pico SDK.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO's code completion for HAL functions on STM32.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to output detailed memory usage per section (.text, .data, .bss)?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO project that cross-compiles for both embedded target and Linux host.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how PlatformIO manages framework-specific build scripts and toolchain flags.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO for a project that needs both WiFi and Ethernet on ESP32?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO extra_script that patches a library source file before compilation.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO project environment inheritance using extends.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you optimize PlatformIO build times for large embedded projects?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for a project using CMSIS-DSP library on STM32.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to use PlatformIO monitor commands for interactive testing during development.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO to generate map files for memory analysis?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO test that validates ADC calibration values against known references.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO package manager and how to create private package registries.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO for developing and testing ESP32 components in isolation?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a platformio.ini for a dual-target project: ESP32 firmware + PC simulation.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to integrate PlatformIO with SonarQube for continuous code quality monitoring.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you configure PlatformIO upload speed and verify options for different targets?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO configuration for an Arduino Mega 2560 with multiple serial ports.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain the PlatformIO src_filter option for including/excluding source files per environment.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you use PlatformIO device list command for automatic port detection?", "domain": "platformio", "source": "manual"}
+{"prompt": "Write a PlatformIO project with conditional library inclusion based on build environment.", "domain": "platformio", "source": "manual"}
+{"prompt": "Explain how to configure PlatformIO for ESP32 with PSRAM (SPI RAM) enabled.", "domain": "platformio", "source": "manual"}
+{"prompt": "How do you set up a PlatformIO monorepo with multiple firmware projects sharing common code?", "domain": "platformio", "source": "manual"}

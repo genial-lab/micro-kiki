@@ -1,0 +1,144 @@
+{"prompt": "Write a FreeCAD Python script to create a parametric box with length, width, and height as variables.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD Part Design workflow from sketch to padded 3D body.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a swept solid along a path using the FreeCAD Part workbench in Python?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that exports all visible objects to STEP format.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the difference between Part and PartDesign workbenches in FreeCAD.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a fillet on selected edges of a Part Design body in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to create an assembly of two parts with a fixed and a revolute constraint.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use datum planes and datum lines in FreeCAD Part Design for complex geometry.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you import a STEP file into FreeCAD and access its topology (faces, edges, vertices)?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to generate a gear profile using involute curve equations.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD Sketcher constraint system and how to fully constrain a sketch.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a loft between multiple sketches in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that measures the distance between two selected faces.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD spreadsheet for driving parametric dimensions.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a helical thread using Part Design helical sweep in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to create a rectangular pattern of holes in a plate.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD mesh workbench operations: import, repair, boolean, and export.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you convert a mesh (STL) to a solid (BREP) in FreeCAD for further editing?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to create a chamfer on all edges of a cube.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD expressions to link dimensions across multiple bodies.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a revolve feature in Part Design from a sketch profile in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that generates a BOM (Bill of Materials) from an assembly.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD topological naming problem and workarounds for stable references.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a pocket (cut) feature with a draft angle in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to boolean subtract one shape from another and display the result.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD TechDraw workbench to create 2D engineering drawings from 3D models.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a multi-body part in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to calculate the volume and surface area of a selected shape.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use external geometry references in FreeCAD Sketcher.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a polar pattern of features around an axis in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that imports a DXF file and extrudes it to create a 3D shape.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD placement system (position, rotation, center) for positioning objects.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a sheet metal part with bends and flat pattern in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to create a parametric enclosure with configurable wall thickness.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD Path workbench for generating CNC toolpaths.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a pipe solid along a wire path with a circular cross-section in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to apply a material (color, transparency) to a shape.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD OpenCASCADE kernel and how it handles BREP topology.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a subtractive feature (hole, pocket, groove) in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that creates a custom toolbar button for a frequently used operation.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD constraints: coincident, tangent, perpendicular, equal, symmetric.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a mirrored copy of features in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to generate a 3D model from a CSV of XYZ coordinates (point cloud to surface).", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD FEM workbench for basic structural analysis.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a parametric spring/coil model in FreeCAD using a helix and sweep?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to iterate over all edges of a shape and print their lengths.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD document object model and how objects relate to features.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you use the FreeCAD Draft workbench for 2D drawing and annotation?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that creates an exploded view of an assembly for documentation.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to create a custom FreeCAD workbench with Python commands.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a thickened shell from a solid body in FreeCAD (shell feature)?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to perform a section cut through a 3D model at a specified plane.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD Arch workbench for building/architectural modeling.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a 3D text extrusion in FreeCAD for engraving on a surface?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to create an array of objects along a custom path.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD macro recording feature and how to edit recorded macros.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you use the FreeCAD Surface workbench to create complex curved surfaces?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to check if two shapes intersect and compute the intersection volume.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to set up a FreeCAD project template with predefined views and standards.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a counterbored and countersunk hole in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that saves screenshots of standard views (front, side, top, isometric).", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD Assembly4 workbench for multi-part assemblies with coordinate systems.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a B-spline curve in the FreeCAD Sketcher and use it for a pad feature?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to tessellate a shape and export it as STL with controlled mesh density.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD with Git for version control of parametric CAD models.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a rib feature (structural reinforcement) in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to programmatically add dimensions to a TechDraw view.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD preference system and how to customize defaults for new documents.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a tube/pipe with wall thickness from a wire path in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that lists all features in a Part Design body with their types and parameters.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to import and position PCB 3D models from KiCad STEP exports in FreeCAD.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you use FreeCAD macros for batch processing multiple files?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to create a custom parametric screw from ISO standard dimensions.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD shape hierarchy: Compound, CompSolid, Solid, Shell, Face, Wire, Edge, Vertex.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a variable fillet (radius changes along the edge) in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to detect interference between parts in an assembly.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD Addon Manager to install and manage extensions.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a lattice/cellular structure for 3D printing in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that applies tolerances to dimensions in a TechDraw drawing.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD Python console and how to interact with the 3D view programmatically.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a flat pattern development of a sheet metal part in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to create an enclosure for a PCB with mounting standoffs and ventilation slots.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD Sketcher construction geometry for reference lines.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a 3D-printable snap-fit joint design in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to create a dovetail joint between two boards.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD FEM mesh refinement options and convergence analysis.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a custom feature in FreeCAD using the FeaturePython framework?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that creates section views at multiple positions along an axis.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to handle FreeCAD model recomputation errors and broken references.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a complex sketch with multiple closed wires for a pad with holes?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to measure and annotate the minimum wall thickness of a part.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD's built-in Python debugger for macro development.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a knurled surface pattern on a cylindrical part in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro to generate a DXF export of all sketch profiles in a body.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD coin3D viewer internals and how to customize the 3D viewport.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a smooth tangent transition between two faces in FreeCAD Surface workbench?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to compute the center of mass and moment of inertia of a body.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD macros for design rule checking (DRC) of mechanical parts.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a linkage mechanism simulation in FreeCAD using the Assembly workbench?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script that generates a technical drawing with title block and revision table.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you use FreeCAD's OpenSCAD integration to import and convert CSG models?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro to create a pipe routing layout with elbows and tee fittings.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD Materials system for thermal and structural analysis.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a thread form (M6, M8, etc.) for 3D printing in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to project a 3D wire onto a face (shape projection).", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain FreeCAD file format (.FCStd) internals and how to extract data programmatically.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a cam profile in FreeCAD using the Sketcher with polar coordinates?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that creates a bolt circle pattern (PCD) of holes.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD Rebar workbench for reinforced concrete design.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a NURBS surface in FreeCAD for aerodynamic or artistic shapes?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to animate a mechanism by varying constraint parameters over time.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to set up FreeCAD rendering with external renderers (POV-Ray, LuxCoreRender).", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a PCB enclosure in FreeCAD from a KiCad board outline with cutouts?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to find the closest point on a face to a given 3D point.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD Part.Shape.check() method and how to fix invalid geometry.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a custom FreeCAD GUI dialog for user input in a macro?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that creates a configurable DIN rail mount bracket.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a surface offset (equidistant surface) in FreeCAD for mold design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to split a solid body along a plane into two separate solids.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to handle FreeCAD sketch over-constraint and under-constraint situations.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a wine glass or vase shape using the revolve feature in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to apply geometric transformations (translate, rotate, scale, mirror).", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use the FreeCAD grading system for Part Design feature tree best practices.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you import an SVG file into FreeCAD Sketcher for use in extrusion?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro to generate a honeycomb infill pattern for a flat plate.", "domain": "freecad", "source": "manual"}
+{"prompt": "Debug this: FreeCAD sketch fillet fails with 'Unable to fillet the given edge' error.", "domain": "freecad", "source": "manual"}
+{"prompt": "Debug this: FreeCAD Part Design Pad fails with 'Result has multiple solids' error.", "domain": "freecad", "source": "manual"}
+{"prompt": "Debug this: FreeCAD assembly constraints become broken after modifying a part.", "domain": "freecad", "source": "manual"}
+{"prompt": "Debug this: FreeCAD STEP export produces a file that other CAD software cannot import.", "domain": "freecad", "source": "manual"}
+{"prompt": "Debug this: FreeCAD macro runs but the 3D view doesn't update until forced recompute.", "domain": "freecad", "source": "manual"}
+{"prompt": "Design a parametric electronics enclosure in FreeCAD with snap-fit lid and cable glands.", "domain": "freecad", "source": "manual"}
+{"prompt": "Design a FreeCAD macro library for standard mechanical components (brackets, plates, standoffs).", "domain": "freecad", "source": "manual"}
+{"prompt": "Design a robot arm assembly in FreeCAD with motion constraints and kinematic chain.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a 3D-printable flexure hinge in FreeCAD with proper living hinge geometry?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script that reads a JSON configuration file and generates a customized bracket.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain the FreeCAD Part.makeWireString() function for creating 3D text from font files.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a mold cavity and core from a part design in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD macro that validates a design against manufacturing constraints (min wall, min hole).", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to use FreeCAD with CadQuery for code-first parametric design.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a curved slot or channel feature in FreeCAD Part Design?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD script to compare two versions of a part and highlight geometric differences.", "domain": "freecad", "source": "manual"}
+{"prompt": "Explain how to automate FreeCAD from the command line for batch processing without GUI.", "domain": "freecad", "source": "manual"}
+{"prompt": "How do you create a compound shape from multiple solid bodies in FreeCAD?", "domain": "freecad", "source": "manual"}
+{"prompt": "Write a FreeCAD Python script to create a custom annotation with leader line in TechDraw.", "domain": "freecad", "source": "manual"}

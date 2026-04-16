@@ -1,0 +1,217 @@
+{"prompt": "Write a bare-metal startup code in C for an ARM Cortex-M4 that initializes the vector table and calls main.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between volatile and non-volatile variables in embedded C and when each is needed.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write an interrupt service routine for a UART receive complete interrupt on a Cortex-M microcontroller.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a circular buffer in C for an embedded system with limited RAM?", "domain": "embedded", "source": "manual"}
+{"prompt": "Design a DMA transfer from a peripheral to memory on an ARM Cortex-M processor. Show the register configuration.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain memory-mapped I/O and how to access hardware registers using pointer casting in C.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a simple cooperative scheduler (round-robin) for a bare-metal embedded system in C.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement software debouncing for a GPIO button input in embedded C?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM Cortex-M NVIC priority grouping and how to configure interrupt priorities.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a linker script for an ARM Cortex-M4 with 256KB Flash and 64KB SRAM.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a watchdog timer reset mechanism to recover from firmware hangs?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between polling and interrupt-driven I/O in embedded systems with pros and cons.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a bit-banged SPI master implementation in C for a microcontroller without hardware SPI.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you minimize power consumption in a battery-powered embedded device? List at least 8 techniques.", "domain": "embedded", "source": "manual"}
+{"prompt": "Implement a FreeRTOS task that reads a sensor via I2C every 100ms and posts the result to a queue.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the stack and heap memory layout in a typical embedded ARM system.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a bootloader that jumps to the application at a fixed flash address on a Cortex-M processor.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you use the MPU (Memory Protection Unit) on a Cortex-M to protect critical memory regions?", "domain": "embedded", "source": "manual"}
+{"prompt": "Implement a state machine in C for parsing a serial protocol with start byte, length, payload, and CRC.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a CRC-16 CCITT calculation function optimized for an 8-bit microcontroller.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how DMA channels work and when to use DMA vs interrupt-driven transfers.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a real-time clock (RTC) alarm wakeup from deep sleep on a Cortex-M?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for a SPI Flash memory chip (e.g., W25Q128) with read, write, and erase operations.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of reentrant functions and why they matter in interrupt-driven embedded code.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you debug a hard fault on a Cortex-M processor? Walk through the fault register analysis.", "domain": "embedded", "source": "manual"}
+{"prompt": "Implement a ring buffer with thread-safe producer/consumer access using atomic operations.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a HAL abstraction layer for GPIO that supports multiple MCU families.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM Cortex-M boot sequence from reset vector to main().", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a software timer wheel for scheduling multiple periodic tasks?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a memory pool allocator for fixed-size blocks suitable for an RTOS environment.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between big-endian and little-endian byte order and how to handle it in firmware.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a command-line interface (CLI) over UART for debugging embedded systems?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for an I2C temperature sensor (e.g., TMP102) with error handling.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain what happens during a context switch in FreeRTOS at the register level.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement flash wear leveling for storing configuration data in embedded systems?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a fault handler that logs the program counter and link register before resetting.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the role of the SysTick timer in an RTOS and how to configure it.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement double buffering for ADC DMA transfers to avoid data loss?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a bare-metal delay function using a hardware timer instead of busy loops.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain mutex vs semaphore vs critical section in RTOS context with code examples.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a FIFO queue with ISR-safe push and task-safe pop operations?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write startup assembly code that copies .data from flash to RAM and zeros .bss.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use scatter-gather DMA for transferring non-contiguous memory blocks.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you safely update firmware over-the-air (OTA) with rollback support?", "domain": "embedded", "source": "manual"}
+{"prompt": "Implement a priority inversion prevention mechanism using priority inheritance.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for a PWM output controlling an LED brightness with fade-in/fade-out.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between RTOS hard real-time and soft real-time and give examples.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you profile and measure interrupt latency on a Cortex-M processor?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a simple memory-mapped register access macro set for an embedded peripheral.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the ITM (Instrumentation Trace Macrocell) for printf-style debugging.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a CAN bus driver from scratch for a bare-metal system?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a FreeRTOS binary semaphore example for synchronizing an ISR with a task.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of memory barriers and when they are needed in multi-core embedded systems.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you handle stack overflow detection in an RTOS-based embedded system?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a generic linked list implementation in C suitable for embedded use (no malloc).", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to implement a low-power sleep mode with GPIO wakeup on a Cortex-M.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you design a multi-tasking embedded system with producer-consumer pattern?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to calculate the baud rate register value for UART given clock and desired baud.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain tail-chaining and late-arriving interrupts in the Cortex-M NVIC.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a software UART (bit-banged) using timer interrupts?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver that uses DMA with circular mode for continuous ADC sampling.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between bare-metal, RTOS, and Linux-based embedded systems.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a secure boot chain verification on an embedded processor?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a simple event-driven architecture for an embedded system without an RTOS.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use GDB with OpenOCD for debugging an ARM embedded target.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you optimize code size for a flash-constrained microcontroller?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a non-blocking I2C master driver using a state machine approach.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of zero-copy buffers and how to implement them for DMA transfers.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement error handling and retry logic for SPI communication?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to configure the system clock from an external crystal oscillator.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the ARM Cortex-M debug watchpoint unit for conditional breakpoints.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a file system (e.g., LittleFS) on SPI NOR Flash for embedded use?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a timer capture driver to measure the frequency of an external signal.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the volatile keyword interaction with compiler optimization flags (-O2, -Os).", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a producer-consumer pattern between two RTOS tasks using a message queue?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a test harness for unit testing embedded C code on a host PC using CMock.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the ARM ETM trace for real-time code execution tracing.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you handle endianness conversion when communicating between different architectures?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a lookup table-based sine wave generator for DAC output in embedded C.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of interrupt nesting and how to enable/disable it on Cortex-M.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a USB CDC device class on a Cortex-M for virtual COM port?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a state machine for managing a battery charger (CC/CV phases) in embedded C.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to implement a PID controller on a microcontroller with fixed-point math.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you use the Cortex-M DWT cycle counter for precise timing measurements?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for a WS2812B addressable LED strip using SPI or timer DMA.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between static and dynamic memory allocation in embedded systems.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a robust error logging system in a resource-constrained embedded device?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function that performs a safe firmware version comparison for OTA update decisions.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how cache coherency issues affect DMA operations and how to handle them.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement an interrupt-driven UART driver with TX and RX ring buffers?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a Makefile for an ARM embedded project with separate debug and release builds.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use CMSIS-RTOS2 API for portable RTOS code across vendors.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a deterministic real-time scheduler with deadline-driven priorities?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a configuration storage system using flash pages with CRC integrity checking.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM Cortex-M exception model and the difference between exceptions and interrupts.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement mutual exclusion between ISR and task contexts without disabling all interrupts?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a generic event flag group implementation for synchronizing multiple events.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to calculate worst-case execution time (WCET) for real-time embedded tasks.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you design a hardware abstraction layer that supports both simulation and real hardware?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a SWD (Serial Wire Debug) bit-banging implementation for flashing a target MCU.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of memory fragmentation in embedded systems and how to avoid it.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement graceful degradation when a sensor fails in an embedded system?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write an assertion macro for embedded C that logs file/line info and triggers a breakpoint.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM TrustZone architecture and how to use it for secure firmware partitioning.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a data logger that writes to SD card via SPI with FAT filesystem?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to perform a safe integer overflow check before arithmetic operations in C.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between JTAG and SWD debugging interfaces for ARM.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement flow control (XON/XOFF or RTS/CTS) in a UART driver?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a multi-channel ADC scanning driver using DMA on a Cortex-M.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the Cortex-M fault status registers to diagnose bus faults.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a bootloader that accepts firmware over UART with XMODEM protocol?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a compile-time configuration system using preprocessor macros for multi-variant firmware.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the impact of compiler optimization on volatile accesses and interrupt handlers.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement ECC (Error Correction Code) for external RAM in an embedded system?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a power-on self-test (POST) routine that checks RAM, Flash CRC, and peripheral connectivity.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use static analysis tools (MISRA-C) to improve embedded code quality.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a task notification mechanism in FreeRTOS as a lightweight alternative to semaphores?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for an external EEPROM (e.g., AT24C256) with page write handling.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the role of the PendSV exception in RTOS context switching.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a software reset with state preservation across the reset?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a DMA-based memory-to-memory copy function optimized for large data transfers.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use link-time optimization (LTO) for embedded firmware and its tradeoffs.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you design a modular firmware architecture with pluggable device drivers?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a fixed-point arithmetic library for Q15.16 format suitable for DSP on a Cortex-M.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the difference between thread mode and handler mode in the ARM Cortex-M.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a deadlock detection mechanism in an RTOS application?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for a 4x4 matrix keypad with interrupt-based key detection.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to properly handle shared resources between DMA callbacks and application code.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a semihosting printf for debug output during development?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function that detects stack corruption at runtime using a canary value.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of interrupt storm and how to protect against it in embedded systems.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a time-triggered architecture for safety-critical embedded systems?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a CDC ACM USB device descriptor and endpoint configuration for a Cortex-M.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the ARM Cortex-M SVC (Supervisor Call) for OS system calls.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a lockfree single-producer single-consumer queue for ISR-to-task data passing?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a Cortex-M assembly function that performs a fast memcpy using LDM/STM instructions.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the differences between FreeRTOS, Zephyr, and ThreadX for embedded development.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a hardware CRC peripheral driver for accelerated data integrity checks?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to safely transition between different power modes (run, sleep, stop, standby).", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the Cortex-M MPU to create sandboxed execution environments.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a firmware update protocol with delta/patch updates to save bandwidth?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a stepper motor driver using timer interrupts for acceleration/deceleration profiles.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of code placement in flash sections and how to use __attribute__((section)).", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a trace buffer for post-mortem debugging in production embedded systems?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a I2C bus recovery function that handles stuck SDA line conditions.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM Cortex-M bit-banding feature and how to use it for atomic bit manipulation.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a runtime selectable clock source with smooth frequency switching?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to verify flash integrity using stored CRC at boot time.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the ETB (Embedded Trace Buffer) for offline trace analysis.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a task priority elevation scheme for handling burst workloads?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a device tree parser for a simple embedded system configuration at boot.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of position-independent code (PIC) and when it's needed in embedded systems.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a diagnostic UART shell with command history and tab completion?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a multi-protocol communication handler that supports UART, SPI, and I2C through a unified API.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use compiler builtins (__builtin_expect, __builtin_clz) for optimization in embedded C.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a deterministic garbage collector for a memory pool in embedded C?", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a power consumption estimation tool that calculates battery life from firmware states.", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to handle clock domain crossing issues when interfacing peripherals at different speeds.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a dual-bank flash scheme for fail-safe firmware updates?", "domain": "embedded", "source": "manual"}
+{"prompt": "Debug this embedded code: an ISR modifies a global variable but the main loop never sees the change.", "domain": "embedded", "source": "manual"}
+{"prompt": "Debug this: DMA transfer completes but the destination buffer contains stale data on a Cortex-M7.", "domain": "embedded", "source": "manual"}
+{"prompt": "Debug this: a FreeRTOS task randomly crashes with a hard fault after running for several hours.", "domain": "embedded", "source": "manual"}
+{"prompt": "Debug this: I2C communication works fine for single reads but fails during burst reads.", "domain": "embedded", "source": "manual"}
+{"prompt": "Debug this: SPI peripheral returns correct data in debug mode but garbage at full speed.", "domain": "embedded", "source": "manual"}
+{"prompt": "Design a firmware architecture for a sensor node that must last 5 years on a coin cell battery.", "domain": "embedded", "source": "manual"}
+{"prompt": "Design a fault-tolerant embedded system that continues operating with degraded functionality.", "domain": "embedded", "source": "manual"}
+{"prompt": "Design a testable embedded firmware architecture with dependency injection for unit testing.", "domain": "embedded", "source": "manual"}
+{"prompt": "Design a multi-core embedded application with shared memory communication on an asymmetric multiprocessor.", "domain": "embedded", "source": "manual"}
+{"prompt": "Design a real-time data acquisition system sampling 8 channels at 100kHz with DMA.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a Cortex-M4 FPU configuration and lazy stacking setup for efficient floating-point ISRs.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a secure key storage mechanism using the Flash option bytes on a Cortex-M?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the RTOS tick hook for system health monitoring.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to implement a median filter for noisy ADC readings in embedded C.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement inter-processor communication on a dual-core Cortex-M using hardware mailbox?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to partition firmware into bootloader, application, and factory-reset sections in flash.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a LED matrix display driver using shift registers and timer-based multiplexing.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a protocol bridge between CAN and UART on a single microcontroller?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of run-to-completion scheduling vs preemptive scheduling for embedded systems.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to pack and unpack binary data structures for wire protocol communication.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a self-calibrating ADC system that compensates for offset and gain errors?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the TPIU (Trace Port Interface Unit) for real-time trace output.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for a rotary encoder with debouncing and velocity detection.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a memory-safe string handling library for embedded C without heap allocation?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the impact of flash wait states on execution speed and how to optimize code placement.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a FreeRTOS stream buffer example for transferring variable-length data from ISR to task.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement AES-128 encryption in software on a resource-constrained microcontroller?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of cooperative multitasking using protothreads in embedded C.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for a capacitive touch sensing interface using GPIO and timer.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a ring buffer for logging crash dumps to be read after reboot?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use conditional compilation to support multiple hardware revisions in one codebase.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function that maps physical memory addresses to logical peripheral names for debug output.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a bus arbiter for multiple masters sharing an I2C bus?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM Cortex-M lazy FPU context saving and its impact on interrupt latency.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a pulse-width measurement function using input capture on a hardware timer.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a factory test mode that validates all board peripherals at production?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the differences between SRAM, DRAM, and Flash memory types in embedded system design.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to generate a pseudo-random number sequence suitable for embedded testing.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement thermal protection by monitoring MCU die temperature and throttling clocks?", "domain": "embedded", "source": "manual"}
+{"prompt": "Design an embedded logging system with log levels, timestamps, and circular flash storage.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a CMake toolchain file for cross-compiling ARM Cortex-M firmware with GCC.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a bootloader that supports multiple communication interfaces (UART/USB/CAN)?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use __attribute__((packed)) correctly and its alignment implications on ARM.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function to atomically set, clear, and toggle GPIO pins using bit-band aliases.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement rate monotonic scheduling analysis for a set of periodic tasks?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the implications of using floating-point in ISRs on a Cortex-M4 with FPU.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a peripheral register dump utility for debugging that prints all registers of a given peripheral.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a reliable serial protocol with framing, escaping, and acknowledgment?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the ARM Cortex-M execution modes and how to switch between privileged and unprivileged.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a driver for an LCD display controller (e.g., SSD1306 OLED) over I2C.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a regression test suite for embedded firmware running on real hardware?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use the SEGGER SystemView tool for RTOS task visualization and profiling.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a function that implements a Kalman filter for IMU sensor fusion on a microcontroller.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you design an interrupt priority scheme for a system with UART, SPI, timer, and ADC interrupts?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain the concept of memory-mapped flash emulation of EEPROM and its wear implications.", "domain": "embedded", "source": "manual"}
+{"prompt": "Write a compile-time assertion macro for checking struct sizes and alignments.", "domain": "embedded", "source": "manual"}
+{"prompt": "How do you implement a safe C string library that prevents buffer overflows in embedded code?", "domain": "embedded", "source": "manual"}
+{"prompt": "Explain how to use unity test framework for embedded C unit testing with mock support.", "domain": "embedded", "source": "manual"}

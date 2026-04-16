@@ -1,0 +1,177 @@
+{"prompt": "How do you configure the STM32 clock tree to use an 8MHz HSE crystal with PLL to get 168MHz SYSCLK?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 HAL code to initialize SPI1 in master mode at 10MHz with CPOL=0, CPHA=0.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the difference between STM32 HAL and LL (Low-Level) drivers and when to use each.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure an STM32 ADC in DMA mode for scanning 4 channels continuously.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you set up a basic timer (TIM6) on STM32 to generate a 1ms periodic interrupt?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 HAL code to transmit and receive data over UART using DMA with circular mode.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 GPIO alternate function mapping and how to configure pins for SPI/I2C/UART.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 RTC with LSE crystal and set up an alarm interrupt?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a PWM output on TIM1 CH1 with configurable duty cycle on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 I2C peripheral in master mode to communicate at 400kHz?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 flash memory organization and how to program/erase sectors at runtime.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write a STM32 bootloader that receives firmware via UART and writes it to flash.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 DAC to generate a sine wave output using DMA and timer trigger?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 DMA stream/channel mapping and how to avoid conflicts between peripherals.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to read the STM32 internal temperature sensor using ADC with calibration.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 IWDG (Independent Watchdog) with a 2-second timeout?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 code to use the CRC peripheral for computing CRC-32 of a data buffer.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use STM32CubeMX to generate initialization code and integrate it with an existing project.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure STM32 low-power modes (Sleep, Stop, Standby) and wake-up sources?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement I2C slave mode on STM32 with address matching and data callback.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 TIM encoder mode to read a quadrature encoder position?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 HAL code to configure and use the USB CDC class for virtual COM port.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 EXTI (External Interrupt) configuration for edge-triggered GPIO interrupts.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement DMA-based SPI communication on STM32 for high-throughput data transfer?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 backup SRAM for preserving data across power cycles.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 bus matrix architecture and its impact on DMA/CPU concurrent access.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 ADC analog watchdog for threshold-based interrupts?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement complementary PWM outputs with dead-time on STM32 TIM1.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 SAI (Serial Audio Interface) for I2S audio streaming?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 clock security system (CSS) and how to handle HSE failure.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 CAN bus at 500kbps with filters for specific message IDs.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 FSMC/FMC peripheral to interface with external SRAM?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 code to implement one-pulse mode on a timer for precise pulse generation.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 option bytes and how to configure read/write protection.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 Ethernet MAC for basic TCP/IP communication with LwIP?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 random number generator (RNG) peripheral for generating secure random numbers.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 SDMMC peripheral to read/write an SD card with FATFS?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 ART accelerator (Adaptive Real-Time) and its effect on flash read performance.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a timer input capture for measuring PWM frequency and duty cycle on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure STM32 SPI in slave mode with DMA for receiving data from a master?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 code to use the COMP (comparator) peripheral for analog signal threshold detection.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 flash dual-bank boot mechanism and how to switch between banks.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 LTDC controller for driving an RGB TFT display?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 hardware AES peripheral for encrypting data blocks.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a USB MSC (Mass Storage Class) device on STM32 using internal flash as storage?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 power supply domains (VDD, VDDA, VBAT) and decoupling requirements.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 OPAMP peripheral for signal conditioning.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use STM32 TIM DMA burst mode for updating multiple timer registers in one DMA transfer?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a multi-ADC mode (dual/triple) for simultaneous sampling on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use STM32CubeIDE for debugging with live variable watch and SWV tracing.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 system memory bootloader for firmware update via UART/USB?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 TSC (Touch Sensing Controller) for capacitive touch buttons.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 GPIO speed (low/medium/high/very high) and when does it matter?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 code to implement a frequency counter using timer gate mode.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 backup domain and how to preserve RTC and backup register data.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 MDMA (Master DMA) on STM32H7 for memory-to-memory transfers?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 LPTIM (Low Power Timer) for wakeup from Stop mode.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 ADC oversampling feature and how to configure it for higher resolution.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a custom USB HID device on STM32 for sending reports to a PC?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 QSPI for reading from external NOR Flash in memory-mapped mode.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you handle STM32 HAL timeout errors in I2C/SPI communication and implement recovery?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 DMA2D (Chrom-ART) for accelerated image blending.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 voltage regulator modes and their impact on performance and power consumption.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 WWDG (Window Watchdog) with proper window timing?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a CAN-FD (Flexible Data-rate) communication on STM32 with FDCAN peripheral.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 DMAMUX for flexible DMA request routing on STM32G4/H7/L4+?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 ADC injected channels with trigger from timer.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to migrate a project from STM32F4 to STM32H7 considering clock tree differences.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 JPEG codec peripheral for hardware JPEG decoding?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement motor control with space vector PWM using STM32 advanced timers.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 CORDIC accelerator for trigonometric calculations?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write STM32 code to configure the FMAC (Filter Math Accelerator) for IIR filter execution.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 MPU (Memory Protection Unit) regions and how to configure them for safety.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement OTA firmware update on STM32 using dual-bank flash swap?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 HASH peripheral for computing SHA-256.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 DCMI interface for capturing frames from a camera module?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement precise microsecond delay using STM32 DWT cycle counter.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 Nucleo/Discovery board jumper configurations for power measurement.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 OCTOSPI peripheral for HyperRAM or OctoSPI Flash?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 PKA (Public Key Accelerator) for RSA operations.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you debug STM32 hard faults by reading SCB registers (CFSR, HFSR, BFAR, MMFAR)?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 TIM master/slave for synchronized timer operation.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use STM32 LL drivers for time-critical GPIO bit-banging operations.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 BDMA for transfers in D3/SRD domain on STM32H7?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a UART bootloader with auto-baud rate detection on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 firewall peripheral to protect sensitive code regions?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 SWPMI (Single Wire Protocol Master Interface).", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 clock recovery system for USB communication without an external crystal.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a high-resolution timer (HRTIM) output for power converter control on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 GFXMMU for memory-optimized round display frame buffers.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 ADC with differential input mode for improved SNR?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a triple-buffer scheme for LCD display using DMA2D on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 SMPS vs LDO power supply options on STM32H7/U5 and board design implications.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 FDCAN for time-triggered CAN communication?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 OTFDEC for on-the-fly decryption of external flash content.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a USB DFU (Device Firmware Upgrade) bootloader on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 PSSI (Parallel Synchronous Slave Interface) for camera input.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the differences between STM32 families (F0, F1, F3, F4, F7, H7, L4, U5, G4) for MCU selection.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 ICACHE on STM32U5 for optimal code execution performance?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a software-based motor FOC (Field Oriented Control) on STM32G4.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 HAL_UART_Receive_DMA only receives data once and then stops.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 ADC DMA readings have occasional zero values interspersed with valid data.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 I2C HAL function returns HAL_BUSY and never recovers.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 USB CDC drops data when sending large buffers.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 SPI DMA transfer works for small buffers but corrupts data for large ones.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32H7 QSPI memory-mapped mode works in debug but hard faults in release build.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 TIM PWM output has jitter when DMA is active on the same bus.", "domain": "stm32", "source": "manual"}
+{"prompt": "Debug this: STM32 CAN peripheral enters bus-off state intermittently.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 VREFINT calibration values to get accurate ADC voltage measurements?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement I2C multi-master arbitration handling on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use the STM32 HAL TIM callback system and its overhead considerations.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 RCC to use HSI48 with CRS for USB clock recovery?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 LPUART for low-power UART communication in Stop mode.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how the STM32 flash prefetch buffer and instruction cache work together.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a custom HAL MSP (MCU Support Package) initialization for STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 TIM ETR (External Trigger) for gating timer operation.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you profile STM32 code execution time using the SWV trace with ITM timestamps?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a ring buffer UART driver using STM32 HAL UART_Receive_IT in circular fashion.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 TrustZone implementation on STM32L5/U5 and secure/non-secure partitioning.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32CubeMonitor tool for real-time variable monitoring?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 analog watchdog to trigger an interrupt when voltage exceeds a threshold.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a multi-protocol communication stack (UART + SPI + I2C) using HAL on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 HAL driver locking mechanism and when HAL_LOCK/HAL_UNLOCK cause issues.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 SPDIF receiver for digital audio input.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you handle STM32 HAL library version upgrades without breaking existing code?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a pulse density modulation (PDM) microphone interface on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use STM32CubeProgrammer for production flash programming with scripts.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 GPU (ChromART/NeoChrom) for 2D graphics acceleration?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a sigma-delta ADC interface using STM32 DFSDM peripheral.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you select the right STM32 MCU for a new project based on peripheral and performance requirements?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 USART in synchronous mode as SPI-like interface.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use the STM32 HAL driver with FreeRTOS including thread-safety considerations.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a production test jig firmware that validates all STM32 peripherals?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 HSEM (Hardware Semaphore) for inter-core synchronization on dual-core STM32H7.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 PVD (Programmable Voltage Detector) for brown-out protection?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 DLYB (Delay Block) for SDMMC/OSPI signal timing optimization.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 HAL error callback mechanism and how to implement global error handling.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a secure element interface (e.g., STSAFE) over I2C on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 RNG peripheral with health test for NIST compliance.", "domain": "stm32", "source": "manual"}
+{"prompt": "Design a complete STM32-based data logger with ADC, SD card, and USB file transfer.", "domain": "stm32", "source": "manual"}
+{"prompt": "Design a motor controller using STM32G4 with ADC sampling synchronized to PWM switching.", "domain": "stm32", "source": "manual"}
+{"prompt": "Design a multi-sensor IoT node using STM32L4 with ultra-low power sleep between measurements.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you generate a .ioc file programmatically for STM32CubeMX configuration?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a USB audio device class on STM32 for real-time audio streaming.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32H7 dual-core boot sequence and how to synchronize M7 and M4 cores.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 flash read protection (RDP) levels and their implications?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement interrupt-safe ring buffer UART reception without HAL overhead on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the differences between STM32 Timer types (Basic, General-purpose, Advanced) and use cases.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you measure actual power consumption of an STM32 design using IDD measurement pins?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 DSI (Display Serial Interface) for MIPI display output.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a multi-buffer SPI slave on STM32 that handles variable-length messages?", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to use the STM32 ST-LINK virtual COM port for debug logging.", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to calibrate the STM32 HSI oscillator using the TIM input capture and a known reference.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement STM32 secure boot using SBSFU (Secure Boot and Secure Firmware Update)?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 UCPD peripheral for USB-C Power Delivery negotiation.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 flash ECC error detection mechanism and how to handle single-bit corrections.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32 HAL assert mechanism for catching parameter errors during development?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a frequency synthesizer using STM32 PLL and timer prescaler chain.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure STM32 GPIO analog mode vs input mode for unused pins to minimize leakage?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a multi-ADC interleaved mode for higher sampling rate on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to configure the STM32 clock output (MCO) pins for debugging clock issues.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a robust I2C bus recovery procedure on STM32 when the bus is stuck?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to use the STM32 IWDG with early wakeup interrupt for pre-reset diagnostics.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you use the STM32CubeMX Device Configuration Tool for pin conflict detection?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure STM32 TIM in one-shot mode triggered by an external GPIO event.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain the STM32 memory map for different families and how to use it for direct register access.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a USB composite device (CDC + MSC) on STM32?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to configure the STM32 DFSDM for monitoring audio level from a PDM microphone.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you handle STM32 errata issues and apply silicon-specific workarounds in firmware?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a simple filesystem for the STM32 internal flash user data partition.", "domain": "stm32", "source": "manual"}
+{"prompt": "Explain how to switch between different STM32 HAL configurations at runtime (e.g., SPI speed change).", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you configure the STM32 SAI for TDM (Time Division Multiplexing) multi-channel audio?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a CAN message scheduler with periodic and event-triggered messages on STM32.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you calculate and verify the STM32 power consumption using CubeMX power calculator?", "domain": "stm32", "source": "manual"}
+{"prompt": "Write code to implement a USB MIDI device on STM32 for musical instrument applications.", "domain": "stm32", "source": "manual"}
+{"prompt": "Design an STM32-based audio effects processor using ADC, DSP, and DAC with DMA.", "domain": "stm32", "source": "manual"}
+{"prompt": "How do you implement a multi-channel voltage monitor using STM32 ADC with automatic sequencing?", "domain": "stm32", "source": "manual"}

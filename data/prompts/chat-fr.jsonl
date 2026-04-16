@@ -444,3 +444,57 @@
 {"prompt": "Quels sont les bienfaits de l'art-thérapie ?", "domain": "chat-fr", "source": "openassistant"}
 {"prompt": "Comment bien choisir son fournisseur d'électricité ?", "domain": "chat-fr", "source": "openassistant"}
 {"prompt": "Qu'est-ce que le mentorat inversé et pourquoi est-ce efficace ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Peux-tu m'expliquer comment fonctionne un réacteur nucléaire en termes simples ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est la différence entre un virus et une bactérie ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment calculer le volume d'un cylindre ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Donne-moi trois arguments pour et trois contre le télétravail", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Résume-moi le principe de la photosynthèse en cinq phrases", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Écris un court poème sur l'automne en alexandrins", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quel est le meilleur moyen de gérer son stress au quotidien ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique-moi le théorème de Pythagore comme si j'avais dix ans", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les avantages et inconvénients de l'énergie solaire ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment organiser un voyage en Corse pour une famille de quatre personnes ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que l'intelligence artificielle et comment elle transforme nos vies ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Aide-moi à rédiger un mail professionnel pour demander un rendez-vous", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles sont les étapes pour faire du pain maison ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique la théorie de la relativité d'Einstein de manière accessible", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment apprendre une nouvelle langue efficacement en tant qu'adulte ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Rédige un dialogue entre un professeur et un élève curieux sur les trous noirs", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles plantes aromatiques peut-on cultiver sur un balcon en ville ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Compare les systèmes éducatifs français et finlandais", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne le système de retraite en France ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Écris une histoire courte pour enfants mettant en scène un chat astronaute", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels exercices de musculation peut-on faire sans matériel à la maison ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique-moi ce qu'est la blockchain comme si je n'y connaissais rien", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment réduire son empreinte carbone au quotidien ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles sont les causes et conséquences du réchauffement climatique ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Propose-moi un menu végétarien équilibré pour une semaine", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est la différence entre l'astronomie et l'astrologie ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment bien préparer un entretien d'embauche ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique le fonctionnement du système immunitaire humain", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les meilleurs livres de science-fiction francophones ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment déboguer un programme Python qui plante sans message d'erreur ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Raconte-moi l'histoire de la construction de la Tour Eiffel", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les principes fondamentaux de la démocratie ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne un moteur électrique de voiture ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Aide-moi à planifier mon budget mensuel avec un salaire de 2500 euros", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que le stoïcisme et comment l'appliquer dans la vie moderne ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique la différence entre corrélation et causalité avec des exemples", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment prendre soin d'un potager en permaculture ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les principaux courants artistiques du vingtième siècle ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Donne-moi des astuces pour améliorer ma concentration au travail", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne le Wi-Fi et pourquoi le signal s'affaiblit avec la distance ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Écris un discours motivant pour une équipe qui traverse une période difficile", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles sont les différences entre le droit civil et le droit pénal ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment expliquer les probabilités à quelqu'un qui n'a jamais fait de maths ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Propose-moi cinq idées de cadeaux originaux pour un anniversaire", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que la mécanique quantique et pourquoi est-elle si contre-intuitive ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment installer un système Linux sur un vieux PC ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Résume les grandes périodes de l'histoire de France en un paragraphe chacune", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les bienfaits de la méditation pleine conscience ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment rédiger une lettre de motivation percutante ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique le concept d'inflation en économie avec des exemples concrets", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles stratégies adopter pour mieux dormir la nuit ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne un GPS et quelle est sa précision ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Écris un petit sketch humoristique sur la vie en open space", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les enjeux éthiques de l'intelligence artificielle générative ?", "domain": "chat-fr", "source": "manual"}

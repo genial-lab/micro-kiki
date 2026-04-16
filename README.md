@@ -85,7 +85,7 @@ The post-hoc KnowBias ordering (applied twice on the merged model rather than on
 
 ## Structure
 
-> **Note:** this tree represents the **target layout** per the 106-step plan. Several directories (`src/memory/`, `src/cognitive/`, `deploy/`) do not exist yet — they are populated as ralph works through the plan. The current state reflects Phase I foundations only.
+> **Note:** this tree represents the implemented layout. All directories are populated — Phases I through XIV scaffolding is in place, with training stories pending GPU execution.
 
 ```
 micro-kiki/
@@ -114,34 +114,57 @@ micro-kiki/
 
 ## Status
 
-14 phases, 107 implementation stories. Tracked in `.ralph/prd.json`.
+14 phases, 108 implementation stories. Tracked in `.ralph/prd.json`. **40/108 done (37%)**.
 
 - [x] Design (2026-04-15) — see `docs/specs/`
 - [x] MoE approach research — see `docs/research/`
-- [x] Implementation plan (107 stories, 14 phases)
-- [ ] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
-- [ ] Phase II — Data pipeline
-- [ ] Phase III — First stack (chat-fr E2E)
-- [ ] Phase IV — Router v0 + dispatcher (3 stacks)
-- [ ] Phase V — Curriculum coding 04–14
+- [x] Implementation plan (108 stories, 14 phases)
+- [x] Phase I — Foundations (bootstrap base + loader + teacher client + smoke)
+- [~] Phase II — Data pipeline (chat-fr distilled 1784 examples, reasoning + python seed prompts ready)
+- [ ] Phase III — First stack (chat-fr E2E) — **NEXT: training on Studio**
+- [x] Phase IV — Router v0 + dispatcher (3 stacks) — code done, training pending
+- [ ] Phase V — Curriculum coding 04–14 — seed prompts for 5/11 technical domains ready
 - [ ] Phase VI — Technical stacks 15–25
 - [ ] Phase VII — Apps + complements 26–32
-- [ ] Phase VIII — Aeon memory palace
-- [ ] Phase IX — Negotiator
-- [ ] Phase X — Post-hoc KnowBias double-application + RBD runtime
-- [ ] Phase XI — Serving deployment
-- [ ] Phase XII — ANE triple pipeline (Mac-only)
-- [ ] Phase XIII — Quantum-inspired pre-release (CompactifAI + QTHA + TN router)
-- [ ] Phase XIV — E2E acceptance test + Release v0.2
+- [x] Phase VIII — Aeon memory palace (atlas + trace + aeon API + backends + serving hook + compression daemon)
+- [x] Phase IX — Negotiator (judge + catfish + argument extractor + integration)
+- [~] Phase X — KnowBias + RBD (code done, bias dataset 1881/5000 in progress, fine-tune pending)
+- [x] Phase XI — Serving deployment (vLLM dynamic LoRA + MLX server + service units)
+- [~] Phase XII — ANE triple pipeline (stubs present, CoreML conversion pending)
+- [x] Phase XIII — Quantum-inspired (CompactifAI + QTHA + TN router — all classical simulators)
+- [~] Phase XIV — E2E acceptance + Release (migration guide + VERSION done, tests pending)
+
+### Bottleneck
+
+The remaining 68 stories are dominated by **37 GPU training stories** (32 stacks × sequential curriculum + router retrains). Estimated: ~30 min/stack × 32 = ~16h of compute on Mac Studio M3 Ultra (BF16 LoRA). All code scaffolding is complete.
 
 ## Execution
 
-Driven by the ralph loop skill:
+Driven by the ralph loop skill + multi-machine orchestration:
 
 ```bash
+# Ralph loop (single machine)
 cd /Users/electron/Documents/Projets/micro-kiki
 MAX_ITERATIONS=10 uv run .ralph/loop.py
+
+# Multi-machine orchestration (from GrosMac)
+./scripts/orchestrate_remote.sh status           # all machines status
+./scripts/orchestrate_remote.sh sync             # pull main everywhere
+./scripts/orchestrate_remote.sh distill chat-fr  # distill on Studio
+./scripts/orchestrate_remote.sh train stack-01   # train on Studio
+./scripts/orchestrate_remote.sh eval stack-01    # eval on kxkm-ai
+
+# Generic domain distillation
+uv run python scripts/distill_domain.py --domain embedded --teacher-url http://kxkm-ai:8000
 ```
+
+### Machines
+
+| Machine | SSH | Role | Status |
+|---------|-----|------|--------|
+| GrosMac (M5) | local | Orchestration, code dev | Active |
+| Studio (M3 Ultra 512 GB) | `ssh studio` | BF16 training, teacher serving | Qwen3.5-35B-A3B downloaded (67 GB) |
+| kxkm-ai (RTX 4090 24 GB) | `ssh kxkm@kxkm-ai` | Q4 inference, eval, distillation | llama-server on :8000 |
 
 Each iteration picks one incomplete story, implements it, runs quality gates, commits, and exits.
 
