@@ -267,14 +267,14 @@
       "title": "End-to-end acceptance test + release-variant freeze",
       "description": "**End-to-end acceptance test + release-variant freeze**\n\n    - Files to touch: `tests/test_e2e_neuro.py`, `scripts/run_e2e_neuro.py`, `results/e2e-neuro.json`, `docs/release-v0.3.md`\n    - Integration test exercising the full v0.3 stack for the Story 29 release variant: AeonSleep + chosen SpikingKiki (or SpikingBrain-7B if cross-eval picks it) + Akida routing.\n    - Canonical scenario: inject 200 planted memories into AeonSleep, run 1 sleep cycle, prompt \"recall X from cluster Y\" and verify correct recall; route through the SNN backbone with Akida-assisted MoE/attn decision; check response non-empty and coherent.\n    - Freeze the picked variant: write a migration guide capturing which SpikingKiki variant ships in the release, which are research-only artefacts, and how users switch backbones.\n    - Acceptance targets: AeonSleep PI-depth-10 accuracy ≥ 95%, SNN response latency meets the per-variant target from Story 29, Akida routing agreement with baseline ≥ 98%. All three must pass.\n    - Dependencies: steps 11, 29, 36.",
       "priority": 38,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-39",
       "title": "HuggingFace release + model card + cookbook",
       "description": "**HuggingFace release + model card + cookbook**\n\n    - Files to touch: `docs/cookbook-v0.3.md`, `MODEL_CARD-v0.3.md`\n    - Publish as `electron-rare/micro-kiki-v0.3-neuroscience` on HuggingFace: the Story 38 frozen SNN backbone + AeonSleep code (NOT the training data), model card declaring caveats (research-grade, 2026 preprint-based, hardware requirement for Akida component).\n    - Cookbook: 3 worked examples — (a) AeonSleep standalone memory palace, (b) SNN backbone CPU inference, (c) Akida-accelerated routing (requires hardware).\n    - Model card links to the research-only SpikingKiki variants on a separate HF collection so readers can reproduce the multi-base study.\n    - Acceptance: HF repo exists and is downloadable; model card has all standard sections (intended use, limitations, citations); cookbook notebooks execute end-to-end on a fresh Studio environment.\n    - Dependencies: step 38.",
       "priority": 39,
-      "passes": false
+      "passes": true
     }
   ]
 }

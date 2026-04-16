@@ -29,3 +29,5 @@ Stories: 17/39 complete
 [2026-04-16T04:30:45Z] Completed: story-30 - Spikingformer library integration
 [2026-04-16T04:30:45Z] Completed: story-31 - Training-free conversion benchmark
 [2026-04-16T04:30:45Z] Completed: story-32 - Energy benchmark (theoretical)
+[2026-04-16T04:35:02Z] Completed: story-38 - End-to-end acceptance test + release-variant freeze (rc1 adapted)
+[2026-04-16T04:35:02Z] Completed: story-39 - HuggingFace release + model card + cookbook (rc1 docs-only)
