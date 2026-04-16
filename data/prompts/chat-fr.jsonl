@@ -1,20 +1,446 @@
-{"prompt": "Explique le fonctionnement d'un condensateur en termes simples."}
-{"prompt": "Quelle est la différence entre un microcontrôleur et un microprocesseur?"}
-{"prompt": "Écris une fonction Python qui trie une liste par insertion."}
-{"prompt": "Comment fonctionne le protocole I2C? Explique avec un exemple."}
-{"prompt": "Donne 3 avantages de l'architecture MoE pour les LLM."}
-{"prompt": "Explique la différence entre UART, SPI et I2C."}
-{"prompt": "Comment dimensionner une alimentation à découpage?"}
-{"prompt": "Écris un script Bash qui surveille l'utilisation CPU."}
-{"prompt": "Qu'est-ce que le DMA et pourquoi est-ce utile en embarqué?"}
-{"prompt": "Explique le concept de LoRA pour le fine-tuning de LLM."}
-{"prompt": "Comment fonctionne un pont en H pour contrôler un moteur DC?"}
-{"prompt": "Décris les étapes de conception d'un PCB 4 couches."}
-{"prompt": "Écris une classe Python pour un buffer circulaire thread-safe."}
-{"prompt": "Quelle est la différence entre FreeRTOS et Zephyr?"}
-{"prompt": "Explique le fonctionnement d'un ADC SAR."}
-{"prompt": "Comment implémenter un filtre de Kalman en Python?"}
-{"prompt": "Décris l'architecture d'un système CAN bus pour automobile."}
-{"prompt": "Écris une fonction TypeScript pour valider un JSON Schema."}
-{"prompt": "Comment fonctionne la modulation PWM pour le contrôle de LED?"}
-{"prompt": "Explique la différence entre compilation AOT et JIT."}
+{"prompt": "Bonjour, comment allez-vous aujourd'hui ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Salut ! Tu fais quoi ce week-end ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Excusez-moi, pourriez-vous m'indiquer le chemin vers la gare ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Hey, t'as vu le dernier épisode de la série ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Pourriez-vous me recommander un bon restaurant dans le quartier ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique-moi la différence entre le passé composé et l'imparfait.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que tu penses de l'intelligence artificielle ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Pouvez-vous résumer les principales causes de la Révolution française ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Raconte-moi une histoire courte pour enfants.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment préparer un bon coq au vin ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les avantages et inconvénients du télétravail ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Traduis en anglais : « La vie est belle quand on la partage avec les gens qu'on aime. »", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Donne-moi cinq conseils pour améliorer mon français écrit.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quel est ton avis sur le changement climatique ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Aide-moi à rédiger un email professionnel pour demander un rendez-vous.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que la philosophie existentialiste ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne le système de sécurité sociale en France ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Invente un dialogue entre un boulanger et un client difficile.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles sont les différences culturelles entre la France et le Québec ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Rédige un court poème sur l'automne.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique-moi le fonctionnement d'un moteur électrique comme si j'avais 10 ans.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels livres me recommandes-tu pour découvrir la littérature française ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment négocier une augmentation de salaire avec son employeur ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Décris les étapes pour créer une entreprise en France.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est la différence entre « savoir » et « connaître » ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Parle-moi des traditions de Noël en France.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment gérer le stress au quotidien ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Écris une lettre de motivation pour un stage en marketing.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les meilleurs endroits à visiter en Provence ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique-moi la théorie de la relativité de manière simple.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Tu préfères la montagne ou la mer ? Pourquoi ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment apprendre une nouvelle langue efficacement ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Résume le livre « Le Petit Prince » en quelques phrases.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles sont les règles du subjonctif en français ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Donne-moi une recette rapide et healthy pour le déjeuner.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne la blockchain ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Raconte une blague drôle.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les enjeux éthiques de l'IA dans la médecine ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment bien préparer un entretien d'embauche ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Décris-moi une journée typique d'un parisien.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que le développement durable et pourquoi est-ce important ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Aide-moi à écrire un discours pour le mariage de mon meilleur ami.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est l'histoire de la Tour Eiffel ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment démarrer un potager sur un balcon ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Traduis en français : « The early bird catches the worm, but the second mouse gets the cheese. »", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les symptômes courants d'un burnout ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Imagine que tu es un guide touristique à Lyon. Présente la ville.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne le vote en France ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Écris un haïku sur la pluie.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Pourquoi le ciel est-il bleu ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Explique les différences entre le vin rouge, blanc et rosé.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Si tu pouvais voyager dans le temps, quelle époque choisirais-tu et pourquoi ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les arguments pour et contre l'énergie nucléaire ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Décris un coucher de soleil sur la Méditerranée en utilisant les cinq sens.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un email à ton propriétaire pour signaler un problème de plomberie.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelle est la différence entre corrélation et causalité ? Donne des exemples.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment expliquerais-tu Internet à quelqu'un du 18e siècle ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un plan de cours pour enseigner la programmation à des débutants.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les principaux courants artistiques du 20e siècle ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Compare les systèmes éducatifs français et finlandais.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une critique constructive d'un film que tu as trouvé moyen.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique le concept de biais cognitif avec trois exemples concrets.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Si tu devais convaincre quelqu'un de lire davantage, quels arguments utiliserais-tu ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles compétences seront les plus demandées dans 10 ans ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Écris un résumé exécutif d'un projet fictif de rénovation urbaine.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la musique influence-t-elle nos émotions ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Analyse les avantages et les risques des réseaux sociaux pour les adolescents.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose trois solutions créatives pour réduire le gaspillage alimentaire.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige le début d'un roman policier se déroulant à Marseille.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles leçons peut-on tirer de la pandémie de COVID-19 ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique le concept de dette technique en développement logiciel.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Si tu étais maire de ta ville, quelles seraient tes trois premières mesures ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Décris les avantages d'un mode de vie minimaliste.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment rédiger un bon CV en 2026 ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les principes fondamentaux de la pensée critique ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Imagine un dialogue entre Voltaire et Elon Musk.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Pourquoi certaines personnes résistent-elles au changement ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une fable moderne avec une morale sur la technologie.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment améliorer la qualité de son sommeil ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles sont les différences entre le stoïcisme et l'épicurisme ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un itinéraire de 5 jours en Bretagne.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment l'impression 3D pourrait-elle transformer la construction ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Traduis et adapte culturellement cette expression anglaise : « It's not rocket science. »", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que l'économie circulaire et comment la mettre en pratique ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une lettre ouverte sur l'importance de la biodiversité.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne un réseau de neurones artificiels ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Décris les étapes pour organiser un événement caritatif.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les mythes courants sur la nutrition ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Imagine que les animaux puissent parler. Écris une conversation entre un chat et un chien.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la France gère-t-elle ses déchets nucléaires ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles sont les bases de la comptabilité pour un auto-entrepreneur ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Écris un texte argumentatif sur la gratuité des transports en commun.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment méditer quand on n'a jamais essayé ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les droits fondamentaux garantis par la Constitution française ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose une activité team-building originale pour une équipe de 15 personnes.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne le marché de l'art contemporain ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Pourquoi apprend-on l'histoire à l'école ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un pitch de 30 secondes pour une startup de livraison éco-responsable.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que l'effet papillon en physique et dans la vie quotidienne ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Peux-tu m'aider à comprendre les bases de la photographie ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Pourquoi dit-on que le français est une langue difficile à apprendre ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne la fermentation dans la fabrication du fromage ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels conseils donnerais-tu à quelqu'un qui veut adopter un chien ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique les bases de l'investissement en bourse pour un débutant.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment réduire son empreinte carbone au quotidien ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce qu'un trou noir et comment se forme-t-il ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige une scène de théâtre comique entre deux voisins.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les bienfaits prouvés de la marche à pied ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le système judiciaire français ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Propose un menu gastronomique français en trois services.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le RGPD et pourquoi est-il important ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment aider un enfant qui a des difficultés en mathématiques ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quelle est l'histoire de la baguette française ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique le fonctionnement d'une centrale solaire.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment organiser un déménagement efficacement ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les différents types de mémoire chez l'être humain ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un conte moderne sur le thème de l'amitié.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le système de retraite en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quelles sont les étapes pour publier un livre en auto-édition ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique la différence entre météo et climat.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment cultiver des herbes aromatiques en intérieur ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la dyslexie et comment la prendre en charge ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Propose un programme d'exercice pour quelqu'un qui travaille assis toute la journée.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment la Révolution industrielle a-t-elle transformé la société ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un dialogue entre un médecin et un patient hypocondriaque.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages du vélo en ville par rapport à la voiture ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment choisir un bon vin pour accompagner un repas ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la cybersécurité et pourquoi chaque citoyen devrait s'en soucier ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique les principes du zéro déchet.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment préparer un voyage sac à dos en Asie du Sud-Est ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quelles sont les grandes périodes de l'histoire de l'art ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le crowdfunding ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un article de blog sur les bienfaits de la lecture.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le syndrome de l'imposteur et comment le surmonter ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique les bases de la musique : notes, gammes, accords.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment réagir face à un conflit au travail ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Pourquoi les abeilles sont-elles essentielles pour l'écosystème ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Décris le processus de fabrication du chocolat de la fève à la tablette.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien commencer la journée ? Propose une routine matinale.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quelles sont les principales causes de la pollution des océans ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Aide-moi à comprendre les bases du droit du travail en France.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment choisir entre acheter et louer un appartement ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la permaculture et comment la pratiquer ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un monologue intérieur d'un astronaute regardant la Terre depuis l'espace.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le corps humain pendant le sommeil ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les meilleurs podcasts francophones pour apprendre quelque chose de nouveau ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Ça va ? Qu'est-ce que tu deviens ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Bonsoir, je cherche un hôtel pas trop cher à Nice pour deux nuits.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Wesh, c'était comment les vacances ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Madame, Monsieur, je me permets de vous contacter au sujet de ma candidature.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'as un bon plan pour un cadeau d'anniversaire original ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je n'arrive pas à dormir la nuit, tu aurais des astuces ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Veuillez m'excuser pour ce retard dans ma réponse.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "C'est quoi ton film préféré et pourquoi ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je voudrais signaler un bug dans votre application.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment tu gères quand t'as trop de trucs à faire en même temps ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Veuillez trouver ci-joint le document que vous m'avez demandé.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Dis-moi, c'est quoi la différence entre un croissant et un pain au chocolat ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je suis nouveau dans la ville, des conseils pour se faire des amis ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Pourriez-vous me faire parvenir un devis pour cette prestation ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Allez, raconte-moi ta journée !", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment écrire une bonne dissertation en trois parties ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que tu ferais si tu gagnais au loto ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je souhaiterais obtenir un remboursement pour ma commande.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "C'est normal d'avoir le trac avant de parler en public ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Bonjour, je voudrais réserver une table pour quatre personnes ce soir.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les meilleurs fromages français selon toi ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Corrige les fautes dans ce texte : « Je suis allé au magazin hier et j'ai achetter du pains. »", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment expliquer la mort à un enfant de 5 ans ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Reformule cette phrase de manière plus formelle : « Je veux qu'on se voit la semaine prochaine. »", "domain": "chat-fr", "source": "manual"}
+{"prompt": "C'est vrai que les Français sont toujours en grève ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Rédige un SMS d'excuse pour avoir oublié un anniversaire.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne le prêt étudiant en France ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'as déjà essayé la réalité virtuelle ? C'est comment ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est la meilleure saison pour visiter le Mont-Saint-Michel ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Aide-moi à trouver un slogan accrocheur pour une boulangerie artisanale.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les stéréotypes sur les Français et lesquels sont vrais ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique le principe de précaution tel qu'il est appliqué en droit français.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment un algorithme de recommandation décide-t-il de ce que tu vois sur YouTube ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige trois tweets engageants pour promouvoir un festival de musique.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles sont les limites de la croissance économique ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne le mécanisme de la photosynthèse ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un exercice de pensée latérale et donne la solution.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les principaux mouvements féministes et leurs revendications ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Écris une nouvelle de science-fiction en 200 mots se déroulant en 2150.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Compare le système de santé français au système américain.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne un vaccin à ARN messager ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que le revenu universel de base et quels pays l'ont testé ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un plan d'action pour réduire les inégalités scolaires.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la gentrification transforme-t-elle les quartiers populaires ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une FAQ pour un site de covoiturage.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les enjeux géopolitiques de l'eau au 21e siècle ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la typographie influence-t-elle la lisibilité d'un texte ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique la différence entre démocratie directe et démocratie représentative.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige le discours d'ouverture d'une conférence sur l'innovation.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne le commerce équitable et est-il vraiment efficace ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que le test de Turing et est-il encore pertinent ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Pourquoi certains films deviennent-ils des classiques cultes ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique le concept de gamification et ses applications en éducation.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une chronique humoristique sur les embouteillages parisiens.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment l'architecture peut-elle contribuer au bien-être des habitants ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les défis de la traduction littéraire ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Compare le rugby et le football : culture, règles, spectacle.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la gastronomie française a-t-elle obtenu le statut de patrimoine immatériel de l'UNESCO ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un débat structuré pour ou contre la semaine de 4 jours.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que l'obsolescence programmée et comment lutter contre ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que le deep learning et en quoi diffère-t-il du machine learning classique ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment reconnaître et éviter les arnaques en ligne ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les principes de base du design UX ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Pourquoi la biodiversité est-elle en déclin et que peut-on faire ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne un moteur à combustion interne ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un guide pour organiser une soirée jeux de société réussie.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages et inconvénients de l'énergie éolienne ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne l'assurance habitation en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique la différence entre les droits d'auteur et le domaine public.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment apprendre à jouer de la guitare en autodidacte ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la résilience psychologique et comment la développer ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les meilleurs outils gratuits pour créer un site web ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le système immunitaire ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Décris les étapes d'un processus de recrutement typique en France.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le stoïcisme et comment l'appliquer au quotidien ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment créer un budget personnel efficace ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les impacts de la fast fashion sur l'environnement ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique comment fonctionne le GPS.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment préparer un exposé oral captivant ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la psychologie positive ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien choisir ses études supérieures ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les bienfaits de la natation pour la santé ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige une lettre de réclamation pour un colis endommagé.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne un panneau solaire photovoltaïque ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que l'intelligence émotionnelle et pourquoi est-elle importante ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment choisir un laptop adapté à ses besoins ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les principaux types de pollution atmosphérique ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique le fonctionnement de l'Union européenne de manière simple.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment réussir à tenir ses bonnes résolutions ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce qu'un algorithme et comment en écrire un simple ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Résume les principaux arguments du débat sur la peine de mort.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Écris un dialogue entre un prof de philo et un élève qui ne comprend pas Descartes.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que le paradoxe de Fermi et quelles sont les hypothèses pour l'expliquer ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment le cerveau humain traite-t-il les langues étrangères ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un manifeste pour une éducation plus créative.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les avantages du logiciel libre par rapport aux logiciels propriétaires ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Compare les philosophies éducatives de Montessori et Freinet.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la colonisation a-t-elle influencé les pays d'Afrique francophone ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un scénario de jeu de rôle pour apprendre la négociation.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que l'économie sociale et solidaire ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment le street art est-il passé du vandalisme à l'art reconnu ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un essai court sur l'importance du doute en science.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les enjeux de la souveraineté numérique en Europe ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la musique classique influence-t-elle la musique contemporaine ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique les enjeux de la neutralité du net.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un atelier d'écriture créative pour des lycéens.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelle est la place de la France dans la francophonie mondiale ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment l'urbanisme peut-il favoriser la mixité sociale ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un conte philosophique sur le temps qui passe.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que la justice restaurative et comment fonctionne-t-elle ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment faire du compost chez soi ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les dangers de la désinformation sur les réseaux sociaux ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne une voiture électrique ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quelle est la différence entre un psychologue, un psychiatre et un psychothérapeute ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien rédiger une note de synthèse ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels exercices recommandes-tu pour soulager le mal de dos ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique comment fonctionne le Wi-Fi.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment gérer ses finances quand on est étudiant ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le commerce international et pourquoi est-il important ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment organiser un road trip en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les signes d'une relation toxique ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique la théorie des jeux avec un exemple simple.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne une imprimante 3D ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les bienfaits du yoga pour le corps et l'esprit ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien préparer un entretien d'admission en école de commerce ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la procrastination et comment la vaincre ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un guide pratique pour débuter le running.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le microbiote intestinal ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les principaux types d'énergie renouvelable ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment écrire un bon mail professionnel en français ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Je me sens un peu seul ces derniers temps. Tu as des idées pour socialiser ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Hé, tu connais un bon podcast pour les trajets en métro ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Pourriez-vous me renseigner sur les horaires d'ouverture de la bibliothèque ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "J'hésite entre deux offres d'emploi, comment choisir ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Coucou ! Tu viens au barbecue samedi ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment expliquer le concept de l'inflation à un adolescent ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je dois faire un discours devant 200 personnes et je stresse. Aide-moi.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce que c'est, le bonheur, selon toi ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Monsieur le Directeur, je sollicite par la présente un congé exceptionnel.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Franchement, je comprends rien aux impôts. Tu peux m'expliquer ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Salut, tu aurais la recette des crêpes de ta grand-mère ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment rester motivé quand un projet n'avance pas ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Cher Monsieur, suite à notre conversation téléphonique, je vous confirme ma participation.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'es plutôt thé ou café le matin et pourquoi ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je viens d'adopter un chat, des conseils pour les premiers jours ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment prendre du recul quand tout semble aller de travers ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Bonjour, je souhaiterais ouvrir un compte bancaire. Quels documents sont nécessaires ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Raconte-moi une anecdote historique surprenante.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Qu'est-ce qui différencie un bon manager d'un mauvais manager ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'as un truc pour apprendre du vocabulaire rapidement ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Résume l'Odyssée d'Homère en dix phrases.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelle est la place de l'humour dans la communication professionnelle ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment l'intelligence artificielle peut-elle aider les personnes handicapées ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une critique gastronomique d'un restaurant trois étoiles fictif.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les principes de la communication non violente ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment le design thinking peut-il résoudre des problèmes complexes ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Explique ce qu'est un paradoxe avec trois exemples célèbres.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quel rôle joue l'art dans une société en crise ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un communiqué de presse pour le lancement d'une application éducative.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment les biais algorithmiques peuvent-ils perpétuer les discriminations ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les grands défis de l'agriculture au 21e siècle ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un plan pour une dissertation sur la liberté d'expression.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment le tourisme de masse affecte-t-il les sites historiques ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que la théorie des cordes en physique ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige le profil LinkedIn idéal d'un data scientist.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment encourager l'esprit entrepreneurial chez les jeunes ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles sont les leçons de la crise financière de 2008 ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Imagine une interview entre un journaliste et une IA consciente.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la réalité augmentée transforme-t-elle le commerce ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que la géothermie et quel est son potentiel en France ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment protéger sa vie privée en ligne ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la sophrologie et à quoi sert-elle ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le don d'organes en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les meilleurs outils pour apprendre à coder ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment réussir une reconversion professionnelle ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique la différence entre éthique et morale.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne une coopérative ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les bienfaits d'une alimentation méditerranéenne ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment réduire l'anxiété avant un examen ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le design biophilique en architecture ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne la bourse et comment commencer à investir ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les droits des locataires en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique ce qu'est un microcontrôleur à quelqu'un qui n'y connaît rien.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien choisir son assurance voyage ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages de l'open source pour les entreprises ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Rédige un texte sur l'importance de la diversité culturelle.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne la mémoire à long terme ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels outils utiliser pour la gestion de projet en équipe ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment la lumière bleue des écrans affecte-t-elle le sommeil ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le biomimétisme et quels sont ses exemples célèbres ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'en penses-tu de l'idée de vivre sans smartphone pendant un mois ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Tu pourrais m'aider à choisir un cadeau pour mes parents ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "C'est quoi le truc le plus bizarre que t'as appris récemment ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Cher collègue, pourriez-vous me transmettre le rapport d'activité du trimestre ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "J'ai raté mon gâteau, qu'est-ce qui a pu aller de travers ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment tu fais pour rester zen dans les embouteillages ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je cherche une activité sportive à faire en couple, des idées ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Peux-tu m'expliquer le fonctionnement de l'Assemblée nationale ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "On mange quoi ce soir ? J'ai la flemme de cuisiner.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment apprendre à dire non sans culpabiliser ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Madame, je vous prie d'agréer mes salutations distinguées.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Tu crois que les robots remplaceront les humains au travail ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment bien préparer ses valises pour un voyage d'un mois ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'aurais pas un tuto pour apprendre à tricoter ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quel est le meilleur moment pour acheter des billets d'avion pas chers ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment expliquer à son patron qu'on est en surcharge de travail ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Raconte-moi l'histoire de la construction du canal de Suez.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Dis, on se tutoie ou on se vouvoie ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est la meilleure façon de se remettre d'une rupture amoureuse ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne une mutuelle santé en France ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quels sont les effets de la musique sur la concentration ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Analyse le phénomène des tiny houses en France.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la philosophie des Lumières a-t-elle influencé la Déclaration des droits de l'homme ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige une pétition contre l'extension d'un aéroport près d'une zone naturelle protégée.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quelles sont les innovations récentes en matière de batteries électriques ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne un système de recommandation basé sur le filtrage collaboratif ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose une expérience de pensée sur le libre arbitre.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que la laïcité à la française et comment a-t-elle évolué ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Écris le début d'un roman d'aventure se déroulant en Guyane française.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment mesure-t-on le bonheur national brut ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les principes de base de l'agroécologie ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Compare le cinéma d'auteur français et le cinéma hollywoodien.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la démocratisation de l'IA transforme-t-elle les métiers créatifs ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige les statuts simplifiés d'une association loi 1901.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que le biais de confirmation et comment s'en prémunir ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment la France gère-t-elle ses outre-mer ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un plan de communication pour une association environnementale.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quel est l'impact environnemental du streaming vidéo ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment le concept de « soft power » s'applique-t-il à la culture française ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que la justice climatique et qui en sont les acteurs ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne CRISPR et quelles sont ses promesses en médecine ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages et limites de la télémédecine ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique le concept de « dette écologique ».", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le financement participatif immobilier ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les défis de l'accessibilité numérique ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment apprendre l'esprit critique aux enfants ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le quantique et pourquoi tout le monde en parle ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le service civique en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages du coworking par rapport au bureau classique ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique le fonctionnement d'une pompe à chaleur.", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment créer un podcast de zéro ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les signes d'une allergie alimentaire ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le tri sélectif en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la médiation culturelle et quel est son rôle ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment apprendre à dessiner quand on part de zéro ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les principes de base de la communication interpersonnelle ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le marché du carbone ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que l'upcycling et comment le pratiquer ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment gérer la charge mentale au quotidien ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les critères pour obtenir le label bio en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Je viens de m'installer en France depuis l'étranger. Par où commencer pour les démarches administratives ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment on dit « it is what it is » en bon français ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Aide-moi à planifier un anniversaire surprise pour ma compagne.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'as déjà lu un livre qui t'a complètement changé la vie ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Bonjour, je souhaiterais annuler mon abonnement. Comment procéder ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "C'est quoi exactement la différence entre un CDI et un CDD ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Dis-moi trois choses que tout le monde devrait savoir sur la France.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment survivre à un dîner de famille quand on ne partage pas les mêmes opinions politiques ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Traduis cette expression québécoise en français de France : « C'est pas pire pantoute ! »", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Rédige un avis positif pour un petit café de quartier.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment réagir quand quelqu'un te critique injustement ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je m'ennuie chez moi un dimanche de pluie. Qu'est-ce que je peux faire ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Peux-tu m'écrire un petit mot de remerciement pour un collègue qui m'a beaucoup aidé ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "T'as une astuce pour retenir les noms des gens qu'on vient de rencontrer ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne Parcoursup et quels sont ses défauts ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelle est la différence entre « amener », « emmener », « apporter » et « emporter » ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Invente un personnage de roman et décris-le en détail.", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Je dois rendre un appartement en bon état. C'est quoi l'usure normale ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Comment fonctionne la TVA pour un freelance ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Ça te dit un petit quiz de culture générale ?", "domain": "chat-fr", "source": "manual"}
+{"prompt": "Quelles sont les tendances de l'architecture durable en 2026 ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment l'essor des véhicules autonomes va-t-il transformer nos villes ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Analyse le rôle des lanceurs d'alerte dans la démocratie.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un rapport d'étonnement pour un nouvel employé dans une startup tech.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les fondements de la justice sociale selon John Rawls ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment fonctionne la captation et le stockage du carbone ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Propose un programme de mentorat pour les jeunes entrepreneurs.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Qu'est-ce que le transhumanisme et quels débats soulève-t-il ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Rédige un éditorial sur l'avenir de la presse écrite.", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Comment les données massives transforment-elles la recherche médicale ?", "domain": "chat-fr", "source": "mtbench-fr"}
+{"prompt": "Quels sont les enjeux de la déforestation en Amazonie ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le crédit immobilier en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les principes de la permaculture urbaine ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien choisir sa formation continue ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que l'hydrogène vert et quel est son avenir ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment organiser efficacement son espace de travail à domicile ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages de la méditation de pleine conscience ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne le microcrédit ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que la food tech et ses innovations récentes ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment réduire le bruit dans un appartement ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les avantages et inconvénients des cryptomonnaies ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne la VAE (Validation des Acquis de l'Expérience) ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que l'aquaponie et comment la mettre en place ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien préparer sa retraite financièrement ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les métiers d'avenir dans le domaine de l'environnement ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Explique le concept de ville intelligente (smart city).", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment fonctionne l'aide juridictionnelle en France ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Quels sont les bienfaits de l'art-thérapie ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Comment bien choisir son fournisseur d'électricité ?", "domain": "chat-fr", "source": "openassistant"}
+{"prompt": "Qu'est-ce que le mentorat inversé et pourquoi est-ce efficace ?", "domain": "chat-fr", "source": "openassistant"}

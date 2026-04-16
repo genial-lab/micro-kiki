@@ -1,39 +1,218 @@
-"""Distill chat-fr dataset from teacher model."""
+#!/usr/bin/env python3
+"""Distill chat-fr dataset (2K examples) from a teacher LLM.
+
+Reads seed prompts from ``data/prompts/chat-fr.jsonl``, sends each to the
+teacher via the OpenAI-compatible HTTP endpoint, and writes completed
+examples to ``data/distilled/chat-fr.jsonl``.  Supports checkpoint resume
+(handled by ``generate_examples``).
+
+Usage::
+
+    uv run python scripts/distill_chat_fr.py \\
+        --teacher-url http://localhost:8000 \\
+        --teacher-model mistral-large-opus
+
+The script multiplies seed prompts via ``n_per_prompt`` to reach the
+target example count.  For 400 seeds targeting 2000 examples, each prompt
+produces 5 completions (with distinct ``sample_idx`` hashes).
+"""
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import logging
+import sys
 from pathlib import Path
+from typing import Any
 
-from src.distill.teacher_client import TeacherClient
-from src.distill.generator import generate_examples
+# Allow direct invocation (uv run python scripts/distill_chat_fr.py) in
+# addition to module invocation (uv run python -m scripts.distill_chat_fr).
+_PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+from src.distill.generator import GeneratorConfig, generate_examples
+from src.distill.teacher_client import GenerateParams, TeacherClient
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Defaults
+# ---------------------------------------------------------------------------
 
-async def main(teacher_model: str, n_examples: int, output_path: str) -> None:
-    prompts_path = Path("data/prompts/chat-fr.jsonl")
-    if not prompts_path.exists():
-        raise FileNotFoundError(f"Seed prompts not found: {prompts_path}")
+DEFAULT_TEACHER_URL = "http://localhost:8000"
+DEFAULT_TEACHER_MODEL = "mistral-large-opus"
+DEFAULT_PROMPTS = Path("data/prompts/chat-fr.jsonl")
+DEFAULT_OUTPUT = Path("data/distilled/chat-fr.jsonl")
+DEFAULT_MAX_EXAMPLES = 2000
 
-    prompts = [json.loads(line)["prompt"] for line in prompts_path.read_text().strip().split("\n") if line]
-    n_per_prompt = max(1, n_examples // len(prompts))
-    logger.info("Generating %d examples (%d per prompt) from %d seeds", n_examples, n_per_prompt, len(prompts))
 
-    client = TeacherClient()
-    generated = await generate_examples(
-        prompts=prompts, teacher=client, model_name=teacher_model,
-        domain="chat-fr", output_path=Path(output_path), n_per_prompt=n_per_prompt,
+# ---------------------------------------------------------------------------
+# Sync adapter — bridges async TeacherClient to sync TeacherProtocol
+# ---------------------------------------------------------------------------
+
+
+class SyncTeacherAdapter:
+    """Wrap :class:`TeacherClient` into the synchronous :class:`TeacherProtocol`.
+
+    ``generate_examples`` calls ``teacher.complete(prompt, **params)``
+    synchronously.  This adapter translates each call into
+    ``TeacherClient.generate_sync``.
+    """
+
+    def __init__(self, client: TeacherClient, model: str, params: GenerateParams) -> None:
+        self._client = client
+        self.model = model
+        self._params = params
+
+    def complete(self, prompt: str, **_params: Any) -> str:
+        """Synchronous completion via the teacher HTTP endpoint."""
+        return self._client.generate_sync(prompt, self.model, params=self._params)
+
+
+# ---------------------------------------------------------------------------
+# Prompt loading
+# ---------------------------------------------------------------------------
+
+
+def load_seed_prompts(path: Path) -> list[str]:
+    """Load prompt strings from a JSONL file.
+
+    Each line must have a ``"prompt"`` key.  Blank / malformed lines are
+    skipped with a warning.
+    """
+    if not path.exists():
+        logger.error("Seed prompts file not found: %s", path)
+        sys.exit(1)
+
+    prompts: list[str] = []
+    with path.open("r", encoding="utf-8") as fh:
+        for lineno, raw in enumerate(fh, start=1):
+            raw = raw.strip()
+            if not raw:
+                continue
+            try:
+                entry = json.loads(raw)
+            except json.JSONDecodeError:
+                logger.warning("Skipping malformed JSON at line %d in %s", lineno, path)
+                continue
+            prompt = entry.get("prompt")
+            if not isinstance(prompt, str) or not prompt.strip():
+                logger.warning("Missing or empty 'prompt' at line %d in %s", lineno, path)
+                continue
+            prompts.append(prompt)
+
+    logger.info("Loaded %d seed prompts from %s", len(prompts), path)
+    return prompts
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Distill chat-fr dataset from a teacher LLM.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    logger.info("Generated %d examples -> %s", generated, output_path)
+    parser.add_argument(
+        "--teacher-url",
+        default=DEFAULT_TEACHER_URL,
+        help="Base URL of the teacher's OpenAI-compatible endpoint.",
+    )
+    parser.add_argument(
+        "--teacher-model",
+        default=DEFAULT_TEACHER_MODEL,
+        help="Model name to pass in the API request.",
+    )
+    parser.add_argument(
+        "--prompts",
+        type=Path,
+        default=DEFAULT_PROMPTS,
+        help="Path to the seed prompts JSONL file.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT,
+        help="Output JSONL path for distilled examples.",
+    )
+    parser.add_argument(
+        "--max-examples",
+        type=int,
+        default=DEFAULT_MAX_EXAMPLES,
+        help="Target number of completed examples.",
+    )
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.7,
+        help="Sampling temperature for the teacher.",
+    )
+    parser.add_argument(
+        "--max-tokens",
+        type=int,
+        default=1024,
+        help="Max tokens per teacher completion.",
+    )
+    args = parser.parse_args()
+
+    # -- Load seed prompts ---------------------------------------------------
+    prompts = load_seed_prompts(args.prompts)
+    if not prompts:
+        logger.error("No valid prompts found.  Aborting.")
+        sys.exit(1)
+
+    # -- Compute n_per_prompt to reach target --------------------------------
+    n_per_prompt = max(1, args.max_examples // len(prompts))
+    total_target = n_per_prompt * len(prompts)
+    logger.info(
+        "Targeting %d examples: %d seeds x %d completions each = %d",
+        args.max_examples,
+        len(prompts),
+        n_per_prompt,
+        total_target,
+    )
+
+    # -- Build teacher adapter -----------------------------------------------
+    client = TeacherClient(
+        endpoints={args.teacher_model: args.teacher_url},
+    )
+    gen_params = GenerateParams(
+        temperature=args.temperature,
+        max_tokens=args.max_tokens,
+    )
+    teacher = SyncTeacherAdapter(client, args.teacher_model, gen_params)
+
+    # -- Configure generator -------------------------------------------------
+    config = GeneratorConfig(
+        n_per_prompt=n_per_prompt,
+        max_retries=3,
+        retry_backoff_s=1.0,
+        domain="chat-fr",
+        params=gen_params.to_dict(),
+    )
+
+    # -- Run distillation ----------------------------------------------------
+    logger.info("Starting distillation -> %s", args.output)
+    stats = generate_examples(
+        prompts=prompts,
+        teacher=teacher,
+        output_path=args.output,
+        config=config,
+    )
+    logger.info(
+        "Done.  generated=%d  skipped=%d  failed=%d",
+        stats["generated"],
+        stats["skipped"],
+        stats["failed"],
+    )
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--teacher", default="mistral-large")
-    parser.add_argument("--n", type=int, default=2000)
-    parser.add_argument("--out", default="data/distilled/chat-fr.jsonl")
-    asyncio.run(main(parser.parse_args().teacher, parser.parse_args().n, parser.parse_args().out))
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+    main()
