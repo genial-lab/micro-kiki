@@ -28,10 +28,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
                     datefmt="%H:%M:%S")
 logger = logging.getLogger(__name__)
 
-os.chdir("/Users/clems/micro-kiki")
+# os.chdir handled by caller
 OUTPUT_ROOT = Path("data/mcp-generated")
 EXPANDED_ROOT = Path("data/prompts-expanded")
-CLAUDE = "/Users/clems/.local/bin/claude"
+CLAUDE = "claude"
 
 # Rate limiting config
 DEFAULT_DELAY = 3.0        # seconds between calls (conservative)
@@ -78,7 +78,7 @@ def generate_one(prompt: str, retries: int = MAX_RETRIES) -> str | None:
             result = subprocess.run(
                 [CLAUDE, "--print", "-p", prompt],
                 capture_output=True, text=True, timeout=timeout,
-                cwd="/Users/clems/micro-kiki",
+                cwd=".",
             )
             if result.returncode == 0 and result.stdout.strip():
                 return result.stdout.strip()
