@@ -25,6 +25,11 @@ import logging
 import sys
 from pathlib import Path
 
+# Allow direct invocation: uv run python scripts/train_grpo_niches.py
+_PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
 logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
