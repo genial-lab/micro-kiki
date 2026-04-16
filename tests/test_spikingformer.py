@@ -160,3 +160,140 @@ class TestSpikingformerAdapter:
         v_w = rng.standard_normal((16, 8))
         result = backend.convert_attention(q_w, k_w, v_w)
         assert "q" in result and "k" in result and "v" in result
+
+
+# ---------------------------------------------------------------------------
+# Spike-attention + SpikingformerConverter tests (story-30 core)
+# ---------------------------------------------------------------------------
+
+from src.spiking.spikingformer import (
+    spike_attention,
+    SpikingTransformerLayer,
+    SpikingformerConverter,
+)
+
+
+class TestSpikeAttention:
+    """Tests for the spike-driven attention primitive."""
+
+    def test_spike_attention_2d_shape(self) -> None:
+        rng = np.random.default_rng(10)
+        seq, dk, dv = 5, 8, 8
+        Q = rng.standard_normal((seq, dk))
+        K = rng.standard_normal((seq, dk))
+        V = rng.standard_normal((seq, dv))
+        out = spike_attention(Q, K, V, threshold=0.0)
+        assert out.shape == (seq, dv)
+
+    def test_spike_attention_3d_batched(self) -> None:
+        rng = np.random.default_rng(11)
+        batch, seq, dk, dv = 2, 4, 6, 6
+        Q = rng.standard_normal((batch, seq, dk))
+        K = rng.standard_normal((batch, seq, dk))
+        V = rng.standard_normal((batch, seq, dv))
+        out = spike_attention(Q, K, V, threshold=0.0)
+        assert out.shape == (batch, seq, dv)
+
+    def test_spike_attention_high_threshold_zeros(self) -> None:
+        """Very high threshold => no spikes => zero output."""
+        rng = np.random.default_rng(12)
+        Q = rng.standard_normal((3, 4)) * 0.1
+        K = rng.standard_normal((3, 4)) * 0.1
+        V = rng.standard_normal((3, 4))
+        out = spike_attention(Q, K, V, threshold=100.0)
+        np.testing.assert_array_equal(out, 0.0)
+
+    def test_spike_attention_produces_finite(self) -> None:
+        rng = np.random.default_rng(13)
+        Q = rng.standard_normal((4, 8))
+        K = rng.standard_normal((4, 8))
+        V = rng.standard_normal((4, 8))
+        out = spike_attention(Q, K, V, threshold=1.0)
+        assert np.all(np.isfinite(out))
+
+
+class TestSpikingTransformerLayer:
+    """Tests for a single spiking transformer layer."""
+
+    @staticmethod
+    def _make_layer(
+        d_model: int = 16,
+        d_k: int = 16,
+        d_ff: int = 32,
+        seed: int = 42,
+    ) -> SpikingTransformerLayer:
+        rng = np.random.default_rng(seed)
+        scale = 0.1
+        return SpikingTransformerLayer(
+            w_q=rng.standard_normal((d_model, d_k)) * scale,
+            w_k=rng.standard_normal((d_model, d_k)) * scale,
+            w_v=rng.standard_normal((d_model, d_k)) * scale,
+            w_out=rng.standard_normal((d_k, d_model)) * scale,
+            w_mlp1=rng.standard_normal((d_model, d_ff)) * scale,
+            w_mlp2=rng.standard_normal((d_ff, d_model)) * scale,
+            threshold=0.5,
+        )
+
+    def test_forward_2d(self) -> None:
+        layer = self._make_layer()
+        x = np.random.default_rng(0).standard_normal((4, 16))
+        out = layer(x)
+        assert out.shape == (4, 16)
+        assert np.all(np.isfinite(out))
+
+    def test_forward_3d_batched(self) -> None:
+        layer = self._make_layer()
+        x = np.random.default_rng(1).standard_normal((2, 4, 16))
+        out = layer(x)
+        assert out.shape == (2, 4, 16)
+
+    def test_param_count(self) -> None:
+        layer = self._make_layer(d_model=16, d_k=16, d_ff=32)
+        # 4 * 16*16 + 2 * 16*32 = 1024 + 1024 = 2048
+        assert layer.param_count == 2048
+
+
+class TestSpikingformerConverter:
+    """Tests for the converter on a tiny 2-layer transformer."""
+
+    @staticmethod
+    def _make_ann_layers(
+        d_model: int = 16,
+        d_ff: int = 32,
+        n_layers: int = 2,
+        seed: int = 99,
+    ) -> list[dict[str, np.ndarray]]:
+        rng = np.random.default_rng(seed)
+        scale = 0.1
+        layers = []
+        for _ in range(n_layers):
+            layers.append({
+                "w_q": rng.standard_normal((d_model, d_model)) * scale,
+                "w_k": rng.standard_normal((d_model, d_model)) * scale,
+                "w_v": rng.standard_normal((d_model, d_model)) * scale,
+                "w_out": rng.standard_normal((d_model, d_model)) * scale,
+                "w_mlp1": rng.standard_normal((d_model, d_ff)) * scale,
+                "w_mlp2": rng.standard_normal((d_ff, d_model)) * scale,
+            })
+        return layers
+
+    def test_convert_and_forward(self) -> None:
+        converter = SpikingformerConverter(threshold=0.5)
+        ann_layers = self._make_ann_layers()
+        snn_layers = converter.convert_model(ann_layers)
+        assert len(snn_layers) == 2
+
+        x = np.random.default_rng(0).standard_normal((3, 16))
+        out = converter.forward_model(snn_layers, x)
+        assert out.shape == (3, 16)
+        assert np.all(np.isfinite(out))
+
+    def test_sparsity_computed(self) -> None:
+        converter = SpikingformerConverter(threshold=0.5)
+        ann_layers = self._make_ann_layers()
+        snn_layers = converter.convert_model(ann_layers)
+        x = np.random.default_rng(1).standard_normal((3, 16))
+        stats = converter.compute_sparsity(snn_layers, x)
+        assert "per_layer" in stats
+        assert len(stats["per_layer"]) == 2
+        assert 0.0 <= stats["avg_sparsity"] <= 1.0
