@@ -120,7 +120,7 @@
       "title": "LAS framework setup on Studio",
       "description": "**LAS framework setup on Studio**\n\n    - Files to touch: `src/spiking/las_converter.py`, `src/spiking/__init__.py`, `tests/test_las_smoke.py`, `docs/specs/las-conversion-framework.md`\n    - Implement (or port) the LAS conversion algorithm from arxiv 2505.09659: lossless ANN→SNN via time-coded quantisation + activation alignment. Modern alternative to Spikingformer (2023–24).\n    - Start from a minimal reference implementation: single `nn.Linear` → spiking version with surrogate gradient; verify identity on a toy 128→64 layer.\n    - Wire a `LASConverter` class that accepts a `torch.nn.Module`, returns its spiking counterpart + metadata (spike timesteps, activation bounds).\n    - Acceptance: `pytest tests/test_las_smoke.py::test_linear_identity` passes (ANN vs SNN outputs match within 1e-4 on a random input); conversion tooling documented in `docs/specs/las-conversion-framework.md`.\n    - Dependencies: step 13.",
       "priority": 17,
-      "passes": false
+      "passes": true
     },
     {
       "id": "story-18",
