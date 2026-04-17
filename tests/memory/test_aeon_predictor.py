@@ -129,3 +129,48 @@ class TestCollapseDetector:
         h_hat[0, 0] = 2.0  # std ~ 0.3 -> ratio exactly 0.1
         flagged, ratio = detect_collapse(h_t, h_hat, threshold=0.1)
         assert flagged is False or ratio == pytest.approx(0.1, abs=1e-6)
+
+
+class TestAeonPredictorIngest:
+    def _mk_palace(self, dim: int = 32) -> AeonSleep:
+        return AeonSleep(dim=dim)
+
+    def test_ingest_appends_to_buffer(self):
+        palace = self._mk_palace(dim=32)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=32))
+        h = _mock_embed(32, seed=1)
+        pred.ingest_latent("t0", h, ts=datetime(2026, 4, 17, 10, 0))
+        assert pred.buffer_size() == 1
+
+    def test_ingest_builds_temporal_pairs(self):
+        palace = self._mk_palace(dim=32)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=32))
+        t0 = datetime(2026, 4, 17, 10, 0)
+        pred.ingest_latent("t0", _mock_embed(32, seed=1), ts=t0, stack_id=3)
+        pred.ingest_latent(
+            "t1", _mock_embed(32, seed=2), ts=t0 + timedelta(minutes=1), stack_id=3
+        )
+        pairs = pred.pairs_for_training()
+        assert len(pairs) == 1
+        h_t, h_next, stack_id = pairs[0]
+        assert h_t.shape == (32,)
+        assert h_next.shape == (32,)
+        assert stack_id == 3
+
+    def test_ingest_rejects_wrong_dim(self):
+        palace = self._mk_palace(dim=32)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=32))
+        with pytest.raises(ValueError, match="dim"):
+            pred.ingest_latent("t0", np.zeros(16, dtype=np.float32), ts=datetime.utcnow())
+
+    def test_ingest_writes_to_palace_and_adds_temporal_edge(self):
+        palace = self._mk_palace(dim=32)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=32))
+        t0 = datetime(2026, 4, 17, 10, 0)
+        pred.ingest_latent("t0", _mock_embed(32, seed=1), ts=t0)
+        pred.ingest_latent("t1", _mock_embed(32, seed=2), ts=t0 + timedelta(minutes=1))
+        temporal_edges = [e for e in palace.graph.edges(kind="temporal")]
+        # Both nodes present, and a temporal edge t0 -> t1 exists.
+        assert palace.graph.has_node("t0")
+        assert palace.graph.has_node("t1")
+        assert any(e.src == "t0" and e.dst == "t1" for e in temporal_edges)

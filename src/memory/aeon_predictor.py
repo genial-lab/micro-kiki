@@ -169,8 +169,95 @@ class LatentMLP:
         return loss
 
 
+
+@dataclass
+class _PairSample:
+    turn_id: str
+    h: np.ndarray            # shape (dim,)
+    ts: datetime
+    stack_id: int            # -1 means "unknown / default"
+
 class AeonPredictor:
-    """Facade wrapping AeonSleep with a latent predictor."""
+    """Facade wrapping AeonSleep with a JEPA-style latent predictor."""
 
     def __init__(self, palace: "AeonSleep", config: PredictorConfig) -> None:
-        raise NotImplementedError("Task 5")
+        if config.dim != palace.dim:
+            raise ValueError(
+                f"config.dim={config.dim} != palace.dim={palace.dim}"
+            )
+        self.palace = palace
+        self.config = config
+        self.mlp = LatentMLP(
+            dim=config.dim,
+            hidden=config.hidden,
+            n_stacks=config.n_stacks,
+            seed=config.seed,
+        )
+        self._buffer: list[_PairSample] = []
+        self._trained_once = False
+
+    # ---------------------------------------------------------- buffer mgmt
+
+    def buffer_size(self) -> int:
+        return len(self._buffer)
+
+    @property
+    def ready(self) -> bool:
+        return (
+            self._trained_once
+            and len(self._buffer) >= self.config.cold_start_threshold
+        )
+
+    # ---------------------------------------------------------- ingest
+
+    def ingest_latent(
+        self,
+        turn_id: str,
+        h: np.ndarray,
+        ts: datetime,
+        stack_id: int | None = None,
+    ) -> None:
+        """Append a latent sample to the buffer and persist to the palace.
+
+        Writes an Episode to AeonSleep (atlas + graph) so existing recall
+        paths still work. Adds a temporal edge from the previous sample
+        (if any) to this one.
+        """
+        if h.shape != (self.config.dim,):
+            raise ValueError(
+                f"h.shape={h.shape} != expected ({self.config.dim},) dim"
+            )
+        from src.memory.aeonsleep import Episode
+
+        ep = Episode(
+            id=turn_id,
+            text="",
+            embedding=h.astype(np.float32).tolist(),
+            ts=ts,
+            topic="__predictor__",
+            payload={"stack_id": -1 if stack_id is None else int(stack_id)},
+        )
+        self.palace.write(ep)
+
+        prev = self._buffer[-1] if self._buffer else None
+        if prev is not None and self.palace.graph.has_node(prev.turn_id):
+            # Add explicit temporal edge even across different topics.
+            self.palace.graph.add_typed_edge(
+                prev.turn_id, turn_id, "temporal"
+            )
+
+        self._buffer.append(
+            _PairSample(
+                turn_id=turn_id,
+                h=h.astype(np.float32).copy(),
+                ts=ts,
+                stack_id=-1 if stack_id is None else int(stack_id),
+            )
+        )
+
+    def pairs_for_training(self) -> list[tuple[np.ndarray, np.ndarray, int]]:
+        """Build `(h_t, h_{t+1}, stack_id)` triples from the ordered buffer."""
+        out: list[tuple[np.ndarray, np.ndarray, int]] = []
+        for a, b in zip(self._buffer, self._buffer[1:]):
+            out.append((a.h, b.h, a.stack_id))
+        return out
