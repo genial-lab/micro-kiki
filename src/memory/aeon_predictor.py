@@ -42,11 +42,51 @@ class PredictorConfig:
     seed: int = 0
 
 
+def _relu(x: np.ndarray) -> np.ndarray:
+    return np.maximum(0.0, x)
+
+
 class LatentMLP:
-    """2-layer numpy MLP with skip connection (h_hat = skip(x) + mlp(x))."""
+    """2-layer numpy MLP with skip connection.
+
+    Input: concat(x[dim], stack_onehot[n_stacks]) of size dim+n_stacks
+    Hidden: linear(hidden) -> ReLU -> linear(hidden) -> ReLU
+    Output: linear(dim) + x   (residual / skip on the embedding path)
+    """
 
     def __init__(self, dim: int, hidden: int, n_stacks: int, seed: int = 0) -> None:
-        raise NotImplementedError("Task 2")
+        self.dim = dim
+        self.hidden = hidden
+        self.n_stacks = n_stacks
+        rng = np.random.default_rng(seed)
+        in_dim = dim + n_stacks
+        scale1 = np.sqrt(2.0 / in_dim)
+        scale2 = np.sqrt(2.0 / hidden)
+        scale3 = np.sqrt(2.0 / hidden) * 0.1  # small init so skip dominates at t=0
+        self.w1 = (rng.standard_normal((in_dim, hidden)) * scale1).astype(np.float32)
+        self.b1 = np.zeros(hidden, dtype=np.float32)
+        self.w2 = (rng.standard_normal((hidden, hidden)) * scale2).astype(np.float32)
+        self.b2 = np.zeros(hidden, dtype=np.float32)
+        self.w3 = (rng.standard_normal((hidden, dim)) * scale3).astype(np.float32)
+        self.b3 = np.zeros(dim, dtype=np.float32)
+
+    def forward(self, x: np.ndarray, stack_onehot: np.ndarray) -> np.ndarray:
+        if x.ndim != 2 or x.shape[1] != self.dim:
+            raise ValueError(f"x must be (batch, {self.dim}), got {x.shape}")
+        if stack_onehot.shape != (x.shape[0], self.n_stacks):
+            raise ValueError(
+                f"stack_onehot must be (batch, {self.n_stacks}), got {stack_onehot.shape}"
+            )
+        inp = np.concatenate([x, stack_onehot], axis=1).astype(np.float32)
+        z1 = np.clip(inp @ self.w1 + self.b1, -30.0, 30.0)
+        h1 = _relu(z1)
+        z2 = np.clip(h1 @ self.w2 + self.b2, -30.0, 30.0)
+        h2 = _relu(z2)
+        delta = h2 @ self.w3 + self.b3
+        out = (x + delta).astype(np.float32)
+        # Cache for backward.
+        self._cache = {"inp": inp, "z1": z1, "h1": h1, "z2": z2, "h2": h2, "x": x}
+        return out
 
 
 class AeonPredictor:
