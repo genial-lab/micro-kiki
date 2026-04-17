@@ -89,6 +89,67 @@ class LatentMLP:
         self._cache = {"inp": inp, "z1": z1, "h1": h1, "z2": z2, "h2": h2, "x": x}
         return out
 
+    def backward_cosine(self, target: np.ndarray, lr: float = 1e-3) -> float:
+        """One SGD step with cosine-similarity loss.
+
+        loss = 1 - mean(cos(h_hat, target)). Returns the scalar loss
+        BEFORE the update (for logging / convergence checks).
+        """
+        cache = self._cache
+        x = cache["x"]
+        inp = cache["inp"]
+        h1 = cache["h1"]
+        h2 = cache["h2"]
+        z1 = cache["z1"]
+        z2 = cache["z2"]
+        batch, dim = x.shape
+        if target.shape != (batch, dim):
+            raise ValueError(f"target shape {target.shape} != {(batch, dim)}")
+
+        # Recompute h_hat from the same x + delta path so grad lines up.
+        delta = h2 @ self.w3 + self.b3
+        h_hat = (x + delta).astype(np.float32)
+
+        eps = 1e-8
+        n_hat = np.linalg.norm(h_hat, axis=1, keepdims=True) + eps
+        n_tgt = np.linalg.norm(target, axis=1, keepdims=True) + eps
+        cos = np.sum(h_hat * target, axis=1, keepdims=True) / (n_hat * n_tgt)
+        loss = float(1.0 - cos.mean())
+
+        # d loss / d h_hat = -(1/batch) * [target/(|h_hat|*|target|)
+        #                   - cos * h_hat / (|h_hat|^2)]
+        d_h_hat = -(
+            target / (n_hat * n_tgt)
+            - cos * h_hat / (n_hat * n_hat)
+        ) / batch
+
+        # d_h_hat flows into delta and into the skip (skip grad on x is
+        # not used — we don't update x, it is input data).
+        d_delta = d_h_hat  # shape (batch, dim)
+        d_w3 = h2.T @ d_delta
+        d_b3 = d_delta.sum(axis=0)
+        d_h2 = d_delta @ self.w3.T
+        d_z2 = d_h2 * (z2 > 0)
+        d_w2 = h1.T @ d_z2
+        d_b2 = d_z2.sum(axis=0)
+        d_h1 = d_z2 @ self.w2.T
+        d_z1 = d_h1 * (z1 > 0)
+        d_w1 = inp.T @ d_z1
+        d_b1 = d_z1.sum(axis=0)
+
+        # Gradient clip — mirrors ForgettingGate pattern.
+        clip = 5.0
+        for g in (d_w1, d_b1, d_w2, d_b2, d_w3, d_b3):
+            np.clip(g, -clip, clip, out=g)
+
+        self.w1 -= lr * d_w1
+        self.b1 -= lr * d_b1
+        self.w2 -= lr * d_w2
+        self.b2 -= lr * d_b2
+        self.w3 -= lr * d_w3
+        self.b3 -= lr * d_b3
+        return loss
+
 
 class AeonPredictor:
     """Facade wrapping AeonSleep with a latent predictor."""

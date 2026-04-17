@@ -67,3 +67,37 @@ class TestLatentMLPForward:
             / ((np.linalg.norm(h_hat[0]) * np.linalg.norm(x[0])) + 1e-8)
         )
         assert cos > 0.5
+
+
+class TestLatentMLPBackward:
+    def test_backward_reduces_cosine_loss(self):
+        rng = np.random.default_rng(0)
+        dim, n_stacks = 32, 4
+        mlp = LatentMLP(dim=dim, hidden=16, n_stacks=n_stacks, seed=0)
+        # Build a trivial pair: target = rotated x, same stack.
+        x = rng.standard_normal((8, dim)).astype(np.float32)
+        x /= np.linalg.norm(x, axis=1, keepdims=True) + 1e-8
+        target = np.roll(x, 1, axis=1)  # deterministic "next" latent
+        target /= np.linalg.norm(target, axis=1, keepdims=True) + 1e-8
+        stack = np.zeros((8, n_stacks), dtype=np.float32)
+        stack[:, 0] = 1.0
+
+        losses = []
+        for _ in range(200):
+            _ = mlp.forward(x, stack)
+            loss = mlp.backward_cosine(target, lr=0.05)
+            losses.append(loss)
+
+        assert losses[-1] < losses[0] - 0.1, (
+            f"loss did not drop enough: start={losses[0]:.3f} end={losses[-1]:.3f}"
+        )
+
+    def test_backward_returns_scalar(self):
+        mlp = LatentMLP(dim=16, hidden=8, n_stacks=2, seed=0)
+        x = np.ones((2, 16), dtype=np.float32) / 4.0
+        stack = np.zeros((2, 2), dtype=np.float32)
+        stack[:, 0] = 1.0
+        _ = mlp.forward(x, stack)
+        loss = mlp.backward_cosine(x, lr=0.01)
+        assert isinstance(loss, float)
+        assert 0.0 <= loss <= 2.0  # cosine loss range
