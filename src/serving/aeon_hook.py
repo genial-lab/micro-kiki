@@ -1,10 +1,10 @@
 """Aeon integration hook for the serving pipeline.
 
 Prepends recalled memories to prompts and writes new memories post-inference.
+Uses dynamic memory budget and structured format matching POC v2.
 """
 from __future__ import annotations
 
-import asyncio
 import logging
 from typing import TYPE_CHECKING
 
@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from src.memory.aeon import AeonPalace
 
 logger = logging.getLogger(__name__)
+
+MEMORY_BUDGET = 3000
 
 
 class AeonServingHook:
@@ -21,11 +23,10 @@ class AeonServingHook:
         self._palace = palace
 
     def pre_inference(self, prompt: str, top_k: int = 8) -> str:
-        """Recall memories and prepend them to the prompt.
+        """Recall memories and prepend them with structured format.
 
-        Returns the augmented prompt with ``[Memory]`` lines inserted
-        before the original user text.  When no memories are found the
-        original prompt is returned unchanged.
+        Uses dynamic budget: MEMORY_BUDGET chars split evenly across
+        recalled episodes.
         """
         try:
             episodes = self._palace.recall(prompt, top_k=top_k)
@@ -36,8 +37,14 @@ class AeonServingHook:
         if not episodes:
             return prompt
 
-        lines = [f"[Memory] {ep.content}" for ep in episodes]
-        return "\n".join(lines) + "\n" + prompt
+        per_ep = max(200, MEMORY_BUDGET // len(episodes))
+        lines = [ep.content[:per_ep] for ep in episodes]
+        memory_block = (
+            "### Previous conversation context:\n"
+            + "\n---\n".join(lines)
+            + "\n\n### Current question:\n"
+        )
+        return memory_block + prompt
 
     def post_inference(
         self,
@@ -46,8 +53,8 @@ class AeonServingHook:
         domain: str,
         turn_id: str,
     ) -> None:
-        """Write the interaction to Aeon memory (fire-and-forget async)."""
-        content = f"Q: {prompt}\nA: {response}"
+        """Write the full interaction to Aeon memory."""
+        content = f"User: {prompt}\nAssistant: {response}"
         try:
             self._palace.write(
                 content=content,

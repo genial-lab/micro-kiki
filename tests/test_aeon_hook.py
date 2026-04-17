@@ -28,8 +28,10 @@ class TestPreInference:
         ]
         hook = AeonServingHook(palace)
         result = hook.pre_inference("hello")
-        assert "[Memory] fact A" in result
-        assert "[Memory] fact B" in result
+        assert "### Previous conversation context:" in result
+        assert "fact A" in result
+        assert "fact B" in result
+        assert "### Current question:" in result
         assert result.endswith("hello")
         palace.recall.assert_called_once_with("hello", top_k=8)
 
@@ -81,7 +83,7 @@ class TestPostInference:
             turn_id="turn-001",
         )
         palace.write.assert_called_once_with(
-            content="Q: what is x?\nA: x is 42",
+            content="User: what is x?\nAssistant: x is 42",
             domain="math",
             source="turn-001",
         )
@@ -101,4 +103,4 @@ class TestPostInference:
         hook.post_inference(prompt="q", response="", domain="d", turn_id="t")
         palace.write.assert_called_once()
         call_kwargs = palace.write.call_args
-        assert "Q: q\nA: " in call_kwargs.kwargs["content"]
+        assert "User: q\nAssistant: " in call_kwargs.kwargs["content"]
