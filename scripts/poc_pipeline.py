@@ -19,12 +19,17 @@ import argparse
 import json
 import logging
 import os
+import sys
 import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-os.chdir("/Users/clems/micro-kiki")
+import numpy as np
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+os.chdir(str(_REPO_ROOT))
+sys.path.insert(0, str(_REPO_ROOT))
 
 import mlx.core as mx
 mx.set_memory_limit(460 * 1024**3)
@@ -38,8 +43,6 @@ logger = logging.getLogger("poc")
 MODEL = "models/qwen3.5-35b-a3b"
 
 # Import micro-kiki modules
-import sys
-sys.path.insert(0, ".")
 from src.routing.router import NICHE_DOMAINS
 from src.routing.model_router import ModelRouter, RouteDecision
 from src.memory.aeon import AeonPalace
@@ -71,8 +74,25 @@ class MicroKikiPipeline:
 
         # 2. Memory
         logger.info("[2/4] Initializing Aeon Memory Palace...")
-        self.memory = AeonPalace()
-        logger.info("  Memory: Atlas vector + Trace episodic graph")
+        import hashlib as _hl
+
+        def _poc_embed(text: str) -> np.ndarray:
+            h = _hl.sha256(text.encode()).digest()
+            rng = np.random.RandomState(int.from_bytes(h[:4], "big"))
+            vec = rng.randn(384).astype(np.float32)
+            return vec / (np.linalg.norm(vec) + 1e-8)
+
+        _model_path = _REPO_ROOT / "models" / "niche-embeddings"
+        if _model_path.exists() and (_model_path / "config.json").exists():
+            try:
+                self.memory = AeonPalace(model_path=str(_model_path))
+                logger.info("  Memory: Atlas vector (trained embeddings, dim=%d)", self.memory._dim)
+            except ImportError:
+                self.memory = AeonPalace(dim=384, embed_fn=_poc_embed)
+                logger.info("  Memory: Atlas vector (hash fallback)")
+        else:
+            self.memory = AeonPalace(dim=384, embed_fn=_poc_embed)
+            logger.info("  Memory: Atlas vector (hash embed)")
 
         # 3. Model
         logger.info("[3/4] Loading Qwen3.5-35B-A3B...")

@@ -29,6 +29,8 @@ from datetime import datetime
 from pathlib import Path
 from statistics import mean
 
+import numpy as np
+
 # ---------------------------------------------------------------------------
 # Working directory (same convention as poc_pipeline.py)
 # ---------------------------------------------------------------------------
@@ -111,8 +113,25 @@ class MicroKikiPipeline:
         logger.info("  Router: 11 domains (10 niches + base)")
 
         logger.info("[2/4] Initializing Aeon Memory Palace...")
-        self.memory = AeonPalace()
-        logger.info("  Memory: Atlas vector + Trace episodic graph")
+        import hashlib as _hl
+
+        def _poc_embed(text: str) -> np.ndarray:
+            h = _hl.sha256(text.encode()).digest()
+            rng = np.random.RandomState(int.from_bytes(h[:4], "big"))
+            vec = rng.randn(384).astype(np.float32)
+            return vec / (np.linalg.norm(vec) + 1e-8)
+
+        _model_path = _REPO_ROOT / "models" / "niche-embeddings"
+        if _model_path.exists() and (_model_path / "config.json").exists():
+            try:
+                self.memory = AeonPalace(model_path=str(_model_path))
+                logger.info("  Memory: Atlas vector (trained embeddings, dim=%d)", self.memory._dim)
+            except ImportError:
+                self.memory = AeonPalace(dim=384, embed_fn=_poc_embed)
+                logger.info("  Memory: Atlas vector (hash fallback)")
+        else:
+            self.memory = AeonPalace(dim=384, embed_fn=_poc_embed)
+            logger.info("  Memory: Atlas vector (hash embed)")
 
         logger.info("[3/4] Loading Qwen3.5-35B-A3B...")
         t0 = time.time()
