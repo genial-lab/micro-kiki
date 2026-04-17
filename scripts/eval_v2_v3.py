@@ -419,6 +419,73 @@ class SafetensorsBackend(AdapterBackend):
         )
 
 
+class MLXBackend(AdapterBackend):
+    """Real MLX backend for Apple Silicon eval."""
+
+    def __init__(self):
+        self._model = None
+        self._tokenizer = None
+        self._active_adapter = None
+
+    def load_base_model(self, path: str) -> None:
+        try:
+            from mlx_lm import load
+            self._model, self._tokenizer = load(path)
+        except ImportError:
+            raise RuntimeError("mlx-lm not installed. Run: pip install mlx-lm")
+
+    def load_adapter(self, adapter_dir: str) -> str:
+        """Load MoE-LoRA adapter weights from a stack directory."""
+        import mlx.core as mx
+        adapter_path = Path(adapter_dir) / "adapters.safetensors"
+        if not adapter_path.exists():
+            raise FileNotFoundError(f"No adapter at {adapter_path}")
+        self._active_adapter = mx.load(str(adapter_path))
+        adapter_id = Path(adapter_dir).name
+        return adapter_id
+
+    def unload_adapter(self, adapter_id: str) -> None:
+        self._active_adapter = None
+
+    def generate(
+        self,
+        prompt: str,
+        adapter_id: str | None = None,
+        max_tokens: int = 256,
+        temperature: float = 0.3,
+    ) -> str:
+        from mlx_lm import generate as mlx_generate
+        messages = [{"role": "user", "content": prompt}]
+        formatted = self._tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+        response = mlx_generate(
+            self._model, self._tokenizer, prompt=formatted,
+            max_tokens=max_tokens, temp=temperature, verbose=False,
+        )
+        return response
+
+    def compute_perplexity(
+        self,
+        text: str,
+        adapter_id: str | None = None,
+    ) -> float:
+        """Compute perplexity of text under the current model."""
+        import mlx.core as mx
+        import mlx.nn as nn
+        tokens = self._tokenizer.encode(text)
+        if len(tokens) < 2:
+            return 100.0
+        input_ids = mx.array([tokens[:-1]])
+        labels = mx.array([tokens[1:]])
+        logits = self._model(input_ids)
+        loss = nn.losses.cross_entropy(
+            logits.reshape(-1, logits.shape[-1]),
+            labels.reshape(-1),
+        )
+        return float(mx.exp(mx.mean(loss)).item())
+
+
 # ---------------------------------------------------------------------------
 # Scoring functions
 # ---------------------------------------------------------------------------
@@ -1051,7 +1118,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--backend",
-        choices=["stub", "safetensors"],
+        choices=["stub", "safetensors", "mlx"],
         default=None,
         help="Backend to use (default: auto-detect from --dry-run flag)",
     )
@@ -1077,19 +1144,26 @@ def main() -> None:
     if args.dry_run or args.backend == "stub":
         backend: AdapterBackend = StubBackend()
         logger.info("Using stub backend (dry-run mode)")
+    elif args.backend == "mlx":
+        backend = MLXBackend()
+        logger.info("Using MLX backend")
     elif args.backend == "safetensors":
         backend = SafetensorsBackend()
     else:
-        # Default: try safetensors, fall back to stub
+        # Default: try MLX first, then safetensors, fall back to stub
         try:
-            backend = SafetensorsBackend()
-            logger.info("Using safetensors backend")
-        except ImportError:
-            logger.warning(
-                "safetensors not installed, falling back to stub backend. "
-                "Install with: pip install safetensors"
-            )
-            backend = StubBackend()
+            backend = MLXBackend()
+            logger.info("Using MLX backend (auto-detected)")
+        except Exception:
+            try:
+                backend = SafetensorsBackend()
+                logger.info("Using safetensors backend")
+            except ImportError:
+                logger.warning(
+                    "Neither mlx-lm nor safetensors installed, "
+                    "falling back to stub backend."
+                )
+                backend = StubBackend()
 
     # Load base model
     backend.load_base_model(args.base_model)
