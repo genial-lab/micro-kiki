@@ -7,13 +7,25 @@ Each test case: {"prompt": "...", "expected_meta_intent": "...", "expected_stack
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 
+import numpy as np
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 from src.routing.dispatcher import dispatch, load_intent_mapping, MetaIntent, DispatchResult
 from src.memory.aeon import AeonPalace
+
+
+def _mock_embed(dim: int = 64):
+    """Return a deterministic hash-based embed_fn for tests."""
+    def fn(text: str) -> np.ndarray:
+        h = hashlib.sha256(text.encode()).digest()
+        rng = np.random.RandomState(int.from_bytes(h[:4], "big"))
+        vec = rng.randn(dim).astype(np.float32)
+        return vec / (np.linalg.norm(vec) + 1e-8)
+    return fn
 from src.cognitive.rbd import ReasoningBiasDetector
 from src.cognitive.antibias import AntiBiasOrchestrator
 from src.serving.switchable import SwitchableModel
@@ -108,14 +120,14 @@ class TestE2EAcceptance:
         assert intents == expected
 
     def test_aeon_writes_turns(self):
-        aeon = AeonPalace(dim=3072)
+        aeon = AeonPalace(dim=64, embed_fn=_mock_embed(64))
         for case in ACCEPTANCE_PROMPTS[:5]:
             eid = aeon.write(case["prompt"], domain=case["expected_meta_intent"])
             assert eid is not None
         assert aeon.stats["episodes"] == 5
 
     def test_aeon_recall_from_history(self):
-        aeon = AeonPalace(dim=3072)
+        aeon = AeonPalace(dim=64, embed_fn=_mock_embed(64))
         aeon.write("I2C configuration on ESP32 requires pull-up resistors", domain="research")
         aeon.write("The bus speed is typically 100kHz or 400kHz", domain="research")
         results = aeon.recall("I2C ESP32", top_k=2)
@@ -206,7 +218,7 @@ class TestAcceptanceFullPipeline:
 
     def test_aeon_memory_across_all_intents(self):
         """Write memories for each intent type and verify recall works."""
-        aeon = AeonPalace(dim=3072)
+        aeon = AeonPalace(dim=64, embed_fn=_mock_embed(64))
         intents_seen = set()
         for case in ACCEPTANCE_PROMPTS:
             intent = case["expected_meta_intent"]

@@ -1,11 +1,23 @@
 from __future__ import annotations
 
+import hashlib
 import threading
 from datetime import datetime, timedelta, timezone
 
+import numpy as np
 import pytest
 
 from src.memory.aeon import AeonPalace
+
+
+def _mock_embed(dim: int = 64):
+    """Return a deterministic hash-based embed_fn for tests."""
+    def fn(text: str) -> np.ndarray:
+        h = hashlib.sha256(text.encode()).digest()
+        rng = np.random.RandomState(int.from_bytes(h[:4], "big"))
+        vec = rng.randn(dim).astype(np.float32)
+        return vec / (np.linalg.norm(vec) + 1e-8)
+    return fn
 
 
 def _populate_palace(palace: AeonPalace, n: int, age_days: int = 60) -> list[str]:
@@ -23,7 +35,7 @@ def _populate_palace(palace: AeonPalace, n: int, age_days: int = 60) -> list[str
 
 
 async def test_compress_reduces_old_episodes():
-    palace = AeonPalace()
+    palace = AeonPalace(dim=64, embed_fn=_mock_embed(64))
     _populate_palace(palace, 50, age_days=60)
     _populate_palace(palace, 10, age_days=1)
 
@@ -35,7 +47,7 @@ async def test_compress_reduces_old_episodes():
 
 
 async def test_compress_with_summarize_fn():
-    palace = AeonPalace()
+    palace = AeonPalace(dim=64, embed_fn=_mock_embed(64))
     _populate_palace(palace, 20, age_days=60)
 
     def summarizer(text: str) -> str:
@@ -55,7 +67,7 @@ async def test_compress_with_summarize_fn():
 
 
 async def test_compress_skips_recent():
-    palace = AeonPalace()
+    palace = AeonPalace(dim=64, embed_fn=_mock_embed(64))
     _populate_palace(palace, 10, age_days=5)
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=30)
@@ -65,7 +77,7 @@ async def test_compress_skips_recent():
 
 
 async def test_recall_finds_compressed():
-    palace = AeonPalace()
+    palace = AeonPalace(dim=64, embed_fn=_mock_embed(64))
     ids = _populate_palace(palace, 30, age_days=60)
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=30)
@@ -77,7 +89,7 @@ async def test_recall_finds_compressed():
 
 async def test_daemon_one_shot():
     """Test the daemon compresses via one-shot mode."""
-    palace = AeonPalace()
+    palace = AeonPalace(dim=64, embed_fn=_mock_embed(64))
     _populate_palace(palace, 10, age_days=60)
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=30)

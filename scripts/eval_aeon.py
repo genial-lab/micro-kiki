@@ -10,6 +10,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import random
@@ -19,11 +20,20 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import numpy as np
+
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 from src.memory.aeon import AeonPalace
+
+
+def _hash_embed(text: str) -> np.ndarray:
+    h = hashlib.sha256(text.encode()).digest()
+    rng = np.random.RandomState(int.from_bytes(h[:4], "big"))
+    vec = rng.randn(384).astype(np.float32)
+    return vec / (np.linalg.norm(vec) + 1e-8)
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +99,7 @@ def generate_test_queries(
 def run_eval(config: EvalConfig) -> RecallMetrics:
     """Write episodes to Aeon, query, and measure recall."""
     rng = random.Random(config.seed)
-    palace = AeonPalace(dim=config.dim)
+    palace = AeonPalace(dim=384, embed_fn=_hash_embed)
 
     episodes = generate_test_episodes(config.episodes, rng)
     logger.info("Writing %d episodes to Aeon", len(episodes))

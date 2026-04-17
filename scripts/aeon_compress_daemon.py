@@ -11,6 +11,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import hashlib
 import logging
 import signal
 import sys
@@ -18,11 +19,20 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import numpy as np
+
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 from src.memory.aeon import AeonPalace
+
+
+def _hash_embed(text: str) -> np.ndarray:
+    h = hashlib.sha256(text.encode()).digest()
+    rng = np.random.RandomState(int.from_bytes(h[:4], "big"))
+    vec = rng.randn(384).astype(np.float32)
+    return vec / (np.linalg.norm(vec) + 1e-8)
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +96,7 @@ def main() -> None:
     signal.signal(signal.SIGTERM, _handle_signal)
     signal.signal(signal.SIGINT, _handle_signal)
 
-    palace = AeonPalace()
+    palace = AeonPalace(dim=384, embed_fn=_hash_embed)
     logger.info(
         "Starting Aeon compress daemon: interval=%ds, max_age=%dd",
         args.interval, args.max_age_days,
