@@ -280,8 +280,16 @@ class MicroKikiPipelineV2(MicroKikiPipeline):
     # Quantum routing helper
     # ------------------------------------------------------------------
 
+    # Minimum VQC confidence to trust the quantum decision.
+    # Untrained VQC gives ~0.09 (uniform); trained VQC should exceed 0.5.
+    VQC_MIN_CONFIDENCE = 0.30
+
     def _quantum_detect_domain(self, query: str) -> tuple[str, float, bool]:
         """Classify domain via VQC router; fall back to keyword detection.
+
+        The VQC decision is only accepted when its confidence exceeds
+        VQC_MIN_CONFIDENCE.  Otherwise keyword scoring is used — this
+        prevents an untrained VQC from overriding the classical router.
 
         Returns:
             (domain, confidence, quantum_used)
@@ -302,19 +310,22 @@ class MicroKikiPipelineV2(MicroKikiPipeline):
                     except ValueError:
                         pass
 
-                # Extract domain from adapter name ("stack-<domain>") or "base"
-                if decision.adapter:
-                    domain = decision.adapter.replace("stack-", "")
+                if confidence >= self.VQC_MIN_CONFIDENCE:
+                    # Extract domain from adapter name ("stack-<domain>") or "base"
+                    if decision.adapter:
+                        domain = decision.adapter.replace("stack-", "")
+                    else:
+                        domain = "base"
+                    logger.info("  [QUANTUM] Domain: %s (conf=%.3f) — accepted", domain, confidence)
+                    return domain, confidence, True
                 else:
-                    domain = "base"
-
-                logger.info("  [QUANTUM] Domain: %s (conf=%.3f)", domain, confidence)
-                return domain, confidence, True
+                    logger.info("  [QUANTUM] conf=%.3f < %.2f — deferring to keyword router",
+                                confidence, self.VQC_MIN_CONFIDENCE)
 
             except Exception as exc:
                 logger.warning("  [QUANTUM] Failed (%s) — falling back to keyword", exc)
 
-        # Fallback: keyword-based
+        # Fallback: keyword-based scoring
         domain = self._detect_domain(query)
         return domain, 0.0, False
 
