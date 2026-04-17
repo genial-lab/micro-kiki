@@ -203,7 +203,7 @@ class MicroKikiPipeline:
         )
         logger.info("  [INFERENCE] Generating (model: %s)...", route.model_id)
         response = generate(self.model, self.tokenizer, prompt=formatted,
-                            max_tokens=500, verbose=False)
+                            max_tokens=1024, verbose=False)
         logger.info("  [INFERENCE] %d chars generated", len(response))
         return response
 
