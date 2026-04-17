@@ -69,6 +69,7 @@ class LatentMLP:
         self.b2 = np.zeros(hidden, dtype=np.float32)
         self.w3 = (rng.standard_normal((hidden, dim)) * scale3).astype(np.float32)
         self.b3 = np.zeros(dim, dtype=np.float32)
+        self._cache: dict = {}
 
     def forward(self, x: np.ndarray, stack_onehot: np.ndarray) -> np.ndarray:
         if x.ndim != 2 or x.shape[1] != self.dim:
