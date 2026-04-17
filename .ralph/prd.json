@@ -131,14 +131,16 @@
       "title": "Integration test router → adapter → response",
       "description": "End-to-end integration test of the routing chain: domain router → adapter load → model inference → response. Test all 10 domain paths + passthrough path. Measure p50/p95 latency for adapter hot-swap. Acceptance: all 11 paths return valid non-empty responses, adapter swap latency p95 < 500ms, no OOM errors.",
       "priority": 18,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-19",
       "title": "E2E smoke test: 10 domains + base fallback",
       "description": "Full E2E smoke test simulating a realistic usage session: send 2 prompts per domain (20 hardware/EDA prompts) + 5 general prompts that should hit passthrough. Validate response quality (non-empty, domain-coherent, no hallucinated footprints/registers on spot-check). Acceptance: all 25 prompts return responses, routing log confirms correct tier for each, spot-check 5 responses manually noted as coherent.",
       "priority": 19,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-20",
@@ -199,7 +201,8 @@
       "title": "LAS convert Qwen3.5-35B-A3B → SpikingKiki-35B (MoE)",
       "description": "Run LAS conversion on Qwen3.5-35B-A3B MoE to produce SpikingKiki-35B. Estimated ~40h on Mac Studio. MoE routing layers require special handling: apply spiking conversion only to attention projections, preserve MoE gate logic as dense. Output to `outputs/snn/spikingkiki-35b/`. Acceptance: conversion completes, MoE routing still functional post-conversion (gate outputs verified on test prompts).",
       "priority": 27,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-28",

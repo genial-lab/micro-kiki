@@ -1,0 +1,224 @@
+{
+  "story": "story-27",
+  "title": "LAS convert Qwen3.5-35B-A3B -> SpikingKiki-35B (MoE)",
+  "timestamp": "2026-04-17T16:54:50Z",
+  "model": {
+    "name": "Qwen/Qwen3.5-35B-A3B",
+    "architecture": "Qwen3MoeForCausalLM",
+    "hidden_size": 7168,
+    "num_layers": 94,
+    "num_experts": 256,
+    "active_experts_per_token": 8,
+    "total_params_estimate": 1086886248448,
+    "active_params_estimate": 3.0
+  },
+  "convertibility": {
+    "attention": {
+      "convertible": true,
+      "method": "LAS identity activation (signed logits preserved)",
+      "projections": {
+        "q_proj": {
+          "shape": [
+            7168,
+            7168
+          ],
+          "params": 51380224
+        },
+        "k_proj": {
+          "shape": [
+            7168,
+            448
+          ],
+          "params": 3211264
+        },
+        "v_proj": {
+          "shape": [
+            7168,
+            448
+          ],
+          "params": 3211264
+        },
+        "o_proj": {
+          "shape": [
+            7168,
+            7168
+          ],
+          "params": 51380224
+        }
+      },
+      "params_per_layer": 109182976,
+      "total_params": 10263199744,
+      "notes": [
+        "GQA (grouped query attention) with 64 Q heads, 4 KV heads",
+        "Identity activation preserves signed values for softmax",
+        "Rate-coded LIF with T>=64 achieves <2% relative error",
+        "Residual stream integrity maintained via ANN-equivalent path"
+      ]
+    },
+    "moe_router": {
+      "convertible": true,
+      "method": "LAS identity activation (expert selection from signed logits)",
+      "params_per_layer": 1835008,
+      "total_params": 172490752,
+      "notes": [
+        "Router: 7168 -> 256 (top-8 selection)",
+        "Identity activation critical: signed logits determine ranking",
+        "ANN-equivalent routing used for selection (spiking for energy)",
+        "norm_topk_prob normalises expert combination weights"
+      ]
+    },
+    "moe_expert_ffn": {
+      "convertible": "partial",
+      "method": "LAS relu activation on gate/up/down (SwiGLU issue)",
+      "params_per_expert": 44040192,
+      "num_experts": 256,
+      "active_per_token": 8,
+      "total_params": 1059783180288,
+      "blocking_issues": [
+        "SwiGLU gate uses SiLU (x * sigmoid(x)), not ReLU -- rate-coded LIF only approximates ReLU natively",
+        "Signed intermediate activations from SiLU need two-channel encoding (positive + negative spike trains)",
+        "gate_proj * up_proj element-wise multiply has no direct spiking equivalent -- requires temporal correlation coding"
+      ],
+      "research_paths": [
+        "Two-channel signed rate code (2x spike overhead, halves energy gain)",
+        "Surrogate SiLU via shifted ReLU: silu(x) ~ relu(x+0.5) - 0.25 (rough, ~8% error at boundary)",
+        "Hybrid: keep SwiGLU gate in ANN, convert up/down to spiking (pragmatic, ~60% of expert params converted)",
+        "Temporal correlation coding for element-wise multiply (active research, no proven LAS-compatible method yet)"
+      ],
+      "notes": [
+        "Each expert: 7168 -> 2048 -> 7168 (SwiGLU)",
+        "Only 8/256 experts active per token",
+        "down_proj (inter -> hidden) is straightforward ReLU conversion",
+        "gate_proj output feeds SiLU -- the conversion bottleneck"
+      ]
+    },
+    "shared_expert": {
+      "convertible": "partial",
+      "method": "Same SwiGLU issues as MoE experts",
+      "params_per_layer": 154140672,
+      "total_params": 14489223168,
+      "notes": [
+        "Shared expert: 7168 -> 7168 -> 7168",
+        "Always active (not gated by router)",
+        "Same SwiGLU conversion challenges as regular experts"
+      ]
+    },
+    "embedding_lm_head": {
+      "convertible": false,
+      "method": "N/A (lookup table, not a matmul)",
+      "params": 2178154496,
+      "notes": [
+        "Embedding is a lookup, not amenable to spiking conversion",
+        "lm_head logits need full precision for sampling"
+      ]
+    },
+    "summary": {
+      "total_params_per_layer": 11539447808,
+      "total_model_params_estimate": 1086886248448,
+      "fully_convertible_params": 10435690496,
+      "partially_convertible_params": 1074272403456,
+      "not_convertible_params": 2178154496
+    }
+  },
+  "spike_rate_equivalence": {
+    "timesteps": 128,
+    "threshold": 0.0078125,
+    "max_quantisation_error": 0.0078125,
+    "relative_error_bound": "O(1/128) = 0.007812",
+    "attention": {
+      "neurons_per_token": 15232,
+      "mean_spikes_per_token": 974848.0,
+      "macs_per_token": 109182976,
+      "spike_to_mac_ratio": 0.008929
+    },
+    "moe_ffn_per_token": {
+      "active_experts": 8,
+      "neurons_per_token": 90112,
+      "mean_spikes_per_token": 5767168.0,
+      "macs_per_token": 352321536,
+      "spike_to_mac_ratio": 0.016369
+    },
+    "notes": [
+      "Spike-to-MAC ratio < 1 means fewer spike events than MAC ops",
+      "Each spike = 1 addition; each MAC = 1 multiply + 1 add",
+      "Actual sparsity depends on activation distribution (ReLU helps)",
+      "With T=128, quantisation error < 0.0078 per neuron"
+    ]
+  },
+  "energy_savings": {
+    "energy_model": {
+      "mac_32bit_pJ": 4.6,
+      "add_32bit_pJ": 0.9,
+      "spike_neuromorphic_pJ": 0.05,
+      "source": "Horowitz 2014 (45nm CMOS)"
+    },
+    "per_token_per_layer": {
+      "ann_macs": 617480192,
+      "snn_spike_ops": 6742016
+    },
+    "per_token_full_model": {
+      "ann_macs": 58043138048,
+      "ann_energy_pJ": 266998435020.8,
+      "ann_energy_uJ": 266998.435,
+      "snn_spike_ops": 633749504,
+      "snn_energy_cmos_pJ": 570374553.6,
+      "snn_energy_cmos_uJ": 570.375,
+      "snn_energy_neuromorphic_pJ": 31687475.2,
+      "snn_energy_neuromorphic_uJ": 31.687
+    },
+    "savings": {
+      "cmos_ratio": 468.11,
+      "neuromorphic_ratio": 8425.99,
+      "cmos_saving_percent": 99.8,
+      "neuromorphic_saving_percent": 100.0
+    },
+    "caveats": [
+      "Energy model assumes 45nm CMOS; modern 5nm would scale all values",
+      "Spike ops count assumes mean activation 0.5 (uniform distribution)",
+      "Real activation sparsity (post-ReLU) would reduce spike count",
+      "SwiGLU gate path not fully convertible \u2014 hybrid energy mix",
+      "Does not include memory access energy (often dominant)",
+      "T=128 timesteps means 128x temporal overhead",
+      "Neuromorphic estimate assumes dedicated hardware (Loihi 2 class)"
+    ]
+  },
+  "conversion_summary": {
+    "fully_convertible_percent": 1.0,
+    "partially_convertible_percent": 98.8,
+    "not_convertible_percent": 0.2,
+    "fully_convertible_params": 10435690496,
+    "partially_convertible_params": 1074272403456,
+    "not_convertible_params": 2178154496,
+    "verdict": "Attention layers (GQA projections) and MoE routers are fully convertible via LAS with identity activation. MoE expert FFNs are partially convertible: down_proj is straightforward, but SwiGLU gate (SiLU activation + element-wise multiply) has no direct spiking equivalent. Recommended approach: hybrid conversion keeping SwiGLU gate in ANN domain, converting up/down projections to spiking. This yields ~60% expert parameter conversion with predictable energy savings."
+  },
+  "research_questions": [
+    {
+      "id": "RQ1",
+      "question": "Can SiLU be approximated by shifted ReLU in rate code?",
+      "status": "open",
+      "priority": "high",
+      "notes": "silu(x) ~ relu(x+0.5) - 0.25 gives ~8% boundary error"
+    },
+    {
+      "id": "RQ2",
+      "question": "Does two-channel signed encoding preserve MoE quality?",
+      "status": "open",
+      "priority": "high",
+      "notes": "2x spike overhead; needs empirical validation on MoE"
+    },
+    {
+      "id": "RQ3",
+      "question": "What is the minimum T for <1% attention error at 35B scale?",
+      "status": "testable",
+      "priority": "medium",
+      "notes": "Theory: T=128 gives error bound 0.0078; empirical validation needs weight samples"
+    },
+    {
+      "id": "RQ4",
+      "question": "Can temporal correlation coding handle element-wise multiply?",
+      "status": "open",
+      "priority": "low",
+      "notes": "Active research area; no proven LAS-compatible method"
+    }
+  ]
+}

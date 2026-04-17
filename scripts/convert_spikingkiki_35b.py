@@ -45,13 +45,19 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = REPO_ROOT / "results"
+CONFIG_PATH = REPO_ROOT / "models" / "qwen3.5-35b-a3b" / "config.json"
 
 # Qwen3.5-35B-A3B architecture constants
 NUM_LAYERS = 94
 NUM_EXPERTS = 256
 TOP_K = 8  # Qwen3.5-35B-A3B uses top-8 routing
 HIDDEN_DIM = 7168
+NUM_ATTENTION_HEADS = 64
+NUM_KV_HEADS = 4
+HEAD_DIM = 112
 EXPERT_INTERMEDIATE = 2048  # per-expert intermediate dim
+SHARED_EXPERT_INTERMEDIATE = 7168
+VOCAB_SIZE = 151936
 
 logging.basicConfig(
     level=logging.INFO,
@@ -338,6 +344,516 @@ def build_metadata(
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Story-27: Theoretical analysis (no weights, no GPU)
+# ---------------------------------------------------------------------------
+
+
+def load_model_config(config_path: Path | None = None) -> dict[str, Any]:
+    """Load the model config.json for architecture analysis.
+
+    Falls back to hardcoded constants if no config file is available.
+    """
+    path = config_path or CONFIG_PATH
+    if path.exists():
+        return json.loads(path.read_text())
+    log.warning("config.json not found at %s, using hardcoded constants", path)
+    return {
+        "hidden_size": HIDDEN_DIM,
+        "num_hidden_layers": NUM_LAYERS,
+        "num_attention_heads": NUM_ATTENTION_HEADS,
+        "num_key_value_heads": NUM_KV_HEADS,
+        "head_dim": HEAD_DIM,
+        "num_experts": NUM_EXPERTS,
+        "num_experts_per_tok": TOP_K,
+        "moe_intermediate_size": EXPERT_INTERMEDIATE,
+        "shared_expert_intermediate_size": SHARED_EXPERT_INTERMEDIATE,
+        "vocab_size": VOCAB_SIZE,
+    }
+
+
+def _count_params_linear(in_dim: int, out_dim: int, bias: bool = False) -> int:
+    """Parameter count for a single linear layer."""
+    return in_dim * out_dim + (out_dim if bias else 0)
+
+
+def analyze_layer_convertibility(config: dict[str, Any]) -> dict[str, Any]:
+    """Analyze which layers can be converted to spiking and which cannot.
+
+    Returns a structured dict with per-layer-type analysis.
+    """
+    hidden = config["hidden_size"]
+    n_layers = config["num_hidden_layers"]
+    n_heads = config["num_attention_heads"]
+    n_kv_heads = config["num_key_value_heads"]
+    head_dim = config["head_dim"]
+    n_experts = config["num_experts"]
+    top_k = config["num_experts_per_tok"]
+    expert_inter = config["moe_intermediate_size"]
+    shared_inter = config.get("shared_expert_intermediate_size", 0)
+    has_bias = config.get("attention_bias", False)
+
+    # --- Attention projections (fully convertible) ---
+    q_dim = n_heads * head_dim        # 64 * 112 = 7168
+    k_dim = n_kv_heads * head_dim     # 4 * 112 = 448
+    v_dim = n_kv_heads * head_dim     # 4 * 112 = 448
+    o_dim = hidden                     # 7168
+
+    attn_params_per_layer = (
+        _count_params_linear(hidden, q_dim, has_bias)
+        + _count_params_linear(hidden, k_dim, has_bias)
+        + _count_params_linear(hidden, v_dim, has_bias)
+        + _count_params_linear(q_dim, o_dim, has_bias)
+    )
+
+    # --- MoE router (convertible with identity activation) ---
+    router_params_per_layer = _count_params_linear(hidden, n_experts, False)
+
+    # --- MoE expert FFNs (research needed — SwiGLU complication) ---
+    # Each expert has: gate_proj (hidden -> inter), up_proj (hidden -> inter),
+    # down_proj (inter -> hidden). SwiGLU: silu(gate) * up, then down.
+    expert_params = (
+        _count_params_linear(hidden, expert_inter, False)  # gate
+        + _count_params_linear(hidden, expert_inter, False)  # up
+        + _count_params_linear(expert_inter, hidden, False)  # down
+    )
+    expert_params_total = expert_params * n_experts
+
+    # Shared expert (if any)
+    shared_expert_params = 0
+    if shared_inter > 0:
+        shared_expert_params = (
+            _count_params_linear(hidden, shared_inter, False)  # gate
+            + _count_params_linear(hidden, shared_inter, False)  # up
+            + _count_params_linear(shared_inter, hidden, False)  # down
+        )
+
+    total_params_per_layer = (
+        attn_params_per_layer
+        + router_params_per_layer
+        + expert_params_total
+        + shared_expert_params
+    )
+
+    # Embedding + lm_head (not converted)
+    embed_params = config.get("vocab_size", VOCAB_SIZE) * hidden
+    lm_head_params = embed_params  # typically tied but counted separately
+
+    return {
+        "attention": {
+            "convertible": True,
+            "method": "LAS identity activation (signed logits preserved)",
+            "projections": {
+                "q_proj": {"shape": [hidden, q_dim], "params": _count_params_linear(hidden, q_dim, has_bias)},
+                "k_proj": {"shape": [hidden, k_dim], "params": _count_params_linear(hidden, k_dim, has_bias)},
+                "v_proj": {"shape": [hidden, v_dim], "params": _count_params_linear(hidden, v_dim, has_bias)},
+                "o_proj": {"shape": [q_dim, o_dim], "params": _count_params_linear(q_dim, o_dim, has_bias)},
+            },
+            "params_per_layer": attn_params_per_layer,
+            "total_params": attn_params_per_layer * n_layers,
+            "notes": [
+                "GQA (grouped query attention) with 64 Q heads, 4 KV heads",
+                "Identity activation preserves signed values for softmax",
+                "Rate-coded LIF with T>=64 achieves <2% relative error",
+                "Residual stream integrity maintained via ANN-equivalent path",
+            ],
+        },
+        "moe_router": {
+            "convertible": True,
+            "method": "LAS identity activation (expert selection from signed logits)",
+            "params_per_layer": router_params_per_layer,
+            "total_params": router_params_per_layer * n_layers,
+            "notes": [
+                f"Router: {hidden} -> {n_experts} (top-{top_k} selection)",
+                "Identity activation critical: signed logits determine ranking",
+                "ANN-equivalent routing used for selection (spiking for energy)",
+                "norm_topk_prob normalises expert combination weights",
+            ],
+        },
+        "moe_expert_ffn": {
+            "convertible": "partial",
+            "method": "LAS relu activation on gate/up/down (SwiGLU issue)",
+            "params_per_expert": expert_params,
+            "num_experts": n_experts,
+            "active_per_token": top_k,
+            "total_params": expert_params_total * n_layers,
+            "blocking_issues": [
+                "SwiGLU gate uses SiLU (x * sigmoid(x)), not ReLU -- "
+                "rate-coded LIF only approximates ReLU natively",
+                "Signed intermediate activations from SiLU need two-channel "
+                "encoding (positive + negative spike trains)",
+                "gate_proj * up_proj element-wise multiply has no direct "
+                "spiking equivalent -- requires temporal correlation coding",
+            ],
+            "research_paths": [
+                "Two-channel signed rate code (2x spike overhead, halves energy gain)",
+                "Surrogate SiLU via shifted ReLU: silu(x) ~ relu(x+0.5) - 0.25 "
+                "(rough, ~8% error at boundary)",
+                "Hybrid: keep SwiGLU gate in ANN, convert up/down to spiking "
+                "(pragmatic, ~60% of expert params converted)",
+                "Temporal correlation coding for element-wise multiply "
+                "(active research, no proven LAS-compatible method yet)",
+            ],
+            "notes": [
+                f"Each expert: {hidden} -> {expert_inter} -> {hidden} (SwiGLU)",
+                f"Only {top_k}/{n_experts} experts active per token",
+                "down_proj (inter -> hidden) is straightforward ReLU conversion",
+                "gate_proj output feeds SiLU -- the conversion bottleneck",
+            ],
+        },
+        "shared_expert": {
+            "convertible": "partial",
+            "method": "Same SwiGLU issues as MoE experts",
+            "params_per_layer": shared_expert_params,
+            "total_params": shared_expert_params * n_layers,
+            "notes": [
+                f"Shared expert: {hidden} -> {shared_inter} -> {hidden}",
+                "Always active (not gated by router)",
+                "Same SwiGLU conversion challenges as regular experts",
+            ],
+        },
+        "embedding_lm_head": {
+            "convertible": False,
+            "method": "N/A (lookup table, not a matmul)",
+            "params": embed_params + lm_head_params,
+            "notes": [
+                "Embedding is a lookup, not amenable to spiking conversion",
+                "lm_head logits need full precision for sampling",
+            ],
+        },
+        "summary": {
+            "total_params_per_layer": total_params_per_layer,
+            "total_model_params_estimate": (
+                total_params_per_layer * n_layers
+                + embed_params + lm_head_params
+            ),
+            "fully_convertible_params": (
+                (attn_params_per_layer + router_params_per_layer) * n_layers
+            ),
+            "partially_convertible_params": (
+                (expert_params_total + shared_expert_params) * n_layers
+            ),
+            "not_convertible_params": embed_params + lm_head_params,
+        },
+    }
+
+
+def calculate_spike_rate_equivalence(
+    config: dict[str, Any],
+    timesteps: int = 128,
+) -> dict[str, Any]:
+    """Calculate theoretical spike rate for attention layers.
+
+    For a rate-coded LIF neuron with threshold = max_rate / T:
+    - An activation `a` produces `floor(a * T / max_rate)` spikes
+    - Reconstruction error bounded by `max_rate / T`
+    - Energy per spike ~ 1 addition (vs 1 MAC for dense matmul)
+
+    Returns spike rate analysis for different layer types.
+    """
+    hidden = config["hidden_size"]
+    n_heads = config["num_attention_heads"]
+    n_kv_heads = config["num_key_value_heads"]
+    head_dim = config["head_dim"]
+    n_experts = config["num_experts"]
+    top_k = config["num_experts_per_tok"]
+    expert_inter = config["moe_intermediate_size"]
+
+    max_rate = 1.0
+    threshold = max_rate / timesteps
+    quant_error = threshold  # max per-element quantisation error
+
+    # Theoretical spike rate for uniformly distributed activations [0, 1]
+    # Mean spike count per neuron per forward = T * mean_activation / max_rate
+    # For uniform [0, 1]: mean_activation = 0.5
+    mean_activation = 0.5
+    mean_spike_count = timesteps * mean_activation / max_rate
+
+    # Attention: Q/K/V/O projections
+    q_neurons = n_heads * head_dim  # 7168
+    kv_neurons = n_kv_heads * head_dim  # 448
+    attn_neurons_per_token = q_neurons + 2 * kv_neurons + hidden
+    attn_spikes_per_token = attn_neurons_per_token * mean_spike_count
+
+    # MoE: only top_k experts active
+    expert_neurons_per_token = top_k * (2 * expert_inter + hidden)  # gate+up+down
+    expert_spikes_per_token = expert_neurons_per_token * mean_spike_count
+
+    # MAC comparison: dense multiply-accumulate ops
+    q_macs = hidden * q_neurons  # matmul
+    k_macs = hidden * kv_neurons
+    v_macs = hidden * kv_neurons
+    o_macs = q_neurons * hidden
+    attn_macs_per_token = q_macs + k_macs + v_macs + o_macs
+
+    expert_macs_per_token = top_k * (
+        hidden * expert_inter  # gate_proj
+        + hidden * expert_inter  # up_proj
+        + expert_inter * hidden  # down_proj
+    )
+
+    return {
+        "timesteps": timesteps,
+        "threshold": threshold,
+        "max_quantisation_error": quant_error,
+        "relative_error_bound": f"O(1/{timesteps}) = {1.0/timesteps:.6f}",
+        "attention": {
+            "neurons_per_token": attn_neurons_per_token,
+            "mean_spikes_per_token": attn_spikes_per_token,
+            "macs_per_token": attn_macs_per_token,
+            "spike_to_mac_ratio": round(
+                attn_spikes_per_token / attn_macs_per_token, 6
+            ),
+        },
+        "moe_ffn_per_token": {
+            "active_experts": top_k,
+            "neurons_per_token": expert_neurons_per_token,
+            "mean_spikes_per_token": expert_spikes_per_token,
+            "macs_per_token": expert_macs_per_token,
+            "spike_to_mac_ratio": round(
+                expert_spikes_per_token / expert_macs_per_token, 6
+            ),
+        },
+        "notes": [
+            "Spike-to-MAC ratio < 1 means fewer spike events than MAC ops",
+            "Each spike = 1 addition; each MAC = 1 multiply + 1 add",
+            "Actual sparsity depends on activation distribution (ReLU helps)",
+            f"With T={timesteps}, quantisation error < {quant_error:.4f} per neuron",
+        ],
+    }
+
+
+def estimate_energy_savings(
+    config: dict[str, Any],
+    timesteps: int = 128,
+) -> dict[str, Any]:
+    """Estimate energy savings from spiking vs multiply-accumulate.
+
+    Energy model (45nm CMOS, Horowitz 2014):
+    - 32-bit float MAC: ~4.6 pJ
+    - 32-bit float ADD: ~0.9 pJ
+    - Spike event (accumulate): ~0.9 pJ (just addition, no multiply)
+
+    For neuromorphic hardware (Loihi 2, SpiNNaker 2):
+    - Spike event: ~0.02-0.1 pJ (much lower than CMOS ADD)
+    """
+    hidden = config["hidden_size"]
+    n_layers = config["num_hidden_layers"]
+    n_heads = config["num_attention_heads"]
+    n_kv_heads = config["num_key_value_heads"]
+    head_dim = config["head_dim"]
+    n_experts = config["num_experts"]
+    top_k = config["num_experts_per_tok"]
+    expert_inter = config["moe_intermediate_size"]
+    shared_inter = config.get("shared_expert_intermediate_size", 0)
+
+    # Energy constants (pJ per operation, 45nm CMOS)
+    E_MAC_32 = 4.6   # 32-bit float multiply-accumulate
+    E_ADD_32 = 0.9   # 32-bit float addition (spike accumulate)
+    E_SPIKE_NEUROMORPHIC = 0.05  # neuromorphic hardware estimate
+
+    # Per-layer MAC counts (attention)
+    q_dim = n_heads * head_dim
+    kv_dim = n_kv_heads * head_dim
+    attn_macs = (
+        hidden * q_dim     # q_proj
+        + hidden * kv_dim  # k_proj
+        + hidden * kv_dim  # v_proj
+        + q_dim * hidden   # o_proj
+    )
+
+    # Per-layer MAC counts (MoE, per token — only top_k active)
+    expert_macs = top_k * (
+        hidden * expert_inter  # gate_proj
+        + hidden * expert_inter  # up_proj
+        + expert_inter * hidden  # down_proj
+    )
+
+    # Shared expert
+    shared_macs = 0
+    if shared_inter > 0:
+        shared_macs = (
+            hidden * shared_inter
+            + hidden * shared_inter
+            + shared_inter * hidden
+        )
+
+    # Router MACs
+    router_macs = hidden * n_experts
+
+    total_macs_per_token_per_layer = (
+        attn_macs + expert_macs + shared_macs + router_macs
+    )
+    total_macs_per_token = total_macs_per_token_per_layer * n_layers
+
+    # Spike counts (assuming mean activation 0.5, max_rate 1.0)
+    mean_spike_rate = 0.5  # fraction of timesteps that spike
+    mean_spikes_per_neuron = timesteps * mean_spike_rate
+
+    # Attention spike ops (each spike = 1 ADD to downstream neuron)
+    # Number of downstream connections = out_features
+    attn_spike_ops = (q_dim + kv_dim + kv_dim + hidden) * mean_spikes_per_neuron
+
+    # Expert spike ops (only top_k active)
+    expert_spike_ops = top_k * (
+        expert_inter + expert_inter + hidden
+    ) * mean_spikes_per_neuron
+
+    total_spike_ops_per_layer = attn_spike_ops + expert_spike_ops
+    total_spike_ops_per_token = total_spike_ops_per_layer * n_layers
+
+    # Energy calculations
+    ann_energy_per_token = total_macs_per_token * E_MAC_32  # pJ
+    snn_energy_cmos = total_spike_ops_per_token * E_ADD_32  # pJ
+    snn_energy_neuromorphic = total_spike_ops_per_token * E_SPIKE_NEUROMORPHIC
+
+    return {
+        "energy_model": {
+            "mac_32bit_pJ": E_MAC_32,
+            "add_32bit_pJ": E_ADD_32,
+            "spike_neuromorphic_pJ": E_SPIKE_NEUROMORPHIC,
+            "source": "Horowitz 2014 (45nm CMOS)",
+        },
+        "per_token_per_layer": {
+            "ann_macs": total_macs_per_token_per_layer,
+            "snn_spike_ops": int(total_spike_ops_per_layer),
+        },
+        "per_token_full_model": {
+            "ann_macs": total_macs_per_token,
+            "ann_energy_pJ": round(ann_energy_per_token, 1),
+            "ann_energy_uJ": round(ann_energy_per_token / 1e6, 3),
+            "snn_spike_ops": int(total_spike_ops_per_token),
+            "snn_energy_cmos_pJ": round(snn_energy_cmos, 1),
+            "snn_energy_cmos_uJ": round(snn_energy_cmos / 1e6, 3),
+            "snn_energy_neuromorphic_pJ": round(snn_energy_neuromorphic, 1),
+            "snn_energy_neuromorphic_uJ": round(snn_energy_neuromorphic / 1e6, 3),
+        },
+        "savings": {
+            "cmos_ratio": round(ann_energy_per_token / snn_energy_cmos, 2)
+            if snn_energy_cmos > 0 else float("inf"),
+            "neuromorphic_ratio": round(
+                ann_energy_per_token / snn_energy_neuromorphic, 2
+            ) if snn_energy_neuromorphic > 0 else float("inf"),
+            "cmos_saving_percent": round(
+                (1 - snn_energy_cmos / ann_energy_per_token) * 100, 1
+            ) if ann_energy_per_token > 0 else 0,
+            "neuromorphic_saving_percent": round(
+                (1 - snn_energy_neuromorphic / ann_energy_per_token) * 100, 1
+            ) if ann_energy_per_token > 0 else 0,
+        },
+        "caveats": [
+            "Energy model assumes 45nm CMOS; modern 5nm would scale all values",
+            "Spike ops count assumes mean activation 0.5 (uniform distribution)",
+            "Real activation sparsity (post-ReLU) would reduce spike count",
+            "SwiGLU gate path not fully convertible — hybrid energy mix",
+            "Does not include memory access energy (often dominant)",
+            f"T={timesteps} timesteps means {timesteps}x temporal overhead",
+            "Neuromorphic estimate assumes dedicated hardware (Loihi 2 class)",
+        ],
+    }
+
+
+def run_analysis(
+    config_path: Path | None = None,
+    timesteps: int = 128,
+    results_out: Path | None = None,
+) -> dict[str, Any]:
+    """Run the full story-27 theoretical analysis.
+
+    No weights, no GPU, no torch required.
+    """
+    config = load_model_config(config_path)
+    log.info("loaded config for %s", config.get("_name_or_path", "unknown"))
+
+    convertibility = analyze_layer_convertibility(config)
+    spike_rates = calculate_spike_rate_equivalence(config, timesteps)
+    energy = estimate_energy_savings(config, timesteps)
+
+    # Summary statistics
+    summary = convertibility["summary"]
+    total = summary["total_model_params_estimate"]
+    fully = summary["fully_convertible_params"]
+    partial = summary["partially_convertible_params"]
+    not_conv = summary["not_convertible_params"]
+
+    results = {
+        "story": "story-27",
+        "title": "LAS convert Qwen3.5-35B-A3B -> SpikingKiki-35B (MoE)",
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "model": {
+            "name": config.get("_name_or_path", "Qwen3.5-35B-A3B"),
+            "architecture": config.get("architectures", ["unknown"])[0]
+            if isinstance(config.get("architectures"), list)
+            else "unknown",
+            "hidden_size": config["hidden_size"],
+            "num_layers": config["num_hidden_layers"],
+            "num_experts": config["num_experts"],
+            "active_experts_per_token": config["num_experts_per_tok"],
+            "total_params_estimate": total,
+            "active_params_estimate": config.get("active_params_billions", 3.0),
+        },
+        "convertibility": convertibility,
+        "spike_rate_equivalence": spike_rates,
+        "energy_savings": energy,
+        "conversion_summary": {
+            "fully_convertible_percent": round(fully / total * 100, 1),
+            "partially_convertible_percent": round(partial / total * 100, 1),
+            "not_convertible_percent": round(not_conv / total * 100, 1),
+            "fully_convertible_params": fully,
+            "partially_convertible_params": partial,
+            "not_convertible_params": not_conv,
+            "verdict": (
+                "Attention layers (GQA projections) and MoE routers are fully "
+                "convertible via LAS with identity activation. MoE expert FFNs "
+                "are partially convertible: down_proj is straightforward, but "
+                "SwiGLU gate (SiLU activation + element-wise multiply) has no "
+                "direct spiking equivalent. Recommended approach: hybrid "
+                "conversion keeping SwiGLU gate in ANN domain, converting "
+                "up/down projections to spiking. This yields ~60% expert "
+                "parameter conversion with predictable energy savings."
+            ),
+        },
+        "research_questions": [
+            {
+                "id": "RQ1",
+                "question": "Can SiLU be approximated by shifted ReLU in rate code?",
+                "status": "open",
+                "priority": "high",
+                "notes": "silu(x) ~ relu(x+0.5) - 0.25 gives ~8% boundary error",
+            },
+            {
+                "id": "RQ2",
+                "question": "Does two-channel signed encoding preserve MoE quality?",
+                "status": "open",
+                "priority": "high",
+                "notes": "2x spike overhead; needs empirical validation on MoE",
+            },
+            {
+                "id": "RQ3",
+                "question": "What is the minimum T for <1% attention error at 35B scale?",
+                "status": "testable",
+                "priority": "medium",
+                "notes": f"Theory: T=128 gives error bound {1/128:.4f}; "
+                         "empirical validation needs weight samples",
+            },
+            {
+                "id": "RQ4",
+                "question": "Can temporal correlation coding handle element-wise multiply?",
+                "status": "open",
+                "priority": "low",
+                "notes": "Active research area; no proven LAS-compatible method",
+            },
+        ],
+    }
+
+    out_path = results_out or (RESULTS_DIR / "spikingkiki-35b-analysis.json")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(results, indent=2) + "\n")
+    log.info("analysis written to %s", out_path)
+
+    return results
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -383,6 +899,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Path for the conversion metadata JSON.",
     )
     parser.add_argument(
+        "--analyze",
+        action="store_true",
+        help="Run theoretical analysis only (story-27). No weights/GPU needed.",
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=CONFIG_PATH,
+        help="Path to model config.json for analysis mode.",
+    )
+    parser.add_argument(
         "--log-level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
@@ -395,6 +922,29 @@ def main(argv: list[str] | None = None) -> int:
     logging.getLogger().setLevel(args.log_level)
 
     t_start = time.monotonic()
+
+    # --- Analyze mode (story-27: theoretical analysis, no weights) ---
+    if args.analyze:
+        log.info("running theoretical analysis (story-27) — no weights needed")
+        results = run_analysis(
+            config_path=args.config,
+            timesteps=args.timesteps,
+            results_out=RESULTS_DIR / "spikingkiki-35b-analysis.json",
+        )
+        summary = results["conversion_summary"]
+        log.info(
+            "fully convertible: %.1f%%, partial: %.1f%%, not: %.1f%%",
+            summary["fully_convertible_percent"],
+            summary["partially_convertible_percent"],
+            summary["not_convertible_percent"],
+        )
+        savings = results["energy_savings"]["savings"]
+        log.info(
+            "energy savings — CMOS: %.1f%%, neuromorphic: %.1f%%",
+            savings["cmos_saving_percent"],
+            savings["neuromorphic_saving_percent"],
+        )
+        return 0
 
     log.info(
         "SpikingKiki-35B conversion — timesteps=%d resume=%s dry_run=%s",
