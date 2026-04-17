@@ -180,7 +180,7 @@ def train_domain(domain: str) -> None:
         "num_layers": 40,
         "learning_rate": lr,
         "batch_size": 1,
-        "grad_accumulation_steps": 4,
+        "grad_accumulation_steps": 2,  # 4 causes Metal OOM on MoE
         "iters": iters,
         "max_seq_length": seq_len,
         "grad_checkpoint": True,
