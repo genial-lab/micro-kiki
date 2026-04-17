@@ -176,6 +176,7 @@ def train_domain(domain: str) -> None:
         "lora_parameters": {
             "rank": rank, "alpha": rank * 2,
             "dropout": dropout, "scale": 2.0,
+            "keys": list(LORA_TARGETS),
         },
         "num_layers": 40,
         "learning_rate": lr,
