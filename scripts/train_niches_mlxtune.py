@@ -176,7 +176,6 @@ def train_domain(domain: str) -> None:
         "lora_parameters": {
             "rank": rank, "alpha": rank * 2,
             "dropout": dropout, "scale": 2.0,
-            "keys": list(LORA_TARGETS),
         },
         "num_layers": 40,
         "learning_rate": lr,
@@ -185,7 +184,7 @@ def train_domain(domain: str) -> None:
         "iters": iters,
         "max_seq_length": seq_len,
         "grad_checkpoint": True,
-        "save_every": 100,
+        "save_every": 50,  # frequent saves force Metal buffer cleanup
         "steps_per_report": 10,
         "steps_per_eval": 200,
         "val_batches": 25,
