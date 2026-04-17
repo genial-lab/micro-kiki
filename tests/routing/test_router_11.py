@@ -34,10 +34,11 @@ def test_legacy_32_output_still_works():
 def test_base_fallback_activates_for_general_query():
     """All niche outputs below threshold → fallback to ["base"]."""
     router = MetaRouter()
-    # Force all domain outputs to 0 (sigmoid(very negative) ≈ 0)
-    x = torch.full((1, 768), -100.0)
-    out = router(x)
-    active = router.get_active_domains_named(out, threshold=0.12)
+    # Craft output tensor directly with all domain scores below threshold.
+    # Using the router's forward pass with random weights is unreliable
+    # because the bias term can produce scores above threshold.
+    crafted = torch.full((1, 11 + 5), 0.05)  # all below 0.12
+    active = router.get_active_domains_named(crafted, threshold=0.12)
     assert active == ["base"]
 
 

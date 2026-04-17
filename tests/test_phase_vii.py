@@ -1,4 +1,8 @@
-"""Validate Phase VII configs, eval files, and scripts."""
+"""Validate 10-niche pivot: configs, eval files, and scripts.
+
+After the 2026-04-16 pivot from 32 LoRA stacks to 10 niche domains,
+this test validates that the niche infrastructure is complete.
+"""
 from __future__ import annotations
 
 import json
@@ -7,9 +11,20 @@ from pathlib import Path
 
 import yaml
 
-PHASE_VII_STACKS = [
-    (26, "web-frontend"), (27, "web-backend"), (28, "music-audio"),
-    (29, "devops"), (30, "llm-orch"), (31, "math"), (32, "security"),
+from src.routing.router import NICHE_DOMAINS
+
+# The 10 niche domains and their stack numbers
+NICHE_STACKS = [
+    (12, "kicad-dsl"),
+    (13, "spice"),
+    (15, "embedded"),
+    (16, "stm32"),
+    (18, "freecad"),
+    (19, "platformio"),
+    (20, "power"),
+    (21, "emc"),
+    (22, "dsp"),
+    (24, "electronics"),
 ]
 
 REQUIRED_CONFIG_KEYS = [
@@ -19,11 +34,20 @@ REQUIRED_CONFIG_KEYS = [
 ]
 
 
-class TestPhaseVIIConfigs:
-    @pytest.mark.parametrize("num,domain", PHASE_VII_STACKS)
+class TestNicheDomainConstants:
+    def test_niche_domains_has_10(self):
+        assert len(NICHE_DOMAINS) == 10
+
+    def test_niche_stacks_match_router(self):
+        stack_domains = {domain for _, domain in NICHE_STACKS}
+        assert stack_domains == NICHE_DOMAINS
+
+
+class TestNicheConfigs:
+    @pytest.mark.parametrize("num,domain", NICHE_STACKS)
     def test_config_valid(self, num, domain):
         path = Path(f"configs/stack-{num:02d}-{domain}.yaml")
-        assert path.exists()
+        assert path.exists(), f"Missing config: {path}"
         with open(path) as f:
             config = yaml.safe_load(f)
         for key in REQUIRED_CONFIG_KEYS:
@@ -31,17 +55,17 @@ class TestPhaseVIIConfigs:
         assert config["curriculum_order"] == num
         assert "35B-A3B" in config["base_model"]
 
-    @pytest.mark.parametrize("num,domain", PHASE_VII_STACKS)
+    @pytest.mark.parametrize("num,domain", NICHE_STACKS)
     def test_eval_file_exists(self, num, domain):
         path = Path(f"data/eval/{domain}.jsonl")
-        assert path.exists()
+        assert path.exists(), f"Missing eval: {path}"
         lines = [l for l in path.read_text().strip().split("\n") if l]
         assert len(lines) >= 5
         for line in lines:
             assert "prompt" in json.loads(line)
 
 
-class TestPhaseVIIScripts:
+class TestNicheScripts:
     def test_distill_script_exists(self):
         assert Path("scripts/distill_domain.py").exists()
 
@@ -50,24 +74,5 @@ class TestPhaseVIIScripts:
 
     def test_full_eval_script_executable(self):
         path = Path("scripts/run_full_eval.sh")
-        # Check it has shebang
         first_line = path.read_text().split("\n")[0]
         assert first_line.startswith("#!/")
-
-
-class TestAllStacksCovered:
-    def test_32_stack_configs_exist(self):
-        """All 32 domains have a config file."""
-        configs = sorted(Path("configs").glob("stack-*.yaml"))
-        nums = [int(c.stem.split("-")[1]) for c in configs]
-        for i in range(1, 33):
-            assert i in nums, f"Missing stack config for stack-{i:02d}"
-
-    def test_all_eval_files_exist(self):
-        """At least one eval file per stack config."""
-        configs = sorted(Path("configs").glob("stack-*.yaml"))
-        for cfg in configs:
-            with open(cfg) as f:
-                domain = yaml.safe_load(f)["domain"]
-            eval_path = Path(f"data/eval/{domain}.jsonl")
-            assert eval_path.exists(), f"Missing eval for {domain}"

@@ -7,21 +7,24 @@
       "title": "Run base-35B benchmark on all domains",
       "description": "Run `scripts/benchmark_base_vs_lora.py` against all 32 original domains to confirm which ones the base 35B-A3B already handles. Expected outcome: 22 domains classified as 'known' (loss delta < 5% vs specialist baseline), 10 domains showing genuine gap. Output: `results/benchmark_base_vs_lora.json`. Acceptance: file exists, at least 10 domains flagged as gap domains, results reproducible.",
       "priority": 1,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-2",
       "title": "Merge datasets for 10 niches",
       "description": "Run `scripts/merge_datasets.py --all` on Mac Studio. For each of the 10 KEEP domains (kicad-dsl, spice, emc, stm32, embedded, freecad, platformio, power, dsp, electronics): download HF mascarade enrichment sets, deduplicate against KIKI-Mac_tunner splits using SHA-256 on normalized prompt text, re-split 80/10/10. Flag any domain with merged total < 2,000 examples for teacher augmentation. Output: `data/merged/<domain>/` with train/valid/test jsonl. Acceptance: 10 domain dirs present, each with split files.",
       "priority": 2,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-3",
       "title": "Validate benchmark results — confirm 22 known domains",
       "description": "Analyse `results/benchmark_base_vs_lora.json` output from story-1 and validate: confirm exactly 22 domains can be served by passthrough (base model), confirm 10 domains have measurable gap requiring LoRA. Update `docs/specs/2026-04-16-reorientation-rationale.md` with final counts and champion/challenger metric table. Acceptance: doc updated, gap count matches 10 niche domains, any deviation documented with rationale.",
       "priority": 3,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-4",
@@ -112,14 +115,16 @@
       "title": "Deploy 11-output domain router",
       "description": "Deploy the 11-output domain classifier router (10 domain scores + 1 passthrough head). Router code is already implemented in `scripts/micro_kiki/meta_router.py`. Validate: load router, run inference on sample prompts from all 10 domains + 5 passthrough prompts, confirm correct routing. Acceptance: routing accuracy ≥ 80% on 50-prompt smoke test, passthrough triggered correctly on general queries.",
       "priority": 16,
-      "passes": true
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-17",
       "title": "Deploy multi-model router",
       "description": "Deploy the multi-model router that selects among 35B-A3B+LoRA (hardware/EDA), 35B-A3B passthrough (general), Qwen3-Coder-480B (complex synthesis), devstral-v3 (firmware). Router code already implemented. Validate: each routing tier reachable, health-check endpoints return 200. Acceptance: all 4 tiers respond, routing decision log shows expected tier selection on test prompts.",
       "priority": 17,
-      "passes": true
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-18",
@@ -140,14 +145,16 @@
       "title": "Aeon memory integration test",
       "description": "Integration test for the Aeon memory palace layer: inject a multi-turn hardware design session (5 turns referencing KiCad component names), then query recall. Verify Atlas SIMD index returns correct memories, Trace graph records temporal relationships. Acceptance: recall precision ≥ 0.8 on 10-query test set, no backend connection errors (native or Qdrant/Neo4j).",
       "priority": 20,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-21",
       "title": "Negotiator integration test",
       "description": "Integration test for the Negotiator layer (CAMP arbitration + Catfish dissent). Create a scenario where two domain stacks produce conflicting recommendations (e.g., kicad-dsl vs power on a power delivery network question). Verify CAMP produces a reasoned arbitration, Catfish injects structured dissent. Acceptance: arbitration output is non-trivial, dissent correctly flags when stacks agree silently, judge selection (fast/deep) respects config.",
       "priority": 21,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-22",
@@ -313,7 +320,8 @@
     {
       "id": "story-45",
       "priority": 45,
-      "passes": false,
+      "passes": true,
+      "status": "done",
       "title": "GRPO reward functions for niche domains",
       "description": "Create src/eval/reward_functions.py with domain-specific reward functions: syntax_valid (SPICE/KiCad parseable), format_correct (expected structure), accuracy_reward (480B judge score). Each function: prompt + response → float score 0-1. Tests: tests/test_reward_functions.py."
     },

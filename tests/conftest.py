@@ -10,8 +10,8 @@ Three fixtures are exposed:
   ``complete`` (sync, generator-compatible) and ``generate`` (async,
   client-compatible) surfaces. Responses deterministic, call log
   accessible via ``mock_teacher.call_log``.
-* :func:`sample_prompts` — 10 prompts spanning a handful of the 32
-  planned domains, kept in this file so tests stay hermetic.
+* :func:`sample_prompts` — 10 prompts spanning a handful of the 10
+  niche domains + base, kept in this file so tests stay hermetic.
 
 These fixtures are kept narrow on purpose: they exist to let every
 module have a one-line smoke test without re-deriving the boilerplate.

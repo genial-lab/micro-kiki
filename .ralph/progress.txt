@@ -77,3 +77,11 @@ Stories: 13/107 complete
 [2026-04-16T02:43:00+00:00] Completed: story-107 - Model card + cookbook
 [2026-04-16T03:41:27+00:00] Completed: story-12 - Train stack-01 chat-fr (MLX LoRA, val_loss 6.90)
 [2026-04-16T14:01:52+00:00] Added 10 stories: DPO (41-44), GRPO (45-47), Embedding (48-50)
+[2026-04-17T13:36:00Z] Completed: story-1 - Run base-35B benchmark on all domains (POC v1+v2)
+[2026-04-17T13:36:00Z] Completed: story-2 - Merge datasets for 10 niches (7-source pipeline)
+[2026-04-17T13:36:00Z] Completed: story-3 - Validate benchmark results (100% routing POC v2)
+[2026-04-17T13:36:00Z] Completed: story-16 - Deploy 11-output domain router
+[2026-04-17T13:36:00Z] Completed: story-17 - Deploy multi-model router
+[2026-04-17T13:36:00Z] Completed: story-20 - Aeon memory integration test (multi-turn proven)
+[2026-04-17T13:36:00Z] Completed: story-21 - Negotiator integration test (CAMP 14/14)
+[2026-04-17T13:36:00Z] Completed: story-45 - GRPO reward functions (5 functions)
