@@ -64,6 +64,39 @@ PROMPTS = [
 ]
 
 
+def check_adapter_health(runtime: MoELoRARuntime) -> dict:
+    """Check adapter weight magnitudes to detect untrained adapters."""
+    zero_b = 0
+    nonzero_b = 0
+    total_a_mag = 0.0
+    total_b_mag = 0.0
+    count = 0
+
+    for key, proj in runtime._projections.items():
+        for i in range(proj.num_experts):
+            a = proj.lora_a[i]
+            b = proj.lora_b[i]
+            mx.eval(a, b)
+            a_mag = mx.max(mx.abs(a)).item()
+            b_mag = mx.max(mx.abs(b)).item()
+            total_a_mag += a_mag
+            total_b_mag += b_mag
+            count += 1
+            if b_mag == 0:
+                zero_b += 1
+            else:
+                nonzero_b += 1
+
+    return {
+        "total_experts": count,
+        "zero_lora_b": zero_b,
+        "nonzero_lora_b": nonzero_b,
+        "avg_lora_a_max": total_a_mag / max(count, 1),
+        "avg_lora_b_max": total_b_mag / max(count, 1),
+        "is_trained": nonzero_b > 0,
+    }
+
+
 def format_prompt(text: str, tokenizer: object) -> str:
     """Format prompt using chat template with thinking disabled."""
     messages = [{"role": "user", "content": text}]
@@ -228,6 +261,17 @@ def main() -> None:
     print(f"  Patched {patched} projections in {patch_time*1000:.0f}ms")
     print(f"  Adapter: {runtime.current_adapter}")
 
+    # Health check
+    health = check_adapter_health(runtime)
+    print(f"  Adapter health: {health}")
+    if not health["is_trained"]:
+        print(f"\n  WARNING: All lora_b tensors are zero!")
+        print(f"  This adapter was never trained (B=0 init, never updated).")
+        print(f"  The MoE-LoRA runtime is working correctly but the adapter")
+        print(f"  weights produce zero delta. Training must be re-run.")
+        print(f"  (lora_a avg max: {health['avg_lora_a_max']:.6f}, "
+              f"lora_b avg max: {health['avg_lora_b_max']:.6f})")
+
     python_stats = {}
     for prompt in PROMPTS:
         print(f"\n  --- Prompt: {prompt['id']} (python adapter) ---")
@@ -258,6 +302,11 @@ def main() -> None:
     swap_time = time.monotonic() - t0
     print(f"  Hot-swapped: {patched} projections in {swap_time*1000:.0f}ms")
     print(f"  Adapter: {runtime.current_adapter}")
+
+    health = check_adapter_health(runtime)
+    print(f"  Adapter health: {health}")
+    if not health["is_trained"]:
+        print(f"  WARNING: Embedded adapter also untrained (all lora_b = 0)")
 
     esp32_prompt = PROMPTS[1]  # ESP32 UART prompt
     print(f"\n  --- Prompt: {esp32_prompt['id']} (embedded adapter) ---")

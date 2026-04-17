@@ -277,12 +277,24 @@ def train_single_stack(config_path: str, domain: str, stack_index: int) -> None:
     )
     print(f"  Attached {n_attached} MoE-LoRA layers")
 
+
     # Count trainable params
     from mlx.utils import tree_flatten
     all_params = tree_flatten(model.parameters())
     trainable = sum(p.size for name, p in all_params if "moe_lora" in name)
     total = sum(p.size for _, p in all_params)
     print(f"  Trainable: {trainable:,} / {total:,} ({trainable/total*100:.4f}%)")
+
+    # Unfreeze MoE-LoRA modules so they receive gradients
+    # (base model stays frozen via model.freeze() above)
+    unfrozen = 0
+    for name, module in model.named_modules():
+        if "moe_lora" in name:
+            module.unfreeze()
+            unfrozen += 1
+    tp_check = sum(p.size for _, p in tree_flatten(model.trainable_parameters()))
+    print(f"  Unfroze {unfrozen} MoE-LoRA modules ({tp_check:,} grad-enabled params)")
+    assert tp_check > 0, "ERROR: No trainable params after unfreeze! Training would be no-op."
 
     # ---- 3. Build null-space projectors from frozen stacks ----
     print("\n[3/7] Building null-space projectors...")

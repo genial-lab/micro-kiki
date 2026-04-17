@@ -143,37 +143,73 @@ class MoELoRALayer(nn.Module):
         return weights, indices
 
     def __call__(self, x: mx.array) -> mx.array:
-        """Forward pass: route input through top-k experts and combine.
+        """Forward pass: soft-weighted sum over ALL experts.
+
+        Uses softmax over all experts (fully differentiable) instead of
+        top-k hard routing (which uses argsort, non-differentiable in MLX).
+        The router still learns to specialize experts via the softmax weights.
 
         Args:
-            x: (batch, seq, in_features)
+            x: (..., in_features) — supports any batch dimensions
 
         Returns:
-            delta: (batch, seq, out_features) — additive LoRA delta
+            delta: (..., out_features) — additive LoRA delta
         """
-        weights, indices = self.route(x)  # (B,T,k), (B,T,k)
+        # Ensure 3D for router
+        orig_shape = x.shape
+        if x.ndim == 2:
+            x = mx.expand_dims(x, axis=0)  # (1, T, in)
 
-        # Compute all expert outputs: list of (B, T, out_features)
+        # Router: compute soft weights over ALL experts
+        h = nn.gelu(self.router_w1(x))     # (..., router_hidden)
+        logits = self.router_w2(h)          # (..., num_experts)
+        weights = mx.softmax(logits, axis=-1)  # (..., num_experts)
+
+        # Compute all expert outputs
         expert_outputs = mx.stack(
             [expert(x) for expert in self.experts], axis=-2
-        )  # (B, T, num_experts, out_features)
+        )  # (..., num_experts, out_features)
 
-        # Gather the top-k experts
-        batch_size, seq_len, _ = x.shape
-        # indices: (B, T, k) — expand for gather
-        idx = mx.expand_dims(indices, axis=-1)           # (B, T, k, 1)
-        idx = mx.broadcast_to(idx, (batch_size, seq_len, self.top_k, self.out_features))
-        # Gather selected expert outputs
-        selected = mx.take_along_axis(expert_outputs, idx, axis=2)  # (B, T, k, out)
+        # Weighted sum over ALL experts (fully differentiable)
+        w = mx.expand_dims(weights, axis=-1)  # (..., num_experts, 1)
+        delta = mx.sum(expert_outputs * w, axis=-2)  # (..., out_features)
 
-        # Weighted sum over top-k
-        w = mx.expand_dims(weights, axis=-1)  # (B, T, k, 1)
-        delta = mx.sum(selected * w, axis=2)  # (B, T, out)
+        # Restore original batch dims
+        if len(orig_shape) == 2:
+            delta = mx.squeeze(delta, axis=0)
+
         return delta
 
     def all_expert_weights_flat(self) -> list[mx.array]:
         """Return flat weight vectors for each expert (for null-space)."""
         return [expert.flat_weights() for expert in self.experts]
+
+
+
+class MoELoRALinear(nn.Module):
+    """Linear layer wrapped with MoE-LoRA: output = base(x) + moe_lora(x).
+
+    This replaces the original nn.Linear in the model so that MoE-LoRA
+    participates in the forward pass and receives gradients during training.
+    """
+
+    def __init__(self, base_linear: nn.Linear, moe_lora: "MoELoRALayer"):
+        super().__init__()
+        self.base = base_linear
+        self.moe_lora = moe_lora
+
+    def __call__(self, x):
+        base_out = self.base(x)
+        lora_out = self.moe_lora(x)
+        return base_out + lora_out
+
+    @property
+    def weight(self):
+        return self.base.weight
+
+    @property
+    def bias(self):
+        return getattr(self.base, "bias", None)
 
 
 def apply_moe_lora(
@@ -226,7 +262,12 @@ def apply_moe_lora(
                     router_hidden=router_hidden,
                     use_rs_lora=use_rs_lora,
                 )
-                # Store as sibling attribute: layer.self_attn.q_proj_moe_lora
+                # Replace base Linear with MoELoRALinear wrapper
+                # This makes MoE-LoRA part of the forward pass graph
+                # so gradients flow to lora_a/lora_b during training
+                wrapped = MoELoRALinear(linear, moe)
+                setattr(sub_module, target, wrapped)
+                # Also store sibling ref for null-space extraction
                 attr_name = f"{target}_moe_lora"
                 setattr(sub_module, attr_name, moe)
                 count += 1

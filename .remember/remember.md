@@ -1,15 +1,16 @@
 # Handoff
 
 ## State
-I got PRD from 0 to 21/50 stories. POC v2 multi-turn memory works end-to-end with real MiniLM embeddings (Turn 4 recalls inductor values). SFT training running on Studio (PID 86223) via `mlx_lm_fork` — freecad in progress, then platformio→power→dsp→electronics. kicad-dsl FAILED (zombie process stole RAM) — needs solo relaunch after the chain finishes. VQC 8-qubit trained (47.2%, weights at `outputs/vqc-8q-weights.npz`). 134K dataset examples, 728+ tests pass.
+PRD at 21/50. POC v2 proven end-to-end with real MiniLM embeddings. 6/10 SFT adapters BLOCKED by Metal OOM: fork `mlx_lm_fork` without keys LoRA-ises too many layers → crash at ~iter 160. With keys → 0 trainable params. 4 working adapters (spice, emc, stm32, embedded) were trained with an earlier fork version. freecad succeeded (small dataset, finished before OOM). 5 remaining: platformio, power, dsp, electronics, kicad-dsl all fail.
 
 ## Next
-1. **Check SFT chain**: `ssh studio "strings ~/micro-kiki/outputs/sft-all-niches-v3.log | grep -E 'START|DONE|FAIL'"` — then relaunch kicad-dsl solo: `ssh studio "cd ~/micro-kiki && .venv/bin/python3 scripts/train_niches_mlxtune.py --domain kicad-dsl"`
-2. **After all 10 adapters done**: story-14 forgetting check, story-15 eval all stacks vs base
-3. **DPO**: relaunch 480B+35B servers on Studio AFTER SFT finishes, run `scripts/generate_dpo_pairs.py`
+1. **Debug the fork**: `ssh studio "diff ~/KIKI-Mac_tunner/lib/mlx_lm_fork/tuner/lora.py"` vs the version that trained spice. Check git log in `~/KIKI-Mac_tunner/lib/mlx_lm_fork/` for changes.
+2. **Alternative**: train on kxkm-ai via vLLM/Unsloth instead of MLX (RTX 4090 24GB may fit rank 4-8 with QLoRA).
+3. **After adapters**: story-14 forgetting check, story-15 eval, DPO pipeline.
 
 ## Context
-- **ZERO compute on GrosMac** — user was explicit, everything on Studio (`ssh studio`) or kxkm-ai.
-- Training MUST use `mlx_lm_fork` at `~/KIKI-Mac_tunner/lib/mlx_lm_fork` (not standard mlx_lm — Metal OOM).
-- Always `pkill -f _train.py` before relaunching training (zombie subprocesses steal 96GB Metal).
-- Commit hook: no `Co-Authored-By`, subject ≤ 50 chars.
+- **ZERO compute on GrosMac** — all on Studio or kxkm-ai.
+- The Metal `resource_limit(499000)` is about allocation COUNT not memory SIZE. Peak mem stays at 106GB but allocations accumulate.
+- `save_every: 50` in config may help (forces checkpoint → GC).
+- Training script: `scripts/train_niches_mlxtune.py`, wrapper: `scripts/train_one_by_one.sh`.
+- Commit hook: no Co-Authored-By, subject ≤ 50 chars.
