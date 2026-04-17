@@ -123,33 +123,54 @@ class MicroKikiPipeline:
         logger.info("[4/4] Pipeline ready!\n")
 
     def _detect_domain(self, query: str) -> str:
-        """Keyword-based domain detection (v1 fallback)."""
+        """Score-based domain detection (v2 — highest score wins).
+
+        Each keyword match adds weight. High-priority keywords (unique to a
+        domain) get weight 3, regular keywords get weight 1.  This fixes the
+        DSP/stm32 and PlatformIO/stm32 conflicts from v1.
+        """
         query_lower = query.lower()
-        domain_keywords: dict[str, list[str]] = {
-            "spice":       ["spice", "netlist", "ngspice", "ltspice", ".subckt", ".model",
-                            "transient", "simulation"],
-            "kicad-dsl":   ["kicad", "schematic", "footprint", "s-expression", "pcb layout",
-                            "symbol"],
-            "emc":         ["emc", "emi", "shielding", "cispr", "grounding", "esd",
-                            "compliance", "radiated"],
-            "stm32":       ["stm32", "hal_", "cubemx", "cortex-m", "stm32f", "stm32h"],
-            "embedded":    ["rtos", "freertos", "interrupt", "dma", "bare-metal", "firmware",
-                            "isr", "circular buffer", "uart"],
-            "power":       ["buck", "boost", "smps", "converter", "mosfet driver",
-                            "inductor selection", "synchronous"],
-            "dsp":         ["fft", "fir", "iir", "dsp", "filter design", "convolution",
-                            "fixed-point", "q15"],
-            "electronics": ["op-amp", "amplifier", "transistor", "bias point", "gain",
-                            "bandwidth", "instrumentation"],
-            "freecad":     ["freecad", "macro", "parametric", "3d model", "part design",
-                            "heatsink"],
-            "platformio":  ["platformio", "pio", "board", "lib_deps", "build_flags",
-                            "platformio.ini"],
+
+        # (keyword, weight) — weight 3 = domain-defining, 1 = supportive
+        domain_keywords: dict[str, list[tuple[str, int]]] = {
+            "platformio":  [("platformio", 3), ("platformio.ini", 3), ("pio", 2),
+                            ("lib_deps", 2), ("build_flags", 2), ("board", 1),
+                            ("multi-env", 2)],
+            "kicad-dsl":   [("kicad", 3), ("s-expression", 3), ("footprint", 2),
+                            ("schematic", 1), ("pcb layout", 2), ("symbol", 1)],
+            "freecad":     [("freecad", 3), ("macro", 1), ("parametric", 1),
+                            ("3d model", 1), ("part design", 2), ("heatsink", 1)],
+            "dsp":         [("fft", 3), ("fir", 2), ("iir", 2), ("dsp", 3),
+                            ("filter design", 2), ("convolution", 2),
+                            ("fixed-point", 2), ("q15", 3)],
+            "spice":       [("spice", 3), ("netlist", 2), ("ngspice", 3),
+                            ("ltspice", 3), (".subckt", 3), (".model", 1),
+                            ("transient", 1), ("simulation", 1)],
+            "emc":         [("emc", 3), ("emi", 3), ("shielding", 2), ("cispr", 3),
+                            ("grounding", 1), ("esd", 2), ("compliance", 1),
+                            ("radiated", 2)],
+            "stm32":       [("stm32", 3), ("hal_", 3), ("cubemx", 3),
+                            ("cortex-m", 1), ("stm32f", 3), ("stm32h", 3)],
+            "embedded":    [("rtos", 3), ("freertos", 3), ("interrupt", 1),
+                            ("dma", 1), ("bare-metal", 2), ("firmware", 1),
+                            ("isr", 2), ("circular buffer", 2), ("uart", 1)],
+            "power":       [("buck", 2), ("boost", 2), ("smps", 3),
+                            ("converter", 1), ("mosfet driver", 2),
+                            ("inductor selection", 2), ("synchronous", 1)],
+            "electronics": [("op-amp", 3), ("amplifier", 2), ("transistor", 2),
+                            ("bias point", 2), ("gain", 1), ("bandwidth", 1),
+                            ("instrumentation", 2)],
         }
-        for domain, keywords in domain_keywords.items():
-            if any(kw in query_lower for kw in keywords):
-                return domain
-        return "base"
+
+        scores: dict[str, int] = {}
+        for domain, kw_list in domain_keywords.items():
+            score = sum(w for kw, w in kw_list if kw in query_lower)
+            if score > 0:
+                scores[domain] = score
+
+        if not scores:
+            return "base"
+        return max(scores, key=scores.__getitem__)
 
     def _infer(self, augmented_query: str, route: RouteDecision) -> str:
         """Run MLX inference and return the raw response string."""
@@ -192,7 +213,7 @@ class MicroKikiPipeline:
         response = self._infer(augmented_query, route)
 
         episode_id = self.memory.write(
-            content=f"Q: {query[:200]}\nA: {response[:200]}",
+            content=f"Q: {query[:300]}\nA: {response[:600]}",
             domain=domain,
             timestamp=datetime.now(),
             source="poc-pipeline-v2",
@@ -397,7 +418,7 @@ class MicroKikiPipelineV2(MicroKikiPipeline):
 
         # Step 5: Memory write
         episode_id = self.memory.write(
-            content=f"Q: {query[:200]}\nA: {response[:200]}",
+            content=f"Q: {query[:300]}\nA: {response[:600]}",
             domain=domain,
             timestamp=datetime.now(),
             source="poc-pipeline-v2",
