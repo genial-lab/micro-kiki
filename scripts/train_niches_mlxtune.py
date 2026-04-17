@@ -47,8 +47,8 @@ LORA_TARGETS = ["q_proj", "k_proj", "v_proj", "o_proj"]
 
 # domain: (rank, epochs, lr, seq_len, dropout)
 NICHE_DOMAINS: dict[str, tuple[int, int, float, int, float]] = {
-    "kicad-dsl":   (16, 2, 5e-5, 2048, 0.0),
-    "spice":       (16, 2, 5e-5, 2048, 0.0),
+    "kicad-dsl":   (8,  2, 5e-5, 1024, 0.0),  # rank 8 + seq 1024 to avoid Metal OOM
+    "spice":       (8,  2, 5e-5, 1024, 0.0),  # same fix
     "emc":         (12, 2, 3e-5, 2048, 0.0),
     "stm32":       (8,  2, 3e-5, 2048, 0.0),
     "embedded":    (12, 1, 3e-5, 2048, 0.0),   # huge dataset, 1 epoch
@@ -200,7 +200,7 @@ def train_domain(domain: str) -> None:
     # Metal limits are set via environment wrapper script.
     train_script = f'''import mlx.core as mx
 mx.set_memory_limit(460 * 1024**3)
-mx.set_cache_limit(32 * 1024**3)
+mx.set_cache_limit(96 * 1024**3)  # x3 for MoE gradient accumulation
 from mlx_lm import lora as lora_mod
 import sys
 sys.argv = ["mlx_lm.lora",
