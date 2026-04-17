@@ -188,7 +188,7 @@ class TestRouterAccuracyEval:
         ]
         correct = 0
         for domain_idx, expected_intent in test_cases:
-            logits = [0.05] * 32
+            logits = [0.05] * 35
             logits[domain_idx] = 0.90
             result = dispatch(logits, mapping)
             if result.intent == expected_intent:
@@ -198,7 +198,7 @@ class TestRouterAccuracyEval:
 
     def test_multi_domain_routing_accuracy(self, mapping):
         """Test that multi-domain activation routes to dominant intent."""
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[2] = 0.90  # python (coding)
         logits[3] = 0.70  # typescript (coding)
         logits[1] = 0.30  # reasoning
@@ -206,7 +206,7 @@ class TestRouterAccuracyEval:
         assert result.intent == MetaIntent.CODING
 
     def test_confidence_values_in_range(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[0] = 0.92
         result = dispatch(logits, mapping)
         assert 0.0 <= result.confidence <= 1.0
@@ -276,7 +276,7 @@ class TestFullEvalOrchestration:
     def test_all_eval_results_serializable(self, mapping, forgetting_evaluator):
         """All eval results must be JSON-serializable."""
         # Router accuracy result
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[0] = 0.90
         router_result = dispatch(logits, mapping)
         json.dumps({"intent": router_result.intent.value, "confidence": router_result.confidence})

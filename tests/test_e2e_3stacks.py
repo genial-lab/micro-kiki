@@ -14,20 +14,20 @@ def mapping():
 class TestE2E3Stacks:
     def test_chat_fr_routed_correctly(self, mapping):
         # Simulate router output where chat-fr (idx 0) is dominant
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[0] = 0.92
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.QUICK_REPLY
         assert 0 in result.active_domains
 
     def test_reasoning_routed_correctly(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[1] = 0.88
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.REASONING
 
     def test_python_routed_correctly(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[2] = 0.85
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.CODING

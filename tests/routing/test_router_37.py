@@ -7,14 +7,14 @@ from src.routing.router import MetaRouter
 
 @pytest.fixture
 def router():
-    return MetaRouter(input_dim=768, num_domains=32, num_capabilities=5)
+    return MetaRouter(input_dim=768, num_domains=35, num_capabilities=5)
 
 
 class TestMetaRouter37:
     def test_output_shape(self, router):
         x = torch.randn(1, 768)
         output = router(x)
-        assert output.shape == (1, 37)
+        assert output.shape == (1, 40)
 
     def test_outputs_are_sigmoid(self, router):
         x = torch.randn(4, 768)
@@ -27,7 +27,7 @@ class TestMetaRouter37:
         output = router(x)
         domains = router.get_domains(output)
         capabilities = router.get_capabilities(output)
-        assert domains.shape == (1, 32)
+        assert domains.shape == (1, 35)
         assert capabilities.shape == (1, 5)
 
     def test_active_stacks_respects_max(self, router):

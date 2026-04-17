@@ -1,4 +1,4 @@
-# Meta-intent mapping: domain indices (0-31) -> 7 intents
+# Meta-intent mapping: domain indices (0-34) -> 7 intents
 # Each domain appears in exactly one bucket
 
 intents:
@@ -34,6 +34,7 @@ intents:
     - 23  # rf-antenna
     - 24  # motor-control
     - 31  # kicad-pcb
+    - 32  # components
 
   agentic:
     - 15  # rtos
@@ -44,6 +45,8 @@ intents:
     - 21  # firmware-debug
     - 26  # testing-qa
     - 27  # ci-cd
+    - 33  # llm-ops
+    - 34  # ml-training
 
   tool-use:
     - 28  # git-workflow

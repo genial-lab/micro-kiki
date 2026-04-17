@@ -1,6 +1,6 @@
 # micro-kiki — project context for Claude Code
 
-32 domain experts (LoRA) on Qwen3.5-35B-A3B MoE base with a cognitive layer (memory palace + negotiator + anti-bias). Trains on Mac Studio M3 Ultra 512 GB.
+35 domain experts (LoRA) on Qwen3.5-35B-A3B MoE base with a cognitive layer (memory palace + negotiator + anti-bias). Trains on Mac Studio M3 Ultra 512 GB.
 
 ## Architecture pivot (2026-04-16)
 
@@ -57,4 +57,4 @@ Switched from Qwen3.5-4B + custom MoE-LoRA to Qwen3.5-35B-A3B (native MoE, 256 e
 
 - HuggingFace: `Qwen/Qwen3.5-35B-A3B` (base), `Qwen/Qwen3-Coder-480B-A35B-Instruct` (teacher)
 - Papers: OPLoRA 2510.13003, Aeon 2601.15311, CAMP 2604.00085, Catfish 2505.21503, KnowBias 2601.21864, RBD 2505.17100
-- Datasets: 32 domains in `~/KIKI-Mac_tunner/data/micro-kiki/` (classified + deduped + split)
+- Datasets: 35 domains in `~/KIKI-Mac_tunner/data/micro-kiki/` (classified + deduped + split)

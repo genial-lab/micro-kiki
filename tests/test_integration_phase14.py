@@ -12,7 +12,7 @@ from src.orchestrator.engine import OrchestrationEngine
 
 class TestPhase14Integration:
     def test_router_37_outputs_feed_engine(self):
-        router = MetaRouter(input_dim=768, num_domains=32, num_capabilities=5)
+        router = MetaRouter(input_dim=768, num_domains=35, num_capabilities=5)
         x = torch.randn(1, 768)
         output = router(x)
 

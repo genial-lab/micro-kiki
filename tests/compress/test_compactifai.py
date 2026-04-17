@@ -37,7 +37,7 @@ class TestQTHA:
 class TestTNRouter:
     def test_config_defaults(self):
         cfg = TNRouterConfig()
-        assert cfg.num_domains == 32
+        assert cfg.num_domains == 35
 
     def test_param_estimate(self):
         cfg = TNRouterConfig()

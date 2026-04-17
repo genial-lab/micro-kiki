@@ -4,7 +4,7 @@ from src.routing.dispatcher import dispatch, load_intent_mapping
 mapping = load_intent_mapping("configs/meta_intents.yaml")
 
 # Simulate router output where chat-fr (idx 0) is dominant
-logits = [0.05] * 32
+logits = [0.05] * 35
 logits[0] = 0.92
 
 result = dispatch(logits, mapping)

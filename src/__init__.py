@@ -1,1 +1,1 @@
-"""micro-kiki: 32 domain experts (MoE-LoRA) on Qwen3.5-4B base."""
+"""micro-kiki: 35 domain experts (MoE-LoRA) on Qwen3.5-35B-A3B base."""

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class TNRouterConfig:
     input_dim: int = 3072
-    num_domains: int = 32
+    num_domains: int = 35
     bond_dim: int = 16
     num_capabilities: int = 5
 

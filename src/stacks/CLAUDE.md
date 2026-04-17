@@ -1,6 +1,6 @@
 # Stacks (Standard LoRA Domain Experts)
 
-32 domain-specific LoRA stacks on Qwen3.5-35B-A3B (native MoE) base.
+35 domain-specific LoRA stacks on Qwen3.5-35B-A3B (native MoE) base.
 
 ## Architecture pivot (2026-04-16)
 

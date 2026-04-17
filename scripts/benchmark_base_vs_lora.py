@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Benchmark base 35B model across all 32 domains.
+"""Benchmark base 35B model across all 35 domains.
 
 Evaluates Qwen3.5-35B-A3B on representative prompts to classify each domain
 as "niche" (LoRA needed) or "known" (base model sufficient).
@@ -39,8 +39,7 @@ logger = logging.getLogger(__name__)
 DOMAIN_CLASS: dict[str, str] = {
     # --- Niche (hardware/EDA/embedded — highly specialised vocabulary) ---
     "kicad-dsl":    "niche",
-    "spice":        "niche",
-    "spice-sim":    "niche",
+    "spice":        "niche",  # includes former spice-sim domain
     "emc":          "niche",
     "stm32":        "niche",
     "embedded":     "niche",
@@ -71,6 +70,10 @@ DOMAIN_CLASS: dict[str, str] = {
     "devops":       "known",
     "llm-orch":     "known",
     "security":     "known",
+    # --- Phase 7 (new) ---
+    "components":   "niche",
+    "llm-ops":      "known",
+    "ml-training":  "known",
 }
 
 # ---------------------------------------------------------------------------
@@ -92,6 +95,7 @@ DOMAIN_PROMPTS: dict[str, list[str]] = {
         "what does it do, when is it needed, and provide an example for a 0-Ohm jumper.",
     ],
     "spice": [
+        # Original spice prompts
         "Write a SPICE netlist for a non-inverting op-amp with gain 10 using TL071, "
         "with AC analysis from 1 Hz to 10 MHz and .MEASURE to extract -3 dB bandwidth.",
         "Explain the difference between SPICE `.TRAN`, `.AC`, `.DC`, and `.NOISE` "
@@ -102,8 +106,7 @@ DOMAIN_PROMPTS: dict[str, list[str]] = {
         "Write a SPICE subcircuit that models the switching transient and snubber.",
         "Convert a SPICE .MODEL card for a Schottky diode (IS, N, RS, CJO, VJ, M, TT) "
         "into an equivalent KiCad simulation model attribute block.",
-    ],
-    "spice-sim": [
+        # Merged from spice-sim
         "In a SPICE simulation of a buck converter at 400 kHz, the output ripple is "
         "50 mV peak-to-peak. Write the .TRAN command and .MEASURE commands needed "
         "to extract Vout_avg, Vripple_pp, and efficiency.",
@@ -540,6 +543,46 @@ DOMAIN_PROMPTS: dict[str, list[str]] = {
         "origin and a CDN, blocks inline scripts, and prevents clickjacking. "
         "Explain each directive.",
     ],
+    # ── PHASE 7 (new) ──────────────────────────────────────────────────────
+    "components": [
+        "From a datasheet for a 100uF electrolytic capacitor rated 25V, extract the "
+        "ESR, ripple current, and temperature derating. Explain which specs matter "
+        "for a 12V DC-DC converter output filter.",
+        "Compare N-channel MOSFET IRFZ44N vs AO3400 for a 5V load switch: "
+        "RDS(on), gate threshold, SOA, and package thermal resistance.",
+        "Generate a JLCPCB-compatible BOM CSV for a voltage regulator circuit with "
+        "an AMS1117-3.3, input/output caps, and status LED. Include LCSC part numbers.",
+        "Explain the difference between basic and extended parts on JLCPCB assembly: "
+        "cost implications, sourcing lead times, and when to prefer LCSC alternatives.",
+        "Write a Python script that queries the LCSC API for resistors matching "
+        "10k 0402 1% and sorts results by unit price with stock > 1000.",
+    ],
+    "llm-ops": [
+        "Explain how to convert a HuggingFace safetensors model to GGUF format "
+        "using llama.cpp's convert script. What quantization levels are available "
+        "and what are the quality/size tradeoffs?",
+        "Write a shell script that starts an Ollama server, pulls Qwen3.5-7B, "
+        "and benchmarks token throughput with 5 concurrent requests.",
+        "Compare vLLM vs llama.cpp vs Ollama for serving a 35B parameter model "
+        "on a single RTX 4090: memory requirements, throughput, and API compatibility.",
+        "Write a Python script that uses the OpenAI-compatible API to batch-process "
+        "100 prompts through a local vLLM server with configurable concurrency.",
+        "Explain KV cache quantization in llama.cpp: what is Q8_0 vs Q4_0 cache, "
+        "how does it affect memory usage and generation quality?",
+    ],
+    "ml-training": [
+        "Write a LoRA fine-tuning script using PEFT + transformers for a 7B model: "
+        "configure rank, alpha, target modules, and gradient checkpointing.",
+        "Explain the relationship between learning rate, batch size, and gradient "
+        "accumulation steps. How do you adjust LR when changing effective batch size?",
+        "What causes catastrophic forgetting during fine-tuning and what strategies "
+        "prevent it? Compare EWC, LoRA, and replay-based approaches.",
+        "Write a training loop with mixed-precision (BF16), gradient clipping, "
+        "cosine LR schedule, and Weights & Biases logging.",
+        "Explain how to diagnose overfitting vs underfitting from loss curves: "
+        "what patterns to look for in train_loss vs val_loss, and how to adjust "
+        "hyperparameters (LR, weight decay, epochs) accordingly.",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -798,7 +841,7 @@ def save_report(report: dict, output: str) -> Path:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Benchmark Qwen3.5-35B-A3B base model across 32 domains to validate "
+            "Benchmark Qwen3.5-35B-A3B base model across 35 domains to validate "
             "which require a LoRA adapter (niche) vs which the base handles well "
             "(known). Inference is stubbed — see _infer_stub()."
         ),
@@ -824,7 +867,7 @@ def parse_args() -> argparse.Namespace:
         metavar="DOMAIN",
         help=(
             "Optional subset of domains to evaluate (space-separated). "
-            "Defaults to all 32 domains if omitted."
+            "Defaults to all 35 domains if omitted."
         ),
     )
     parser.add_argument(

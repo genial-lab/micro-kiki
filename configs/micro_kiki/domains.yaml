@@ -1,4 +1,4 @@
-# Micro_KIKI — 32 Expert Domain Configuration
+# Micro_KIKI — 35 Expert Domain Configuration
 # Each domain has:
 #   keywords: list of strings for heuristic matching (case-insensitive substring)
 #   patterns: list of regex patterns for stronger signal
@@ -278,7 +278,7 @@ domains:
   spice:
     phase: 3
     teacher: "Qwen3.5-122B-A10B-BF16"
-    target: 2000
+    target: 4000  # merged: was 2000 spice + 2000 spice-sim
     keywords:
       - "spice"
       - "ngspice"
@@ -290,10 +290,24 @@ domains:
       - ".dc"
       - "MOSFET"
       - "transistor"
+      # --- merged from spice-sim ---
+      - "simulation"
+      - "transient"
+      - "AC analysis"
+      - "DC sweep"
+      - "Monte Carlo"
+      - "parametric"
+      - "convergence"
+      - "step response"
+      - "Bode plot"
+      - "waveform"
     patterns:
       - "\\b(\\.subckt|\\.tran|\\.ac |\\.dc |\\.model |V[0-9]+|R[0-9]+)\\b"
+      # --- merged from spice-sim ---
+      - "\\b(transient|AC.analysis|DC.sweep|Monte.Carlo|Bode|convergence)\\b"
     existing_sources:
       - "clemsail/kiki-spice"
+      - "clemsail/kiki-spice-sim"  # merged from spice-sim
 
   lua-upy:
     phase: 3
@@ -346,6 +360,10 @@ domains:
     phase: 4
     teacher: "Qwen3.5-122B-A10B-BF16"
     target: 2000
+    parent_domain: embedded  # sub-category: router checks embedded stack first
+    routing_note: >
+      Sub-category of embedded. Router checks embedded stack first,
+      falls back to stm32-specific adapter if available.
     keywords:
       - "STM32"
       - "CubeMX"
@@ -482,25 +500,9 @@ domains:
     patterns:
       - "\\b(FFT|FIR|IIR|Nyquist|spectrogram|convolution|CMSIS.DSP)\\b"
 
-  spice-sim:
-    phase: 4
-    teacher: "Qwen3.5-122B-A10B-BF16"
-    target: 2000
-    keywords:
-      - "simulation"
-      - "transient"
-      - "AC analysis"
-      - "DC sweep"
-      - "Monte Carlo"
-      - "parametric"
-      - "convergence"
-      - "step response"
-      - "Bode plot"
-      - "waveform"
-    patterns:
-      - "\\b(transient|AC.analysis|DC.sweep|Monte.Carlo|Bode|convergence)\\b"
-    existing_sources:
-      - "clemsail/kiki-spice-sim"
+  # spice-sim: MERGED into spice domain (2026-04-17)
+  # Keywords, patterns, and data absorbed into the unified spice domain above.
+  # See: python3 scripts/merge_domains.py --source spice-sim --target spice
 
   electronics:
     phase: 4
@@ -686,3 +688,67 @@ domains:
       - "penetration"
     patterns:
       - "\\b(OWASP|XSS|CSRF|SQL.injection|CVE-|JWT|OAuth|TLS|encryption)\\b"
+
+  components:
+    phase: 7
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "datasheet"
+      - "resistor"
+      - "capacitor"
+      - "MOSFET"
+      - "BOM"
+      - "sourcing"
+      - "JLCPCB"
+      - "LCSC"
+      - "component"
+      - "part number"
+      - "package"
+      - "footprint"
+    patterns:
+      - "\\b(datasheet|BOM|JLCPCB|LCSC|MOSFET|SOT-23|QFN|0402|0603|0805)\\b"
+      - "\\b(sourcing|component.select|part.number|MPN|Digi-?Key|Mouser)\\b"
+
+  llm-ops:
+    phase: 7
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    target: 2000
+    keywords:
+      - "ollama"
+      - "vllm"
+      - "gguf"
+      - "quantize"
+      - "inference"
+      - "llama"
+      - "llama.cpp"
+      - "model serving"
+      - "token throughput"
+      - "batch size"
+      - "GPU memory"
+      - "context length"
+    patterns:
+      - "\\b(ollama|vllm|vLLM|gguf|GGUF|llama\\.cpp|quantiz|Q[48]_K_[MS])\\b"
+      - "\\b(model.serv|inference.server|token.throughput|KV.cache)\\b"
+
+  ml-training:
+    phase: 7
+    teacher: "Qwen3.5-122B-A10B-BF16"
+    teacher_secondary: "opus-api"
+    target: 2000
+    keywords:
+      - "fine-tune"
+      - "lora"
+      - "epoch"
+      - "loss"
+      - "gradient"
+      - "training"
+      - "learning rate"
+      - "batch"
+      - "checkpoint"
+      - "dataset"
+      - "overfitting"
+      - "validation"
+    patterns:
+      - "\\b(fine.tun|LoRA|QLoRA|epoch|gradient|backprop|learning.rate|lr.schedule)\\b"
+      - "\\b(train.loss|val.loss|overfit|checkpoint|weight.decay|Adam[Ww]?)\\b"

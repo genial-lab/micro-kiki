@@ -99,7 +99,7 @@ class TestRouteAndServe:
             }),
         )
         # Step 1: route
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[2] = 0.90  # python
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.CODING
@@ -261,7 +261,7 @@ class TestMultiDomainRouting:
                 "choices": [{"message": {"content": "code result"}}]
             }),
         )
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[5] = 0.88  # rust
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.CODING
@@ -277,7 +277,7 @@ class TestMultiDomainRouting:
                 "choices": [{"message": {"content": "PCB answer"}}]
             }),
         )
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[31] = 0.85  # kicad-pcb
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.RESEARCH

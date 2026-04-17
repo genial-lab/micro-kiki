@@ -50,7 +50,7 @@ class MetaRouter(_NNModule):  # type: ignore[misc,valid-type]
     """Sigmoid meta-router with domain + capability outputs.
 
     Requires torch at runtime. Use ``num_domains=11`` (default) for the
-    10-niche + base layout, or ``num_domains=32`` for legacy backward compat.
+    10-niche + base layout, or ``num_domains=35`` for legacy backward compat.
     """
 
     # Ordered list of niche domain names for 11-output mode (index 0-9).

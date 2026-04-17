@@ -93,10 +93,10 @@ def mapping():
 
 @pytest.fixture
 def stacks_dir(tmp_path):
-    """Create fake stacks for the full set of 32 domains."""
+    """Create fake stacks for the full set of 35 domains."""
     d = tmp_path / "stacks"
     d.mkdir()
-    for i in range(1, 33):
+    for i in range(1, 36):
         (d / f"stack-{i:02d}").mkdir()
     return d
 
@@ -106,7 +106,7 @@ class TestE2EAcceptance:
 
     def test_all_20_prompts_route_correctly(self, mapping):
         for case in ACCEPTANCE_PROMPTS:
-            logits = [0.05] * 32
+            logits = [0.05] * 35
             logits[case["domain_idx"]] = 0.9
             result = dispatch(logits, mapping)
             assert result.intent.value == case["expected_meta_intent"], (
@@ -177,7 +177,7 @@ class TestAcceptanceFullPipeline:
     def test_dispatch_result_has_active_domains(self, mapping):
         """Each dispatch result contains active domain indices."""
         for case in ACCEPTANCE_PROMPTS:
-            logits = [0.05] * 32
+            logits = [0.05] * 35
             logits[case["domain_idx"]] = 0.9
             result = dispatch(logits, mapping)
             assert case["domain_idx"] in result.active_domains
@@ -185,7 +185,7 @@ class TestAcceptanceFullPipeline:
     def test_dispatch_confidence_above_threshold(self, mapping):
         """Confidence should be high when a single domain is dominant."""
         for case in ACCEPTANCE_PROMPTS:
-            logits = [0.05] * 32
+            logits = [0.05] * 35
             logits[case["domain_idx"]] = 0.9
             result = dispatch(logits, mapping)
             assert result.confidence > 0.5, (
@@ -206,7 +206,7 @@ class TestAcceptanceFullPipeline:
         """Full pipeline: prompt -> logits -> dispatch -> apply stacks."""
         model = SwitchableModel(stacks_dir=str(stacks_dir))
         for case in ACCEPTANCE_PROMPTS[:3]:
-            logits = [0.05] * 32
+            logits = [0.05] * 35
             logits[case["domain_idx"]] = 0.9
             result = dispatch(logits, mapping)
             assert result.intent.value == case["expected_meta_intent"]
@@ -230,7 +230,7 @@ class TestAcceptanceFullPipeline:
     def test_conflict_prompt_activates_multiple_domains(self, mapping):
         """Conflict prompt (Rust vs C++) should have coding intent."""
         conflict = ACCEPTANCE_PROMPTS[19]  # "Should I use Rust or C++..."
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[4] = 0.85  # cpp
         logits[5] = 0.80  # rust
         result = dispatch(logits, mapping)

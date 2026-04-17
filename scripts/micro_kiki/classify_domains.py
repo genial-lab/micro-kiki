@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Classify examples into 1 of 32 Micro_KIKI domains.
+"""Classify examples into 1 of 35 Micro_KIKI domains.
 
 Reads raw datasets from data/raw/, classifies each example using keyword
 heuristics + regex patterns, and writes per-domain JSONL to data/micro-kiki/classified/.
@@ -32,7 +32,7 @@ def load_config(config_path: str) -> dict:
     """Load and validate domain configuration."""
     with open(config_path) as f:
         config = yaml.safe_load(f)
-    assert len(config["domains"]) == 32, f"Expected 32 domains, got {len(config['domains'])}"
+    assert len(config["domains"]) == 35, f"Expected 35 domains, got {len(config['domains'])}"
     return config
 
 
@@ -287,7 +287,7 @@ def run_classification(config_path: str, input_dir: str, output_dir: str,
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Classify examples into 32 Micro_KIKI domains")
+    parser = argparse.ArgumentParser(description="Classify examples into 35 Micro_KIKI domains")
     parser.add_argument("--config", default="configs/micro_kiki/domains.yaml",
                         help="Path to domain configuration YAML")
     parser.add_argument("--input-dir", default="data/raw",

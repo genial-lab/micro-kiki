@@ -1,0 +1,15 @@
+base_model: Qwen/Qwen3.5-35B-A3B
+lora_rank: 16
+lora_alpha: 32
+learning_rate: 0.0002
+batch_size: 4
+grad_accum: 8
+epochs: 3
+seq_len: 4096
+dataset: data/distilled/components.jsonl
+init_lora_weights: oplora
+domain: components
+curriculum_order: 33
+source_note: Datasheets, BOM, component sourcing, JLCPCB, LCSC, MOSFET selection
+
+grad_checkpoint: true

@@ -23,12 +23,12 @@ def test_kicad_dsl_in_niche_domains():
     assert "kicad-dsl" in NICHE_DOMAINS
 
 
-def test_legacy_32_output_still_works():
-    router = MetaRouter(num_domains=32)
-    assert router.num_domains == 32
+def test_legacy_35_output_still_works():
+    router = MetaRouter(num_domains=35)
+    assert router.num_domains == 35
     x = torch.zeros(1, 768)
     out = router(x)
-    assert out.shape == (1, 32 + 5)
+    assert out.shape == (1, 35 + 5)
 
 
 def test_base_fallback_activates_for_general_query():

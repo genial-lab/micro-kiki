@@ -34,8 +34,8 @@ def load_intent_mapping(config_path: str | Path = "configs/meta_intents.yaml") -
     return data["intents"]
 
 
-def validate_mapping(mapping: dict[str, list[int]], num_domains: int = 32) -> bool:
-    """Each domain index 0..31 must appear in exactly one bucket."""
+def validate_mapping(mapping: dict[str, list[int]], num_domains: int = 35) -> bool:
+    """Each domain index 0..34 must appear in exactly one bucket."""
     seen: dict[int, str] = {}
     for intent, indices in mapping.items():
         for idx in indices:
@@ -49,10 +49,10 @@ def validate_mapping(mapping: dict[str, list[int]], num_domains: int = 32) -> bo
 
 
 def dispatch(router_logits, mapping: dict[str, list[int]]) -> DispatchResult:
-    """Derive dominant meta-intent from 32-dim sigmoid output.
+    """Derive dominant meta-intent from 35-dim sigmoid output.
 
     Args:
-        router_logits: tensor or list of 32 floats (sigmoid outputs).
+        router_logits: tensor or list of 35 floats (sigmoid outputs).
         mapping: intent name -> list of domain indices.
     """
     if hasattr(router_logits, "tolist"):

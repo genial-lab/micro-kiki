@@ -4,7 +4,7 @@ Sigmoid meta-router selects which stacks to activate per query.
 
 ## Meta-Router
 
-- 32 sigmoid outputs (one per domain), NOT softmax
+- 35 sigmoid outputs (one per domain), NOT softmax
 - Threshold: 0.12 general, 0.20 floor for chat-mode
 - Max 4 active stacks (VRAM constraint)
 - Trained on domain-classified examples from pipeline

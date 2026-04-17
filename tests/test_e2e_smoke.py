@@ -44,33 +44,33 @@ class TestRouteToCorrectStack:
     """Verify that router sigmoid outputs dispatch to the right meta-intent."""
 
     def test_chat_fr_routes_to_quick_reply(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[0] = 0.92  # chat-fr dominant
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.QUICK_REPLY
         assert 0 in result.active_domains
 
     def test_python_routes_to_coding(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[2] = 0.88  # python dominant
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.CODING
         assert 2 in result.active_domains
 
     def test_reasoning_routes_correctly(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[1] = 0.85  # reasoning dominant
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.REASONING
 
     def test_embedded_routes_to_research(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[14] = 0.80  # embedded-c
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.RESEARCH
 
     def test_git_routes_to_tool_use(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[28] = 0.75  # git-workflow
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.TOOL_USE
@@ -80,7 +80,7 @@ class TestMultiStackActivation:
     """Verify that multiple domains can be active simultaneously."""
 
     def test_two_coding_domains_active(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[2] = 0.80  # python
         logits[3] = 0.70  # typescript
         result = dispatch(logits, mapping)
@@ -104,14 +104,14 @@ class TestFallbackToChat:
     """When no domain scores above threshold, should still dispatch."""
 
     def test_low_scores_still_dispatch(self, mapping):
-        logits = [0.10] * 32  # all below threshold 0.12
+        logits = [0.10] * 35  # all below threshold 0.12
         result = dispatch(logits, mapping)
         # Should still return a result (best-effort)
         assert isinstance(result, DispatchResult)
         assert isinstance(result.intent, MetaIntent)
 
     def test_all_zero_dispatches(self, mapping):
-        logits = [0.0] * 32
+        logits = [0.0] * 35
         result = dispatch(logits, mapping)
         assert isinstance(result, DispatchResult)
         assert result.active_domains == []
@@ -121,19 +121,19 @@ class TestDomainSpecificRouting:
     """Test domain-specific routing for various meta-intents."""
 
     def test_kicad_routes_to_research(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[11] = 0.90  # kicad-dsl
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.RESEARCH
 
     def test_rtos_routes_to_agentic(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[15] = 0.88  # rtos
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.AGENTIC
 
     def test_doc_writing_routes_to_creative(self, mapping):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[29] = 0.85  # doc-writing
         result = dispatch(logits, mapping)
         assert result.intent == MetaIntent.CREATIVE
@@ -170,7 +170,7 @@ class TestEndToEndPipeline:
 
     def test_full_pipeline_chat(self, mapping, stacks_dir):
         # 1. Simulate router output
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[0] = 0.92  # chat-fr
 
         # 2. Dispatch to meta-intent
@@ -184,7 +184,7 @@ class TestEndToEndPipeline:
         assert "stack-01-chat-fr" in model.active_stacks
 
     def test_full_pipeline_coding(self, mapping, stacks_dir):
-        logits = [0.05] * 32
+        logits = [0.05] * 35
         logits[2] = 0.88  # python
 
         result = dispatch(logits, mapping)
@@ -208,13 +208,13 @@ class TestMetaRouterIntegration:
     """Integration test with the actual MetaRouter nn.Module."""
 
     def test_router_output_shape(self):
-        router = MetaRouter(input_dim=768, num_domains=32, num_capabilities=5)
+        router = MetaRouter(input_dim=768, num_domains=35, num_capabilities=5)
         x = torch.randn(1, 768)
         out = router(x)
-        assert out.shape == (1, 37)
+        assert out.shape == (1, 40)
 
     def test_router_outputs_are_sigmoid(self):
-        router = MetaRouter(input_dim=768, num_domains=32, num_capabilities=5)
+        router = MetaRouter(input_dim=768, num_domains=35, num_capabilities=5)
         x = torch.randn(1, 768)
         out = router(x)
         assert (out >= 0).all()
@@ -222,7 +222,7 @@ class TestMetaRouterIntegration:
 
     def test_router_to_dispatch_pipeline(self):
         mapping = load_intent_mapping("configs/meta_intents.yaml")
-        router = MetaRouter(input_dim=768, num_domains=32, num_capabilities=5)
+        router = MetaRouter(input_dim=768, num_domains=35, num_capabilities=5)
         x = torch.randn(1, 768)
         out = router(x)
         domains = router.get_domains(out)
