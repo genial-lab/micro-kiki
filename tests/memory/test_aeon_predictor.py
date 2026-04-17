@@ -174,3 +174,53 @@ class TestAeonPredictorIngest:
         assert palace.graph.has_node("t0")
         assert palace.graph.has_node("t1")
         assert any(e.src == "t0" and e.dst == "t1" for e in temporal_edges)
+
+
+class TestAeonPredictorPredict:
+    def test_predict_cold_start_returns_input(self):
+        palace = AeonSleep(dim=32)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=32))
+        h = _mock_embed(32, seed=1)
+        out = pred.predict_next(h, horizon=1)
+        assert out.shape == (32,)
+        np.testing.assert_allclose(out, h, atol=1e-6)  # fallback == identity
+
+    def test_predict_after_ready_differs_from_input(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, hidden=8, n_stacks=2, cold_start_threshold=4)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(6):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i), ts=t0 + timedelta(minutes=i)
+            )
+        # Force trained flag by calling fit_on_buffer (added in this task).
+        pred.fit_on_buffer(lr=0.05, epochs=50, batch_size=4)
+        assert pred.ready is True
+        h = _mock_embed(16, seed=99)
+        out = pred.predict_next(h, horizon=1)
+        assert out.shape == (16,)
+        # After training it should NOT be exactly h (residual has moved).
+        assert not np.allclose(out, h, atol=1e-4)
+
+    def test_predict_horizon_k_iterates(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, hidden=8, n_stacks=2, cold_start_threshold=4)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(6):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i), ts=t0 + timedelta(minutes=i)
+            )
+        pred.fit_on_buffer(lr=0.05, epochs=30, batch_size=4)
+        h = _mock_embed(16, seed=99)
+        out1 = pred.predict_next(h, horizon=1)
+        out3 = pred.predict_next(h, horizon=3)
+        # horizon=3 must differ from horizon=1 (3 applied rollouts).
+        assert not np.allclose(out1, out3, atol=1e-4)
+
+    def test_predict_rejects_bad_horizon(self):
+        palace = AeonSleep(dim=16)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=16))
+        with pytest.raises(ValueError, match="horizon"):
+            pred.predict_next(_mock_embed(16, seed=0), horizon=0)

@@ -261,3 +261,79 @@ class AeonPredictor:
         for a, b in zip(self._buffer, self._buffer[1:]):
             out.append((a.h, b.h, a.stack_id))
         return out
+
+
+    # ---------------------------------------------------------- training
+
+    def fit_on_buffer(
+        self,
+        *,
+        lr: float = 1e-3,
+        epochs: int = 1,
+        batch_size: int = 32,
+    ) -> list[float]:
+        """One (or more) SGD passes over the current pair buffer.
+
+        Returns per-epoch mean loss. Sets `_trained_once=True` iff at
+        least one pair was seen.
+        """
+        triples = self.pairs_for_training()
+        if not triples:
+            return []
+        n = len(triples)
+        rng = np.random.default_rng(self.config.seed)
+        history: list[float] = []
+        for _ in range(max(1, epochs)):
+            order = rng.permutation(n)
+            losses: list[float] = []
+            for start in range(0, n, batch_size):
+                batch = [triples[i] for i in order[start:start + batch_size]]
+                x = np.stack([t[0] for t in batch]).astype(np.float32)
+                tgt = np.stack([t[1] for t in batch]).astype(np.float32)
+                stack = self._stack_onehot([t[2] for t in batch])
+                self.mlp.forward(x, stack)
+                loss = self.mlp.backward_cosine(tgt, lr=lr)
+                losses.append(loss)
+            history.append(float(np.mean(losses)))
+        self._trained_once = True
+        return history
+
+    # ---------------------------------------------------------- predict
+
+    def predict_next(
+        self,
+        h_t: np.ndarray,
+        horizon: int = 1,
+        stack_id: int | None = None,
+    ) -> np.ndarray:
+        """Predict h_{t+horizon} by iterating the MLP `horizon` times.
+
+        Cold-start: if `not self.ready`, return `h_t` unchanged so the
+        serving path stays on pure-retrieval mode.
+        """
+        if horizon < 1:
+            raise ValueError(f"horizon must be >= 1, got {horizon}")
+        if h_t.shape != (self.config.dim,):
+            raise ValueError(
+                f"h_t.shape={h_t.shape} != ({self.config.dim},)"
+            )
+        if not self.ready:
+            return h_t.astype(np.float32).copy()
+        x = h_t.reshape(1, -1).astype(np.float32)
+        stack = self._stack_onehot([-1 if stack_id is None else int(stack_id)])
+        current = x
+        for _ in range(horizon):
+            current = self.mlp.forward(current, stack)
+        return current[0].astype(np.float32)
+
+    # ---------------------------------------------------------- helpers
+
+    def _stack_onehot(self, stack_ids: list[int]) -> np.ndarray:
+        n = len(stack_ids)
+        out = np.zeros((n, self.config.n_stacks), dtype=np.float32)
+        for i, sid in enumerate(stack_ids):
+            if sid < 0:
+                continue  # unknown stack -> all zeros (null condition)
+            idx = sid % self.config.n_stacks
+            out[i, idx] = 1.0
+        return out
