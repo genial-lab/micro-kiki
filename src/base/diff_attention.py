@@ -1,6 +1,6 @@
 """Differential Attention (arxiv 2410.05258, ICLR 2025).
 
-Applied only to the full_attention layers of Qwen3.5-4B (not the
+Applied only to the full_attention layers of Qwen3.5-35B-A3B (not the
 GatedDeltaNet/linear layers).  DiffAttn cancels noise via:
 
     scores = softmax(Q1*K1) - lambda * softmax(Q2*K2)

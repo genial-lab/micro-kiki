@@ -35,7 +35,7 @@ from typing import Any, Iterator
 
 
 class BaseModelLoader:
-    """Load Qwen3.5-4B base and manage hot-swap LoRA adapters.
+    """Load Qwen3.5-35B-A3B base and manage hot-swap LoRA adapters.
 
     Two disjoint load paths are supported:
 
