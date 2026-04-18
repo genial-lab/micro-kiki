@@ -493,17 +493,14 @@ def measure_forgetting_signal(
     baseline = float(winrate_baseline)
     drop = baseline - measured
 
-    angle_bad = mean_angle < angle_threshold
-    winrate_bad = drop > winrate_drop_threshold
-    gate_status = (
-        "fail"
-        if apply_and_gate(mean_angle, drop, angle_threshold, winrate_drop_threshold)
-        else "pass"
+    decision = apply_and_gate_detailed(
+        mean_angle, drop, angle_threshold, winrate_drop_threshold
     )
+    gate_status = "fail" if decision.failed else "pass"
     warning_bits = []
-    if angle_bad:
+    if decision.angle_bad:
         warning_bits.append(f"angle {mean_angle:.2f}° < {angle_threshold}°")
-    if winrate_bad:
+    if decision.delta_bad:
         warning_bits.append(f"winrate_drop {drop:.3f} > {winrate_drop_threshold}")
     warning = "; ".join(warning_bits) or None
 
