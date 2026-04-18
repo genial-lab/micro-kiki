@@ -1,0 +1,57 @@
+<h2>Quel régime temporel pour les échanges inter-WML ?</h2>
+<p class="subtitle">Bidirectionnel + alphabet partagé → il faut <em>absolument</em> un mécanisme pour répondre à : « qui parle quand ? ». Trois familles biologiquement plausibles, avec des implications d'implémentation très différentes.</p>
+
+<div class="options">
+  <div class="option" data-choice="lockstep" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Lockstep — Tours discrets synchronisés</h3>
+      <p><strong>Analogie :</strong> horloge globale · tous les WMLs émettent puis écoutent, par rounds. Comme les couches d'un Transformer.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          t=0 : tous émettent&nbsp;&nbsp;━━►&nbsp;&nbsp;t=1 : tous reçoivent&nbsp;&nbsp;━━►&nbsp;&nbsp;t=2 : …<br/>
+          WML<sub>A</sub> ━━[α₂]━━► WML<sub>B</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(round 0)<br/>
+          WML<sub>B</sub> ━━[δ₃]━━► WML<sub>A</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(round 1)<br/>
+          <span class="label">Pas d'ambiguïté · parité impair/pair désambiguïse</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> trivial à entraîner (BP standard), débuggable, déterministe. <strong>Limite :</strong> pas biologique, latence = max des WMLs lents, rythme global rigide.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="async" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Event-driven asynchrone — Tir spontané</h3>
+      <p><strong>Analogie :</strong> neurones biologiques réels — un WML émet <em>quand il a quelque chose à dire</em> (un seuil interne dépassé). Les autres écoutent en temps réel.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          t ──────────────────────────────────────────►<br/>
+          WML<sub>A</sub>&nbsp;&nbsp;&nbsp;&nbsp;│α₂│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│γ₇│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│ε₃│<br/>
+          WML<sub>B</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│δ₃│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│β₁₁│<br/>
+          <span class="label">Chaque message = tuple (src, dst, lettre, timestamp)</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> biologique, sparse par nature (pas de tir = pas de calcul), énergie optimale. <strong>Limite :</strong> dur à entraîner (événements non-différentiables → RL / surrogate gradient), ordonnancement non-déterministe.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="phase" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Phase-clocked — Rythmes θ / γ imbriqués</h3>
+      <p><strong>Analogie :</strong> oscillations corticales · chaque WML est assigné à une phase (θ 4-8 Hz porte les « items », γ 30-100 Hz porte les « traits »). Un WML n'écoute que ce qui est émis pendant <em>sa</em> phase d'entrée.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          phase&nbsp;φ=0&nbsp;:&nbsp;WML<sub>A,C,F</sub>&nbsp;émettent&nbsp;·&nbsp;autres&nbsp;écoutent<br/>
+          phase&nbsp;φ=1&nbsp;:&nbsp;WML<sub>B,D,E</sub>&nbsp;émettent&nbsp;·&nbsp;autres&nbsp;écoutent<br/>
+          phase&nbsp;φ=2&nbsp;:&nbsp;retour&nbsp;φ=0&nbsp;…<br/>
+          <span class="label">Multiplexing temporel · alphabet partagé · pas de collision</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> biologiquement plausible, déterministe au sein d'une phase, différentiable, élégant pour alphabet partagé. <strong>Limite :</strong> nécessite un scheduler global des phases (mais apprenable).</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Les 2 questions restantes (après celle-ci) : <strong>granularité d'un WML</strong> (combien de neurones ? un bloc Transformer ? un LoRA ?) et <strong>taille de l'alphabet</strong> (16 · 64 · 256 · appris). Puis je propose 2-3 approches architecturales avant spec.</p>

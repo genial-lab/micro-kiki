@@ -1,0 +1,113 @@
+<h2>Un cycle d'inférence — 4 WMLs, 1 période γ + 1 période θ</h2>
+<p class="subtitle">Setup concret : <strong>WML₁ (MLP, « haut ») · WML₂ (MLP) · WML₃ (LIF) · WML₄ (LIF, « bas »)</strong> en hiérarchie sparse. Un cycle complet = 1 burst γ (prédictions descendantes, 40 Hz = 25 ms) + 1 burst θ (erreurs montantes, 6 Hz = 170 ms).</p>
+
+<div class="mockup">
+  <div class="mockup-header">Phase γ — prédictions descendantes (t = 0 → 25 ms)</div>
+  <div class="mockup-body" style="font-family:monospace;padding:16px;line-height:1.7;white-space:pre">
+t=0 ms
+┌──────────────────┐
+│ WML₁ (MLP, haut) │  codebook₁[17] = "situation objet en mouvement"
+│ core.step()      │
+│ → emit_head_pi   │  code_local = 17
+└────────┬─────────┘
+         │ send(Neuroletter(code=17, Role.π, Phase.γ, src=1, dst=2, t=0))
+         ▼
+    [ Nerve_12 ]  transducer T[1→2] : code 17 → distribution → argmax 41
+         │
+         ▼
+┌──────────────────┐
+│ WML₂ (MLP, mid)  │  codebook₂[41] = "trajectoire prédite"
+│ listen(2) → [41] │
+│ core.step()      │
+│ → emit_head_pi   │  code_local = 23
+└────────┬─────────┘
+         │ send(Neuroletter(code=23, Role.π, Phase.γ, src=2, dst=3, t=8ms))
+         ▼
+    [ Nerve_23 ]  transducer T[2→3] : code 23 → argmax 9
+         │
+         ▼
+┌──────────────────┐
+│ WML₃ (LIF, mid)  │  codebook₃[9] → pattern spike [0,1,1,0,…,1]
+│ _codes_to_current│  injecte courant dans 100 neurones
+│ v_mem integrate  │  4 neurones tirent à t=12 ms
+│ decoder.match    │  pattern → code_local = 5
+└────────┬─────────┘
+         │ send(Neuroletter(code=5, Role.π, Phase.γ, src=3, dst=4, t=18ms))
+         ▼
+    [ Nerve_34 ]  transducer T[3→4] : code 5 → argmax 62
+         │
+         ▼
+┌──────────────────┐
+│ WML₄ (LIF, bas)  │  codebook₄[62] → pattern spike
+│ integrate dyn    │  spikes émergent à t=25 ms
+└──────────────────┘
+  </div>
+</div>
+
+<div class="mockup" style="margin-top:16px">
+  <div class="mockup-header">Phase θ — erreurs montantes (t = 25 ms → 195 ms, seulement si surprise)</div>
+  <div class="mockup-body" style="font-family:monospace;padding:16px;line-height:1.7;white-space:pre">
+À t=30 ms, WML₄ observe l'input réel : objet stationnaire.
+WML₄ compute surprise = ‖actual − predicted_from_WML₃‖ = 0.81
+                              ↑
+                      seuil_eps=0.30 → surprise > seuil, ÉMET ε
+
+┌──────────────────┐
+│ WML₄ (LIF, bas)  │
+│ mismatch_neuron  │  code_local = 8 (« inattendu arrêt »)
+│ emit ε           │
+└────────┬─────────┘
+         │ send(Neuroletter(code=8, Role.ε, Phase.θ, src=4, dst=3, t=30ms))
+         ▼
+    [ Nerve_34 ]  transducer T[4→3]_ε (canal ε distinct du π) → argmax 19
+         │
+         ▼
+┌──────────────────┐
+│ WML₃ (LIF, mid)  │  integrate ε, compute interne : ma prédiction était fausse
+│ mismatch         │  cascade surprise=0.44 (> seuil, continue à remonter)
+│ emit ε_local=31  │
+└────────┬─────────┘
+         │ send(ε, code=31, src=3, dst=2, t=80ms)
+         ▼
+┌──────────────────┐
+│ WML₂ (MLP)       │  reçoit ε=50 (après transducer)
+│ core.step(ε_in)  │  update weights (backward partiel via STE)
+│ emit ε_local=7   │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│ WML₁ (MLP, haut) │  reçoit ε=2, ajuste le modèle de monde
+│ update codebook₁ │  commitment loss push code 17 vers la nouvelle observation
+└──────────────────┘
+
+Au t=195 ms, cycle γ/θ complet : un prediction-error boucle a traversé 4 WMLs,
+dont 2 MLP et 2 LIF, SANS que ces WMLs sachent leur nature mutuelle.
+  </div>
+</div>
+
+<div class="split" style="margin-top:20px">
+  <div class="mockup">
+    <div class="mockup-header">Propriétés à retenir</div>
+    <div class="mockup-body" style="padding:14px">
+      <ul style="margin:0;padding-left:18px">
+        <li>Chaque WML voit <strong>uniquement des codes dans son codebook local</strong> (17, 41, 9, 5, 62 ci-dessus)</li>
+        <li>Les <strong>transducers</strong> font la médiation inter-codebooks (T[1→2], T[2→3], T[3→4], et leurs versions ε)</li>
+        <li>γ et θ ne peuvent pas collisionner — multiplexing fréquentiel garanti par la <code>Phase</code></li>
+        <li>Quand surprise &lt; seuil, <strong>aucun ε n'est émis</strong> → nerf silencieux → sparsité naturelle</li>
+      </ul>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Couplage avec dreamOfkiki</div>
+    <div class="mockup-body" style="padding:14px">
+      <ul style="margin:0;padding-left:18px">
+        <li>L'<strong>accumulation de ε</strong> pendant un épisode = trace de consolidation</li>
+        <li>Pendant un « dream » (offline), on rejoue les traces ε pour <strong>ajuster les transducers</strong> sans toucher les WMLs</li>
+        <li>C'est <strong>exactement</strong> l'op <code>P_equ</code> de kiki_oniric : consolidation qui préserve l'invariant <em>substrate-agnostic</em></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Prochaine section (5) : <strong>training strategy</strong> — comment on entraîne les 3 composants (codebooks VQ · transducers · routing Gumbel · LIF via surrogate grad) ensemble sans que ça s'effondre.</p>

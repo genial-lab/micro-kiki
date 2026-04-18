@@ -48,6 +48,7 @@ class EvalResult:
     predictor_ready: bool
     stream_type: str
     use_centering: bool
+    per_stack_centering: bool
 
 
 def _unit(v: np.ndarray) -> np.ndarray:
@@ -117,6 +118,8 @@ def main() -> int:
     ap.add_argument("--use-centering", action="store_true",
                     help="Enable DinoV3-style centering in LatentMLP")
     ap.add_argument("--centering-momentum", type=float, default=0.9)
+    ap.add_argument("--per-stack-centering", action="store_true",
+                    help="Use per-stack running means (only with --use-centering)")
     ap.add_argument("--stream", type=str, default="random-walk",
                     choices=["random-walk", "stack-structured"],
                     help="Stream generator: random-walk (current) or stack-structured (stack-specific transitions)")
@@ -135,6 +138,7 @@ def main() -> int:
         seed=args.seed,
         use_centering=args.use_centering,
         centering_momentum=args.centering_momentum,
+        per_stack_centering=args.per_stack_centering,
     )
     pred = AeonPredictor(palace=palace, config=cfg)
     palace.attach_predictor(pred)
@@ -222,6 +226,7 @@ def main() -> int:
         predictor_ready=pred.ready,
         stream_type=args.stream,
         use_centering=args.use_centering,
+        per_stack_centering=args.per_stack_centering,
     )
 
     payload = asdict(result)

@@ -1,0 +1,64 @@
+<h2>Quelle topologie pour le réseau de nerfs inter-WMLs ?</h2>
+<p class="subtitle">Signal retenu : <strong>neurolettres discrètes</strong> (alphabet appris ~16-256 codes, comme un vocabulaire de neurotransmetteurs). Question suivante : comment les WMLs sont-ils câblés entre eux ?</p>
+
+<div class="options">
+  <div class="option" data-choice="mesh" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Mesh — Tous-à-tous appris</h3>
+      <p><strong>Analogie :</strong> cortex associatif, n'importe quelle aire peut moduler n'importe quelle autre. Chaque paire (WML<sub>i</sub>, WML<sub>j</sub>) a son propre canal.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.6;">
+          &nbsp;&nbsp;&nbsp;WML<sub>A</sub> ════╤════ WML<sub>B</sub><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║&nbsp;&nbsp;&nbsp;&nbsp;╲&nbsp;&nbsp;&nbsp;&nbsp;║<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╲&nbsp;&nbsp;&nbsp;&nbsp;╲&nbsp;&nbsp;&nbsp;&nbsp;║<br/>
+          &nbsp;&nbsp;&nbsp;WML<sub>C</sub> ════╧════ WML<sub>D</sub><br/>
+          <span class="label">N×(N−1)/2 canaux · chaque canal a son alphabet</span>
+        </div>
+      </div>
+      <p><strong>Coût :</strong> O(N²) paramètres pour les encodeurs/décodeurs. <strong>Atout :</strong> expressivité max, gating appris (attention sur WMLs).</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="sparse" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Graphe sparse appris — Connectome routé</h3>
+      <p><strong>Analogie :</strong> connectome réel du cerveau — ~1 % des paires possibles câblées. Sparsité apprise par pruning ou top-k routing.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.6;">
+          &nbsp;&nbsp;&nbsp;WML<sub>A</sub> ──► WML<sub>B</sub><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br/>
+          &nbsp;&nbsp;&nbsp;WML<sub>C</sub> ───► WML<sub>E</sub> ───► WML<sub>F</sub><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▲<br/>
+          &nbsp;&nbsp;&nbsp;WML<sub>D</sub> ────────────╯<br/>
+          <span class="label">K canaux par WML · K≪N · topologie découverte au training</span>
+        </div>
+      </div>
+      <p><strong>Coût :</strong> O(K·N) paramètres. <strong>Atout :</strong> passe à l'échelle, spécialisation naturelle, mais routing discret est dur à entraîner (Gumbel, STE).</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="hub" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hub central — Moelle épinière / thalamus</h3>
+      <p><strong>Analogie :</strong> thalamus — chaque WML publie ses neurolettres sur un bus central, chaque WML écoute ce qui le concerne via gating.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.6;">
+          &nbsp;&nbsp;&nbsp;WML<sub>A</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WML<sub>B</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WML<sub>C</sub><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;╲&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╱<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╲&nbsp;&nbsp;&nbsp;&nbsp;║&nbsp;&nbsp;&nbsp;&nbsp;╱<br/>
+          &nbsp;&nbsp;&nbsp;━━━━[ HUB · bus neurolettres ]━━━━<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╱&nbsp;&nbsp;&nbsp;&nbsp;║&nbsp;&nbsp;&nbsp;&nbsp;╲<br/>
+          &nbsp;&nbsp;&nbsp;WML<sub>D</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WML<sub>E</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WML<sub>F</sub><br/>
+          <span class="label">1 encodeur + 1 décodeur par WML · alphabet partagé</span>
+        </div>
+      </div>
+      <p><strong>Coût :</strong> O(N) paramètres. <strong>Atout :</strong> alphabet universel, ajout de WML trivial. <strong>Risque :</strong> hub = point de saturation, perte d'info inter-paire.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Dimension orthogonale à préciser après : <strong>directionnalité</strong> (nerfs unidirectionnels/afférents-efférents vs bidirectionnels avec feedback) — on y reviendra juste après.</p>

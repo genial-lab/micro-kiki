@@ -1,0 +1,52 @@
+<h2>Quel signal circule sur le nerf entre WMLs ?</h2>
+<p class="subtitle">Ta formule : <em>data → nerf → WML</em>. Un WML = un ensemble de neurones. Mais le « data » porté par le nerf peut prendre trois formes très différentes — chacune mène à une architecture radicalement distincte.</p>
+
+<div class="options">
+  <div class="option" data-choice="spikes" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Spikes — Potentiels d'action discrets</h3>
+      <p><strong>Analogie biologique :</strong> axone qui tire ou ne tire pas. Codage par le <em>timing</em> et la <em>fréquence</em>, pas l'amplitude.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:12px;">
+          WML<sub>A</sub> ══╪═╪══╪═══╪═╪══► WML<sub>B</sub><br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t₀&nbsp;&nbsp;&nbsp;t₁&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t₂&nbsp;&nbsp;&nbsp;t₃<br/>
+          <span class="label">Binaire · timing-encodé · sparse</span>
+        </div>
+      </div>
+      <p><strong>Implication :</strong> SNN/LIF, LAS-converti, bande passante ultra-basse, énergie minimale. Latence dominée par le taux de tir.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="latent" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Vecteurs latents — Hidden states continus</h3>
+      <p><strong>Analogie biologique :</strong> potentiel gradué (rétine, cellules amacrines) — amplitude continue, pas de seuil tout-ou-rien.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:12px;">
+          WML<sub>A</sub> ══ [ 0.42, −0.18, 0.07, …, 0.91 ] ══► WML<sub>B</sub><br/>
+          <span class="label">Dim fixe (ex. 128) · dense · différentiable</span>
+        </div>
+      </div>
+      <p><strong>Implication :</strong> comme le <code>KikiFlowBridge</code> (kiki-flow-research) ou Aeon Latent Predictor. Bande passante élevée, gradient-friendly, facile à entraîner.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="codes" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Tokens abstraits — Alphabet appris non-linguistique</h3>
+      <p><strong>Analogie biologique :</strong> neurotransmetteurs — un petit vocabulaire discret (GABA, glutamate, dopamine, sérotonine…) qui module le récepteur post-synaptique.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:12px;">
+          WML<sub>A</sub> ══ [ γ₇ · α₂ · ε₃ · … · β₁₁ ] ══► WML<sub>B</sub><br/>
+          <span class="label">Vocabulaire de ~16-256 « neurolettres » · discret · compositionnel</span>
+        </div>
+      </div>
+      <p><strong>Implication :</strong> VQ-VAE / discrete bottleneck entre WMLs. Compositionnel, inspectable, mais non-différentiable (besoin STE/Gumbel).</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:24px;">Tu peux aussi répondre <strong>autre chose</strong> dans le terminal — par exemple un hybride (spikes + amplitude variable, ou latents + quantisation légère).</p>

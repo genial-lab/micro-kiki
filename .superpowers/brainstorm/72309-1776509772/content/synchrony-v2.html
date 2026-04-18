@@ -1,0 +1,55 @@
+<h2>Régime temporel — Cadre prédictif bidirectionnel</h2>
+<p class="subtitle"><strong>Recadrage :</strong> B + C fusionnés → nerf <em>physiquement</em> bidirectionnel (un canal, alphabet partagé) mais <em>sémantiquement</em> asymétrique : descendant = <code>π</code> prédictions, montant = <code>ε</code> erreurs. Les rôles viennent du flag porté par chaque neurolettre, pas du câble. Dans ce cadre, la question du temps devient :</p>
+
+<div class="options">
+  <div class="option" data-choice="sweep" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Double sweep feedforward + backward</h3>
+      <p><strong>Analogie :</strong> vague descendante de prédictions, puis vague montante d'erreurs, répétées. Comme les 2 passes d'un réseau profond mais avec un alphabet discret.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          sweep↓&nbsp;:&nbsp;WML<sub>haut</sub>━[π₁]━►WML<sub>mid</sub>━[π₄]━►WML<sub>bas</sub><br/>
+          sweep↑&nbsp;:&nbsp;WML<sub>bas</sub>━[ε₂]━►WML<sub>mid</sub>━[ε₇]━►WML<sub>haut</sub><br/>
+          (puis nouveau cycle · parfois 3-4 cycles avant convergence)<br/>
+          <span class="label">Déterministe · BP facile · mais latence = 2×profondeur</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> direct à entraîner, trace d'inférence claire. <strong>Limite :</strong> peu biologique, redondant.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="event" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Prédictions continues + erreurs event-driven</h3>
+      <p><strong>Analogie :</strong> voie descendante = prédictions en fond permanent (steady-state) ; voie montante = erreurs qui ne tirent <em>que</em> si mismatch dépasse un seuil. Sparsité naturelle : pas d'erreur = pas de trafic montant.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          descente&nbsp;:&nbsp;[π₁][π₁][π₁][π₁][π₁][π₁][π₁][π₁]&nbsp;(continu)<br/>
+          montée&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;[ε₂]&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;[ε₇]&nbsp;&nbsp;·&nbsp;(bursty)<br/>
+          <span class="label">Sparse · biologique · énergie minimale</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> le plus proche de Friston active inference. Erreurs = surprise, déclenchent apprentissage. <strong>Limite :</strong> seuil d'erreur non-différentiable (STE/Gumbel nécessaire sur le gating).</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="rhythms" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Rythmes γ ↓ / θ ↑ — Bastos-Friston 2012</h3>
+      <p><strong>Analogie :</strong> la littérature neurosciences montre que les prédictions descendent en γ (30-100 Hz, fréquence porteuse rapide) et les erreurs remontent en θ / α (4-12 Hz, lent). Le multiplexing se fait par fréquence.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          phase γ (rapide)&nbsp;:&nbsp;π₁ π₄ π₂ π₉ π₃ π₇ π₁ π₄ π₂ π₉&nbsp;↓<br/>
+          phase θ (lent)&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ε₇&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ε₂&nbsp;↑<br/>
+          <span class="label">Multiplexing fréquentiel · déterministe par phase · signature biologique exacte</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> le plus fidèle à la biologie corticale réelle, différentiable (oscillateurs continus), très élégant pour paper. <strong>Limite :</strong> machinerie d'oscillateurs à maintenir, résolution temporelle > Transformer classique.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Après ce choix : <strong>granularité WML</strong> (bloc Transformer · stack LoRA · petit MLP · neurones bruts) puis <strong>taille d'alphabet</strong> (16 · 64 · 256 · appris).</p>

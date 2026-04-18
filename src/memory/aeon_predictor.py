@@ -42,6 +42,7 @@ class PredictorConfig:
     seed: int = 0
     use_centering: bool = False
     centering_momentum: float = 0.9
+    per_stack_centering: bool = False  # if True, maintain n_stacks+1 running means
 
 
 def detect_collapse(
@@ -82,6 +83,7 @@ class LatentMLP:
         seed: int = 0,
         use_centering: bool = False,
         centering_momentum: float = 0.9,
+        per_stack_centering: bool = False,
     ) -> None:
         self.dim = dim
         self.hidden = hidden
@@ -102,8 +104,14 @@ class LatentMLP:
         self.use_centering = bool(use_centering)
         self.centering_momentum = float(centering_momentum)
         self._running_mean = np.zeros(dim, dtype=np.float32)
+        # When per_stack_centering, maintain one running mean per stack + a shared fallback at index 0.
+        # Index layout: running_means[0] = shared fallback (for stack_id=-1 or unknown),
+        #               running_means[i+1] = per-stack mean for stack_id=i (i in 0..n_stacks-1)
+        self.per_stack_centering = bool(per_stack_centering)
+        if self.per_stack_centering:
+            self._running_means_per_stack = np.zeros((n_stacks + 1, dim), dtype=np.float32)
 
-    def forward(self, x: np.ndarray, stack_onehot: np.ndarray) -> np.ndarray:
+    def forward(self, x: np.ndarray, stack_onehot: np.ndarray, stack_ids: np.ndarray | None = None) -> np.ndarray:
         if x.ndim != 2 or x.shape[1] != self.dim:
             raise ValueError(f"x must be (batch, {self.dim}), got {x.shape}")
         if stack_onehot.shape != (x.shape[0], self.n_stacks):
@@ -119,12 +127,25 @@ class LatentMLP:
         out = (x + delta).astype(np.float32)
         # DinoV3-style centering (anti-collapse by distribution shift).
         if self.use_centering:
-            batch_mean = out.mean(axis=0)
-            self._running_mean = (
-                self.centering_momentum * self._running_mean
-                + (1.0 - self.centering_momentum) * batch_mean
-            ).astype(np.float32)
-            out = (out - self._running_mean).astype(np.float32)
+            if self.per_stack_centering and stack_ids is not None:
+                # Per-stack centering: maintain separate running means for each stack
+                for sid in np.unique(stack_ids):
+                    slot = int(sid) + 1  # -1 -> 0, 0 -> 1, ..., n-1 -> n
+                    mask_idx = (stack_ids == sid)
+                    group_mean = out[mask_idx].mean(axis=0)
+                    self._running_means_per_stack[slot] = (
+                        self.centering_momentum * self._running_means_per_stack[slot]
+                        + (1.0 - self.centering_momentum) * group_mean
+                    ).astype(np.float32)
+                    out[mask_idx] = (out[mask_idx] - self._running_means_per_stack[slot]).astype(np.float32)
+            else:
+                # Shared centering (existing behavior)
+                batch_mean = out.mean(axis=0)
+                self._running_mean = (
+                    self.centering_momentum * self._running_mean
+                    + (1.0 - self.centering_momentum) * batch_mean
+                ).astype(np.float32)
+                out = (out - self._running_mean).astype(np.float32)
         # Cache for backward.
         self._cache = {"inp": inp, "z1": z1, "h1": h1, "z2": z2, "h2": h2, "x": x}
         return out
@@ -216,6 +237,7 @@ class AeonPredictor:
             seed=config.seed,
             use_centering=config.use_centering,
             centering_momentum=config.centering_momentum,
+            per_stack_centering=config.per_stack_centering,
         )
         self._buffer: list[_PairSample] = []
         self._trained_once = False
@@ -315,7 +337,8 @@ class AeonPredictor:
                 x = np.stack([t[0] for t in batch]).astype(np.float32)
                 tgt = np.stack([t[1] for t in batch]).astype(np.float32)
                 stack = self._stack_onehot([t[2] for t in batch])
-                self.mlp.forward(x, stack)
+                stack_ids = np.array([t[2] for t in batch], dtype=np.int64)
+                self.mlp.forward(x, stack, stack_ids=stack_ids)
                 loss = self.mlp.backward_cosine(tgt, lr=lr)
                 losses.append(loss)
             history.append(float(np.mean(losses)))
@@ -345,9 +368,10 @@ class AeonPredictor:
             return h_t.astype(np.float32).copy()
         x = h_t.reshape(1, -1).astype(np.float32)
         stack = self._stack_onehot([-1 if stack_id is None else int(stack_id)])
+        stack_ids = np.array([-1 if stack_id is None else int(stack_id)], dtype=np.int64)
         current = x
         for _ in range(horizon):
-            current = self.mlp.forward(current, stack)
+            current = self.mlp.forward(current, stack, stack_ids=stack_ids)
         return current[0].astype(np.float32)
 
     # ---------------------------------------------------------- recall

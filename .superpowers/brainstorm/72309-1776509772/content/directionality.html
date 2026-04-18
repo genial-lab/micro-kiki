@@ -1,0 +1,53 @@
+<h2>Quelle directionnalité sur les nerfs ?</h2>
+<p class="subtitle">Signal = neurolettres · Topologie = graphe sparse appris. La nature biologique d'un nerf permet plusieurs régimes selon qu'on s'inspire d'un axone moteur simple, d'une boucle cortico-thalamique, ou du codage prédictif de Friston/Rao-Ballard (directement pertinent vu ton dreamOfkiki avec l'op <code>restructure</code> C-Hobson).</p>
+
+<div class="options">
+  <div class="option" data-choice="unidir" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Unidirectionnel — Pipeline afférent / efférent</h3>
+      <p><strong>Analogie :</strong> nerf moteur ou sensoriel — un sens unique. Si deux WMLs doivent se « parler dans les deux sens », il y a <em>deux nerfs séparés</em>.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          WML<sub>A</sub> ──[α₂ γ₇ …]──► WML<sub>B</sub><br/>
+          WML<sub>B</sub> ──[δ₃ ε₁ …]──► WML<sub>A</sub>&nbsp;&nbsp;(nerf distinct, alphabet distinct)<br/>
+          <span class="label">DAG possible · loops = nerfs récurrents explicites</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> simple à entraîner, séquences claires, BP facile. <strong>Limite :</strong> doublement des canaux, pas de « conversation » native.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="bidir-sym" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Bidirectionnel symétrique — Alphabet partagé</h3>
+      <p><strong>Analogie :</strong> synapses gap-junction ou boucle cortico-thalamique à vocabulaire unique. Même alphabet dans les deux sens ; le <em>contexte</em> (phase, layer) désambiguïse.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          WML<sub>A</sub> ◄══[α₂ γ₇ · δ₃ ε₁ · …]══► WML<sub>B</sub><br/>
+          <span class="label">1 nerf · 1 alphabet · 2 sens · codage temporel/de phase</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> moitié de paramètres, symétrie élégante. <strong>Limite :</strong> confusion possible (qui parle ?), besoin de clocking/phasing strict.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="predictive" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Asymétrique — Codage prédictif (Friston / Rao-Ballard)</h3>
+      <p><strong>Analogie :</strong> la voie descendante porte des <em>prédictions</em>, la voie montante porte des <em>erreurs résiduelles</em>. Deux alphabets distincts, deux rôles computationnels distincts.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          WML<sub>haut</sub> ──[ prédictions : π₁ π₄ … ]──► WML<sub>bas</sub><br/>
+          WML<sub>bas</sub>&nbsp;&nbsp;──[ erreurs : ε₂ ε₇ … ]──► WML<sub>haut</sub><br/>
+          <span class="label">2 alphabets sémantiquement distincts · active inference friendly</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> pont naturel avec dreamOfkiki (DR-axioms, profiles P_min/P_equ/P_max), interprétabilité sémantique forte. <strong>Limite :</strong> plus de machinerie (2 encodeurs/décodeurs), exige une hiérarchie.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Dimension orthogonale que je te poserai après : <strong>synchronisme</strong> (tous les WMLs tirent en même temps · event-driven asynchrone · clocké par phase).</p>

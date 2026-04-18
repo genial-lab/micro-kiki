@@ -1,0 +1,66 @@
+<h2>Architecture — 2 tracks parallèles + merge</h2>
+<p class="subtitle">B + C fusionnés : <strong>Track-P (Protocol sim)</strong> valide le nerf en isolation (aucune WML dedans) · <strong>Track-W (WML lab)</strong> valide les 4 WMLs (2 MLP + 2 LIF) contre un nerf mocké · merge quand les deux tracks passent leurs gates.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Vue d'ensemble (lis de gauche à droite, temps)</div>
+  <div class="mockup-body" style="font-family:monospace;padding:16px;line-height:1.75;white-space:pre">
+┌─────────────────────────────────────────────────────────────┐
+│                    Track-P · Protocol Sim                   │
+│ ┌──────────┐   ┌─────────┐   ┌──────────┐   ┌────────────┐  │
+│ │ γ/θ osc  │──►│ VQ-64   │──►│ π/ε tag  │──►│ Sparse     │  │
+│ │ (cont.)  │   │ codec   │   │ heads    │   │ router K-k │  │
+│ └──────────┘   └─────────┘   └──────────┘   └────────────┘  │
+│ Input : mock signals (sinusoïdes, impulses, noise)          │
+│ Output : info-theoretic benchmarks (capacity, sparsity,     │
+│          disambiguation, collision rate)                    │
+│ GATE P : capacity ≥ target, dead codes < 10%                │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              │   (mock nerf API = shared contract)
+                              │
+┌─────────────────────────────────────────────────────────────┐
+│                      Track-W · WML Lab                      │
+│ ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   │
+│ │ WML₁ MLP │   │ WML₂ MLP │   │ WML₃ LIF │   │ WML₄ LIF │   │
+│ │ 4×256    │   │ 4×256    │   │ 100 neur │   │ 100 neur │   │
+│ └──────────┘   └──────────┘   └──────────┘   └──────────┘   │
+│      │              │              │              │         │
+│      └──── nerf mock contract (stable API) ───────┘         │
+│ Input : toy task (2-task continual learning,                │
+│         à la Split-MNIST ou échantillons flow states)       │
+│ Output : polymorphie validée (MLP WML ≡ LIF WML vis-à-vis   │
+│          du nerf mock) · perf par-domaine                   │
+│ GATE W : les 4 WMLs résolvent la tâche avec gap MLP/LIF     │
+│          < 5 % après training                               │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  MERGE — Nerve × WML E2E                    │
+│     Track-P protocole réel remplace le mock de Track-W      │
+│     GATE M : tâche résolue au moins aussi bien qu'avec mock │
+│     Output : 1 figure E2E + 1 paper draft                   │
+└─────────────────────────────────────────────────────────────┘
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top:20px">
+  <div class="pros">
+    <h4>Atouts du parallélisme</h4>
+    <ul>
+      <li>Les risques sont découplés — si Track-P casse, Track-W continue sur le mock</li>
+      <li>Chaque track a son propre « paper moment » si l'autre traîne</li>
+      <li>L'<strong>interface nerve (API de contrat)</strong> devient l'artifact le plus stable — exactement le contribution à défendre</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>Coût du parallélisme</h4>
+    <ul>
+      <li>Besoin de définir le contrat <code>Nerve</code> en tout début (sinon les 2 tracks divergent)</li>
+      <li>Merge gate M peut révéler des mismatch cachés (sim plus sale que mock)</li>
+      <li>2 tracks = 2 suites de tests à maintenir</li>
+    </ul>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Prochaine section : <strong>le contrat d'interface <code>Nerve</code></strong> — c'est ce qui unit les 2 tracks. Je le détaille en terminal (texte dense).</p>

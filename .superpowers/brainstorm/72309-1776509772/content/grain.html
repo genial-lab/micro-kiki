@@ -1,0 +1,60 @@
+<h2>Qu'est-ce qu'un WML, concrètement ?</h2>
+<p class="subtitle">Tu as dit « WML = un ensemble de neurones ». Trois granularités possibles, chacune menant à un projet d'ampleur très différente — du plug-in dans micro-kiki à un nouveau moteur neuro-symbolique standalone.</p>
+
+<div class="options">
+  <div class="option" data-choice="lora" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Stack LoRA — Adapter domain-expert</h3>
+      <p><strong>Taille :</strong> ~10-100 M params (rank 8-32 sur Qwen 3.5-35B). <strong>Où ça vit :</strong> directement dans <code>micro-kiki/src/stacks/</code>, un WML = une spécialisation.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          WML<sub>kicad</sub> ═══γ π═══► WML<sub>spice</sub><br/>
+          WML<sub>kicad</sub> ◄══θ ε═══ WML<sub>spice</sub><br/>
+          (chaque WML = 1 LoRA adapter sur Qwen3.5-35B-A3B partagé)<br/>
+          <span class="label">35 WMLs potentiels · infrastructure existante · impact production</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> branche immédiatement sur ton runtime. <strong>Atout 2 :</strong> les neurolettres π/ε sont apprises <em>par-dessus</em> des experts déjà compétents. <strong>Limite :</strong> les WMLs partagent le backbone 35B — la diversité des « neurones » est simulée, pas physique.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="mlp" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Micro-MLP dédié — Module indépendant</h3>
+      <p><strong>Taille :</strong> ~100 k à 10 M params chacun. <strong>Où ça vit :</strong> nouveau moteur (nouveau repo ou sous-projet dreamOfkiki/kiki-flow-research), pas sur un LLM.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          ┌─WML<sub>A</sub>─┐&nbsp;&nbsp;&nbsp;&nbsp;┌─WML<sub>B</sub>─┐<br/>
+          │MLP 4×256│━━► nerf ━━►│MLP 4×256│<br/>
+          │embed    │◄━━ nerf ━━━│embed    │<br/>
+          └─────────┘&nbsp;&nbsp;&nbsp;&nbsp;└─────────┘<br/>
+          <span class="label">PoC propre · pas de LLM · entraînable sur GrosMac</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> clean slate — pas de dépendance Qwen/LoRA. <strong>Atout 2 :</strong> permet d'étudier le protocole de nerf en isolation (paper-friendly). <strong>Limite :</strong> pas de branchement direct avec la production LLM ; ambition d'une plateforme séparée.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="neurons" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Groupe de neurones — Population LIF/SNN</h3>
+      <p><strong>Taille :</strong> ~50-500 neurones biologiquement plausibles (LIF, Izhikevich), chacun avec son état membraire. <strong>Où ça vit :</strong> nouveau moteur neuromorphique, inspiré de Nengo / Brian2 / ta branche SpikingKiki v0.3.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          ┌──WML<sub>A</sub>──┐&nbsp;&nbsp;&nbsp;&nbsp;┌──WML<sub>B</sub>──┐<br/>
+          │ 100 LIF   │──axone γ──►│ 100 LIF   │<br/>
+          │ neurons   │◄──axone θ──│ neurons   │<br/>
+          │ Vm dyn    │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│ Vm dyn    │<br/>
+          └───────────┘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└───────────┘<br/>
+          <span class="label">Pure neuro · énergie mesurée en spikes/s · paper neurosciences</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> le plus fidèle à « ensemble de neurones ». <strong>Atout 2 :</strong> mesurable énergétiquement, déployable sur hardware neuromorphique (Loihi, Akida). <strong>Limite :</strong> non-différentiable (surrogate grad ou STDP), entraînement plus lent, intégration LLM lointaine.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Dernière question après : <strong>taille de l'alphabet</strong> de neurolettres (16 · 64 · 256 · appris). Puis je propose 2-3 approches architecturales complètes avant de rédiger le design.</p>

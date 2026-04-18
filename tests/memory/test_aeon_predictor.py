@@ -341,3 +341,40 @@ class TestCentering:
         assert len(history) == 20
         # Loss should not be NaN or exploded.
         assert all(not np.isnan(h) and h < 5.0 for h in history)
+
+
+class TestPerStackCentering:
+    def test_per_stack_centering_disabled_by_default(self):
+        mlp = LatentMLP(dim=16, hidden=8, n_stacks=2, seed=0,
+                       use_centering=True, per_stack_centering=False)
+        assert mlp.per_stack_centering is False
+
+    def test_per_stack_centering_maintains_separate_means(self):
+        mlp = LatentMLP(dim=8, hidden=8, n_stacks=2, seed=0,
+                       use_centering=True, per_stack_centering=True, centering_momentum=0.5)
+        # First stack (sid=0)
+        x0 = np.ones((3, 8), dtype=np.float32) * 0.5
+        stack0 = np.zeros((3, 2), dtype=np.float32); stack0[:, 0] = 1.0
+        sids0 = np.array([0, 0, 0], dtype=np.int64)
+        _ = mlp.forward(x0, stack0, stack_ids=sids0)
+        mean_stack0 = mlp._running_means_per_stack[1].copy()
+
+        # Second stack (sid=1), very different input
+        x1 = np.ones((3, 8), dtype=np.float32) * 5.0
+        stack1 = np.zeros((3, 2), dtype=np.float32); stack1[:, 1] = 1.0
+        sids1 = np.array([1, 1, 1], dtype=np.int64)
+        _ = mlp.forward(x1, stack1, stack_ids=sids1)
+        mean_stack1 = mlp._running_means_per_stack[2].copy()
+
+        # The two per-stack running means must differ
+        assert not np.allclose(mean_stack0, mean_stack1)
+
+    def test_predictor_config_has_per_stack_flag(self):
+        cfg = PredictorConfig(dim=16, use_centering=True, per_stack_centering=True)
+        assert cfg.per_stack_centering is True
+
+    def test_per_stack_centering_propagates_via_config(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, use_centering=True, per_stack_centering=True)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        assert pred.mlp.per_stack_centering is True

@@ -1,0 +1,54 @@
+<h2>Quelle taille d'alphabet pour les neurolettres ?</h2>
+<p class="subtitle">Rappel du design en cours : nerf bidirectionnel · π↓/ε↑ sémantique · rythmes γ/θ · pool hétérogène MLP+LIF. Le choix de <em>combien de symboles</em> dans l'alphabet partagé entre WMLs fixe l'expressivité, la difficulté d'entraînement, et l'interprétabilité.</p>
+
+<div class="options">
+  <div class="option" data-choice="dna" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>16 codes — « ADN-like », minimaliste</h3>
+      <p><strong>Information :</strong> 4 bits par neurolettre. Comme les nucléotides (A,T,G,C) mais × 4. Signification émerge par <em>séquence longue</em>, pas par symbole unique.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          Alphabet = { α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π }&nbsp;&nbsp;|Σ|=16<br/>
+          Message typique = [γ α π ε ε ξ λ μ … ]&nbsp;&nbsp;&nbsp;&nbsp;(20-200 lettres)<br/>
+          <span class="label">Très compressé · VQ facile à entraîner · compositionnel fort</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> alphabet facile à stabiliser (peu de collapse modes), chaque code largement utilisé. <strong>Limite :</strong> bande passante faible — besoin de nerfs qui tirent beaucoup pour dire quelque chose.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="codon" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>64 codes — « codon-like », compromis</h3>
+      <p><strong>Information :</strong> 6 bits par neurolettre. 64 = 4³ (analogie directe codons ARN). Point d'équilibre entre expressivité et stabilité.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          Alphabet = { 64 codes, ~6-8 « familles » apprises }<br/>
+          Message typique = [ π₁₇ π₄₁ ε₂₃ π₅ … ]&nbsp;&nbsp;&nbsp;&nbsp;(8-50 lettres)<br/>
+          <span class="label">Assez pour encoder 1 « concept » par lettre · ~64 clusters</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> bonne lisibilité (64 = ~7 phonèmes-like). Entraînement stable avec commitment loss VQ-VAE. <strong>Limite :</strong> peut saturer si un WML a + que 64 concepts à exprimer.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="byte" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>256 codes — « byte-like », expressif</h3>
+      <p><strong>Information :</strong> 8 bits par neurolettre. Un octet. Riche pour capturer nuance dans une seule lettre, mais risque de collapse/dead codes si pas entraîné soigneusement.</p>
+      <div class="mockup">
+        <div class="mockup-body" style="font-family:monospace;padding:14px;line-height:1.7;">
+          Alphabet = { 256 codes · fréquences très déséquilibrées }<br/>
+          Message typique = [ π₁₂₇ ε₄₁ π₁₉₉ … ]&nbsp;&nbsp;&nbsp;&nbsp;(4-20 lettres)<br/>
+          <span class="label">1 concept riche par lettre · collapse risque</span>
+        </div>
+      </div>
+      <p><strong>Atout :</strong> bande passante max. Bien pour WMLs qui gèrent beaucoup de contextes. <strong>Limite :</strong> dead codes classiques en VQ-VAE, exige EMA codebook update ou rotation tricks.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Après ça, je te propose 2-3 approches architecturales complètes (PoC minimal · MLP-only baseline · hybride MLP+LIF) avec leurs tradeoffs et ma recommandation.</p>
