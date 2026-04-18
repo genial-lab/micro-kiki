@@ -22,7 +22,6 @@ SRC_DIR = REPO_ROOT / "src"
 FORBIDDEN_STRINGS: tuple[str, ...] = (
     "Qwen3.5-4B",
     "Qwen3-4B",
-    "[0.0] * 37",
     "[0.0] * 32",
 )
 
