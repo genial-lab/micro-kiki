@@ -105,6 +105,20 @@ class AtlasIndex:
     def total_vectors(self) -> int:
         return sum(p.count for p in self._pages)
 
+    def remove(self, vector_id: str) -> bool:
+        """Remove a vector by ID. Returns True if found and removed."""
+        page_idx = self._id_to_page.pop(vector_id, None)
+        if page_idx is None:
+            return False
+        page = self._pages[page_idx]
+        try:
+            idx = page.ids.index(vector_id)
+            page.ids.pop(idx)
+            page.count -= 1
+            return True
+        except ValueError:
+            return False
+
 
 def time_search(index: AtlasIndex, query, k: int, repeats: int = 3) -> float:
     """Return mean wall-clock ms for ``repeats`` searches."""

@@ -103,6 +103,10 @@ class SleepReport:
     kept: int
     clusters_built: int
     compression_ratio: float
+    # Predictor hook (step 5) — optional, all zeros when no predictor.
+    predictor_epochs: int = 0
+    predictor_loss: float | None = None
+    predictor_collapsed: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -159,7 +163,16 @@ class AeonSleep:
         self._episode_meta: dict[str, dict[str, Any]] = {}
         self._summary_counter = itertools.count()
 
+        # Optional latent predictor attached via attach_predictor().
+        self._predictor = None
+
     # ------------------------------------------------------------ write api
+
+    def attach_predictor(self, predictor) -> None:
+        """Register a predictor to be trained during sleep_cycle step 5."""
+        self._predictor = predictor
+
+    # ----
 
     def write(self, episode: Episode) -> Tag:
         """Persist ``episode`` and return its conflict tag.
@@ -294,12 +307,53 @@ class AeonSleep:
 
         stats = self.consolidator.last_stats()
         compression = stats.compression_ratio if stats else 0.0
+
+        # Step 5: train attached latent predictor on current buffer.
+        predictor_epochs = 0
+        predictor_loss: float | None = None
+        predictor_collapsed = False
+        if self._predictor is not None:
+            triples = self._predictor.pairs_for_training()
+            if triples:
+                # Snapshot weights for rollback on collapse.
+                snap = {
+                    "w1": self._predictor.mlp.w1.copy(),
+                    "b1": self._predictor.mlp.b1.copy(),
+                    "w2": self._predictor.mlp.w2.copy(),
+                    "b2": self._predictor.mlp.b2.copy(),
+                    "w3": self._predictor.mlp.w3.copy(),
+                    "b3": self._predictor.mlp.b3.copy(),
+                }
+                from src.memory.aeon_predictor import detect_collapse
+
+                history = self._predictor.fit_on_buffer(
+                    lr=1e-3, epochs=1, batch_size=32
+                )
+                predictor_epochs = len(history)
+                predictor_loss = history[-1] if history else None
+
+                # Collapse check on the same buffer.
+                xs = np.stack([t[0] for t in triples]).astype(np.float32)
+                tgt = np.stack([t[1] for t in triples]).astype(np.float32)
+                sids = [t[2] for t in triples]
+                stack = self._predictor._stack_onehot(sids)
+                h_hat = self._predictor.mlp.forward(xs, stack)
+                flagged, _ratio = detect_collapse(tgt, h_hat)
+                if flagged:
+                    predictor_collapsed = True
+                    # Roll back weights.
+                    for k, v in snap.items():
+                        setattr(self._predictor.mlp, k, v)
+
         return SleepReport(
             tags_assigned=tags_assigned,
             evicted=evicted,
             kept=len(raw_ids) - evicted,
             clusters_built=len(clusters),
             compression_ratio=compression,
+            predictor_epochs=predictor_epochs,
+            predictor_loss=predictor_loss,
+            predictor_collapsed=predictor_collapsed,
         )
 
     # ------------------------------------------------------------ time api
