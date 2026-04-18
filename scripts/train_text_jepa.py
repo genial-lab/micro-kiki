@@ -9,11 +9,16 @@ from __future__ import annotations
 
 import argparse
 import logging
+import sys
 from pathlib import Path
 
 import numpy as np
 import torch
 import yaml
+
+_PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 
 from src.routing.text_jepa.dataset import DomainSample, load_domain_corpus
 from src.routing.text_jepa.trainer import TextJEPATrainer
