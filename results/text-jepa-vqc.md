@@ -7,7 +7,7 @@
 **Teacher:** EMA momentum 0.99  
 **Predictor:** MLP 128 → 32 → 128  
 **Loss:** L1 on span-masked positions (ratio 0.4, span 3-5 tokens)  
-**VQC:** 4 qubits, 6 StronglyEntanglingLayers, parameter-shift gradient, 2-3 training epochs  
+**VQC:** 6 qubits, 6 StronglyEntanglingLayers, parameter-shift gradient, 2-3 training epochs  
 
 ## Results
 
@@ -62,3 +62,32 @@ VQC training via parameter-shift gradients is inherently slow (>3 min per epoch 
 2. **Mask ratio sweep:** 0.2, 0.4, 0.6 to study robustness to varying context loss
 3. **Latent dimension scaling:** 64, 128, 256 to map accuracy vs compression trade-off curve
 4. **Backbone swap:** Test with other sentence transformers (all-MiniLM-L12-v2, jina-small-en)
+
+## Ablation — latent dim (Task 15, 2026-04-19)
+
+Budget-constrained sweep (see caveat below):
+
+| latent_dim | Student params | VQC accuracy | Compression | Collapsed |
+|------------|----------------|--------------|-------------|-----------|
+| 64         | 115,520        | 0.180        | 6×          | no        |
+| 128        | 131,968        | 0.185        | 3×          | no        |
+| 256        | 164,864        | 0.190        | 1.5×        | no        |
+| baseline 384 | n/a          | 0.095        | 1×          | n/a       |
+
+**Caveat**: this ablation was run with `--vqc-epochs 2` (budget-constrained), where baseline was at chance-level. At full VQC budget (Task 14, `--vqc-epochs 10`), baseline reached 0.925 and dim=128 reached 0.900.
+
+**Interpretation**: All Text-JEPA dims converge 2× above chance at a budget where the baseline stays at chance. This suggests Text-JEPA embeddings are more VQC-learnable, but **absolute accuracy at dim=64 vs dim=128 at full VQC budget is still open**. Task 15.5 (dim=64 full-budget validation) is running to close this question.
+
+## Final verdict (Task 16, 2026-04-19)
+
+- [X] **Success** (Task 14 at full VQC budget): 3× compression at 97% retention (0.900 vs 0.925)
+- [ ] **Further validation pending** (Task 15.5): dim=64 full-budget test to confirm 6× compression claim
+- [X] **Regression suite**: 40 tests passed, 8 skipped (torch-dependent) — no breakage from Tasks 1-15
+
+### Companion papers
+- `docs/papers/paper-a-draft-v1.md` — Paper A workshop draft (v1, 6205 words)
+- `docs/papers/paper-a-reframe-aeon-ami.md` — reframe plan (2357 words)
+- `docs/papers/stack-conditioning-case-study.md` — companion paper (3387 words)
+- `docs/research/vqc-class-count-reconciliation.md` — VQC 6q/35-class reconciliation
+- `docs/research/vqc-cem-acceleration-vjepa2.md` — VQC-CEM research note (verdict: no near-term)
+- `docs/research/vqc-conditioned-aeon-predictor.md` — D direction design doc
