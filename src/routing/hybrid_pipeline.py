@@ -50,12 +50,18 @@ class HybridPipelineConfig:
         quantum_confidence_threshold: If quantum confidence is below this value
             the classical ModelRouter is also run as a backup and its result
             takes precedence.
+        use_text_jepa: If True, VQC input embedding comes from the Text-JEPA
+            student. Default False (baseline MiniLM direct embedding).
+        text_jepa_checkpoint: Path to the student checkpoint saved by
+            scripts/train_text_jepa.py. Required when use_text_jepa=True.
     """
 
     use_quantum: bool = True
     use_memory: bool = True
     use_negotiator: bool = False
     quantum_confidence_threshold: float = 0.7
+    use_text_jepa: bool = False
+    text_jepa_checkpoint: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -402,4 +408,65 @@ def create_hybrid_pipeline(
         model_router=model_router,
         aeon_hook=aeon_hook,
         negotiator=negotiator,
+    )
+
+
+def build_text_jepa_embedder(checkpoint_path: str | Path):
+    """Load a Text-JEPA student checkpoint and return a TextJEPAEmbedder.
+
+    Args:
+        checkpoint_path: Path produced by scripts/train_text_jepa.py.
+
+    Returns:
+        TextJEPAEmbedder ready for `.embed(text)`.
+    """
+    import numpy as np
+    import torch
+
+    from src.routing.text_jepa.embed import TextJEPAEmbedder
+    from src.routing.text_jepa.encoder import StudentEncoder
+
+    ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    cfg = ckpt["config"]
+    student = StudentEncoder(
+        input_dim=int(cfg["input_dim"]),
+        hidden_dim=int(cfg["hidden_dim"]),
+        output_dim=int(cfg["latent_dim"]),
+    )
+    student.load_state_dict(ckpt["student_state_dict"])
+    student.eval()
+
+    seq_len = int(cfg["seq_len"])
+    input_dim = int(cfg["input_dim"])
+    backbone = cfg.get("backbone", "random")
+
+    if backbone == "random":
+        def _embed(text: str) -> torch.Tensor:
+            rng = np.random.default_rng(abs(hash(text)) % (2**32))
+            return torch.from_numpy(rng.standard_normal((seq_len, input_dim)).astype(np.float32))
+        token_fn = _embed
+    else:
+        from sentence_transformers import SentenceTransformer
+
+        st = SentenceTransformer(str(backbone))
+        tok = st.tokenizer
+        transformer = st[0].auto_model
+
+        def _embed_st(text: str) -> torch.Tensor:
+            enc = tok(
+                text,
+                return_tensors="pt",
+                truncation=True,
+                max_length=seq_len,
+                padding="max_length",
+            )
+            with torch.no_grad():
+                out = transformer(**enc).last_hidden_state
+            return out.squeeze(0).float()
+        token_fn = _embed_st
+
+    return TextJEPAEmbedder(
+        student=student,
+        token_embed_fn=token_fn,
+        latent_dim=int(cfg["latent_dim"]),
     )
