@@ -22,7 +22,7 @@ Artifacts (`checkpoints/`, `output/`, `outputs/`, `results/`, `models/`, `data/`
 
 - **Base**: `Qwen/Qwen3.5-35B-A3B` (Apache 2.0, 262K ctx). **Teacher**: `Qwen3-Coder-480B-A35B` MLX 4bit (local Mac Studio, 1.1 TB).
 - **Adapter surface**: standard LoRA on q/k/v/o attention projections **only**. Never on MoE FFN layers — the MoE routing is already trained.
-- **Rank budget**: 4–16 for niches, 32 for foundations; alpha = 2×rank; scale 2.0.
+- **Rank budget**: 4/8 narrow niches, 12 coding-secondary/technical/apps, 16 broad niches, 32 foundations; alpha = 2×rank; scale 2.0.
 - **Training**: MLX only. BF16. Sequential per-domain, curriculum order (foundations first). Never in parallel — stacks interfere.
 - **Forgetting gate**: run after EACH stack; rollback if angle < 30° AND win-rate drop > 0.03.
 - **Serving**: Q4_K_M for inference, never below Q4 (quality cliff). Max 4 active stacks simultaneously (VRAM + interference).
