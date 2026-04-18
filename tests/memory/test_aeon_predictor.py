@@ -295,3 +295,49 @@ class TestStackConditioning:
         # stack_id=None should not raise and should not produce NaN.
         out = pred.predict_next(_mock_embed(16, seed=99), stack_id=None)
         assert not np.any(np.isnan(out))
+
+
+class TestCentering:
+    def test_centering_disabled_by_default(self):
+        mlp = LatentMLP(dim=16, hidden=8, n_stacks=2, seed=0)
+        assert mlp.use_centering is False
+
+    def test_centering_enabled_shifts_running_mean(self):
+        mlp = LatentMLP(
+            dim=16, hidden=8, n_stacks=2, seed=0,
+            use_centering=True, centering_momentum=0.5,
+        )
+        # Initially zero.
+        assert np.allclose(mlp._running_mean, 0.0)
+        x = np.ones((4, 16), dtype=np.float32) * 0.5
+        stack = np.zeros((4, 2), dtype=np.float32)
+        stack[:, 0] = 1.0
+        _ = mlp.forward(x, stack)
+        # After one forward, running_mean should be non-zero.
+        assert not np.allclose(mlp._running_mean, 0.0)
+
+    def test_predictor_config_propagates_centering(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, use_centering=True, centering_momentum=0.8)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        assert pred.mlp.use_centering is True
+        assert pred.mlp.centering_momentum == pytest.approx(0.8)
+
+    def test_centering_does_not_break_training(self):
+        """Regression test: training still converges with centering on."""
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(
+            dim=16, hidden=8, n_stacks=2,
+            cold_start_threshold=2, use_centering=True,
+        )
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(8):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i),
+                ts=t0 + timedelta(minutes=i), stack_id=i % 2,
+            )
+        history = pred.fit_on_buffer(lr=0.05, epochs=20, batch_size=4)
+        assert len(history) == 20
+        # Loss should not be NaN or exploded.
+        assert all(not np.isnan(h) and h < 5.0 for h in history)

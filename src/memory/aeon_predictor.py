@@ -40,6 +40,8 @@ class PredictorConfig:
     n_stacks: int = 16
     cold_start_threshold: int = 500
     seed: int = 0
+    use_centering: bool = False
+    centering_momentum: float = 0.9
 
 
 def detect_collapse(
@@ -72,7 +74,15 @@ class LatentMLP:
     Output: linear(dim) + x   (residual / skip on the embedding path)
     """
 
-    def __init__(self, dim: int, hidden: int, n_stacks: int, seed: int = 0) -> None:
+    def __init__(
+        self,
+        dim: int,
+        hidden: int,
+        n_stacks: int,
+        seed: int = 0,
+        use_centering: bool = False,
+        centering_momentum: float = 0.9,
+    ) -> None:
         self.dim = dim
         self.hidden = hidden
         self.n_stacks = n_stacks
@@ -88,6 +98,10 @@ class LatentMLP:
         self.w3 = (rng.standard_normal((hidden, dim)) * scale3).astype(np.float32)
         self.b3 = np.zeros(dim, dtype=np.float32)
         self._cache: dict = {}
+        # Centering state
+        self.use_centering = bool(use_centering)
+        self.centering_momentum = float(centering_momentum)
+        self._running_mean = np.zeros(dim, dtype=np.float32)
 
     def forward(self, x: np.ndarray, stack_onehot: np.ndarray) -> np.ndarray:
         if x.ndim != 2 or x.shape[1] != self.dim:
@@ -103,6 +117,14 @@ class LatentMLP:
         h2 = _relu(z2)
         delta = h2 @ self.w3 + self.b3
         out = (x + delta).astype(np.float32)
+        # DinoV3-style centering (anti-collapse by distribution shift).
+        if self.use_centering:
+            batch_mean = out.mean(axis=0)
+            self._running_mean = (
+                self.centering_momentum * self._running_mean
+                + (1.0 - self.centering_momentum) * batch_mean
+            ).astype(np.float32)
+            out = (out - self._running_mean).astype(np.float32)
         # Cache for backward.
         self._cache = {"inp": inp, "z1": z1, "h1": h1, "z2": z2, "h2": h2, "x": x}
         return out
@@ -192,6 +214,8 @@ class AeonPredictor:
             hidden=config.hidden,
             n_stacks=config.n_stacks,
             seed=config.seed,
+            use_centering=config.use_centering,
+            centering_momentum=config.centering_momentum,
         )
         self._buffer: list[_PairSample] = []
         self._trained_once = False
