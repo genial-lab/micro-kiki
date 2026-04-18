@@ -1,0 +1,17 @@
+{
+  "baseline_recall_at_5": 1.0,
+  "predictive_recall_at_5": 1.0,
+  "null_stack_recall_at_5": 1.0,
+  "baseline_mrr": 0.41333333333333333,
+  "predictive_mrr": 0.415,
+  "null_stack_mrr": 0.41166666666666674,
+  "win_rate_predictive": 0.05,
+  "win_rate_stack_vs_null": 0.05,
+  "n_queries": 100,
+  "elapsed_seconds": 1.6457960605621338,
+  "final_train_loss": 0.5667058005928993,
+  "predictor_ready": true,
+  "stream_type": "stack-structured",
+  "use_centering": false,
+  "per_stack_centering": false
+}
