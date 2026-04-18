@@ -143,6 +143,22 @@ ANGLE_THRESHOLD = 30.0
 WINRATE_DROP_THRESHOLD = 0.03
 
 
+def apply_and_gate(
+    angle: float,
+    winrate_drop: float,
+    angle_threshold: float = ANGLE_THRESHOLD,
+    winrate_drop_threshold: float = WINRATE_DROP_THRESHOLD,
+) -> bool:
+    """Return True when the forgetting gate trips (rollback).
+
+    Single source of truth for the AND-gate decision:
+    rollback iff ``angle < angle_threshold`` AND ``winrate_drop > winrate_drop_threshold``.
+    Shared by ``measure_forgetting_signal``, ``ForgettingEvaluator``, and
+    ``src.ralph.forgetting_auto.ForgettingChecker``.
+    """
+    return angle < angle_threshold and winrate_drop > winrate_drop_threshold
+
+
 # ---------------------------------------------------------------------------
 # Low-level helpers: LoRA delta extraction + angle computation
 # (shared by scripts/measure_forgetting.py CLI and measure_forgetting_signal)
@@ -453,7 +469,11 @@ def measure_forgetting_signal(
 
     angle_bad = mean_angle < angle_threshold
     winrate_bad = drop > winrate_drop_threshold
-    gate_status = "fail" if (angle_bad and winrate_bad) else "pass"
+    gate_status = (
+        "fail"
+        if apply_and_gate(mean_angle, drop, angle_threshold, winrate_drop_threshold)
+        else "pass"
+    )
     warning_bits = []
     if angle_bad:
         warning_bits.append(f"angle {mean_angle:.2f}° < {angle_threshold}°")
@@ -502,9 +522,11 @@ class ForgettingEvaluator:
         winrate_adapted: float,
     ) -> ForgettingReport:
         winrate_drop = winrate_base - winrate_adapted
-        should_rollback = (
-            angle < self._angle_threshold
-            and winrate_drop > self._winrate_drop_threshold
+        should_rollback = apply_and_gate(
+            angle,
+            winrate_drop,
+            self._angle_threshold,
+            self._winrate_drop_threshold,
         )
         return ForgettingReport(
             stack_id=stack_id,

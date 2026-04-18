@@ -6,6 +6,8 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 
+from src.eval.forgetting import apply_and_gate
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,9 +48,12 @@ class ForgettingChecker:
         winrate_adapted: float,
     ) -> ForgettingResult:
         winrate_drop = winrate_base - winrate_adapted
-        angle_low = angle < self._angle_threshold
-        winrate_dropped = winrate_drop > self._winrate_drop_threshold
-        should_rollback = angle_low and winrate_dropped
+        should_rollback = apply_and_gate(
+            angle,
+            winrate_drop,
+            self._angle_threshold,
+            self._winrate_drop_threshold,
+        )
 
         result = ForgettingResult(
             angle=angle,
