@@ -1,0 +1,75 @@
+{
+  "baseline": {
+    "accuracy": 0.095,
+    "n_test": 200,
+    "vqc_params": 122,
+    "latent_dim": 384,
+    "embed_time_sec": 4.81,
+    "eval_time_sec": 548.29
+  },
+  "runs": [
+    {
+      "accuracy": 0.18,
+      "n_test": 200,
+      "vqc_params": 122,
+      "latent_dim": 64,
+      "collapsed": false,
+      "student_params": 115520,
+      "train_time_sec": 18.74,
+      "embed_time_sec": 6.96,
+      "eval_time_sec": 595.8,
+      "compression_ratio": 6.0,
+      "checkpoint": "models/text-jepa/student_dim64.pt"
+    },
+    {
+      "accuracy": 0.185,
+      "n_test": 200,
+      "vqc_params": 122,
+      "latent_dim": 128,
+      "collapsed": false,
+      "student_params": 131968,
+      "train_time_sec": 17.73,
+      "embed_time_sec": 6.71,
+      "eval_time_sec": 539.16,
+      "compression_ratio": 3.0,
+      "checkpoint": "models/text-jepa/student_dim128.pt"
+    },
+    {
+      "accuracy": 0.19,
+      "n_test": 200,
+      "vqc_params": 122,
+      "latent_dim": 256,
+      "collapsed": false,
+      "student_params": 164864,
+      "train_time_sec": 8.4,
+      "embed_time_sec": 4.16,
+      "eval_time_sec": 495.25,
+      "compression_ratio": 1.5,
+      "checkpoint": "models/text-jepa/student_dim256.pt"
+    }
+  ],
+  "domains": [
+    "dsp",
+    "electronics",
+    "emc",
+    "embedded",
+    "freecad",
+    "kicad-dsl",
+    "platformio",
+    "power",
+    "spice",
+    "stm32"
+  ],
+  "n_samples": 1000,
+  "config": {
+    "max_per_domain": 100,
+    "train_epochs": 2,
+    "vqc_epochs": 2,
+    "batch_size": 16,
+    "seq_len": 32,
+    "input_dim": 384,
+    "hidden_dim": 256,
+    "backbone": "models/niche-embeddings",
+    "seed": 0
+  }
+}
