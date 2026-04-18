@@ -36,9 +36,12 @@ from src.memory.aeonsleep import AeonSleep
 class EvalResult:
     baseline_recall_at_5: float
     predictive_recall_at_5: float
+    null_stack_recall_at_5: float
     baseline_mrr: float
     predictive_mrr: float
+    null_stack_mrr: float
     win_rate_predictive: float
+    win_rate_stack_vs_null: float
     n_queries: int
     elapsed_seconds: float
     final_train_loss: float
@@ -95,10 +98,13 @@ def main() -> int:
     palace.attach_predictor(pred)
 
     stream = _build_stream(args.n_turns, args.dim, seed=args.seed)
+    stream_stack_ids = []  # Track stack_id for each turn
     t0 = datetime(2026, 4, 17, 10, 0)
     for i, h in enumerate(stream):
+        sid = rng.integers(0, 16)
+        stream_stack_ids.append(sid)
         pred.ingest_latent(
-            f"t{i}", h, ts=t0 + timedelta(seconds=i), stack_id=rng.integers(0, 16)
+            f"t{i}", h, ts=t0 + timedelta(seconds=i), stack_id=sid
         )
 
     # 2. Train predictor.
@@ -114,35 +120,53 @@ def main() -> int:
     for i in range(held_start, held_start + n_held):
         if i + 1 >= len(stream):
             break
-        queries.append((stream[i], f"t{i + 1}"))  # (h_q, gold next-turn id)
+        queries.append((stream[i], f"t{i + 1}", stream_stack_ids[i]))  # (h_q, gold next-turn id)
 
-    # 4. Compare baseline vs predictive.
-    baseline_hits, pred_hits = [], []
-    baseline_rr, pred_rr = [], []
-    wins = 0
-    for h_q, gold in queries:
+    # 4. Compare baseline vs predictive vs null-stack (3-way ablation).
+    baseline_hits, pred_hits, null_hits = [], [], []
+    baseline_rr, pred_rr, null_rr = [], [], []
+    wins_pred = 0
+    wins_stack = 0  # predictive > null-stack
+    for h_q, gold, current_stack in queries:
+        # Baseline: retrieval only
         base = palace.recall(h_q.tolist(), k=5)
         base_ids = [h.episode_id for h in base]
         baseline_hits.append(gold in base_ids)
         baseline_rr.append(_reciprocal_rank(base_ids, gold))
 
-        h_pred = pred.predict_next(h_q, horizon=1)
+        # Predictive with real stack
+        h_pred = pred.predict_next(h_q, horizon=1, stack_id=current_stack)
         pr = palace.recall(h_pred.tolist(), k=5)
         pr_ids = [h.episode_id for h in pr]
         pred_hits.append(gold in pr_ids)
         pred_rr.append(_reciprocal_rank(pr_ids, gold))
 
+        # Null-stack ablation: stack_id=-1 (all-zeros one-hot)
+        h_null = pred.predict_next(h_q, horizon=1, stack_id=-1)
+        nr = palace.recall(h_null.tolist(), k=5)
+        nr_ids = [h.episode_id for h in nr]
+        null_hits.append(gold in nr_ids)
+        null_rr.append(_reciprocal_rank(nr_ids, gold))
+
+        # Win: predictive > baseline
         if pred_rr[-1] >= baseline_rr[-1] and (
             pred_rr[-1] > baseline_rr[-1] or pred_hits[-1] > baseline_hits[-1]
         ):
-            wins += 1
+            wins_pred += 1
+
+        # Win: predictive > null-stack (isolates stack contribution)
+        if pred_rr[-1] > null_rr[-1]:
+            wins_stack += 1
 
     result = EvalResult(
         baseline_recall_at_5=float(np.mean(baseline_hits)) if baseline_hits else 0.0,
         predictive_recall_at_5=float(np.mean(pred_hits)) if pred_hits else 0.0,
+        null_stack_recall_at_5=float(np.mean(null_hits)) if null_hits else 0.0,
         baseline_mrr=float(np.mean(baseline_rr)) if baseline_rr else 0.0,
         predictive_mrr=float(np.mean(pred_rr)) if pred_rr else 0.0,
-        win_rate_predictive=(wins / len(queries)) if queries else 0.0,
+        null_stack_mrr=float(np.mean(null_rr)) if null_rr else 0.0,
+        win_rate_predictive=(wins_pred / len(queries)) if queries else 0.0,
+        win_rate_stack_vs_null=(wins_stack / len(queries)) if queries else 0.0,
         n_queries=len(queries),
         elapsed_seconds=time.time() - t_start,
         final_train_loss=float(final_loss),

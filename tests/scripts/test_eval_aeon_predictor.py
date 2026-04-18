@@ -37,9 +37,12 @@ def test_eval_aeon_predictor_smoke(tmp_path):
     for key in (
         "baseline_recall_at_5",
         "predictive_recall_at_5",
+        "null_stack_recall_at_5",
         "baseline_mrr",
         "predictive_mrr",
+        "null_stack_mrr",
         "win_rate_predictive",
+        "win_rate_stack_vs_null",
     ):
         assert key in data
     assert elapsed < 5.0, f"smoke run too slow: {elapsed:.2f}s"
