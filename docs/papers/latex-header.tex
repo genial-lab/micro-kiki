@@ -1,0 +1,56 @@
+% Custom header injected into pandoc default LaTeX template via -H flag.
+% Uses xelatex + fontspec so Greek/math chars render correctly.
+
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{fontspec}
+
+% Main font with Unicode coverage (STIX Two supports Greek + math symbols)
+\IfFontExistsTF{STIX Two Text}{%
+  \setmainfont{STIX Two Text}%
+}{%
+  \IfFontExistsTF{TeX Gyre Termes}{%
+    \setmainfont{TeX Gyre Termes}%
+  }{%
+    % fallback: let Latin Modern remain but remap Greek via newunicodechar
+    \usepackage{newunicodechar}
+    \newunicodechar{α}{$\alpha$}
+    \newunicodechar{β}{$\beta$}
+    \newunicodechar{γ}{$\gamma$}
+    \newunicodechar{δ}{$\delta$}
+    \newunicodechar{ε}{$\epsilon$}
+    \newunicodechar{θ}{$\theta$}
+    \newunicodechar{λ}{$\lambda$}
+    \newunicodechar{μ}{$\mu$}
+    \newunicodechar{π}{$\pi$}
+    \newunicodechar{σ}{$\sigma$}
+    \newunicodechar{τ}{$\tau$}
+    \newunicodechar{φ}{$\phi$}
+    \newunicodechar{ψ}{$\psi$}
+    \newunicodechar{ω}{$\omega$}
+    \newunicodechar{Δ}{$\Delta$}
+    \newunicodechar{Σ}{$\Sigma$}
+    \newunicodechar{Ω}{$\Omega$}
+    \newunicodechar{∈}{$\in$}
+    \newunicodechar{∑}{$\sum$}
+    \newunicodechar{×}{$\times$}
+    \newunicodechar{·}{$\cdot$}
+    \newunicodechar{→}{$\rightarrow$}
+    \newunicodechar{←}{$\leftarrow$}
+    \newunicodechar{≤}{$\leq$}
+    \newunicodechar{≥}{$\geq$}
+    \newunicodechar{≈}{$\approx$}
+  }%
+}
+
+\definecolor{headingdark}{HTML}{1a1a2e}
+
+\titleformat*{\section}{\Large\bfseries\color{headingdark}}
+\titleformat*{\subsection}{\large\bfseries\color{headingdark}}
+\titleformat*{\subsubsection}{\normalsize\bfseries\itshape\color{headingdark}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{--- \thepage\ ---}
+\renewcommand{\headrulewidth}{0pt}
