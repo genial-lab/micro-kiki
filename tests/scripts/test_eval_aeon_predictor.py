@@ -43,6 +43,8 @@ def test_eval_aeon_predictor_smoke(tmp_path):
         "null_stack_mrr",
         "win_rate_predictive",
         "win_rate_stack_vs_null",
+        "stream_type",
+        "use_centering",
     ):
         assert key in data
     assert elapsed < 5.0, f"smoke run too slow: {elapsed:.2f}s"

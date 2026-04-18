@@ -46,6 +46,8 @@ class EvalResult:
     elapsed_seconds: float
     final_train_loss: float
     predictor_ready: bool
+    stream_type: str
+    use_centering: bool
 
 
 def _unit(v: np.ndarray) -> np.ndarray:
@@ -60,6 +62,34 @@ def _build_stream(n_turns: int, dim: int, seed: int) -> list[np.ndarray]:
         step = 0.3 * rng.standard_normal(dim).astype(np.float32)
         out.append(_unit(out[-1] + step))
     return out
+
+
+def _build_stack_structured_stream(
+    n_turns: int, dim: int, n_stacks: int, seed: int
+) -> tuple[list[np.ndarray], list[int]]:
+    """Stream where each stack has its OWN transition rule.
+
+    Stack k applies a deterministic rotation/shift in latent space.
+    This creates stack-specific dynamics so the predictor can leverage stack_id.
+    Returns (stream, stack_ids_parallel).
+    """
+    rng = np.random.default_rng(seed)
+    # Per-stack random direction vectors (the "drift" for each stack).
+    directions = [
+        _unit(rng.standard_normal(dim).astype(np.float32))
+        for _ in range(n_stacks)
+    ]
+    stream = [_unit(rng.standard_normal(dim).astype(np.float32))]
+    stacks: list[int] = [int(rng.integers(0, n_stacks))]
+    for _ in range(n_turns - 1):
+        # Pick stack for this turn (random per turn — mimics routing).
+        sid = int(rng.integers(0, n_stacks))
+        # Apply stack-specific drift + small noise.
+        drift = 0.3 * directions[sid]
+        noise = 0.1 * rng.standard_normal(dim).astype(np.float32)
+        stream.append(_unit(stream[-1] + drift + noise))
+        stacks.append(sid)
+    return stream, stacks
 
 
 def _reciprocal_rank(hit_ids: list[str], gold: str) -> float:
@@ -80,6 +110,12 @@ def main() -> int:
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--use-centering", action="store_true",
+                    help="Enable DinoV3-style centering in LatentMLP")
+    ap.add_argument("--centering-momentum", type=float, default=0.9)
+    ap.add_argument("--stream", type=str, default="random-walk",
+                    choices=["random-walk", "stack-structured"],
+                    help="Stream generator: random-walk (current) or stack-structured (stack-specific transitions)")
     args = ap.parse_args()
 
     rng = np.random.default_rng(args.seed)
@@ -93,18 +129,25 @@ def main() -> int:
         n_stacks=16,
         cold_start_threshold=args.cold_start,
         seed=args.seed,
+        use_centering=args.use_centering,
+        centering_momentum=args.centering_momentum,
     )
     pred = AeonPredictor(palace=palace, config=cfg)
     palace.attach_predictor(pred)
 
-    stream = _build_stream(args.n_turns, args.dim, seed=args.seed)
-    stream_stack_ids = []  # Track stack_id for each turn
+    if args.stream == "stack-structured":
+        stream, preset_stacks = _build_stack_structured_stream(
+            args.n_turns, args.dim, n_stacks=16, seed=args.seed
+        )
+        stream_stack_ids = preset_stacks  # use preset, not random
+    else:
+        stream = _build_stream(args.n_turns, args.dim, seed=args.seed)
+        stream_stack_ids = [int(rng.integers(0, 16)) for _ in stream]
+
     t0 = datetime(2026, 4, 17, 10, 0)
     for i, h in enumerate(stream):
-        sid = rng.integers(0, 16)
-        stream_stack_ids.append(sid)
         pred.ingest_latent(
-            f"t{i}", h, ts=t0 + timedelta(seconds=i), stack_id=sid
+            f"t{i}", h, ts=t0 + timedelta(seconds=i), stack_id=stream_stack_ids[i]
         )
 
     # 2. Train predictor.
@@ -171,6 +214,8 @@ def main() -> int:
         elapsed_seconds=time.time() - t_start,
         final_train_loss=float(final_loss),
         predictor_ready=pred.ready,
+        stream_type=args.stream,
+        use_centering=args.use_centering,
     )
 
     payload = asdict(result)
