@@ -26,7 +26,7 @@ from collections import defaultdict
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable
+from typing import TYPE_CHECKING, Any, Callable, Iterable, NamedTuple
 
 if TYPE_CHECKING:
     import torch
@@ -143,6 +143,31 @@ ANGLE_THRESHOLD = 30.0
 WINRATE_DROP_THRESHOLD = 0.03
 
 
+class GateDecision(NamedTuple):
+    """Detailed AND-gate verdict with per-axis booleans for message building."""
+
+    failed: bool
+    angle_bad: bool
+    delta_bad: bool
+
+
+def apply_and_gate_detailed(
+    angle: float,
+    winrate_drop: float,
+    angle_threshold: float = ANGLE_THRESHOLD,
+    winrate_drop_threshold: float = WINRATE_DROP_THRESHOLD,
+) -> GateDecision:
+    """Return the detailed AND-gate decision.
+
+    Single source of truth for the AND-gate: rollback iff ``angle < angle_threshold``
+    AND ``winrate_drop > winrate_drop_threshold``. Also exposes per-axis booleans
+    so callers can build diagnostic messages without re-deriving them.
+    """
+    angle_bad = angle < angle_threshold
+    delta_bad = winrate_drop > winrate_drop_threshold
+    return GateDecision(failed=angle_bad and delta_bad, angle_bad=angle_bad, delta_bad=delta_bad)
+
+
 def apply_and_gate(
     angle: float,
     winrate_drop: float,
@@ -151,12 +176,13 @@ def apply_and_gate(
 ) -> bool:
     """Return True when the forgetting gate trips (rollback).
 
-    Single source of truth for the AND-gate decision:
-    rollback iff ``angle < angle_threshold`` AND ``winrate_drop > winrate_drop_threshold``.
-    Shared by ``measure_forgetting_signal``, ``ForgettingEvaluator``, and
+    Thin bool wrapper over :func:`apply_and_gate_detailed`. Shared by
+    ``measure_forgetting_signal``, ``ForgettingEvaluator``, and
     ``src.ralph.forgetting_auto.ForgettingChecker``.
     """
-    return angle < angle_threshold and winrate_drop > winrate_drop_threshold
+    return apply_and_gate_detailed(
+        angle, winrate_drop, angle_threshold, winrate_drop_threshold
+    ).failed
 
 
 # ---------------------------------------------------------------------------
@@ -767,9 +793,14 @@ def check_forgetting(
     - win_rate_delta > max_delta (regression on prior stack)
     - gradient_subspace_angle < min_angle (high interference)
     """
-    delta_bad = win_rate_delta > max_delta
-    angle_bad = angle_deg < min_angle
-    failed = delta_bad and angle_bad
+    # win_rate_delta is already a drop (baseline - measured), so it maps
+    # directly onto apply_and_gate_detailed's ``winrate_drop`` axis.
+    failed, angle_bad, delta_bad = apply_and_gate_detailed(
+        angle=angle_deg,
+        winrate_drop=win_rate_delta,
+        angle_threshold=min_angle,
+        winrate_drop_threshold=max_delta,
+    )
 
     if failed:
         reason = f"FORGETTING: delta={win_rate_delta:.3f}>{max_delta}, angle={angle_deg:.1f}<{min_angle}"
