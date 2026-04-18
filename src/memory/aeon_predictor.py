@@ -43,6 +43,7 @@ class PredictorConfig:
     use_centering: bool = False
     centering_momentum: float = 0.9
     per_stack_centering: bool = False  # if True, maintain n_stacks+1 running means
+    use_layernorm_delta: bool = False  # normalize delta via LayerNorm (alt to centering)
 
 
 def detect_collapse(
@@ -84,6 +85,7 @@ class LatentMLP:
         use_centering: bool = False,
         centering_momentum: float = 0.9,
         per_stack_centering: bool = False,
+        use_layernorm_delta: bool = False,
     ) -> None:
         self.dim = dim
         self.hidden = hidden
@@ -110,6 +112,12 @@ class LatentMLP:
         self.per_stack_centering = bool(per_stack_centering)
         if self.per_stack_centering:
             self._running_means_per_stack = np.zeros((n_stacks + 1, dim), dtype=np.float32)
+        # LayerNorm(delta) state
+        self.use_layernorm_delta = bool(use_layernorm_delta)
+        if self.use_layernorm_delta:
+            self._ln_gamma = np.ones(dim, dtype=np.float32)
+            self._ln_beta = np.zeros(dim, dtype=np.float32)
+            self._ln_eps = 1e-5
 
     def forward(self, x: np.ndarray, stack_onehot: np.ndarray, stack_ids: np.ndarray | None = None) -> np.ndarray:
         if x.ndim != 2 or x.shape[1] != self.dim:
@@ -124,6 +132,12 @@ class LatentMLP:
         z2 = np.clip(h1 @ self.w2 + self.b2, -30.0, 30.0)
         h2 = _relu(z2)
         delta = h2 @ self.w3 + self.b3
+        # LayerNorm(delta) — normalize the residual per-sample, not across batch.
+        if self.use_layernorm_delta:
+            mean = delta.mean(axis=1, keepdims=True)
+            var = delta.var(axis=1, keepdims=True)
+            delta_normed = (delta - mean) / np.sqrt(var + self._ln_eps)
+            delta = (delta_normed * self._ln_gamma + self._ln_beta).astype(np.float32)
         out = (x + delta).astype(np.float32)
         # DinoV3-style centering (anti-collapse by distribution shift).
         if self.use_centering:
@@ -238,6 +252,7 @@ class AeonPredictor:
             use_centering=config.use_centering,
             centering_momentum=config.centering_momentum,
             per_stack_centering=config.per_stack_centering,
+            use_layernorm_delta=config.use_layernorm_delta,
         )
         self._buffer: list[_PairSample] = []
         self._trained_once = False

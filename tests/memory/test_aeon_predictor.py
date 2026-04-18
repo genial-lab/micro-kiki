@@ -378,3 +378,23 @@ class TestPerStackCentering:
         cfg = PredictorConfig(dim=16, use_centering=True, per_stack_centering=True)
         pred = AeonPredictor(palace=palace, config=cfg)
         assert pred.mlp.per_stack_centering is True
+
+
+class TestLayerNormDelta:
+    def test_layernorm_disabled_by_default(self):
+        mlp = LatentMLP(dim=16, hidden=8, n_stacks=2, seed=0)
+        assert mlp.use_layernorm_delta is False
+
+    def test_layernorm_preserves_finite_output(self):
+        mlp = LatentMLP(dim=16, hidden=8, n_stacks=2, seed=0, use_layernorm_delta=True)
+        x = np.random.default_rng(1).standard_normal((4, 16)).astype(np.float32)
+        stack = np.zeros((4, 2), dtype=np.float32)
+        stack[np.arange(4), np.arange(4) % 2] = 1.0
+        out = mlp.forward(x, stack)
+        assert np.all(np.isfinite(out))
+
+    def test_layernorm_config_propagates(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, use_layernorm_delta=True)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        assert pred.mlp.use_layernorm_delta is True
