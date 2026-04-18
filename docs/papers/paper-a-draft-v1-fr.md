@@ -441,6 +441,23 @@ Tous les fichiers de résultats JSON référencés dans les Sections 4.2 et 4.3 
 
 CPU Apple M5, numpy mono-thread. Toutes les runs PoC se terminent en 1.2–4.2 secondes pour des flux de 1000 tours à 50–300 epochs. Aucune allocation GPU requise. Licence : Apache 2.0 (code), CC BY 4.0 (texte du papier).
 
+## Appendice B : Projections de déploiement edge (~300 mots)
+
+Aeon étant un prédicteur de ~100 K paramètres en numpy pur, et AeonSleep un store vectoriel+graph CPU-friendly, le déploiement sur plateformes edge AI est envisageable sans réingénierie. Nous fournissons des latences **projetées** (non mesurées) pour deux plateformes candidates :
+
+- **GenioBoard** (MediaTek Genio 700, NPU 4 TOPS, octa-core Cortex-A78/A55, 8 GB LPDDR4X)
+- **Arduino VENTUNO Q** (Qualcomm Dragonwing IQ8-275 MPU jusqu'à 40 dense TOPS + STM32H5F5 MCU, dual-brain)
+
+| Opération | Mac M5 (baseline) | GenioBoard Genio 700 | VENTUNO Q (côté MPU) |
+|-----------|-------------------|----------------------|----------------------|
+| `AeonPredictor.predict_next` (single) | 200 µs | ~300 µs | ~250 µs |
+| `AeonSleep.recall(k=10)` à 10 k tours | 1–2 ms | ~3–5 ms | ~2–4 ms |
+| `QuantumRouter.classify` (VQC, PennyLane) | 5 ms | ~10–15 ms | ~8–12 ms |
+| Inférence LLM petite (3B Q4, 10 tokens) | 2 s | ~5–10 s (CPU seul) | ~1–2 s (NPU) |
+| Tour complet (ingest + predict + recall + LLM 3B) | ~2.2 s | ~5–10 s | ~1–2 s |
+
+Les chiffres sont extrapolés depuis les specs publiques des SoC et des benchmarks comparables sur cœurs ARM / Qualcomm IQ8, non mesurés sur dev kits. Le verdict qualitatif : le cœur Aeon + VQC se porte **trivialement** (bound CPU, 100 K params, simulateur PennyLane), et l'architecture **dual-brain** du VENTUNO Q mappe proprement sur le split existant de micro-kiki entre une stack de serving LLM Python et une couche d'actuation/contrôle ESP32/STM32 — un foyer physique naturel pour les déploiements industriels Kill_LIFE / Zacus / KXKM Parallelator. Notes de scouting et discussion d'architecture dans `docs/research/edge-deployment-genio-ventunoq.md`.
+
 ---
 
 **Métadonnées du document**
