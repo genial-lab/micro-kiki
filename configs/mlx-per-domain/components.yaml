@@ -1,4 +1,4 @@
-# spice-sim — rank 4, seq 2048, 276 iters
+# components — rank 8, seq 2048, 500 iters
 model: models/qwen3.5-35b-a3b
 fine_tune_type: lora
 grad_checkpoint: true
@@ -10,9 +10,9 @@ train: true
 seed: 42
 clear_cache_threshold: 50000000000
 lora_parameters:
-  rank: 4
-  alpha: 8
-  dropout: 0.05
+  rank: 8
+  alpha: 16
+  dropout: 0.0
   scale: 2.0
   keys:
   - self_attn.q_proj
@@ -20,8 +20,8 @@ lora_parameters:
   - self_attn.v_proj
   - self_attn.o_proj
 num_layers: 40
-learning_rate: 2.0e-05
+learning_rate: 3.0e-05
 batch_size: 1
 grad_accumulation_steps: 4
-iters: 276
+iters: 500
 max_seq_length: 2048
