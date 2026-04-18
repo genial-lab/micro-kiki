@@ -26,3 +26,22 @@ jobs:
           python scripts/validate_no_pre_pivot.py
       - name: run validator tests
         run: python -m pytest tests/test_validate_*.py -v
+
+  forgetting-tests:
+    name: forgetting-tests
+    runs-on: ubuntu-latest
+    # Installs torch CPU wheel (~200MB) for synthetic safetensors in OPLoRA
+    # forgetting-measurement tests. Runs in parallel with config-invariants;
+    # kept separate so config-only changes keep the fast feedback loop.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: install deps
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install safetensors numpy pyyaml pytest pytest-asyncio loguru
+      - name: run forgetting tests
+        run: python -m pytest tests/scripts/test_measure_forgetting.py tests/test_forgetting_check_all_previous.py -v
