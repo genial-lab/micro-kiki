@@ -1,0 +1,30 @@
+{
+  "stack": "stack-01-chat-fr",
+  "n_prompts": 3,
+  "wins": 0,
+  "win_rate_vs_base": 0.0,
+  "avg_score": 0.0,
+  "results": [
+    {
+      "prompt": "Explique brievement ce qu'est l'intelligence artificielle",
+      "winner": "base",
+      "score_B": 0.0,
+      "reason": "Response A provides a clear, concise, and direct answer to the prompt. Response B contains irrelevant conversational filler and does not answer the question.",
+      "time_s": 130.5
+    },
+    {
+      "prompt": "Quels sont les bienfaits de la lecture quotidienne ?",
+      "winner": "base",
+      "score_B": 0.0,
+      "reason": "Response A directly answers the prompt about the benefits of daily reading, while Response B is irrelevant, containing unrelated questions about music and French cuisine.",
+      "time_s": 127.4
+    },
+    {
+      "prompt": "Comment faire un bon cafe filtre ?",
+      "winner": "base",
+      "score_B": 0.0,
+      "reason": "Response A provides a coherent and helpful start to answering the question about making filter coffee. Response B is completely broken, containing only repeated 'user' and 'assistant' tags with no actual content.",
+      "time_s": 124.7
+    }
+  ]
+}
