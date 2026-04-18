@@ -1,16 +1,15 @@
 # Handoff
 
 ## State
-PRD at 21/50. POC v2 proven end-to-end with real MiniLM embeddings. 6/10 SFT adapters BLOCKED by Metal OOM: fork `mlx_lm_fork` without keys LoRA-ises too many layers → crash at ~iter 160. With keys → 0 trainable params. 4 working adapters (spice, emc, stm32, embedded) were trained with an earlier fork version. freecad succeeded (small dataset, finished before OOM). 5 remaining: platformio, power, dsp, electronics, kicad-dsl all fail.
+PRD 21/50. Restart wrapper running on Studio (PID 47114) for power domain (chunk 39/405). Val loss stagnates at ~1.95 — resume-adapter may not reload weights correctly (val loss resets to ~2.4 each chunk instead of continuing from ~1.5). 6/10 adapters exist: spice, emc, stm32, embedded, freecad + partial power. kicad-dsl and platformio have stale adapters (need delete+retrain). POC v2 proven with real MiniLM embeddings.
 
 ## Next
-1. **Debug the fork**: `ssh studio "diff ~/KIKI-Mac_tunner/lib/mlx_lm_fork/tuner/lora.py"` vs the version that trained spice. Check git log in `~/KIKI-Mac_tunner/lib/mlx_lm_fork/` for changes.
-2. **Alternative**: train on kxkm-ai via vLLM/Unsloth instead of MLX (RTX 4090 24GB may fit rank 4-8 with QLoRA).
-3. **After adapters**: story-14 forgetting check, story-15 eval, DPO pipeline.
+1. **Fix resume**: check if `--resume-adapter-file` in `mlx_lm_fork` actually loads LoRA weights. Try `ssh studio "strings ~/micro-kiki/outputs/sft-restart-all.log | grep -i 'loading\|resume\|adapter'"`. If broken, consider training in ONE long run with `mx.clear_cache()` injected in the fork's training loop.
+2. **After fixing**: retrain power, dsp, electronics, kicad-dsl, platformio with working resume.
+3. **Alternative**: train on kxkm-ai via Unsloth (RTX 4090, no Metal issues).
 
 ## Context
-- **ZERO compute on GrosMac** — all on Studio or kxkm-ai.
-- The Metal `resource_limit(499000)` is about allocation COUNT not memory SIZE. Peak mem stays at 106GB but allocations accumulate.
-- `save_every: 50` in config may help (forces checkpoint → GC).
-- Training script: `scripts/train_niches_mlxtune.py`, wrapper: `scripts/train_one_by_one.sh`.
+- **ZERO compute on GrosMac**.
+- Metal `resource_limit(499000)` = allocation count, not memory. Crashes after ~30-60 iters regardless of peak mem.
+- The restart wrapper (`scripts/train_with_restart.py --all --chunk 20`) works mechanically but resume quality is suspect.
 - Commit hook: no Co-Authored-By, subject ≤ 50 chars.
