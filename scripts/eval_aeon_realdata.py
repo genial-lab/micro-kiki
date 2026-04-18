@@ -179,6 +179,9 @@ def main() -> int:
     ap.add_argument("--stream-mode", choices=["interleaved", "within-topic"],
                     default="interleaved",
                     help="Stream topology: interleaved (topic-switched) or within-topic (contiguous blocks)")
+    ap.add_argument("--eval-metric", choices=["exact", "soft-domain"],
+                    default="exact",
+                    help="exact: gold = exact t+1 turn id; soft-domain: gold = domain of t+1")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
@@ -216,12 +219,15 @@ def main() -> int:
     pred = AeonPredictor(palace=palace, config=cfg)
     palace.attach_predictor(pred)
 
-    # Ingest
+    # Ingest — also build turn_id → domain_idx map for soft-match metric
     t0 = datetime(2026, 4, 19, 10, 0)
+    turn_to_domain: dict[str, int] = {}
     print("ingesting...")
     for i, (h, sid) in enumerate(zip(stream, stream_stack_ids)):
+        tid = f"t{i}"
+        turn_to_domain[tid] = sid
         pred.ingest_latent(
-            f"t{i}", h.astype(np.float32), ts=t0 + timedelta(seconds=i), stack_id=sid
+            tid, h.astype(np.float32), ts=t0 + timedelta(seconds=i), stack_id=sid
         )
 
     # Train
@@ -237,34 +243,49 @@ def main() -> int:
     for i in range(held_start, held_start + n_held):
         if i + 1 >= len(stream):
             break
-        queries.append((stream[i], f"t{i + 1}", stream_stack_ids[i]))
+        gold_id = f"t{i + 1}"
+        gold_domain = stream_stack_ids[i + 1]
+        queries.append((stream[i], gold_id, gold_domain, stream_stack_ids[i]))
+
+    def _hit(ret_ids: list[str], gold_id: str, gold_dom: int) -> bool:
+        if args.eval_metric == "soft-domain":
+            return any(turn_to_domain.get(r, -1) == gold_dom for r in ret_ids)
+        return gold_id in ret_ids
+
+    def _rr(ret_ids: list[str], gold_id: str, gold_dom: int) -> float:
+        if args.eval_metric == "soft-domain":
+            for rank, r in enumerate(ret_ids, start=1):
+                if turn_to_domain.get(r, -1) == gold_dom:
+                    return 1.0 / rank
+            return 0.0
+        return _reciprocal_rank(ret_ids, gold_id)
 
     # 3-way comparison: baseline / predictive / null-stack
     baseline_hits, pred_hits, null_hits = [], [], []
     baseline_rr, pred_rr, null_rr = [], [], []
     wins_pred, wins_stack = 0, 0
 
-    print(f"evaluating {len(queries)} queries...")
-    for h_q, gold, cur_stack in queries:
+    print(f"evaluating {len(queries)} queries (metric={args.eval_metric})...")
+    for h_q, gold_id, gold_dom, cur_stack in queries:
         # Baseline: pure retrieval
         base = palace.recall(h_q.tolist(), k=5)
         base_ids = [h.episode_id for h in base]
-        baseline_hits.append(gold in base_ids)
-        baseline_rr.append(_reciprocal_rank(base_ids, gold))
+        baseline_hits.append(_hit(base_ids, gold_id, gold_dom))
+        baseline_rr.append(_rr(base_ids, gold_id, gold_dom))
 
         # Predictive (real stack)
         h_pred = pred.predict_next(h_q, horizon=1, stack_id=cur_stack)
         pr = palace.recall(h_pred.tolist(), k=5)
         pr_ids = [h.episode_id for h in pr]
-        pred_hits.append(gold in pr_ids)
-        pred_rr.append(_reciprocal_rank(pr_ids, gold))
+        pred_hits.append(_hit(pr_ids, gold_id, gold_dom))
+        pred_rr.append(_rr(pr_ids, gold_id, gold_dom))
 
         # Null-stack (stack_id=-1)
         h_null = pred.predict_next(h_q, horizon=1, stack_id=-1)
         nr = palace.recall(h_null.tolist(), k=5)
         nr_ids = [h.episode_id for h in nr]
-        null_hits.append(gold in nr_ids)
-        null_rr.append(_reciprocal_rank(nr_ids, gold))
+        null_hits.append(_hit(nr_ids, gold_id, gold_dom))
+        null_rr.append(_rr(nr_ids, gold_id, gold_dom))
 
         if pred_rr[-1] >= baseline_rr[-1] and (
             pred_rr[-1] > baseline_rr[-1] or pred_hits[-1] > baseline_hits[-1]
