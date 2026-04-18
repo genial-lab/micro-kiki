@@ -1,0 +1,28 @@
+name: validators
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  config-invariants:
+    name: config-invariants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: install deps
+        run: pip install pyyaml pytest pytest-asyncio
+      - name: run validators
+        run: |
+          python scripts/validate_domains.py
+          python scripts/validate_rank_schema.py
+          python scripts/validate_curriculum_order.py
+          python scripts/validate_no_pre_pivot.py
+      - name: run validator tests
+        run: python -m pytest tests/test_validate_*.py -v
