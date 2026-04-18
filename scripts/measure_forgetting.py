@@ -124,12 +124,16 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     status = report.get("gate_status")
-    if status == "fail":
+    status_aggregate = report.get("gate_status_aggregate", status)
+    status_per_module = report.get("gate_status_per_module", status)
+    if status_aggregate == "fail" or status_per_module == "fail":
         logger.warning(
-            "GATE FAIL: %s",
+            "GATE FAIL (aggregate=%s, per-module=%s): %s",
+            status_aggregate,
+            status_per_module,
             report.get("warning") or "angle<30° AND winrate_drop>0.03",
         )
-    elif status == "angle_only_partial":
+    elif status_aggregate == "angle_only_partial":
         mean = report.get("angle_degrees_mean")
         if isinstance(mean, (int, float)) and mean < ANGLE_THRESHOLD:
             logger.warning(
@@ -138,6 +142,20 @@ def main(argv: list[str] | None = None) -> int:
                 mean,
                 ANGLE_THRESHOLD,
                 WINRATE_DROP_THRESHOLD,
+            )
+        # Also surface per-module canary even in angle-only mode.
+        min_mod = report.get("min_angle_module")
+        min_val = report.get("min_angle_value")
+        if (
+            isinstance(min_val, (int, float))
+            and min_val == min_val  # not NaN
+            and min_val < ANGLE_THRESHOLD
+        ):
+            logger.warning(
+                "per-module canary: {} at {:.2f}° (informational — no "
+                "win-rate to finalize the per-module gate).",
+                min_mod,
+                min_val,
             )
 
     payload = json.dumps(report, indent=2, sort_keys=True)
@@ -148,8 +166,10 @@ def main(argv: list[str] | None = None) -> int:
         args.output.write_text(payload + "\n", encoding="utf-8")
         logger.info("wrote {}", args.output)
 
-    # Full-gate fail → non-zero exit for CI. angle_only and pass → 0.
-    return 1 if status == "fail" else 0
+    # Either aggregate or per-module gate fail → non-zero exit for CI.
+    # angle-only and full-pass → 0.
+    failed = status_aggregate == "fail" or status_per_module == "fail"
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

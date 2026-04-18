@@ -117,6 +117,94 @@ Progress logs go to stderr via stdlib `logging`, so the script runs on
 the Mac Studio training venv (torch/safetensors/numpy only — no
 `loguru` dependency).
 
+## Per-module gate
+
+The **aggregate** gate above (mean angle across every module kind)
+masks divergences concentrated in a single module. The 2026-04-18
+post-pivot sweep of 5 adapters (chat-fr, cpp, python, reasoning,
+typescript) passed the aggregate gate 20/20 while
+`mlp.shared_expert_gate` alone hit **17.3°** on the python↔typescript
+pair — below the 30° threshold.
+
+`src.eval.forgetting.apply_per_module_gate` adds a fine-grained
+complement:
+
+```python
+from src.eval.forgetting import apply_per_module_gate
+
+decision = apply_per_module_gate(
+    per_module_angles={...},       # from measure_forgetting_signal
+    winrate_drop=0.04,             # baseline − measured
+    angle_threshold=30.0,
+    winrate_drop_threshold=0.03,
+    ignore_modules=None,           # → DEFAULT_PER_MODULE_IGNORE
+)
+# decision.failed             — bool (AND-logic: any module <30° AND drop>0.03)
+# decision.offending_modules  — list[str] of below-threshold modules (angle only)
+# decision.min_angle_module   — lowest-angle non-ignored module
+# decision.min_angle_value    — its angle in degrees
+```
+
+### Why two gates coexist
+
+- **Aggregate gate** (`gate_status_aggregate`) — coarse monitoring.
+  Survives small per-module noise and matches historical reports.
+- **Per-module gate** (`gate_status_per_module`) — flags a single
+  module blowing out even when the mean stays safe. Runs with the
+  same AND-logic (angle AND winrate-drop) so a low angle alone is
+  never enough to rollback.
+
+`measure_forgetting_signal` returns both statuses; the CLI
+(`scripts/measure_forgetting.py`) and `ForgettingEvaluator.
+check_all_previous` exit non-zero / rollback when **either** gate
+fails — stricter is safer.
+
+### Why `mlp.shared_expert_gate` is ignored by default
+
+The Qwen3.5-35B-A3B shared-expert gate has a rank-1 delta shape
+(`(hidden, r) @ (r, 1)` → `(hidden, 1)`). Subspace angles on a
+one-column matrix are structurally constrained — the measured angle
+is an artifact of the shape, not a meaningful forgetting signal.
+
+Empirically (post-pivot sweep):
+
+- All 16 other module kinds stay > 42° across every pair in the
+  5-adapter matrix.
+- `mlp.shared_expert_gate` alone drops to 17.3° on two pairs
+  (python↔typescript, bidirectional) while their aggregate mean
+  angle is still 66.6°.
+
+The default ignore list (`DEFAULT_PER_MODULE_IGNORE`) therefore
+excludes `mlp.shared_expert_gate`. Override via the
+``ignore_modules`` kwarg when you want the strictest possible view
+(e.g. investigating a specific pair):
+
+```python
+apply_per_module_gate(per_module_angles=..., winrate_drop=...,
+                      ignore_modules=set())   # consider every module
+apply_per_module_gate(per_module_angles=..., winrate_drop=...,
+                      ignore_modules={"mlp.shared_expert_gate",
+                                       "mlp.gate"})  # add more
+```
+
+A CLI flag to flip this behaviour (e.g.
+`--no-ignore-shared-expert-gate`) is a straightforward follow-up
+when a human operator needs it; the API already supports the
+override.
+
+### Updated CLI exit-code policy
+
+| Scenario | `gate_status_aggregate` | `gate_status_per_module` | exit |
+|---|---|---|---|
+| All modules safe, full gate passes | `pass` | `pass` | 0 |
+| Aggregate fails (mean < 30° AND drop > 0.03) | `fail` | any | **1** |
+| Per-module fails (any non-ignored module < 30° AND drop > 0.03) | any | `fail` | **1** |
+| Angle-only (no win-rate inputs) | `angle_only_partial` | `angle_only_partial` | 0 (informational) |
+
+`offending_modules` / `min_angle_module` / `min_angle_value` are
+populated even in angle-only mode; they never force a non-zero exit
+on their own (AND-logic with the win-rate drop is preserved).
+
 ## Reference
 
 Full protocol, alternatives considered, and roadmap:

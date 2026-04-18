@@ -142,6 +142,15 @@ class GradientSubspaceAnalyzer:
 ANGLE_THRESHOLD = 30.0
 WINRATE_DROP_THRESHOLD = 0.03
 
+# Per-module canary: the shared_expert_gate has a rank-1 delta shape
+# (Qwen3.5-35B-A3B: ``(hidden, r) @ (r, 1)`` → ``(hidden, 1)``). Its
+# geometry is structurally constrained — low angles there are an
+# artifact of the shape, not a meaningful forgetting signal.
+# Empirical evidence: post-pivot 5-adapter sweep (2026-04-18) showed
+# this module hits 17.3° on python↔typescript while every other
+# module stays > 42°. See docs/training/forgetting-gate.md.
+DEFAULT_PER_MODULE_IGNORE = frozenset({"mlp.shared_expert_gate"})
+
 
 class GateDecision(NamedTuple):
     """Detailed AND-gate verdict with per-axis booleans for message building."""
@@ -149,6 +158,23 @@ class GateDecision(NamedTuple):
     failed: bool
     angle_bad: bool
     delta_bad: bool
+
+
+class PerModuleGateDecision(NamedTuple):
+    """Per-module AND-gate verdict.
+
+    ``failed`` is True iff at least one non-ignored module has
+    ``angle < angle_threshold`` AND the supplied ``winrate_drop``
+    exceeds ``winrate_drop_threshold``. When ``winrate_drop`` is
+    ``None`` the gate runs in partial/angle-only mode: ``failed`` is
+    always False but ``offending_modules`` still lists modules whose
+    angle alone is below the threshold (informational).
+    """
+
+    failed: bool
+    offending_modules: list[str]
+    min_angle_module: str
+    min_angle_value: float
 
 
 def apply_and_gate_detailed(
@@ -183,6 +209,95 @@ def apply_and_gate(
     return apply_and_gate_detailed(
         angle, winrate_drop, angle_threshold, winrate_drop_threshold
     ).failed
+
+
+def apply_per_module_gate(
+    per_module_angles: dict[str, float],
+    winrate_drop: float | None,
+    angle_threshold: float = ANGLE_THRESHOLD,
+    winrate_drop_threshold: float = WINRATE_DROP_THRESHOLD,
+    ignore_modules: set[str] | frozenset[str] | None = None,
+) -> PerModuleGateDecision:
+    """Per-module forgetting gate.
+
+    Fails iff ANY non-ignored module has ``angle < angle_threshold`` AND
+    the aggregate ``winrate_drop`` exceeds ``winrate_drop_threshold``.
+    This is the fine-grained complement of :func:`apply_and_gate`: the
+    aggregate gate uses the mean across modules and masks individual
+    divergences, whereas this gate flags the single worst offender.
+
+    The AND-logic with the win-rate drop matches the project invariant
+    (top-level ``CLAUDE.md``): "rollback if angle < 30° AND win-rate
+    drop > 0.03". A low module angle alone is not a rollback signal —
+    the win-rate drop is still required for the gate to fail.
+
+    When ``winrate_drop`` is ``None`` (angle-only / partial mode), the
+    gate never fails but ``offending_modules`` still lists modules
+    whose angle alone falls below the threshold — callers may surface
+    this informationally.
+
+    Args:
+        per_module_angles: mapping ``module_key -> angle_degrees``,
+            typically from :func:`compute_angles`.
+        winrate_drop: baseline − measured win-rate. ``None`` for
+            angle-only partial mode.
+        angle_threshold: degrees below which a module's angle is
+            considered unsafe (default 30.0).
+        winrate_drop_threshold: fractional drop above which win-rate
+            signals regression (default 0.03).
+        ignore_modules: module keys to skip (not considered for gate
+            or offender/min reporting). Defaults to
+            :data:`DEFAULT_PER_MODULE_IGNORE` which excludes
+            ``mlp.shared_expert_gate`` — see its docstring for the
+            rank-1 delta rationale. Pass an empty ``set()`` to consider
+            every module (strictest mode). Pass ``None`` for the
+            default.
+
+    Returns:
+        :class:`PerModuleGateDecision` with ``failed``,
+        ``offending_modules`` (modules with angle below threshold,
+        empty list if none or if ``per_module_angles`` is empty),
+        ``min_angle_module`` (the lowest-angle non-ignored module,
+        ``""`` if no modules), and ``min_angle_value`` (the
+        corresponding angle, ``nan`` if no modules).
+    """
+    import math
+
+    if ignore_modules is None:
+        ignore_modules = DEFAULT_PER_MODULE_IGNORE
+
+    considered = {
+        k: float(v) for k, v in per_module_angles.items() if k not in ignore_modules
+    }
+    if not considered:
+        return PerModuleGateDecision(
+            failed=False,
+            offending_modules=[],
+            min_angle_module="",
+            min_angle_value=float("nan"),
+        )
+
+    min_module = min(considered, key=considered.__getitem__)
+    min_value = considered[min_module]
+    offending = sorted(k for k, v in considered.items() if v < angle_threshold)
+
+    # AND-logic: a low angle is a rollback signal only when paired with
+    # a win-rate drop above threshold. In partial/angle-only mode
+    # (``winrate_drop is None``) we never fail — the caller is expected
+    # to treat ``offending_modules`` as informational.
+    delta_bad = (
+        winrate_drop is not None and winrate_drop > winrate_drop_threshold
+    )
+    failed = bool(offending) and delta_bad
+    if not math.isfinite(min_value):
+        min_value = float("nan")
+
+    return PerModuleGateDecision(
+        failed=failed,
+        offending_modules=offending,
+        min_angle_module=min_module,
+        min_angle_value=float(min_value),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -567,7 +682,20 @@ def measure_forgetting_signal(
           - ``winrate_measured`` (float or None)
           - ``winrate_baseline`` (float or None)
           - ``winrate_drop`` (float or None)
-          - ``gate_status`` ("pass" | "fail" | "angle_only_partial")
+          - ``gate_status`` ("pass" | "fail" | "angle_only_partial") —
+            legacy aggregate-only status, kept for back-compat.
+          - ``gate_status_aggregate`` (same values) — the coarse gate
+            (mean angle across modules).
+          - ``gate_status_per_module`` (same values) — the fine-grained
+            gate (any single module < threshold).
+          - ``offending_modules`` (list[str]) — modules with angle
+            below threshold under the per-module gate (``mlp.
+            shared_expert_gate`` is ignored by default; see
+            :data:`DEFAULT_PER_MODULE_IGNORE`).
+          - ``min_angle_module`` (str) — lowest-angle non-ignored
+            module, ``""`` if none.
+          - ``min_angle_value`` (float) — lowest angle, ``nan`` if no
+            modules.
           - ``warning`` (str or None)
           - ``note`` (str, context)
     """
@@ -584,6 +712,11 @@ def measure_forgetting_signal(
             "winrate_drop": None,
             "warning": "no matching LoRA layers found in either adapter",
             "gate_status": "angle_only_partial",
+            "gate_status_aggregate": "angle_only_partial",
+            "gate_status_per_module": "angle_only_partial",
+            "offending_modules": [],
+            "min_angle_module": "",
+            "min_angle_value": float("nan"),
             "note": "Win-rate half not measured; run paired eval for full gate.",
         }
 
@@ -599,6 +732,14 @@ def measure_forgetting_signal(
         and winrate_baseline is not None
     )
     if not winrate_inputs_provided:
+        # Per-module partial view: drop=None means never fail, but still
+        # surface the lowest module for diagnostics.
+        pm_partial = apply_per_module_gate(
+            per_module,
+            winrate_drop=None,
+            angle_threshold=angle_threshold,
+            winrate_drop_threshold=winrate_drop_threshold,
+        )
         warning: str | None = None
         if mean_angle < angle_threshold:
             warning = "angle below threshold"
@@ -610,6 +751,11 @@ def measure_forgetting_signal(
             "winrate_drop": None,
             "warning": warning,
             "gate_status": "angle_only_partial",
+            "gate_status_aggregate": "angle_only_partial",
+            "gate_status_per_module": "angle_only_partial",
+            "offending_modules": list(pm_partial.offending_modules),
+            "min_angle_module": pm_partial.min_angle_module,
+            "min_angle_value": pm_partial.min_angle_value,
             "note": "Win-rate half not measured; run paired eval for full gate.",
         }
 
@@ -632,12 +778,23 @@ def measure_forgetting_signal(
     decision = apply_and_gate_detailed(
         mean_angle, drop, angle_threshold, winrate_drop_threshold
     )
-    gate_status = "fail" if decision.failed else "pass"
+    pm_decision = apply_per_module_gate(
+        per_module,
+        winrate_drop=drop,
+        angle_threshold=angle_threshold,
+        winrate_drop_threshold=winrate_drop_threshold,
+    )
+    gate_status_aggregate = "fail" if decision.failed else "pass"
+    gate_status_per_module = "fail" if pm_decision.failed else "pass"
     warning_bits = []
     if decision.angle_bad:
         warning_bits.append(f"angle {mean_angle:.2f}° < {angle_threshold}°")
     if decision.delta_bad:
         warning_bits.append(f"winrate_drop {drop:.3f} > {winrate_drop_threshold}")
+    if pm_decision.failed and pm_decision.offending_modules:
+        warning_bits.append(
+            "per-module: " + ",".join(pm_decision.offending_modules)
+        )
     warning = "; ".join(warning_bits) or None
 
     return {
@@ -647,8 +804,17 @@ def measure_forgetting_signal(
         "winrate_baseline": baseline,
         "winrate_drop": float(drop),
         "warning": warning,
-        "gate_status": gate_status,
-        "note": "Full gate: angle<30° AND winrate_drop>0.03 → fail.",
+        # Legacy aggregate-only status (unchanged behaviour).
+        "gate_status": gate_status_aggregate,
+        "gate_status_aggregate": gate_status_aggregate,
+        "gate_status_per_module": gate_status_per_module,
+        "offending_modules": list(pm_decision.offending_modules),
+        "min_angle_module": pm_decision.min_angle_module,
+        "min_angle_value": pm_decision.min_angle_value,
+        "note": (
+            "Full gate: aggregate (mean angle) AND per-module (any "
+            "non-ignored module < 30°) both enforced with winrate_drop>0.03."
+        ),
     }
 
 
@@ -852,7 +1018,13 @@ class ForgettingEvaluator:
                 wr_measured = signal.get("winrate_measured")
                 wr_baseline = signal.get("winrate_baseline")
                 wr_drop = signal.get("winrate_drop")
-                gate_status = signal.get("gate_status", "angle_only_partial")
+                gate_status_agg = signal.get(
+                    "gate_status_aggregate",
+                    signal.get("gate_status", "angle_only_partial"),
+                )
+                gate_status_pm = signal.get(
+                    "gate_status_per_module", gate_status_agg
+                )
 
                 if wr_measured is None or wr_baseline is None:
                     winrate_base_val = 0.0
@@ -863,7 +1035,11 @@ class ForgettingEvaluator:
                     winrate_adapted_val = float(wr_measured)
                     winrate_drop_val = float(wr_drop or 0.0)
 
-                should_rollback = gate_status == "fail"
+                # Rollback on EITHER aggregate or per-module failure
+                # (stricter is safer — matches CLI exit policy).
+                should_rollback = (
+                    gate_status_agg == "fail" or gate_status_pm == "fail"
+                )
                 reports.append(
                     ForgettingReport(
                         stack_id=stack_id,
