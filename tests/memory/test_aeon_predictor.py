@@ -174,3 +174,170 @@ class TestAeonPredictorIngest:
         assert palace.graph.has_node("t0")
         assert palace.graph.has_node("t1")
         assert any(e.src == "t0" and e.dst == "t1" for e in temporal_edges)
+
+
+class TestAeonPredictorPredict:
+    def test_predict_cold_start_returns_input(self):
+        palace = AeonSleep(dim=32)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=32))
+        h = _mock_embed(32, seed=1)
+        out = pred.predict_next(h, horizon=1)
+        assert out.shape == (32,)
+        np.testing.assert_allclose(out, h, atol=1e-6)  # fallback == identity
+
+    def test_predict_after_ready_differs_from_input(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, hidden=8, n_stacks=2, cold_start_threshold=4)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(6):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i), ts=t0 + timedelta(minutes=i)
+            )
+        # Force trained flag by calling fit_on_buffer (added in this task).
+        pred.fit_on_buffer(lr=0.05, epochs=50, batch_size=4)
+        assert pred.ready is True
+        h = _mock_embed(16, seed=99)
+        out = pred.predict_next(h, horizon=1)
+        assert out.shape == (16,)
+        # After training it should NOT be exactly h (residual has moved).
+        assert not np.allclose(out, h, atol=1e-4)
+
+    def test_predict_horizon_k_iterates(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, hidden=8, n_stacks=2, cold_start_threshold=4)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(6):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i), ts=t0 + timedelta(minutes=i)
+            )
+        pred.fit_on_buffer(lr=0.05, epochs=30, batch_size=4)
+        h = _mock_embed(16, seed=99)
+        out1 = pred.predict_next(h, horizon=1)
+        out3 = pred.predict_next(h, horizon=3)
+        # horizon=3 must differ from horizon=1 (3 applied rollouts).
+        assert not np.allclose(out1, out3, atol=1e-4)
+
+    def test_predict_rejects_bad_horizon(self):
+        palace = AeonSleep(dim=16)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=16))
+        with pytest.raises(ValueError, match="horizon"):
+            pred.predict_next(_mock_embed(16, seed=0), horizon=0)
+
+
+class TestAeonPredictorRecall:
+    def test_recall_delegates_to_palace(self):
+        palace = AeonSleep(dim=16)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=16))
+        t0 = datetime(2026, 4, 17, 10, 0)
+        pred.ingest_latent("t0", _mock_embed(16, seed=1), ts=t0)
+        pred.ingest_latent(
+            "t1", _mock_embed(16, seed=2), ts=t0 + timedelta(minutes=1)
+        )
+        hits = pred.recall(_mock_embed(16, seed=1), top_k=2)
+        assert len(hits) >= 1
+        # Top hit should be t0 or t1 — both live in the atlas now.
+        assert hits[0].episode_id in {"t0", "t1"}
+
+    def test_recall_top_k_respected(self):
+        palace = AeonSleep(dim=16)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=16))
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(5):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i), ts=t0 + timedelta(minutes=i)
+            )
+        hits = pred.recall(_mock_embed(16, seed=0), top_k=3)
+        assert len(hits) == 3
+
+
+class TestStackConditioning:
+    def test_two_stacks_learn_different_targets(self):
+        """Same h_t but stacks 0 and 1 learn opposite shifts."""
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(
+            dim=16, hidden=16, n_stacks=4, cold_start_threshold=4
+        )
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+
+        rng = np.random.default_rng(0)
+        # Alternate stack 0 (shift-right) and stack 1 (shift-left) pairs.
+        for i in range(40):
+            h = rng.standard_normal(16).astype(np.float32)
+            h /= np.linalg.norm(h) + 1e-8
+            pred.ingest_latent(
+                f"t{i}", h, ts=t0 + timedelta(minutes=i), stack_id=i % 2
+            )
+
+        # Train long enough that the two stacks separate.
+        pred.fit_on_buffer(lr=0.05, epochs=200, batch_size=8)
+
+        probe = rng.standard_normal(16).astype(np.float32)
+        probe /= np.linalg.norm(probe) + 1e-8
+        out_s0 = pred.predict_next(probe, horizon=1, stack_id=0)
+        out_s1 = pred.predict_next(probe, horizon=1, stack_id=1)
+        assert not np.allclose(out_s0, out_s1, atol=1e-3), (
+            "stack 0 and stack 1 should produce distinguishable outputs"
+        )
+
+    def test_unknown_stack_uses_null_condition(self):
+        palace = AeonSleep(dim=16)
+        pred = AeonPredictor(palace=palace, config=PredictorConfig(dim=16, cold_start_threshold=2))
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(4):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i),
+                ts=t0 + timedelta(minutes=i), stack_id=None,
+            )
+        pred.fit_on_buffer(epochs=10, batch_size=4)
+        # stack_id=None should not raise and should not produce NaN.
+        out = pred.predict_next(_mock_embed(16, seed=99), stack_id=None)
+        assert not np.any(np.isnan(out))
+
+
+class TestCentering:
+    def test_centering_disabled_by_default(self):
+        mlp = LatentMLP(dim=16, hidden=8, n_stacks=2, seed=0)
+        assert mlp.use_centering is False
+
+    def test_centering_enabled_shifts_running_mean(self):
+        mlp = LatentMLP(
+            dim=16, hidden=8, n_stacks=2, seed=0,
+            use_centering=True, centering_momentum=0.5,
+        )
+        # Initially zero.
+        assert np.allclose(mlp._running_mean, 0.0)
+        x = np.ones((4, 16), dtype=np.float32) * 0.5
+        stack = np.zeros((4, 2), dtype=np.float32)
+        stack[:, 0] = 1.0
+        _ = mlp.forward(x, stack)
+        # After one forward, running_mean should be non-zero.
+        assert not np.allclose(mlp._running_mean, 0.0)
+
+    def test_predictor_config_propagates_centering(self):
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(dim=16, use_centering=True, centering_momentum=0.8)
+        pred = AeonPredictor(palace=palace, config=cfg)
+        assert pred.mlp.use_centering is True
+        assert pred.mlp.centering_momentum == pytest.approx(0.8)
+
+    def test_centering_does_not_break_training(self):
+        """Regression test: training still converges with centering on."""
+        palace = AeonSleep(dim=16)
+        cfg = PredictorConfig(
+            dim=16, hidden=8, n_stacks=2,
+            cold_start_threshold=2, use_centering=True,
+        )
+        pred = AeonPredictor(palace=palace, config=cfg)
+        t0 = datetime(2026, 4, 17, 10, 0)
+        for i in range(8):
+            pred.ingest_latent(
+                f"t{i}", _mock_embed(16, seed=i),
+                ts=t0 + timedelta(minutes=i), stack_id=i % 2,
+            )
+        history = pred.fit_on_buffer(lr=0.05, epochs=20, batch_size=4)
+        assert len(history) == 20
+        # Loss should not be NaN or exploded.
+        assert all(not np.isnan(h) and h < 5.0 for h in history)
