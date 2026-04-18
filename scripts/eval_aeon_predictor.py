@@ -49,6 +49,7 @@ class EvalResult:
     stream_type: str
     use_centering: bool
     per_stack_centering: bool
+    use_layernorm_delta: bool
 
 
 def _unit(v: np.ndarray) -> np.ndarray:
@@ -230,6 +231,7 @@ def main() -> int:
         stream_type=args.stream,
         use_centering=args.use_centering,
         per_stack_centering=args.per_stack_centering,
+        use_layernorm_delta=args.use_layernorm_delta,
     )
 
     payload = asdict(result)
