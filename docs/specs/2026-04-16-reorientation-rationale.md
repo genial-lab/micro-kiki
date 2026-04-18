@@ -249,7 +249,7 @@ Stack-01 `chat-fr` checkpoint (overfitted, best iter 300, val 0.722) should be *
 | Use rank 16 for all 10 stacks? | No — use rank 8 for electronics, freecad, platformio |
 | Augment sub-threshold domains? | Yes — teacher distillation with `--require-verify` |
 | Merge HF mascarade data? | Yes — dedup + re-classify before training |
-| Router: 32 sigmoid → 11 classifier? | Yes — argmax + passthrough head at 0.65 threshold |
+| Router: 32 sigmoid → 35-class sigmoid (final)? | Yes — sigmoid outputs (not argmax) for 34 niches + base; confidence-driven routing via thresholds |
 | Training time saving? | 16.5 h saved (22 dropped × 45 min) |
 | Risk of further overfitting? | Mitigated by enrichment; stm32/electronics flagged for early stopping |
 

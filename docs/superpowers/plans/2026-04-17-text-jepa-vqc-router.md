@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the VQC router's sentence-transformers input embeddings with embeddings from a small Text-JEPA student encoder (MLP projector trained with a JEPA objective — L1 masked-prediction loss against an EMA teacher) and benchmark 11-class domain classification against baseline.
+**Goal:** Replace the VQC router's sentence-transformers input embeddings with embeddings from a small Text-JEPA student encoder (MLP projector trained with a JEPA objective — L1 masked-prediction loss against an EMA teacher) and benchmark 35-class domain classification against baseline.
 
-**Architecture:** Frozen `all-MiniLM-L6-v2` (384-d) → trainable 2-layer MLP student projector (384 → 128) + EMA teacher (same shape, no grad) + tiny MLP predictor (~1/10 params of student). Training uses multi-span masking of input tokens (contiguous 3–5 token blocks), L1 loss on masked-position targets only, stop-gradient on teacher. At inference the student outputs 128-d embeddings that feed the existing 4-qubit / 6-layer VQC router. A config flag (`use_text_jepa`) selects the embedding path so we can A/B test.
+**Architecture:** Frozen `all-MiniLM-L6-v2` (384-d) → trainable 2-layer MLP student projector (384 → 128) + EMA teacher (same shape, no grad) + tiny MLP predictor (~1/10 params of student). Training uses multi-span masking of input tokens (contiguous 3–5 token blocks), L1 loss on masked-position targets only, stop-gradient on teacher. At inference the student outputs 128-d embeddings that feed the existing 6-qubit / 6-layer VQC router. A config flag (`use_text_jepa`) selects the embedding path so we can A/B test.
 
 **Tech Stack:** Python 3.11, PyTorch 2.4 (CPU or MPS), `sentence-transformers>=3.0`, PennyLane (VQC), NumPy, pytest, uv.
 
@@ -16,7 +16,7 @@
 - Modifying the VQC circuit itself (qubits, layers, parameter-shift gradients).
 - VICReg / Barlow Twins / contrastive objectives — collapse prevention relies on EMA + stop-gradient + asymmetry only.
 
-**Success criterion:** VQC router accuracy with Text-JEPA input **≥ baseline accuracy** on held-out 11-class test set, OR **equal accuracy at 128-d latent vs 384-d baseline** (memory/compute win).
+**Success criterion:** VQC router accuracy with Text-JEPA input **≥ baseline accuracy** on held-out 35-class test set, OR **equal accuracy at 128-d latent vs 384-d baseline** (memory/compute win).
 **Kill criterion:** accuracy drops > 5 points vs baseline, OR student embedding std collapses to `< 0.01` during training (monitor every epoch).
 
 ---
@@ -1820,7 +1820,7 @@ git commit -m "feat(routing): use_text_jepa flag + embedder factory"
 - Create: `scripts/eval_text_jepa_vqc.py`
 - Test: `tests/scripts/test_eval_text_jepa_vqc.py`
 
-Script: for each condition (baseline MiniLM vs Text-JEPA student), (a) build embeddings for N samples/domain, (b) train the VQC on 80% train split, (c) measure 11-class accuracy on 20% test split, (d) write JSON with both conditions + latent dim + param count.
+Script: for each condition (baseline MiniLM vs Text-JEPA student), (a) build embeddings for N samples/domain, (b) train the VQC on 80% train split, (c) measure 35-class accuracy on 20% test split, (d) write JSON with both conditions + latent dim + param count.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1984,7 +1984,7 @@ def _evaluate_vqc(
     split = int(0.8 * len(idx))
     tr, te = idx[:split], idx[split:]
 
-    cfg = QuantumRouterConfig(n_qubits=4, n_layers=6, n_classes=n_classes)
+    cfg = QuantumRouterConfig(n_qubits=6, n_layers=6, n_classes=n_classes)
     vqc = QuantumRouter(cfg)
     vqc.train(embs[tr], labels[tr].astype(int), epochs=epochs)
 
@@ -2149,7 +2149,7 @@ Create `results/text-jepa-vqc.md` with the template below, filling in the real n
 **Teacher:** EMA momentum 0.99
 **Predictor:** MLP 128 → 32 → 128
 **Loss:** L1 on span-masked positions (ratio 0.4, span 3-5 tokens)
-**VQC:** 4 qubits, 6 StronglyEntanglingLayers, parameter-shift gradient, 10 training epochs.
+**VQC:** 6 qubits, 6 StronglyEntanglingLayers, parameter-shift gradient, 10 training epochs.
 
 ## Results
 
@@ -2360,7 +2360,7 @@ def _eval_vqc(embs: np.ndarray, labels: np.ndarray, n_classes: int, epochs: int,
     rng.shuffle(idx)
     split = int(0.8 * len(idx))
     tr, te = idx[:split], idx[split:]
-    cfg = QuantumRouterConfig(n_qubits=4, n_layers=6, n_classes=n_classes)
+    cfg = QuantumRouterConfig(n_qubits=6, n_layers=6, n_classes=n_classes)
     vqc = QuantumRouter(cfg)
     vqc.train(embs[tr], labels[tr].astype(int), epochs=epochs)
     correct = 0

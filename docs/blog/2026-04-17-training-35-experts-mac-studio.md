@@ -164,7 +164,7 @@ The model runs on any Apple Silicon Mac with 32+ GB (Q4_K_M via MLX or llama.cpp
 
 Three directions:
 
-**Quantum router.** A 4-qubit Variational Quantum Circuit (72 parameters, PennyLane) for domain classification achieves 86.8% accuracy in preliminary tests -- a 47x parameter reduction versus classical routing (72 vs 3.4M parameters). QPU deployment on IonQ Aria is planned for H2 2026. This is part of a broader triple-hybrid architecture combining quantum (VQC routing), spiking (energy-efficient inference), and classical (LoRA adaptation) computation.
+**Quantum router.** A 6-qubit Variational Quantum Circuit (~108 parameters, PennyLane) for domain classification into 35 classes achieves preliminary results of 86.8% accuracy on smaller domain sets. Early 4-qubit experiments showed a 47x parameter reduction (72 vs 3.4M parameters); the production 6-qubit VQC achieves 31,000x reduction. QPU deployment on IonQ Aria is planned for H2 2026. This is part of a broader triple-hybrid architecture combining quantum (VQC routing), spiking (energy-efficient inference), and classical (LoRA adaptation) computation.
 
 **Runtime MoE per-token routing.** Currently the domain router operates at the query level. Moving to per-token routing would allow the model to activate different domain expertise within a single response -- switching from `electronics` to `python` mid-sentence as the topic shifts from circuit analysis to firmware code.
 

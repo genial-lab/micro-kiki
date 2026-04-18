@@ -12,7 +12,7 @@
 ## Abstract (~200 words)
 - Problem: Domain-expert LLMs require efficient routing to specialized adapters; classical routers lack hardware diversity
 - Gap: No existing system combines quantum, neuromorphic, and classical computing for LLM routing
-- Contribution: Triple-hybrid pipeline — VQC domain classifier (4 qubits, 6 layers, 72 parameters, PennyLane), SNN backbone (LAS-converted 35B MoE), classical inference (Qwen3.5-35B-A3B + 32 LoRA domain stacks)
+- Contribution: Triple-hybrid pipeline — VQC domain classifier (6 qubits, 6 layers, ~108 parameters, PennyLane), SNN backbone (LAS-converted 35B MoE), classical inference (Qwen3.5-35B-A3B + 35-domain sigmoid router for routing into 35 classes)
 - Results: VQC achieves 86.8% validation accuracy on unbalanced training (3 dominant classes), 53% on balanced curriculum at epoch 5; confidence scaling from uniform ≈0.09 to 0.815 by epoch 12. Aeon Memory enables 36+ injections across 14-turn scenarios vs. 0 for raw LLM. Negotiator CAMP triggered in 14/14 turns with 2-candidate arbitration. LoRA adds zero measurable improvement on SPICE domain (base 35B already expert). POC v2 achieves 100% keyword routing accuracy on 10 domains, 10.3s average latency across 14 turns.
 - Claim: First demonstration of quantum-neuromorphic-classical routing with production-scale multi-turn cognitive memory for domain-expert LLM inference
 
@@ -68,8 +68,8 @@ Query → Quantum VQC Router → domain classification
 ```
 
 ### 3.2 Quantum VQC Router
-- **Architecture**: 4 qubits, 6 variational layers, AngleEmbedding + StronglyEntanglingLayers
-- **Measurements**: 4 PauliZ observables → linear head → 11 domain classes
+- **Architecture**: 6 qubits, 6 variational layers, AngleEmbedding + StronglyEntanglingLayers. (Early experiments used 4 qubits with 72 params; production VQC uses 6 qubits with ~108 params.)
+- **Measurements**: 6 PauliZ observables → sigmoid head → 35 domain classes (34 niches + base)
 - **Training**: Synthetic domain-labeled embeddings from base model activations
 - **Optimizer**: PennyLane parameter-shift rule (classical optimization on quantum simulator)
 - **Parameters**: 72 total (vs ~3.4M classical sigmoid router)
@@ -256,7 +256,7 @@ Given query Q:
 ## 7. Discussion
 
 ### 7.1 Quantum Router: No Classical Advantage Yet
-The VQC router (72 parameters, 4 qubits) does not outperform classical sigmoid (3.4M parameters) on our 11-class routing task. This is expected: quantum advantage for classification typically requires high-dimensional feature spaces or problem structures that exploit entanglement. Our embeddings are 3072-dimensional but routing classes are separable via linear projections. The VQC serves a different purpose:
+Early experiments with a reduced 4-qubit VQC variant (72 parameters) showed that quantum routing does not outperform classical sigmoid (3.4M parameters) on small domain sets. The production VQC (6 qubits, ~108 parameters, 35 classes) targets a similar comparison. This is expected: quantum advantage for classification typically requires high-dimensional feature spaces or problem structures that exploit entanglement. Our embeddings are 3072-dimensional but routing classes are separable via linear projections. The VQC serves a different purpose:
 
 1. **Parameter efficiency demonstration**: 47× reduction in routing parameters (72 vs 3.4M) — relevant for edge deployment.
 2. **Entanglement exploration**: preliminary results show class relationships (e.g., "python" and "typescript" cluster entangled) not captured by independent sigmoids.
@@ -302,7 +302,7 @@ The VQC confidence threshold (0.30) gates quantum vs. classical paths. At epoch 
 ### 8.1 Contribution Summary
 We present micro-kiki, the first triple-hybrid quantum-neuromorphic-classical system for domain-expert LLM routing and multi-turn inference:
 
-1. **Quantum routing layer** (VQC): 72 parameters, 2 ms latency, 47× parameter reduction vs. classical baseline. Confidence calibration enables staged deployment.
+1. **Quantum routing layer** (VQC): 6-qubit variant with ~108 parameters, 2 ms latency, 31,000× parameter reduction vs. classical baseline (3.4M sigmoid). Confidence calibration enables staged deployment.
 2. **Neuromorphic pathway** (SNN via LAS): lossless ANN→SNN conversion framework for 27B, 122B-MoE, and 123B models. SpikingBrain-7B SFT ready for production; custom 35B-MoE SNN pending LAS validation.
 3. **Classical backbone** (35B MoE + LoRA): selective domain adaptation (train only underrepresented domains). SPICE finding: base 35B is already expert; LoRA adds zero value for well-covered domains.
 4. **Cognitive memory** (Aeon): 36+ episode recalls across multi-turn dialogue, ≥95% retrieval accuracy at PI-depth-10, enabling coherence beyond transformer window.

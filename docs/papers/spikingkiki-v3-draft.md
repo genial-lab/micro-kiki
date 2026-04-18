@@ -478,7 +478,7 @@ The energy estimates in this paper should be interpreted as theoretical bounds. 
 
 ### 8.5 Future Work
 
-**Quantum Router Integration.** The companion triple-hybrid architecture (see `docs/paper-outline-triple-hybrid.md`) integrates a 4-qubit VQC (72 parameters, PennyLane) for domain classification. Preliminary results show 86.8% accuracy on unbalanced training and 53% on balanced curriculum at epoch 5. The VQC achieves 47x parameter reduction versus classical sigmoid routing (72 vs 3.4M parameters). QPU deployment on IonQ Aria is planned for H2 2026.
+**Quantum Router Integration.** The companion triple-hybrid architecture (see `docs/paper-outline-triple-hybrid.md`) integrates a 6-qubit VQC (~108 parameters, PennyLane) for domain classification into 35 classes. Early experiments with a reduced 4-qubit variant (72 parameters) showed 86.8% accuracy on unbalanced training and 53% on balanced curriculum at epoch 5. The production 6-qubit VQC achieves 31,000x parameter reduction versus classical sigmoid routing (~108 vs 3.4M parameters). QPU deployment on IonQ Aria is planned for H2 2026.
 
 **Neuromorphic Hardware Deployment.** BrainChip Akida Mini PCIe provides a physical platform for SNN inference benchmarking. The LAS-converted SpikingKiki model would run on Akida's event-driven neuromorphic processor, where AC operations consume ~10x less energy than GPU MAC. Intel Loihi 2 is an alternative target.
 

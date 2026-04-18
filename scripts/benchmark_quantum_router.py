@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Benchmark quantum VQC router vs classical sigmoid router.
 
-Generates synthetic embeddings for 11 domain classes, trains both routers,
-then compares accuracy, per-classification latency, and parameter count.
+Generates synthetic embeddings for 11-domain subset (dsp, electronics, emc, ..., base),
+trains both routers, then compares accuracy, per-classification latency, and parameter count.
+Note: This benchmark intentionally uses a reduced 11-domain subset for fast iteration;
+the production VQC router handles all 35 domains.
 
 Results are written to results/quantum-router-benchmark.json.
 
@@ -30,7 +32,8 @@ logger = logging.getLogger(__name__)
 
 _RESULTS_DIR = Path(__file__).parent.parent / "results"
 
-# 10 niche domains + base — must match router._ALL_DOMAINS
+# 11-domain synthetic subset for benchmarking (does not match full router._ALL_DOMAINS which has 35)
+# The production router supports all 35 domains; this benchmark uses a reduced subset for fast local testing.
 _ALL_DOMAINS = [
     "dsp",
     "electronics",
@@ -44,7 +47,7 @@ _ALL_DOMAINS = [
     "stm32",
     "base",
 ]
-N_CLASSES = len(_ALL_DOMAINS)  # 11
+N_CLASSES = len(_ALL_DOMAINS)  # 11 (synthetic subset, not production scale)
 
 
 @dataclass
