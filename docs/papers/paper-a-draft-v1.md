@@ -439,6 +439,23 @@ All JSON result files referenced in Sections 4.2 and 4.3 live under `micro-kiki-
 
 Apple M5 CPU, single-threaded numpy. All PoC runs complete in 1.2–4.2 seconds for 1000-turn streams at 50–300 epochs. No GPU allocation required. License: Apache 2.0 (code), CC BY 4.0 (paper text).
 
+## Appendix B: Edge deployment projections (~300 words)
+
+Because Aeon is a numpy-only ~100 K-parameter predictor and AeonSleep is a CPU-friendly vector+graph store, deployment on edge AI platforms is feasible without re-engineering. We provide projected (not measured) latency for two candidate platforms:
+
+- **GenioBoard** (MediaTek Genio 700, 4 TOPS NPU, octa-core Cortex-A78/A55, 8 GB LPDDR4X)
+- **Arduino VENTUNO Q** (Qualcomm Dragonwing IQ8-275 MPU with up to 40 dense TOPS + STM32H5F5 MCU, dual-brain)
+
+| Operation | Mac M5 (baseline) | GenioBoard Genio 700 | VENTUNO Q (MPU side) |
+|-----------|-------------------|----------------------|----------------------|
+| `AeonPredictor.predict_next` (single) | 200 µs | ~300 µs | ~250 µs |
+| `AeonSleep.recall(k=10)` at 10 k turns | 1–2 ms | ~3–5 ms | ~2–4 ms |
+| `QuantumRouter.classify` (VQC, PennyLane) | 5 ms | ~10–15 ms | ~8–12 ms |
+| Small LLM inference (3B Q4, 10 tokens) | 2 s | ~5–10 s (CPU-only) | ~1–2 s (NPU-accelerated) |
+| Full turn (ingest + predict + recall + LLM 3B) | ~2.2 s | ~5–10 s | ~1–2 s |
+
+Numbers are extrapolated from public SoC specs and comparable ARM/Qualcomm benchmarks, not measured on dev kits. The qualitative story: Aeon + VQC core ports trivially (CPU-bound, 100 K params, PennyLane simulator), and the VENTUNO Q dual-brain architecture maps cleanly onto micro-kiki's existing split between a Python LLM serving stack and an ESP32/STM32-based actuation/control layer — a natural physical home for the Kill_LIFE / Zacus / KXKM Parallelator industrial deployments. Scouting notes and architecture discussion are in `docs/research/edge-deployment-genio-ventunoq.md`.
+
 ---
 
 **Document metadata**
