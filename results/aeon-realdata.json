@@ -1,0 +1,19 @@
+{
+  "baseline_recall_at_5": 0.02,
+  "predictive_recall_at_5": 0.01,
+  "null_stack_recall_at_5": 0.01,
+  "baseline_mrr": 0.0045000000000000005,
+  "predictive_mrr": 0.002,
+  "null_stack_mrr": 0.002,
+  "win_rate_predictive": 0.01,
+  "win_rate_stack_vs_null": 0.0,
+  "n_queries": 100,
+  "n_samples_ingested": 1000,
+  "n_domains": 10,
+  "elapsed_seconds": 15.24838399887085,
+  "final_train_loss": 0.2350528948009014,
+  "predictor_ready": true,
+  "use_centering": false,
+  "use_layernorm_delta": true,
+  "dim": 384
+}
