@@ -43,6 +43,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any, Callable, Iterable, Sequence
 
+import numpy as np
+
 from src.cognitive.consolidation import (
     Consolidator,
     RawEpisode,
@@ -192,14 +194,7 @@ class AeonSleep:
 
         # 2) Persist vector + graph node.
         payload = dict(episode.payload)
-        payload.update(
-            {
-                "text": episode.text,
-                "topic": episode.topic,
-                "ts": episode.ts.isoformat(),
-            }
-        )
-        self.atlas.add(episode.id, episode.embedding, payload=payload)
+        self.atlas.insert(episode.id, np.array(episode.embedding, dtype=np.float32))
         self.graph.add_node(
             episode.id,
             kind="raw",
@@ -207,13 +202,14 @@ class AeonSleep:
             text=episode.text,
             topic=episode.topic,
             conflict=tag.level,
+            **payload,
         )
 
         # 3) Temporal edge from the most recent same-topic episode.
         prev_same_topic = self._last_on_topic(episode.topic, before=episode.ts)
         if prev_same_topic is not None:
-            self.graph.add_edge(
-                prev_same_topic, episode.id, kind="temporal"
+            self.graph.add_typed_edge(
+                prev_same_topic, episode.id, "temporal"
             )
 
         self._episode_meta[episode.id] = {
