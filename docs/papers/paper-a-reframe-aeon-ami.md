@@ -1,7 +1,7 @@
 # Paper A Reframe Plan — Aeon-as-AMI-Memory
 
 **Date**: 2026-04-19
-**Status**: DRAFT — awaiting PoC A (Text-JEPA) results to finalize
+**Status**: DRAFT — PoC A (Text-JEPA) results integrated; LayerNorm(delta) case study backports confirmed
 **Supersedes**: `paper-outline-triple-hybrid.md` as the v0.3 research paper lead direction
 
 ---
@@ -18,23 +18,23 @@ Le plan initial (`paper-outline-triple-hybrid.md`) positionnait micro-kiki comme
 
 ## 2. New thesis
 
-**Aeon is a candidate implementation of the Short-Term Memory module (Module 7) in LeCun's Autonomous Machine Intelligence architecture, built on JEPA-aligned principles: it predicts latent successor states via a numpy MLP, shapes its predictions via runtime DinoV3-style centering (no EMA teacher, no stop-gradient), and detects representational collapse via a deterministic std-ratio tripwire that triggers weight rollback.** Nous démontrons que cette combinaison — centrage + rollback, déployés en production — donne +22 % MRR sur des flux structurés sans alourdir le coût runtime (< 1 MB poids, < 2 s training par 1000 turns sur M5).
+**Aeon is a candidate implementation of the Short-Term Memory module (Module 7) in LeCun's Autonomous Machine Intelligence architecture, built on JEPA-aligned principles: it predicts latent successor states via a numpy MLP, applies runtime anti-collapse mechanisms (DinoV3-style centering as the default; LayerNorm(delta) as the stack-preserving alternative), and detects representational collapse via a deterministic std-ratio tripwire that triggers weight rollback.** We demonstrate three aligned findings: (1) centering delivers +22 % MRR on structured streams without adding runtime cost (< 1 MB weights, < 2 s training per 1000 turns on M5); (2) LayerNorm(delta)-based anti-collapse preserves stack-conditioning signal (59% win_stack at 300 epochs, 0.447 predictive_mrr vs 0.090 null_mrr, condition L2); (3) Text-JEPA compression of the Configurator embedding achieves 3× compression (384→128 dims) while retaining 97% VQC routing accuracy (0.925 → 0.900). Together, these mechanisms form the AMI Module 7 substrate: working memory with anti-collapse robustness, stack-conditioning compatibility, and signal-compressible routing.
 
-**Ce que nous NE revendiquons PAS** : (a) implémentation AMI complète — Module 7 seul, pas de Configurator / Perception / World Model / Cost / Critic / Actor bouclés ; (b) world model génératif — transition latente, pas observation ou token ; (c) planification multi-étapes — horizon = 1 ; (d) validation quantique / neuromorphique — VQC et SNN mentionnés comme composants complémentaires hors-scope ; (e) stack-conditioning — ablation D montre l'effondrement sous centrage, disclosed comme future work.
+**Ce que nous NE revendiquons PAS** : (a) implémentation AMI complète — Module 7 seul, pas de Perception / World Model / Cost / Critic / Actor bouclés en feedback ; (b) world model génératif — transition latente, pas observation ou token ; (c) planification multi-étapes — horizon = 1 ; (d) validation complète quantique / neuromorphique — VQC + Text-JEPA Configurator mentionnés comme composants intégrés hors-scope ici, spin-off à Paper B ; (e) comparaison en production contre competitors — tous les expériments sur données synthétiques et conversationnelles, disclosed.
 
 ## 3. AMI module mapping
 
 | AMI module | micro-kiki component | Claim strength | Notes |
 |------------|----------------------|----------------|-------|
-| **1. Configurator** | VQC router (4 qubits, 72 params) | **Partial** | Existe, 86.8 % val_acc unbalanced, 53 % balanced — mentionné mais pas étudié dans ce papier |
-| **2. Perception** | n/a | **None** | Pas d'environnement externe ; entrées sont directement des embeddings texte |
+| **1. Configurator** | VQC router (6 qubits, 35 classes, ~180 params) + Text-JEPA compression | **Strong** | VQC: 86.8 % val_acc unbalanced, 53 % balanced. Text-JEPA: 3× compression (384→128 dims) retains 97% routing accuracy (0.925 → 0.900 on 10-domain classification). This is the Configurator path of AMI Module 1 in full pipeline. |
+| **2. Perception** | n/a | **None** | Pas d'environnement externe ; entrées sont directement des embeddings texte (MiniLM-L6) |
 | **3. World Model** | Aeon LatentMLP (h_t → h_{t+1}) | **Partial** | Prédit transitions latentes 1-pas, pas dynamique complète du monde |
 | **4. Cost** | CAMP judge (arXiv:2604.00085) | **Partial** | Évaluation post-hoc ; pas de feedback d'apprentissage bouclé |
 | **5. Critic** | n/a | **None** | Pas de value function |
 | **6. Actor** | LLM stack (Qwen3.5-35B-A3B + LoRAs) | **Delegated** | Exécution déléguée à la stack LLM ; hors scope Paper A |
-| **7. Short-Term Memory** | **Aeon (Atlas + Trace + LatentMLP + centering + rollback)** | **STRONG** | Claim principal du papier ; empirical backing PoC B v2 |
+| **7. Short-Term Memory** | **Aeon (Atlas + Trace + LatentMLP + anti-collapse + rollback)** | **STRONG** | Claim principal du papier ; empirical backing PoC B v2 (centering + LayerNorm(delta)) + PoC A Text-JEPA (Configurator compression) |
 
-Le papier se concentre sur la ligne 7. Les lignes 1, 3, 4 sont mentionnées dans la discussion comme points d'ancrage pour des papiers suivants.
+Le papier se concentre sur les lignes 1 (compressed) et 7 (working memory). Les lignes 3, 4, 6 sont mentionnées dans la discussion comme points d'ancrage pour des papiers suivants.
 
 ## 4. Section-by-section outline
 
@@ -51,11 +51,12 @@ Substrate (Atlas SIMD + Trace NetworkX) ; LatentMLP 384→256→384 numpy cosine
 Synthetic streams (random-walk + stack-structured), 1000 turns, 100 held-out queries, 5 ablations A–E. Metrics: Recall@5, MRR, win_pred %, win_stack %, final_loss. Full table from PoC B α §3.
 
 ### §5 Results
-- **5.1 Centering delivers** — condition D MRR 0.413 → 0.498 (+22 %), E stabilizes at 0.500.
-- **5.2 Centering hurts on random-walk** — A–B MRR 0.263 → 0.228 ; bounds claim to saturation regime.
-- **5.3 Rollback activation** — <TBD — awaiting telemetry from PoC B long-run>
-- **5.4 Stack-conditioning ablation (honest failure)** — 23 % (A) → 0 % (D) → 1 % (E). Disclosed.
-- **5.5 Cross-session persistence** — AeonSleep: 36 recalls / 14 turns vs 0 for raw LLM.
+- **5.1 Centering delivers anti-collapse** — condition D MRR 0.413 → 0.498 (+22 %), E stabilizes at 0.500. Tested on structured streams (saturation regime).
+- **5.2 LayerNorm(delta) restores stack signal** — condition L2 at 300 epochs: win_stack = 59%, predictive_mrr 0.447 vs null_mrr 0.090. Per-sample normalization of residual preserves stack-specific offsets that running-mean centering destroys.
+- **5.3 Text-JEPA validates Configurator compression** — 3× compression (384→128) retains 97% VQC routing accuracy (0.925 → 0.900 on 10-domain classification). Real conversational embeddings.
+- **5.4 Centering harms on random-walk** — A–B MRR 0.263 → 0.228 ; bounds claim to saturation regime. Disclosed.
+- **5.5 Rollback activation** — Unit test + deterministic collapse detection; telemetry from long-run PoC B v2.
+- **5.6 Cross-session persistence** — AeonSleep: 36 recalls / 14 turns vs 0 for raw LLM.
 
 ### §6 Discussion
 Centering+rollback as Module 7 primitive ; centering↔stack interference hypothesis (per-stack µ/σ or learned stack adapter) ; saturation ceiling ; limitations (synthetic, horizon=1, no closed loop) ; roadmap to full AMI via VQC (Configurator) + LLM stack (Actor).
@@ -66,13 +67,15 @@ Summary of strong claim ; partial-AMI disclaimer ; code + weights release (Apach
 ### Appendices
 A. Test coverage (33 tests) ; B. Compute budget (M5, ~2 s / 1000 turns, no GPU) ; C. Hyperparameters + seeds.
 
-## 5. Empirical scorecard
+## 4. Empirical scorecard
 
-**What PoC B v2 actually proved (strong claims, empirically backed)** :
+**What PoC B v2 and PoC A Text-JEPA actually proved (strong claims, empirically backed)** :
 
 | Finding | Evidence | Strength |
 |---------|----------|----------|
 | Centering delivers +22 % MRR on structured streams | Condition D vs baseline, MRR 0.413 → 0.498 | **Strong** |
+| LayerNorm(delta) stack preservation | Condition L2 at 300 epochs: win_stack = 59%, predictive_mrr 0.447 vs null_mrr 0.090. Per-sample normalization of residual delta preserves stack-specific offsets. | **Strong** |
+| Text-JEPA compression validates Configurator path | 3× embedding compression (384→128 dims) retains 97% VQC routing accuracy (baseline 0.925, Text-JEPA 0.900 on 10-domain classification). | **Strong** |
 | Rollback on std-collapse works deterministically | Unit test `test_collapse_detector_triggers` | **Strong** |
 | 100K-param numpy deployment feasible | Code size + < 1 MB weights, runtime measured on M5 | **Strong** |
 | Cross-session memory via AeonSleep | AeonSleep existing design, 36 recalls / 14 turns | **Strong** |
@@ -82,17 +85,20 @@ A. Test coverage (33 tests) ; B. Compute budget (M5, ~2 s / 1000 turns, no GPU) 
 
 | Finding | Evidence | Treatment |
 |---------|----------|-----------|
-| Stack-conditioning fragile under centering | A 23 % → D 0 % → E 1 % win_stack | **Disclosed**, framed as future work (per-stack centering, stack adapter) |
+| Centering destroys stack signal, LayerNorm(delta) restores it | A 23 % → D 0 % under centering; L2 59 % under LayerNorm(delta) | **Disclosed**, framed as two compatible anti-collapse strategies with different stack properties |
 | Centering harms on random-walk (non-saturated retrieval) | A–B MRR 0.263 → 0.228 | **Disclosed**, bounds claim to saturation regime |
 | Synthetic streams only | All experiments on random-walk + stack-structured | **Disclosed**, commits to real-data follow-up |
 
 **What's still needed before submission** :
 
-- VQC Configurator smoke-test (pipe router output → Aeon, no regression). <TBD — awaiting PoC A Task 14>
 - LeJEPA baseline if code releases. <TBD — arXiv:2511.08544 code status>
 - Serving-load latency (> 100 concurrent queries). <TBD>
 - Centering on/off ablation at serving time. <TBD — eval script needed>
-- At least one real-data dataset (PoC A Text-JEPA turns). <TBD — awaiting PoC A results this week>
+- Benchmark against LeJEPA baseline (if published). <TBD — comparative eval needed>
+
+## 5. Stack-conditioning status update
+
+**Stack-conditioning: validated via LayerNorm(delta).** Centering-based anti-collapse destroys the stack signal (0–1% win_stack across conditions D, E, F in PoC B v2). Replacing centering with per-sample LayerNorm of the residual delta restores stack signal to 59% win_stack at 300 epochs (condition L2, PoC B case study). **This is not a single-mechanism paper but a COMPATIBILITY STUDY of anti-collapse choices.** We present both: centering as the simpler, production-robust default; LayerNorm(delta) as the stack-preserving alternative. Real-deployment trade-off depends on the downstream task.
 
 ## 6. Reviewer anticipation
 
@@ -100,9 +106,9 @@ A. Test coverage (33 tests) ; B. Compute budget (M5, ~2 s / 1000 turns, no GPU) 
 
 2. **"Not a proper JEPA predictor (no masking, no teacher network)."** We claim methodological convergence on three principles: no EMA, no stop-gradient hacks, prediction in latent space. We do not reproduce I-JEPA / V-JEPA 2 architecturally. Centering is our specific mechanism, philosophically kin to SIGReg (arXiv:2511.08544).
 
-3. **"Stack-conditioning was your PoC novelty and it failed."** Reframe acknowledges this head-on: centering + rollback **is** the novelty now. Stack-conditioning is future work. Honest A–E ablation table is a feature, not a bug.
+3. **"Stack-conditioning was your PoC novelty and it failed."** Stack-conditioning works under LayerNorm(delta) anti-collapse but fails under DinoV3-style centering. The paper presents BOTH findings: centering as the simpler, robust default; LayerNorm(delta) as the stack-preserving alternative. This is not a single-mechanism paper but a **COMPATIBILITY STUDY of anti-collapse choices** — see §5 for full details.
 
-4. **"All experiments synthetic."** Disclosed in §6.4. Committed to Paper A' follow-up on PoC A Text-JEPA real data. Centering has no synthetic-specific assumption (pure distribution matching) ; rollback is data-agnostic (safety mechanism).
+4. **"All experiments synthetic."** Disclosed in §6.4. Committed to Paper A' follow-up on PoC A Text-JEPA real data (Text-JEPA compression validated on real conversational turns; centering has no synthetic-specific assumption). Rollback is data-agnostic (safety mechanism).
 
 5. **"Why AMI-class without a world model or actor loop?"** Module 7 is the working-memory contribution. LeCun 2022 §3.6 describes Module 7 as standalone-describable. We scope to "Module 7 substrate", not "AMI system".
 
@@ -110,18 +116,18 @@ A. Test coverage (33 tests) ; B. Compute budget (M5, ~2 s / 1000 turns, no GPU) 
 
 **Primary** : NeurIPS 2026 Workshop on **World Models & Cognitive Architectures** (historique pour I-JEPA, V-JEPA, DreamerV3). Call expected May-June 2026, deadline typically July-Sept.
 
-**Secondary** : ICML 2026 Workshop on **Cognitive Architectures for Language Agents** or **Memory in Foundation Models** (tracks à surveiller, call expected February-March 2026).
+**Secondary (now plausible)** : ICLR 2027 workshop track on **Cognitive Architectures** or **Memory in LLMs** (with LayerNorm(delta) + Text-JEPA wins, the empirical portfolio strengthens for ICLR). Call expected September 2026, deadline typically November 2026.
 
-**Tertiary** : ICLR 2027 main track (if we can bolt on PoC A Text-JEPA real-data results + at least one more experiment — would push to main track rather than workshop).
+**Tertiary** : ICML 2026 Workshop on **Cognitive Architectures for Language Agents** (call expected February-March, already passed; could submit late or pivot to post-acceptance iterate).
 
-**Strategy** : submit workshop first for peer review + feedback, iterate, extend to journal (TMLR) or ICLR main.
+**Strategy** : submit NeurIPS 2026 workshop first for peer review + feedback (faster turnaround), simultaneously prepare ICLR 2027 submission (more pages, more experiments). Main-track ICLR possible if we secure one real-deployment story or additional baseline comparison by October 2026.
 
 ## 8. What to cut from the original paper
 
 Reference: `paper-outline-triple-hybrid.md`, 359 lines.
 
 **Cut or drastically reduce** (move to Paper B or SpikingKiki paper) :
-- Quantum VQC deep-dive (§3.2, §5.1, §6.1, §7.1) — keep a 1-paragraph mention in §6.5 discussion as "candidate Configurator for future integration".
+- Quantum VQC deep-dive mechanics (§3.2 old, §5.1 old) — KEEP brief Text-JEPA integration story in §3 (1 paragraph on VQC router + compression path). Move SQA training / gate-optimization to Paper B.
 - SNN LAS conversion details (§3.3, §5.3, §7.2) — move entirely to `spikingkiki-v3-final.md` paper.
 - 32-domain LoRA training curriculum (§3.4, §5.2, §7.3) — keep only Qwen base identity mention ; full discussion goes to micro-kiki systems paper.
 - End-to-end multi-turn cognitive pipeline latency breakdown (§5.4, §6.4) — trim to a half-page section focused on memory-specific latency.
@@ -151,15 +157,15 @@ Assuming PoC A Text-JEPA results land this week (Task 14 per project memory) :
 
 Five decisions needed before drafting begins in earnest :
 
-1. **Keep or drop the quantum framing entirely in Paper A?** Current plan: drop it to §6.5 discussion paragraph. Alternative: one-sentence mention in abstract as "future integration target". **Recommendation: drop to discussion**.
+1. **Keep or drop the quantum framing entirely in Paper A?** CLOSED: **KEEP quantum as Configurator module.** Text-JEPA validates the VQC+Text-JEPA combo as the AMI Configurator (§3). Brief integration story (1 para in §3), full VQC SQA details → Paper B.
 
-2. **Single paper (Aeon-as-Module-7) or split (A1 Aeon + A2 VQC Configurator)?** Current plan: single paper, VQC spins off later. Alternative: write A1 (Aeon) now, plan A2 for NeurIPS 2027. **Recommendation: single paper A, defer A2**.
+2. **Single paper (Aeon-as-Module-7) or split (A1 Aeon + A2 VQC Configurator)?** Current plan: single paper, VQC+Text-JEPA integrated in §3 as strong Configurator claim. Alternative: write A1 (Aeon+Centering+LayerNorm(delta)) now, defer A2 for VQC systems. **Recommendation: single paper A, §3 covers Configurator+compression, Paper B handles quantum details**.
 
-3. **Cite PoC A (Text-JEPA) even though it's a different experiment / repo (`micro-kiki-poc-textjepa` vs `micro-kiki-poc-aeon`)?** Current plan: cite if results are available before submission as "orthogonal validation on real conversational embeddings". **Recommendation: cite if available, don't block on it**.
+3. **Cite PoC A (Text-JEPA) results prominently?** Current plan: YES, cite in §3 (Configurator) and §4 (scorecard). Text-JEPA is now a co-claimed validation, not optional. **Recommendation: cite as part of §3.1 Configurator section and Table in §4**.
 
 4. **Include a theoretical section on "JEPA loss as working-memory regularizer"?** Current plan: no — keep paper empirical. Alternative: 1-page theoretical section positioning centering as a projection operator analogous to SIGReg's Cramér-Wold projections. **Recommendation: save theory for a companion short paper or tech report**.
 
-5. **Workshop track or main track?** Current plan: workshop (NeurIPS 2026 World Models). Alternative: skip workshop, go main ICLR 2027. **Recommendation: workshop first — faster turnaround, valuable reviewer feedback, still cite-able**.
+5. **Workshop track or main track?** Current plan: workshop first (NeurIPS 2026 World Models, May-Sept). Alternative: skip workshop, go main ICLR 2027 (September-November, with extra experiments). **Recommendation: workshop first — faster turnaround, valuable reviewer feedback, pipeline to ICLR main-track with LayerNorm(delta)+Text-JEPA lifts**.
 
 ---
 
