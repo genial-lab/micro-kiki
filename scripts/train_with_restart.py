@@ -100,7 +100,7 @@ def train_domain_chunked(domain: str, chunk: int) -> bool:
         "save_every": chunk,
         "steps_per_report": 10,
         "steps_per_eval": chunk,
-        "val_batches": 25,
+        "val_batches": 0,  # disable val eval (saves Metal allocations)
         "train": True,
         "seed": 42,
     }
