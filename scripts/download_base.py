@@ -75,23 +75,6 @@ def snapshot(target: Path) -> Path:
     return Path(local)
 
 
-def verify_download(bf16_path: str, q4_path: str) -> dict:
-    """Quick existence + size check for both bf16 dir and Q4 GGUF."""
-    bf16 = Path(bf16_path)
-    q4 = Path(q4_path)
-    bf16_exists = bf16.is_dir()
-    q4_exists = q4.is_file()
-    bf16_ok = False
-    if bf16_exists:
-        total = sum(f.stat().st_size for f in bf16.rglob("*") if f.is_file())
-        bf16_ok = total > EXPECTED_BF16_BYTES * (1 - SIZE_TOLERANCE)
-    return {
-        "bf16_exists": bf16_exists,
-        "q4_exists": q4_exists,
-        "bf16_ok": bf16_ok,
-    }
-
-
 def verify_sizes(local: Path) -> int:
     """Sum shard sizes, log the total. 35B-A3B has no fixed reference byte
     count (upstream re-releases change shard layout) — real integrity is

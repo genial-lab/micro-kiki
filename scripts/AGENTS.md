@@ -36,7 +36,7 @@ Operator-facing command-line drivers for the full micro-kiki lifecycle: download
 | Directory | Purpose |
 |-----------|---------|
 | `micro_kiki/` | Legacy / research pipeline (pre-MLX pivot): `classify_domains.py`, `deduplicate.py`, `eval_stack.py`, `moe_lora.py`, `null_space.py`, `residual_boost.py`, `split_domains.py`, `pipeline_data.sh`, `train_all_stacks.sh` |
-| `legacy/` | Archived pre-pivot drivers (Qwen3.5-4B era + GPU prototyping): `train_stack02.py`, `train_stack03.py`, `train_stack_kxkm.py`, `train_micro_kiki_v3_gpu.py`, `train_router_v0.py`, `train_router_kxkm.py`, `distill_fast.py`, `distill_niche.py`, `e2e_final.py`, `smoke_e2e.py`, `smoke_test_e2e.py`, `run_pipeline.sh`, `run_eval_stack01{,_fast}.py`, `run_eval_v2.py`, `run_eval_mini.py`, `run_eval_3.py`. Kept for reference only — NOT on the 35B-A3B path |
+| `legacy/` | Archived pre-pivot drivers (Qwen3.5-4B era + GPU prototyping): `train_stack02.py`, `train_stack03.py`, `train_stack_kxkm.py`, `train_micro_kiki_v3_gpu.py`, `train_router_v0.py`, `train_router_kxkm.py`, `distill_fast.py`, `e2e_final.py`, `smoke_e2e.py`, `smoke_test_e2e.py`, `run_pipeline.sh`, `run_eval_stack01{,_fast}.py`, `run_eval_v2.py`, `run_eval_mini.py`, `run_eval_3.py`. Kept for reference only — NOT on the 35B-A3B path |
 
 ## For AI Agents
 
