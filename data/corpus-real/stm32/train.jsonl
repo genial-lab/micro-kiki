@@ -1,50 +1,50 @@
-{"text": "Configure UART2 on STM32F4 at 115200 baud with DMA reception.", "domain": "stm32"}
-{"text": "Write a FreeRTOS task that reads an I2C sensor (BME280) every 2 seconds and sends data to a queue.", "domain": "stm32"}
-{"text": "Write ARM Thumb-2 assembly for a fast memcpy with 32-bit aligned transfers on Cortex-M4.", "domain": "stm32"}
-{"text": "How to configure the ADC on STM32F4 with DMA for continuous multi-channel scanning?", "domain": "stm32"}
-{"text": "Implement a hardware timer interrupt on STM32F4 that toggles an LED at exactly 1kHz.", "domain": "stm32"}
-{"text": "Write a SPI driver for STM32 to communicate with a W25Q128 flash memory. Include read, write, and erase functions.", "domain": "stm32"}
-{"text": "How do I set up the STM32 MPU (Memory Protection Unit) to protect a critical memory region?", "domain": "stm32"}
-{"text": "Implement a CAN bus driver for STM32F4 to send and receive messages.", "domain": "stm32"}
-{"text": "Write a low-power sleep mode implementation for STM32L4 with RTC wakeup.", "domain": "stm32"}
-{"text": "Explain the STM32 clock tree and write the SystemClock_Config for 168MHz on STM32F407.", "domain": "stm32"}
-{"text": "How to use the STM32 hardware CRC peripheral for data integrity verification?", "domain": "stm32"}
-{"text": "Write a bootloader concept for STM32 that jumps to the application after CRC check.", "domain": "stm32"}
-{"text": "Create a simple LED control program using GPIOE GPIO_PIN_13", "domain": "stm32"}
-{"text": "Create an external interrupt program using GPIOA GPIO_PIN_12", "domain": "stm32"}
-{"text": "Implement STM32 UART functionality", "domain": "stm32"}
-{"text": "Create a PWM control program using TIM11 [PERSON]", "domain": "stm32"}
-{"text": "Create a UART communication program using UART4", "domain": "stm32"}
-{"text": "Create a UART communication program using UART5", "domain": "stm32"}
-{"text": "Create an ADC reading program using ADC2 ADC_CHANNEL_1", "domain": "stm32"}
-{"text": "Create a timer interrupt program using TIM7", "domain": "stm32"}
-{"text": "Create a UART communication program using USART2", "domain": "stm32"}
-{"text": "Create a SPI communication program", "domain": "stm32"}
-{"text": "Create an ADC reading program using [PERSON]", "domain": "stm32"}
-{"text": "Create a SPI communication program", "domain": "stm32"}
-{"text": "Create an external interrupt program using GPIOD GPIO_PIN_6", "domain": "stm32"}
-{"text": "Create a PWM control program using TIM3 TIM_CHANNEL_1", "domain": "stm32"}
-{"text": "Create a multi-LED control program with 4 LEDs", "domain": "stm32"}
-{"text": "Create an ADC reading program using [PERSON]", "domain": "stm32"}
-{"text": "Create a simple LED control program using GPIOE GPIO_PIN_11", "domain": "stm32"}
-{"text": "Create a simple LED control program using GPIOG [PERSON]", "domain": "stm32"}
-{"text": "Create a simple LED control program using GPIOH GPIO_PIN_3", "domain": "stm32"}
-{"text": "Create an external interrupt program using GPIOG GPIO_PIN_3", "domain": "stm32"}
-{"text": "Create a PWM control program using TIM1 TIM_CHANNEL_2", "domain": "stm32"}
-{"text": "Create a SPI communication program", "domain": "stm32"}
-{"text": "Create an ADC reading program using ADC2 ADC_CHANNEL_0", "domain": "stm32"}
-{"text": "Create a timer interrupt program using TIM5", "domain": "stm32"}
-{"text": "Create a PWM control program using TIM11 TIM_CHANNEL_2", "domain": "stm32"}
-{"text": "Create a multi-LED control program with 3 LEDs", "domain": "stm32"}
-{"text": "Create a multi-LED control program with 4 LEDs", "domain": "stm32"}
-{"text": "Create a SPI communication program", "domain": "stm32"}
-{"text": "Create an I2C communication program", "domain": "stm32"}
-{"text": "Create a PWM control program using TIM2 TIM_CHANNEL_4", "domain": "stm32"}
-{"text": "Create a timer interrupt program using TIM10", "domain": "stm32"}
-{"text": "Create a DMA transfer program", "domain": "stm32"}
-{"text": "Create an I2C communication program", "domain": "stm32"}
-{"text": "Create a UART communication program using USART2", "domain": "stm32"}
-{"text": "Create a PWM control program using TIM5 TIM_CHANNEL_4", "domain": "stm32"}
-{"text": "Create a simple LED control program using GPIOG [PERSON]", "domain": "stm32"}
-{"text": "Create a DMA transfer program", "domain": "stm32"}
-{"text": "Create an I2C communication program", "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Configure UART2 on STM32F4 at 115200 baud with DMA reception."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Write a FreeRTOS task that reads an I2C sensor (BME280) every 2 seconds and sends data to a queue."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Write ARM Thumb-2 assembly for a fast memcpy with 32-bit aligned transfers on Cortex-M4."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "How to configure the ADC on STM32F4 with DMA for continuous multi-channel scanning?"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Implement a hardware timer interrupt on STM32F4 that toggles an LED at exactly 1kHz."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Write a SPI driver for STM32 to communicate with a W25Q128 flash memory. Include read, write, and erase functions."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "How do I set up the STM32 MPU (Memory Protection Unit) to protect a critical memory region?"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Implement a CAN bus driver for STM32F4 to send and receive messages."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Write a low-power sleep mode implementation for STM32L4 with RTC wakeup."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Explain the STM32 clock tree and write the SystemClock_Config for 168MHz on STM32F407."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "How to use the STM32 hardware CRC peripheral for data integrity verification?"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Write a bootloader concept for STM32 that jumps to the application after CRC check."}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a simple LED control program using GPIOE GPIO_PIN_13"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an external interrupt program using GPIOA GPIO_PIN_12"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Implement STM32 UART functionality"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a PWM control program using TIM11 [PERSON]"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a UART communication program using UART4"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a UART communication program using UART5"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an ADC reading program using ADC2 ADC_CHANNEL_1"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a timer interrupt program using TIM7"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a UART communication program using USART2"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a SPI communication program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an ADC reading program using [PERSON]"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a SPI communication program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an external interrupt program using GPIOD GPIO_PIN_6"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a PWM control program using TIM3 TIM_CHANNEL_1"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a multi-LED control program with 4 LEDs"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an ADC reading program using [PERSON]"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a simple LED control program using GPIOE GPIO_PIN_11"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a simple LED control program using GPIOG [PERSON]"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a simple LED control program using GPIOH GPIO_PIN_3"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an external interrupt program using GPIOG GPIO_PIN_3"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a PWM control program using TIM1 TIM_CHANNEL_2"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a SPI communication program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an ADC reading program using ADC2 ADC_CHANNEL_0"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a timer interrupt program using TIM5"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a PWM control program using TIM11 TIM_CHANNEL_2"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a multi-LED control program with 3 LEDs"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a multi-LED control program with 4 LEDs"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a SPI communication program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an I2C communication program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a PWM control program using TIM2 TIM_CHANNEL_4"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a timer interrupt program using TIM10"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a DMA transfer program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an I2C communication program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a UART communication program using USART2"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a PWM control program using TIM5 TIM_CHANNEL_4"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a simple LED control program using GPIOG [PERSON]"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create a DMA transfer program"}], "domain": "stm32"}
+{"messages": [{"role": "user", "content": "Create an I2C communication program"}], "domain": "stm32"}

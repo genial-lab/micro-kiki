@@ -1,50 +1,50 @@
-{"text": "How do I calculate microstrip impedance for a 50\u03a9 trace on a 4-layer PCB with FR4?", "domain": "kicad-dsl"}
-{"text": "Write a KiCad Python script to create a QFN-48 footprint with exposed pad.", "domain": "kicad-dsl"}
-{"text": "What is the recommended 4-layer PCB stackup for a mixed-signal design with USB 2.0?", "domain": "kicad-dsl"}
-{"text": "How to set up DRC rules in KiCad 8 for JLCPCB manufacturing capabilities?", "domain": "kicad-dsl"}
-{"text": "How to route differential pairs in KiCad for USB 3.0 or Ethernet?", "domain": "kicad-dsl"}
-{"text": "Write a KiCad Python script to export BOM in JLCPCB format from a schematic.", "domain": "kicad-dsl"}
-{"text": "What are the IPC-2221 conductor spacing requirements for different voltages?", "domain": "kicad-dsl"}
-{"text": "How to design a proper ground pour in KiCad with via stitching?", "domain": "kicad-dsl"}
-{"text": "How do I calculate trace width for a given current in KiCad?", "domain": "kicad-dsl"}
-{"text": "Explain the KiCad file formats and how to parse .kicad_pcb programmatically.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical engineering.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
-{"text": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design.", "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "How do I calculate microstrip impedance for a 50\u03a9 trace on a 4-layer PCB with FR4?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "Write a KiCad Python script to create a QFN-48 footprint with exposed pad."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "What is the recommended 4-layer PCB stackup for a mixed-signal design with USB 2.0?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "How to set up DRC rules in KiCad 8 for JLCPCB manufacturing capabilities?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "How to route differential pairs in KiCad for USB 3.0 or Ethernet?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "Write a KiCad Python script to export BOM in JLCPCB format from a schematic."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "What are the IPC-2221 conductor spacing requirements for different voltages?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "How to design a proper ground pour in KiCad with via stitching?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "How do I calculate trace width for a given current in KiCad?"}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "Explain the KiCad file formats and how to parse .kicad_pcb programmatically."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical engineering."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}
+{"messages": [{"role": "user", "content": "You are an electrical engineer and you will answer questions related to electrical schematic and PCB design."}], "domain": "kicad-dsl"}

@@ -1,50 +1,50 @@
-{"text": "Write bare-metal ARM Cortex-M4 startup code in assembly with vector table and Reset_Handler.", "domain": "embedded"}
-{"text": "Write ESP32 code using ESP-IDF to configure SPI master and communicate with an SPI flash chip (W25Q128).", "domain": "embedded"}
-{"text": "Write a RISC-V bare-metal program in assembly that blinks an LED on a SiFive HiFive1 board.", "domain": "embedded"}
-{"text": "How to configure DMA on STM32F4 using LL drivers for high-speed ADC sampling?", "domain": "embedded"}
-{"text": "Write a [PERSON] bare-metal program in C that blinks an LED on GPIO17 without any OS.", "domain": "embedded"}
-{"text": "Explain the Teensy 4.1 (i.MX RT1062) startup sequence and how to use its hardware timers in bare-metal.", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control LED on GPIOE GPIO_PIN_13", "domain": "embedded"}
-{"text": "Write STM32 HAL code for external interrupt on GPIOA GPIO_PIN_12", "domain": "embedded"}
-{"text": "Write STM32 code for UART using HAL library", "domain": "embedded"}
-{"text": "Write STM32 HAL code for PWM generation at 10000Hz using TIM11", "domain": "embedded"}
-{"text": "Write STM32 HAL code for UART communication at 460800 baud rate using UART4", "domain": "embedded"}
-{"text": "Write STM32 HAL code for UART communication at 38400 baud rate using UART5", "domain": "embedded"}
-{"text": "Write STM32 HAL code to read analog input from ADC2 ADC_CHANNEL_1", "domain": "embedded"}
-{"text": "Write STM32 HAL code for timer interrupt using TIM7", "domain": "embedded"}
-{"text": "Write STM32 HAL code for UART communication at 57600 baud rate using USART2", "domain": "embedded"}
-{"text": "Write STM32 HAL code for SPI master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code to read analog input from ADC1 ADC_CHANNEL_7", "domain": "embedded"}
-{"text": "Write STM32 HAL code for SPI master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code for external interrupt on GPIOD [PERSON]", "domain": "embedded"}
-{"text": "Write STM32 HAL code for PWM generation at 10000Hz using TIM3", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control 4 LEDs with running pattern", "domain": "embedded"}
-{"text": "Write STM32 HAL code to read analog input from ADC1 ADC_CHANNEL_7", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control LED on GPIOE GPIO_PIN_11", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control LED on GPIOG [PERSON]", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control LED on GPIOH GPIO_PIN_3", "domain": "embedded"}
-{"text": "Write STM32 HAL code for external interrupt on GPIOG GPIO_PIN_3", "domain": "embedded"}
-{"text": "Write STM32 HAL code for PWM generation at 2000Hz using TIM1", "domain": "embedded"}
-{"text": "Write STM32 HAL code for SPI master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code to read analog input from ADC2 ADC_CHANNEL_0", "domain": "embedded"}
-{"text": "Write STM32 HAL code for timer interrupt using TIM5", "domain": "embedded"}
-{"text": "Write STM32 HAL code for PWM generation at 1000Hz using TIM11", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control 3 LEDs with running pattern", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control 4 LEDs with running pattern", "domain": "embedded"}
-{"text": "Write STM32 HAL code for SPI master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code for I2C master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code for PWM generation at 5000Hz using TIM2", "domain": "embedded"}
-{"text": "Write STM32 HAL code for timer interrupt using TIM10", "domain": "embedded"}
-{"text": "Write STM32 HAL code for DMA memory to memory transfer", "domain": "embedded"}
-{"text": "Write STM32 HAL code for I2C master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code for UART communication at 19200 baud rate using USART2", "domain": "embedded"}
-{"text": "Write STM32 HAL code for PWM generation at 1000Hz using TIM5", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control LED on GPIOG [PERSON]", "domain": "embedded"}
-{"text": "Write STM32 HAL code for DMA memory to memory transfer", "domain": "embedded"}
-{"text": "Write STM32 HAL code for I2C master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code to read analog input from [PERSON]", "domain": "embedded"}
-{"text": "Write STM32 HAL code for external interrupt on GPIOD GPIO_PIN_0", "domain": "embedded"}
-{"text": "Write STM32 HAL code for UART communication at 230400 baud rate using USART2", "domain": "embedded"}
-{"text": "Write STM32 HAL code for SPI master communication", "domain": "embedded"}
-{"text": "Write STM32 HAL code for UART communication at 19200 baud rate using USART3", "domain": "embedded"}
-{"text": "Write STM32 HAL code to control LED on GPIOH GPIO_PIN_0", "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write bare-metal ARM Cortex-M4 startup code in assembly with vector table and Reset_Handler."}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write ESP32 code using ESP-IDF to configure SPI master and communicate with an SPI flash chip (W25Q128)."}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write a RISC-V bare-metal program in assembly that blinks an LED on a SiFive HiFive1 board."}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "How to configure DMA on STM32F4 using LL drivers for high-speed ADC sampling?"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write a [PERSON] bare-metal program in C that blinks an LED on GPIO17 without any OS."}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Explain the Teensy 4.1 (i.MX RT1062) startup sequence and how to use its hardware timers in bare-metal."}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control LED on GPIOE GPIO_PIN_13"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for external interrupt on GPIOA GPIO_PIN_12"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 code for UART using HAL library"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for PWM generation at 10000Hz using TIM11"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for UART communication at 460800 baud rate using UART4"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for UART communication at 38400 baud rate using UART5"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to read analog input from ADC2 ADC_CHANNEL_1"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for timer interrupt using TIM7"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for UART communication at 57600 baud rate using USART2"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for SPI master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to read analog input from ADC1 ADC_CHANNEL_7"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for SPI master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for external interrupt on GPIOD [PERSON]"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for PWM generation at 10000Hz using TIM3"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control 4 LEDs with running pattern"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to read analog input from ADC1 ADC_CHANNEL_7"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control LED on GPIOE GPIO_PIN_11"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control LED on GPIOG [PERSON]"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control LED on GPIOH GPIO_PIN_3"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for external interrupt on GPIOG GPIO_PIN_3"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for PWM generation at 2000Hz using TIM1"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for SPI master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to read analog input from ADC2 ADC_CHANNEL_0"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for timer interrupt using TIM5"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for PWM generation at 1000Hz using TIM11"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control 3 LEDs with running pattern"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control 4 LEDs with running pattern"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for SPI master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for I2C master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for PWM generation at 5000Hz using TIM2"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for timer interrupt using TIM10"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for DMA memory to memory transfer"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for I2C master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for UART communication at 19200 baud rate using USART2"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for PWM generation at 1000Hz using TIM5"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control LED on GPIOG [PERSON]"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for DMA memory to memory transfer"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for I2C master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to read analog input from [PERSON]"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for external interrupt on GPIOD GPIO_PIN_0"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for UART communication at 230400 baud rate using USART2"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for SPI master communication"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code for UART communication at 19200 baud rate using USART3"}], "domain": "embedded"}
+{"messages": [{"role": "user", "content": "Write STM32 HAL code to control LED on GPIOH GPIO_PIN_0"}], "domain": "embedded"}

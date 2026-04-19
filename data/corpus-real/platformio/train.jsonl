@@ -1,50 +1,50 @@
-{"text": "Write a complete platformio.ini for an ESP32 project with [PERSON], MQTT, DHT22 sensor, OTA updates, and separate debug/release environments.", "domain": "platformio"}
-{"text": "Write a PlatformIO ESP32 project with [PERSON] manager (captive portal for config), MQTT auto-reconnect, and deep sleep.", "domain": "platformio"}
-{"text": "How to write unit tests for an Arduino/PlatformIO project that can run on both native and embedded targets?", "domain": "platformio"}
-{"text": "Write PlatformIO code for an ESP32 BLE scanner that reports nearby devices via MQTT.", "domain": "platformio"}
-{"text": "How to create a custom PlatformIO board definition for a custom ESP32-S3 PCB?", "domain": "platformio"}
-{"text": "Write a PlatformIO ESP32 web server with REST API to control GPIOs and read ADC values.", "domain": "platformio"}
-{"text": "How to set up PlatformIO CI/CD with GitHub Actions for automated testing and OTA deployment?", "domain": "platformio"}
-{"text": "Write a PlatformIO library for a modular sensor abstraction with I2C auto-detection.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
-{"text": "Explain this Arduino concept and provide example code.", "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Write a complete platformio.ini for an ESP32 project with [PERSON], MQTT, DHT22 sensor, OTA updates, and separate debug/release environments."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Write a PlatformIO ESP32 project with [PERSON] manager (captive portal for config), MQTT auto-reconnect, and deep sleep."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "How to write unit tests for an Arduino/PlatformIO project that can run on both native and embedded targets?"}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Write PlatformIO code for an ESP32 BLE scanner that reports nearby devices via MQTT."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "How to create a custom PlatformIO board definition for a custom ESP32-S3 PCB?"}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Write a PlatformIO ESP32 web server with REST API to control GPIOs and read ADC values."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "How to set up PlatformIO CI/CD with GitHub Actions for automated testing and OTA deployment?"}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Write a PlatformIO library for a modular sensor abstraction with I2C auto-detection."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}
+{"messages": [{"role": "user", "content": "Explain this Arduino concept and provide example code."}], "domain": "platformio"}

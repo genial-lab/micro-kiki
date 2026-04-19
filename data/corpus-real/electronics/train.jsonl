@@ -1,50 +1,50 @@
-{"text": "Write ESP-IDF code for an MQTT client that publishes sensor data to a broker with TLS and auto-reconnection.", "domain": "electronics"}
-{"text": "Create a Home Assistant YAML configuration for a custom ESP32 sensor with MQTT auto-discovery.", "domain": "electronics"}
-{"text": "Write a FreeRTOS application with ESP-IDF that manages [PERSON] reconnection, MQTT, and deep sleep for a battery-powered sensor.", "domain": "electronics"}
-{"text": "Write a PlatformIO project configuration for an ESP32 with MQTT, DHT22, and OTA updates.", "domain": "electronics"}
-{"text": "How do I implement [PERSON] levels properly and when to use each one?", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
-{"text": "Write this ESP-IDF C code and explain its purpose.", "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write ESP-IDF code for an MQTT client that publishes sensor data to a broker with TLS and auto-reconnection."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Create a Home Assistant YAML configuration for a custom ESP32 sensor with MQTT auto-discovery."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write a FreeRTOS application with ESP-IDF that manages [PERSON] reconnection, MQTT, and deep sleep for a battery-powered sensor."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write a PlatformIO project configuration for an ESP32 with MQTT, DHT22, and OTA updates."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "How do I implement [PERSON] levels properly and when to use each one?"}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
+{"messages": [{"role": "user", "content": "Write this ESP-IDF C code and explain its purpose."}], "domain": "electronics"}
