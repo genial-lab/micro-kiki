@@ -21,7 +21,7 @@ To move from workshop-track to **main-track publishable**, 5 independent sub-pro
 | **C2** | Downstream LLM eval (router → actual model selection quality, not just accuracy) | TBD | 3-5 days | Needs brainstorm before plan |
 | **C3** | Real dialogue corpus (replace `data/final` synthetic with real user queries) | TBD | 5-7 days | Needs data-source decision |
 | **C4** | Scale test (10 → 35 domains with full MoE stack routing) | TBD | 3-4 days | Blocked by C1 + C3 |
-| **C5** | Theoretical analysis (information-capacity bound formal proof, linking 4-qubit ceiling to classical coding theory) | TBD | 5-10 days | Independent, can start anytime |
+| **C5** | Theoretical analysis (information-capacity bound formal proof, linking 4-qubit ceiling to classical coding theory) | Done | ~45min eng | **Completed 2026-04-19 (commits `41a3432`..`c370001`)** — see `docs/paper-a/c5-info-bound.tex`, bound=0.911 vs empirical 0.246 |
 
 **Total: 18-29 days of focused work** (vs 6 months with PennyLane parameter-shift).
 
