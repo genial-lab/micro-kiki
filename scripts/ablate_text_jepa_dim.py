@@ -32,6 +32,7 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 from src.routing.quantum_router import QuantumRouter, QuantumRouterConfig
+from src.routing.torch_vqc_router import TorchVQCRouter
 from src.routing.text_jepa.dataset import load_domain_corpus
 from src.routing.text_jepa.embed import TextJEPAEmbedder
 from src.routing.text_jepa.trainer import TextJEPATrainer
@@ -133,6 +134,7 @@ def _eval_vqc(
     n_classes: int,
     epochs: int,
     seed: int,
+    backend: str = "torch",
 ) -> dict:
     rng = np.random.default_rng(seed)
     idx = np.arange(len(embs))
@@ -140,10 +142,24 @@ def _eval_vqc(
     split = int(0.8 * len(idx))
     tr, te = idx[:split], idx[split:]
 
+    if backend == "torch":
+        model = TorchVQCRouter(
+            n_qubits=4, n_layers=6, n_classes=n_classes,
+            lr=0.05, seed=seed, input_dim=int(embs.shape[1]), weight_decay=1e-4,
+        )
+        X_tr = torch.from_numpy(embs[tr]).double()
+        y_tr = torch.from_numpy(labels[tr].astype(np.int64))
+        X_te = torch.from_numpy(embs[te]).double()
+        model.train_batched(X_tr, y_tr, epochs=epochs)
+        with torch.no_grad():
+            preds = model.predict(X_te).numpy()
+        acc = float((preds == labels[te].astype(np.int64)).mean())
+        n_params = sum(p.numel() for p in model.parameters())
+        return {"accuracy": acc, "n_test": int(len(te)), "vqc_params": int(n_params), "backend": "torch"}
+
     cfg = QuantumRouterConfig(n_qubits=4, n_layers=6, n_classes=n_classes)
     vqc = QuantumRouter(cfg)
     vqc.train(embs[tr], labels[tr].astype(int), epochs=epochs)
-
     correct = 0
     for e, y in zip(embs[te], labels[te]):
         qubits = vqc.circuit(vqc.weights, e)
@@ -152,11 +168,7 @@ def _eval_vqc(
             correct += 1
     acc = correct / max(len(te), 1)
     n_params = int(vqc.weights.size + vqc.linear_w.size + vqc.linear_b.size)
-    return {
-        "accuracy": float(acc),
-        "n_test": int(len(te)),
-        "vqc_params": n_params,
-    }
+    return {"accuracy": float(acc), "n_test": int(len(te)), "vqc_params": n_params, "backend": "pennylane"}
 
 
 def _count_params(module: torch.nn.Module) -> int:
