@@ -1,0 +1,52 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both this repository and the parent research program's pre-registration (OSF DOI 10.17605/OSF.IO/Q6JYN)."
+title: "micro-kiki: 35 Domain-Expert LoRA Adapters with Cognitive Layer on Qwen3.5 MoE"
+abstract: >
+  micro-kiki is a deployable 3B-active MoE-LoRA instantiation of the
+  dreamOfkiki framework. It pairs 35 domain-expert LoRA adapters
+  (sequentially trained via MLX on Mac Studio M3 Ultra 512 GB) with
+  a router of 35 sigmoid outputs (domains are not mutually
+  exclusive). Inference targets Q4_K_M quantization on consumer GPUs
+  (RTX 4090 24 GB class). The cognitive layer implements a subset of
+  the canonical dream operations (replay, downscale) against the
+  shared episodic-memory protocol defined in the parent framework.
+type: software
+authors:
+  - name: "genial-lab contributors"
+  - family-names: Saillant
+    given-names: Clément
+    email: clement@saillant.cc
+    affiliation: "L'Electron Rare, Grandris, France"
+repository-code: "https://github.com/genial-lab/micro-kiki"
+url: "https://github.com/genial-lab/micro-kiki"
+license: MIT
+license-url: "https://github.com/genial-lab/micro-kiki/blob/main/LICENSE"
+keywords:
+  - mixture of experts
+  - LoRA adaptation
+  - continual learning
+  - MLX
+  - Qwen3.5
+  - domain experts
+  - quantized inference
+  - Q4_K_M
+identifiers:
+  - type: doi
+    value: 10.17605/OSF.IO/Q6JYN
+    description: "Parent research program pre-registration (dreamOfkiki Cycle 1)"
+  - type: url
+    value: "https://osf.io/v7a2j"
+    description: "Parent research program OSF project"
+date-released: 2026-04-19
+preferred-citation:
+  type: unpublished
+  title: "dreamOfkiki: A Substrate-Agnostic Formal Framework for Dream-Based Knowledge Consolidation in Artificial Cognitive Systems"
+  authors:
+    - name: "dreamOfkiki project contributors"
+    - family-names: Saillant
+      given-names: Clément
+      email: clement@saillant.cc
+      affiliation: "L'Electron Rare, Grandris, France"
+  year: 2026
+  url: "https://github.com/genial-lab/dream-of-kiki"
+  notes: "Paper 1 draft v0.2. MIT code + CC-BY-4.0 docs. OSF pre-registration DOI 10.17605/OSF.IO/Q6JYN. arXiv preprint forthcoming."
