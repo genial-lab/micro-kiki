@@ -1,0 +1,223 @@
+{
+  "benchmark": "Base 35B vs LoRA 35B vs LoRA 4B",
+  "base_model": "Qwen3.6-35B-A3B",
+  "date": "2026-04-19",
+  "summary": {
+    "lora_35b_wins": 30,
+    "base_wins": 4,
+    "lora_4b_wins": 1,
+    "avg_improvement": "26%"
+  },
+  "domains": {
+    "chat-fr": {
+      "base_ppl": 6.53,
+      "lora_35b_ppl": 10.25,
+      "delta_pct": 57,
+      "winner": "base"
+    },
+    "reasoning": {
+      "base_ppl": 5.97,
+      "lora_35b_ppl": 6.31,
+      "delta_pct": 6,
+      "winner": "base"
+    },
+    "python": {
+      "base_ppl": 19.75,
+      "lora_35b_ppl": 6.03,
+      "delta_pct": -69,
+      "winner": "lora-35b"
+    },
+    "typescript": {
+      "base_ppl": 23.12,
+      "lora_35b_ppl": 21.75,
+      "delta_pct": -6,
+      "winner": "lora-35b"
+    },
+    "cpp": {
+      "base_ppl": 29.62,
+      "lora_35b_ppl": 21.0,
+      "delta_pct": -29,
+      "winner": "lora-35b"
+    },
+    "rust": {
+      "base_ppl": 44.5,
+      "lora_35b_ppl": 29.62,
+      "delta_pct": -33,
+      "winner": "lora-35b"
+    },
+    "html-css": {
+      "base_ppl": 22.38,
+      "lora_35b_ppl": 24.25,
+      "delta_pct": 8,
+      "winner": "base"
+    },
+    "shell": {
+      "base_ppl": 13.19,
+      "lora_35b_ppl": 7.62,
+      "delta_pct": -42,
+      "winner": "lora-35b"
+    },
+    "sql": {
+      "base_ppl": 43.75,
+      "lora_35b_ppl": 38.75,
+      "delta_pct": -11,
+      "winner": "lora-35b"
+    },
+    "yaml-json": {
+      "base_ppl": 24.25,
+      "lora_35b_ppl": 7.62,
+      "delta_pct": -69,
+      "winner": "lora-35b"
+    },
+    "docker": {
+      "base_ppl": 29.62,
+      "lora_35b_ppl": 19.12,
+      "delta_pct": -35,
+      "winner": "lora-35b"
+    },
+    "kicad-dsl": {
+      "base_ppl": 24.62,
+      "lora_35b_ppl": 12.94,
+      "delta_pct": -47,
+      "winner": "lora-35b"
+    },
+    "spice": {
+      "base_ppl": 22.75,
+      "lora_35b_ppl": 8.12,
+      "delta_pct": -64,
+      "winner": "lora-35b"
+    },
+    "lua-upy": {
+      "base_ppl": 19.5,
+      "lora_35b_ppl": 18.62,
+      "delta_pct": -5,
+      "winner": "lora-35b"
+    },
+    "embedded": {
+      "base_ppl": 26.62,
+      "lora_35b_ppl": 14.44,
+      "delta_pct": -46,
+      "winner": "lora-35b"
+    },
+    "stm32": {
+      "base_ppl": 42.5,
+      "lora_35b_ppl": 13.19,
+      "delta_pct": -69,
+      "winner": "lora-35b"
+    },
+    "iot": {
+      "base_ppl": 35.25,
+      "lora_35b_ppl": 34.75,
+      "delta_pct": -1,
+      "winner": "lora-35b"
+    },
+    "freecad": {
+      "base_ppl": 53.0,
+      "lora_35b_ppl": 63.75,
+      "delta_pct": 20,
+      "winner": "base"
+    },
+    "platformio": {
+      "base_ppl": 51.25,
+      "lora_35b_ppl": 26.25,
+      "delta_pct": -49,
+      "winner": "lora-35b"
+    },
+    "power": {
+      "base_ppl": 11.25,
+      "lora_35b_ppl": 9.94,
+      "delta_pct": -12,
+      "winner": "lora-35b"
+    },
+    "emc": {
+      "base_ppl": 68.0,
+      "lora_35b_ppl": 60.0,
+      "delta_pct": -12,
+      "winner": "lora-35b"
+    },
+    "dsp": {
+      "base_ppl": 9.31,
+      "lora_35b_ppl": 9.19,
+      "delta_pct": -1,
+      "winner": "lora-35b"
+    },
+    "spice-sim": {
+      "base_ppl": 77.0,
+      "lora_35b_ppl": 46.0,
+      "delta_pct": -40,
+      "winner": "lora-35b"
+    },
+    "electronics": {
+      "base_ppl": 49.75,
+      "lora_35b_ppl": 48.25,
+      "delta_pct": -3,
+      "winner": "lora-35b"
+    },
+    "kicad-pcb": {
+      "base_ppl": 148.0,
+      "lora_35b_ppl": 123.0,
+      "delta_pct": -17,
+      "winner": "lora-35b"
+    },
+    "web-frontend": {
+      "base_ppl": 30.12,
+      "lora_35b_ppl": 14.44,
+      "delta_pct": -52,
+      "winner": "lora-35b"
+    },
+    "web-backend": {
+      "base_ppl": 123.0,
+      "lora_35b_ppl": 84.5,
+      "delta_pct": -31,
+      "winner": "lora-35b"
+    },
+    "music-audio": {
+      "base_ppl": 12.38,
+      "lora_35b_ppl": 10.56,
+      "delta_pct": -15,
+      "winner": "lora-35b"
+    },
+    "devops": {
+      "base_ppl": 16.88,
+      "lora_35b_ppl": 14.69,
+      "delta_pct": -13,
+      "winner": "lora-35b"
+    },
+    "llm-orch": {
+      "base_ppl": 15.62,
+      "lora_35b_ppl": 14.0,
+      "delta_pct": -10,
+      "winner": "lora-35b"
+    },
+    "math": {
+      "base_ppl": 14.0,
+      "lora_35b_ppl": 12.94,
+      "delta_pct": -8,
+      "winner": "lora-35b"
+    },
+    "security": {
+      "base_ppl": 112.0,
+      "lora_35b_ppl": 93.0,
+      "delta_pct": -17,
+      "winner": "lora-35b"
+    },
+    "components": {
+      "base_ppl": 26.62,
+      "lora_35b_ppl": 22.75,
+      "delta_pct": -15,
+      "winner": "lora-35b"
+    },
+    "llm-ops": {
+      "base_ppl": 84.5,
+      "lora_35b_ppl": 43.75,
+      "delta_pct": -48,
+      "winner": "lora-35b"
+    },
+    "ml-training": {
+      "base_ppl": 70.0,
+      "lora_35b_ppl": 49.0,
+      "delta_pct": -30,
+      "winner": "lora-35b"
+    }
+  }
+}
