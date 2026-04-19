@@ -1,0 +1,92 @@
+[
+  {
+    "domain": "chat-fr",
+    "gen_time": 5.4,
+    "resp_len": 909,
+    "preview": "We need to explain how a variable frequency drive (VFD) works for an induction motor. The user asked in French: \"Explique le fonctionnement d un variateur de frequence pour moteur asynchrone.\" So the answer should be in French. I'll provide a clear, concise explanation covering the main components a"
+  },
+  {
+    "domain": "reasoning",
+    "gen_time": 5.4,
+    "resp_len": 618,
+    "preview": "Here's a thinking process that leads to the suggested solution:\n\n1.  **Analyze the Request:**\n    *   **Components:** Three resistors.\n    *   **Values:** $100\\,\\Omega$, $200\\,\\Omega$, $300\\,\\Omega$.\n    *   **Configuration:** Parallel.\n    *   **Goal:** Calculate total resistance ($R_{total}$ or $R"
+  },
+  {
+    "domain": "python",
+    "gen_time": 4.6,
+    "resp_len": 905,
+    "preview": "Here's a thinking process:\n\n1.  **Understand the User Request:**\n   - **Goal:** Create a Python decorator that retries a function with exponential backoff.\n   - **Key Features:** \n     - Retry mechanism\n     - Exponential backoff (delay increases exponentially between retries)\n     - Should be reusa"
+  },
+  {
+    "domain": "typescript",
+    "gen_time": 4.6,
+    "resp_len": 867,
+    "preview": "Here's a thinking process:\n\n1.  **Understand the Goal**: The user wants a TypeScript generic type-safe event emitter. This means:\n   - It should be a class or function that manages events\n   - It should be type-safe: when you define events, the types of the event names and their corresponding payloa"
+  },
+  {
+    "domain": "cpp",
+    "gen_time": 4.7,
+    "resp_len": 933,
+    "preview": "Here's a thinking process:\n\n1.  **Understand the User Request:**\n   - **Language:** C++\n   - **Concept:** RAII (Resource Acquisition Is Initialization) wrapper for a file descriptor\n   - **Key Feature:** Move semantics\n   - **Goal:** Create a class that manages a file descriptor, automatically closi"
+  },
+  {
+    "domain": "rust",
+    "gen_time": 4.6,
+    "resp_len": 719,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - **Language:** Rust\n   - **Task:** Parse a CSV file into a `Vec` of structs\n   - **Library:** `serde` (and by extension, `serde_csv` or `csv` crate with serde integration)\n   - **Output:** A function that accomplishes this\n\n2.  **Ident"
+  },
+  {
+    "domain": "shell",
+    "gen_time": 4.6,
+    "resp_len": 734,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - **Goal:** Write a bash function that finds the largest files recursively.\n   - **Output Format:** Table format.\n   - **Language:** Bash.\n\n2.  **Key Components Needed:**\n   - Find largest files recursively: `find` command with size sor"
+  },
+  {
+    "domain": "sql",
+    "gen_time": 4.6,
+    "resp_len": 733,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - **Database:** PostgreSQL\n   - **Feature:** CTE (Common Table Expression)\n   - **Goal:** Calculate running total revenue by month\n   - **Output:** SQL query using CTE\n\n2.  **Key Concepts Needed:**\n   - CTE syntax: `WITH cte_name AS (SE"
+  },
+  {
+    "domain": "embedded",
+    "gen_time": 4.6,
+    "resp_len": 558,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - **Framework:** ESP-IDF (Espressif IoT Development Framework)\n   - **Sensor:** INA226 (current/voltage/power sensor)\n   - **Interface:** I2C\n   - **Goal:** Write code to read the INA226\n\n2.  **Key Components of INA226:**\n   - I2C addre"
+  },
+  {
+    "domain": "electronics",
+    "gen_time": 4.6,
+    "resp_len": 921,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - The user wants a comparison between bootstrap and charge pump gate drivers for a half-bridge configuration.\n   - Key aspects to cover: operating principles, advantages, disadvantages, applications, performance characteristics, cost, c"
+  },
+  {
+    "domain": "kicad-dsl",
+    "gen_time": 4.6,
+    "resp_len": 592,
+    "preview": "The user wants a KiCad symbol for a USB-C connector with CC pins.\nI need to create a KiCad symbol file (.kicad_sym) that defines a USB-C connector.\nUSB-C connectors typically have 24 pins.\nThe CC pins are crucial for USB-C functionality (CC1 and CC2).\nI should include all 24 pins and label them appr"
+  },
+  {
+    "domain": "spice",
+    "gen_time": 4.6,
+    "resp_len": 799,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request**: The user wants an ngspice netlist for a Wien bridge oscillator.\n\n2.  **Identify Key Components of a Wien Bridge Oscillator**:\n   - Op-Amp (or transistor-based amplifier)\n   - RC network for frequency selection (Wien bridge)\n   - Negative f"
+  },
+  {
+    "domain": "components",
+    "gen_time": 4.7,
+    "resp_len": 746,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - Compare three microcontrollers: STM32F103, ESP32-S3, RP2040\n   - Application: Battery-powered IoT sensor\n   - Key factors to consider: Power consumption, performance, connectivity, peripherals, ecosystem, cost, development experience,"
+  },
+  {
+    "domain": "docker",
+    "gen_time": 4.7,
+    "resp_len": 761,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - **Goal:** Create a multi-stage Dockerfile for a Rust web service.\n   - **Key Feature:** Use `cargo-chef` for dependency caching optimization.\n   - **Language:** Rust\n   - **Build Tool:** Cargo\n   - **Docker Feature:** Multi-stage buil"
+  },
+  {
+    "domain": "power",
+    "gen_time": 4.8,
+    "resp_len": 599,
+    "preview": "Here's a thinking process:\n\n1.  **Understand User Request:**\n   - Design a synchronous buck converter\n   - Input voltage: 12V\n   - Output voltage: 3.3V\n   - Output current: 5A\n   - Calculate inductor value\n\n2.  **Identify Key Parameters & Assumptions:**\n   - Input voltage (Vin) = 12V\n   - Output vol"
+  }
+]
