@@ -134,7 +134,8 @@ def run_residual_boost_round(
     Returns:
         Average loss after this boost round
     """
-    from micro_kiki.moe_lora import collect_moe_lora_layers
+    # Archived 2026-04-19 — see docs/research/2026-04-19-moe-lora-root-cause.md
+    from legacy.moe_lora import collect_moe_lora_layers  # type: ignore[import-not-found]
 
     boost_steps = config.get("boost_steps", 100)
     boost_weight = config.get("boost_weight", 2.0)

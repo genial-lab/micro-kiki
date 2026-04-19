@@ -541,7 +541,7 @@ def _unpatch_moe_lora_forward(model, target_modules: list[str] | None = None) ->
 class MLXBackend(AdapterBackend):
     """Real MLX backend for Apple Silicon eval with MoE-LoRA support.
 
-    Uses the custom MoE-LoRA module from scripts/micro_kiki/moe_lora.py
+    Uses the archived MoE-LoRA module from scripts/legacy/moe_lora.py
     to properly apply per-expert LoRA adapters during inference.
     Handles Qwen3.5 thinking mode by stripping <think>...</think> tags.
     """
@@ -573,7 +573,13 @@ class MLXBackend(AdapterBackend):
         return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
     def _get_apply_moe_lora(self):
-        """Import apply_moe_lora from the project's micro_kiki module."""
+        """Import apply_moe_lora from the archived legacy module.
+
+        Archived 2026-04-19 — see docs/research/2026-04-19-moe-lora-root-cause.md.
+        The module moved from scripts/micro_kiki/moe_lora.py to
+        scripts/legacy/moe_lora.py because its dual-mount topology
+        stranded every ``lora_b`` at zero on pre-pivot adapters.
+        """
         try:
             # Try importing from the project's scripts directory
             import importlib.util
@@ -581,10 +587,14 @@ class MLXBackend(AdapterBackend):
                 Path(self._base_model_path).parent.parent / "scripts",
                 PROJECT_ROOT / "scripts",
             ]:
-                moe_path = scripts_dir / "micro_kiki" / "moe_lora.py"
+                # Post-archival location
+                moe_path = scripts_dir / "legacy" / "moe_lora.py"
+                # Fallback to pre-archival location for stale checkouts
+                if not moe_path.exists():
+                    moe_path = scripts_dir / "micro_kiki" / "moe_lora.py"
                 if moe_path.exists():
                     spec = importlib.util.spec_from_file_location(
-                        "micro_kiki.moe_lora", str(moe_path)
+                        "legacy.moe_lora", str(moe_path)
                     )
                     mod = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(mod)
@@ -594,11 +604,11 @@ class MLXBackend(AdapterBackend):
 
         # Fallback: try sys.path
         try:
-            from micro_kiki.moe_lora import apply_moe_lora
+            from legacy.moe_lora import apply_moe_lora  # type: ignore[import-not-found]
             return apply_moe_lora
         except ImportError:
             raise RuntimeError(
-                "Cannot import apply_moe_lora. Ensure scripts/micro_kiki/moe_lora.py "
+                "Cannot import apply_moe_lora. Ensure scripts/legacy/moe_lora.py "
                 "exists in the project or is on PYTHONPATH."
             )
 

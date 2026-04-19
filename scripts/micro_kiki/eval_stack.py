@@ -27,7 +27,8 @@ import mlx.nn as nn
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from micro_kiki.moe_lora import apply_moe_lora
+# Archived 2026-04-19 — see docs/research/2026-04-19-moe-lora-root-cause.md
+from legacy.moe_lora import apply_moe_lora  # type: ignore[import-not-found]
 
 
 # ---------------------------------------------------------------------------

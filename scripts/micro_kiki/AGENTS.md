@@ -18,9 +18,9 @@ Core training + data-pipeline scripts for the 35-domain micro_kiki system. These
 | `generate_missing.py` | Synthetic generation for sparse domains (< target examples) using a teacher model. |
 | `deduplicate.py` | Cross-domain deduplication (exact + near-duplicate hashing). |
 | `split_domains.py` | Train/valid split per domain (`valid_ratio` from `domains.yaml`). |
-| `train_stack.py` | **Core training loop.** Loads `brainstacks.yaml`, freezes base, attaches MoE-LoRA, computes null-space projector from prior stacks, runs SFT (~500 steps), residual-boost round on hard examples, freezes + saves, evaluates all prior domains. |
+| `train_stack.py` | **Core training loop.** Loads `brainstacks.yaml`, freezes base, attaches MoE-LoRA, computes null-space projector from prior stacks, runs SFT (~500 steps), residual-boost round on hard examples, freezes + saves, evaluates all prior domains. Imports MoE-LoRA from the archived `scripts/legacy/moe_lora.py`. |
 | `train_all_stacks.sh` | Sequential curriculum sweep over all 35 domains. |
-| `moe_lora.py` | MoE-LoRA layer implementation (4 experts, top-2 routing, rank 16, rsLoRA scaling). |
+| ~~`moe_lora.py`~~ | **ARCHIVED 2026-04-19** → `scripts/legacy/moe_lora.py`. Dual-mount topology stranded every `lora_b` at zero; see `docs/research/2026-04-19-moe-lora-root-cause.md`. |
 | `null_space.py` | Randomized SVD → null-space projector for forgetting prevention (`ns_top_k_dirs: 32`). |
 | `residual_boost.py` | Hard-example mining + reweighted training rounds (top-25% loss quantile, 2x weight, 100 boost steps). |
 | `eval_stack.py` | Per-stack eval harness (win-rate, angle vs prior). |
@@ -42,7 +42,7 @@ Core training + data-pipeline scripts for the 35-domain micro_kiki system. These
 
 - Smoke test: `./pipeline_data.sh --dry-run` should complete without invoking the teacher or writing to disk.
 - `train_stack.py` has a `--dry-run` mode in practice through `iters` override — use `iters: 10` via config override before a full run.
-- `poc_2stacks.py` is the minimal pipeline smoke test; run it after any change to `moe_lora.py`, `null_space.py`, or `residual_boost.py`.
+- `poc_2stacks.py` is the minimal pipeline smoke test; run it after any change to `null_space.py` or `residual_boost.py`. The underlying MoE-LoRA module is archived at `scripts/legacy/moe_lora.py` (see `docs/research/2026-04-19-moe-lora-root-cause.md`) — do not resurrect.
 - Forgetting check is a post-condition of `train_stack.py`, not a separate test — rollback criteria: angle < 30° AND win-rate drop > 0.03.
 
 ### Common Patterns

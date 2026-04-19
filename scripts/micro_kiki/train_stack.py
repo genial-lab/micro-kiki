@@ -34,7 +34,10 @@ import numpy as np
 # Ensure scripts/ is on path for local imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from micro_kiki.moe_lora import (
+# Archived 2026-04-19 — see docs/research/2026-04-19-moe-lora-root-cause.md
+# The pre-pivot MoE-LoRA module was moved to scripts/legacy/moe_lora.py
+# because its dual-mount topology stranded every ``lora_b`` at zero.
+from legacy.moe_lora import (  # type: ignore[import-not-found]
     apply_moe_lora,
     collect_moe_lora_layers,
     MoELoRALayer,
