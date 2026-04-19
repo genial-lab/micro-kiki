@@ -246,3 +246,4 @@ docs/papers/pdf/
 # Unsloth compiled kernel cache (regenerated per run)
 unsloth_compiled_cache/
 >>>>>>> 00928aeb7eec8139fd39941434a1f253c60172b8
+*.npz
