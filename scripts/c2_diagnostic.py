@@ -75,3 +75,31 @@ def analyze_stratified(data: dict) -> dict:
         "vqc_correct": _bucket(correct_idx),
         "vqc_wrong": _bucket(wrong_idx),
     }
+
+
+def top_10_by_gap(data: dict, k: int = 10) -> list[dict]:
+    """Return top-k queries by oracle_score - vqc_score, descending, ties stable."""
+    oracle_pq = data["results"]["oracle"]["per_query"]
+    vqc_pq = data["results"]["vqc"]["per_query"]
+    random_pq = data["results"]["random"]["per_query"]
+
+    rows = []
+    for i, (o, v, r) in enumerate(zip(oracle_pq, vqc_pq, random_pq)):
+        rows.append({
+            "index": i,
+            "question": o["question"],
+            "expected_domain": o["expected_domain"],
+            "oracle_score": o["score"],
+            "oracle_answer": o["answer"],
+            "vqc_routed_domain": v["routed_domain"],
+            "vqc_score": v["score"],
+            "vqc_answer": v["answer"],
+            "random_routed_domain": r["routed_domain"],
+            "random_score": r["score"],
+            "random_answer": r["answer"],
+            "gap": o["score"] - v["score"],
+        })
+
+    # Sort: primary key = gap desc, secondary = index asc (stability)
+    rows.sort(key=lambda x: (-x["gap"], x["index"]))
+    return rows[:k]
