@@ -105,6 +105,13 @@ def _sweep(
                 "angle_degrees_per_module": per_module,
                 "gate_status": gate_status,
             }
+            # Additive: pass through the per-expert breakdown when the
+            # underlying adapters exposed MoE structure. Plain LoRA
+            # pairs omit the field entirely so the matrix schema stays
+            # backward compatible.
+            per_expert = report.get("angle_degrees_per_expert")
+            if per_expert:
+                pair_entry["angle_degrees_per_expert"] = per_expert
             pairs.append(pair_entry)
             if isinstance(mean_angle, (int, float)) and mean_angle == mean_angle:
                 if mean_angle < min_mean:

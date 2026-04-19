@@ -68,6 +68,39 @@ be harmless if win-rate on prior domains is unchanged. The full gate
 (angle **AND** win-rate drop) requires the paired eval wiring in
 `src/eval/forgetting.py::check_all_previous` — see phase 1b.
 
+## Per-expert analysis
+
+For MoE adapters the report also carries an optional
+`angle_degrees_per_expert` field — keyed `module → expert_idx → angle`
+with JSON-string expert indices. The field is **present only when the
+input adapters expose true expert structure** (pre-pivot
+`.experts.<N>` MoE-LoRA keys, or post-pivot MLX `switch_mlp.*` 3D
+stacks). Plain LoRA adapters omit it entirely, so existing callers
+that parse the JSON strictly remain unaffected.
+
+```json
+"angle_degrees_per_expert": {
+  "mlp.switch_mlp.down_proj": { "0": 82.1, "1": 77.4, "2": 89.0 },
+  "mlp.down_proj_moe_lora":   { "0": 71.2, "1": 65.8 }
+}
+```
+
+Interpret it against the module-averaged view:
+
+- **Spread wide, mean high (e.g. 60–95°)** — experts are genuinely
+  specializing and the adapter lives in mostly orthogonal directions.
+  The post-pivot `switch_mlp.*` 88° mean observation is real.
+- **Spread wide, mean near 90°** — averaging artifact. Random high-dim
+  vectors tend toward orthogonal under the mean; per-expert angles
+  will vary widely, some low. Do not trust the mean alone.
+- **Spread tight and low (< 30°)** — genuine forgetting on those
+  experts; the averaged gate will catch it too.
+
+Per-expert angles are **diagnostic only** — the gate threshold remains
+on the averaged per-module view. Use them when the mean looks
+suspiciously uniform or you need to localize which experts are driving
+the signal.
+
 ## Pairwise sweep across a fleet of adapters
 
 `scripts/run_forgetting_sweep.py` runs `measure_forgetting_signal()` for

@@ -449,24 +449,37 @@ def _compose_delta(
 
 def _extract_deltas(
     tensors: dict[str, "torch.Tensor"],
-) -> dict[str, list["torch.Tensor"]]:
+) -> tuple[
+    dict[str, list["torch.Tensor"]],
+    dict[str, dict[int, list["torch.Tensor"]]],
+]:
     """Group LoRA A/B pairs by module-kind and compute per-layer deltas.
 
-    Returns a mapping ``module_key -> [delta_layer_0, delta_layer_1, ...]``.
-    ``module_key`` is the module path relative to the decoder layer (e.g.
-    ``self_attn.q_proj``, ``linear_attn.in_proj_qkv``,
-    ``mlp.switch_mlp.down_proj``) so the same kind of module groups across
-    layers even when tensor names differ in layer index or top-level prefix.
+    Returns a pair of mappings:
+
+    - ``averaged``: ``module_key -> [delta_layer_0, delta_layer_1, ...]``
+      — the module-averaged view consumed by the default gate. For MoE
+      adapters (pre-pivot ``.experts.<N>`` MoE-LoRA or post-pivot MLX
+      ``switch_mlp.*`` 3D tensors) the per-layer delta is the mean
+      across experts so the output shape matches plain LoRA.
+    - ``per_expert``: ``module_key -> {expert_idx -> [delta_layer_0, ...]}``
+      — the unfolded per-expert view consumed by
+      :func:`compute_angles_per_expert`. Populated **only** for modules
+      that actually exposed expert structure (pre-pivot MoE-LoRA
+      ``.experts.<N>`` keys or 3D post-pivot MLX tensors). Plain-LoRA
+      modules contribute nothing, so the dict is empty for non-MoE
+      adapters and downstream code uses that as the MoE probe.
+
+    ``module_key`` is the module path relative to the decoder layer
+    (e.g. ``self_attn.q_proj``, ``linear_attn.in_proj_qkv``,
+    ``mlp.switch_mlp.down_proj``) so the same kind of module groups
+    across layers even when tensor names differ in layer index or
+    top-level prefix.
 
     Supports PEFT (``.lora_A.weight`` / ``.lora_A.default.weight``) and
-    MLX-LM (``.lora_a`` with no ``.weight`` suffix) conventions, including
-    3D MoE tensors (``switch_mlp.*`` with per-expert stacks) — see
-    :func:`_compose_delta`.
-
-    For pre-pivot MoE-LoRA adapters (keys containing ``.experts.<N>``),
-    the per-module delta is the mean across experts: each expert's
-    ``B@A`` is computed separately and then averaged to produce one
-    per-layer delta, keeping the output shape identical to plain LoRA.
+    MLX-LM (``.lora_a`` with no ``.weight`` suffix) conventions,
+    including 3D MoE tensors (``switch_mlp.*`` with per-expert stacks)
+    — see :func:`_compose_delta`.
 
     Layers with only A or only B (malformed) are skipped with a warning.
     """
@@ -486,6 +499,13 @@ def _extract_deltas(
         bucket[(layer_prefix, module_key)][expert_idx] = tensor
 
     deltas: dict[str, list[Any]] = defaultdict(list)
+    # per_expert_deltas[module_key][expert_idx] -> list of per-layer
+    # deltas for that expert. Only populated for modules with true
+    # expert structure (pre-pivot ``.experts.<N>`` keys or post-pivot
+    # MLX 3D switch_mlp.* stacks). Plain LoRA never lands here.
+    per_expert_deltas: dict[str, dict[int, list[Any]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
     for (layer_prefix, module_key), a_by_expert in a_matrices.items():
         b_by_expert = b_matrices.get((layer_prefix, module_key))
         if b_by_expert is None:
@@ -494,6 +514,11 @@ def _extract_deltas(
             )
             continue
         per_expert: list[Any] = []
+        # Track per-expert deltas for this (layer, module) so we can
+        # populate the per_expert_deltas view alongside the averaged one.
+        # Pre-pivot MoE-LoRA: one entry per ``.experts.<N>`` key.
+        # Post-pivot MLX switch_mlp: one entry per slice of the 3D stack.
+        per_expert_entries: list[tuple[int, Any]] = []
         for expert_idx, a in a_by_expert.items():
             b = b_by_expert.get(expert_idx)
             if b is None:
@@ -515,11 +540,19 @@ def _extract_deltas(
                 )
                 continue
             # 3D MoE delta (n_experts, out, in) — from MLX-LM switch_mlp.*
-            # tensors (distinct from pre-pivot MoE-LoRA). Average over the
-            # expert dimension to keep memory bounded on models with
-            # hundreds of experts (Qwen3.5-A3B has 256).
+            # tensors (distinct from pre-pivot MoE-LoRA). Record every
+            # expert slice into per_expert_entries (so the per-expert
+            # view sees real specialization), then collapse to the mean
+            # for the averaged view to keep memory bounded on models
+            # with hundreds of experts (Qwen3.5-A3B has 256).
             if delta.ndim == 3:
+                for i in range(delta.shape[0]):
+                    per_expert_entries.append((i, delta[i]))
                 delta = delta.mean(dim=0)
+            elif expert_idx is not None:
+                # Pre-pivot MoE-LoRA: the parsed key carried an explicit
+                # expert index for this 2D delta.
+                per_expert_entries.append((int(expert_idx), delta))
             per_expert.append(delta)
         if not per_expert:
             continue
@@ -532,12 +565,26 @@ def _extract_deltas(
             import torch
 
             deltas[module_key].append(torch.stack(per_expert, dim=0).mean(dim=0))
+        # Populate the per-expert view with whatever was recorded above.
+        # Plain-LoRA modules leave per_expert_entries empty and nothing
+        # is appended here.
+        for expert_idx_val, expert_delta in per_expert_entries:
+            per_expert_deltas[module_key][expert_idx_val].append(expert_delta)
     for (layer_prefix, module_key) in b_matrices.keys():
         if (layer_prefix, module_key) not in a_matrices:
             logger.warning(
                 "missing lora_A for %s%s; skipping", layer_prefix, module_key
             )
-    return deltas
+    # Strip empty buckets (plain-LoRA modules never populate them, but
+    # defensive in case a malformed MoE adapter leaves a module with no
+    # surviving expert deltas).
+    per_expert_clean: dict[str, dict[int, list[Any]]] = {
+        module_key: {idx: d for idx, d in experts.items() if d}
+        for module_key, experts in per_expert_deltas.items()
+        if experts
+    }
+    per_expert_clean = {k: v for k, v in per_expert_clean.items() if v}
+    return deltas, per_expert_clean
 
 
 def _stack_group(deltas: Iterable["torch.Tensor"]) -> "torch.Tensor":
@@ -565,8 +612,8 @@ def compute_angles(
     adapters (e.g. Qwen3.5-35B-A3B trained via MLX-LM).
     """
     analyzer = analyzer or GradientSubspaceAnalyzer()
-    prior_deltas = _extract_deltas(prior_tensors)
-    new_deltas = _extract_deltas(new_tensors)
+    prior_deltas, _ = _extract_deltas(prior_tensors)
+    new_deltas, _ = _extract_deltas(new_tensors)
 
     # Intersect module keys present in both adapters — a missing module on
     # one side cannot contribute to an angle measurement.
@@ -596,6 +643,55 @@ def compute_angles(
         angles[module_key] = angle
         logger.debug("%s: angle = %.3f°", module_key, angle)
     return angles
+
+
+def compute_angles_per_expert(
+    prior_per_expert: dict[str, dict[int, list["torch.Tensor"]]],
+    new_per_expert: dict[str, dict[int, list["torch.Tensor"]]],
+    analyzer: GradientSubspaceAnalyzer | None = None,
+) -> dict[str, dict[int, float]]:
+    """Return ``module_key -> {expert_idx -> angle_degrees}``.
+
+    Companion to :func:`compute_angles` that unfolds the averaging done
+    in ``_extract_deltas`` for MoE adapters. Each ``(module_key,
+    expert_idx)`` bucket contains the per-layer deltas for one expert
+    only; we stack those as the "gradient" matrix (columns = layers,
+    rows = params) and run the same ``GradientSubspaceAnalyzer``.
+
+    Only modules and experts present in **both** adapters contribute —
+    asymmetric MoE layouts (different expert indices between prior and
+    new) silently skip the unmatched experts. If neither adapter
+    exposes expert structure (plain LoRA) the result is an empty dict,
+    which callers can use as the "MoE present" probe.
+    """
+    analyzer = analyzer or GradientSubspaceAnalyzer()
+    out: dict[str, dict[int, float]] = {}
+    shared_modules = sorted(set(prior_per_expert) & set(new_per_expert))
+    for module_key in shared_modules:
+        prior_experts = prior_per_expert.get(module_key, {})
+        new_experts = new_per_expert.get(module_key, {})
+        shared_experts = sorted(set(prior_experts) & set(new_experts))
+        per_expert_angles: dict[int, float] = {}
+        for expert_idx in shared_experts:
+            p_list = prior_experts.get(expert_idx) or []
+            n_list = new_experts.get(expert_idx) or []
+            if not p_list or not n_list:
+                continue
+            p_mat = _stack_group(p_list)
+            n_mat = _stack_group(n_list)
+            if p_mat.shape[0] != n_mat.shape[0]:
+                min_rows = min(p_mat.shape[0], n_mat.shape[0])
+                p_mat = p_mat[:min_rows]
+                n_mat = n_mat[:min_rows]
+            if p_mat.shape[1] != n_mat.shape[1]:
+                min_cols = min(p_mat.shape[1], n_mat.shape[1])
+                p_mat = p_mat[:, :min_cols]
+                n_mat = n_mat[:, :min_cols]
+            angle = analyzer.compute_angle(p_mat, n_mat)
+            per_expert_angles[int(expert_idx)] = float(angle)
+        if per_expert_angles:
+            out[module_key] = per_expert_angles
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -770,6 +866,11 @@ def measure_forgetting_signal(
         Dict with the JSON-ready fields:
           - ``angle_degrees_mean`` (float or NaN)
           - ``angle_degrees_per_module`` (dict[str, float])
+          - ``angle_degrees_per_expert`` (dict[str, dict[str, float]]) —
+            **optional**, present only for MoE adapters (pre-pivot
+            ``.experts.<N>`` MoE-LoRA or post-pivot MLX
+            ``switch_mlp.*`` 3D stacks). Plain LoRA adapters omit the
+            field entirely. Expert indices are JSON string keys.
           - ``winrate_measured`` (float or None)
           - ``winrate_baseline`` (float or None)
           - ``winrate_drop`` (float or None)
@@ -793,6 +894,27 @@ def measure_forgetting_signal(
     prior_tensors = _load_tensors(Path(prior_adapter_path))
     new_tensors = _load_tensors(Path(new_adapter_path))
     angles = compute_angles(prior_tensors, new_tensors)
+
+    # Per-expert angles are additive diagnostics for MoE adapters. The
+    # default (averaged) per-module view is unchanged; we only surface
+    # the per-expert dict when at least one module exposes true expert
+    # structure (pre-pivot MoE-LoRA ``.experts.<N>`` keys or post-pivot
+    # MLX 3D switch_mlp.* stacks). Plain LoRA → empty dict → field
+    # omitted from the signal.
+    _, prior_per_expert = _extract_deltas(prior_tensors)
+    _, new_per_expert = _extract_deltas(new_tensors)
+    per_expert_angles = compute_angles_per_expert(
+        prior_per_expert, new_per_expert
+    )
+    # JSON object keys must be strings; stringify expert indices here
+    # so the payload round-trips through json.dumps unchanged.
+    per_expert_serialized: dict[str, dict[str, float]] = {
+        module_key: {
+            str(expert_idx): float(angle)
+            for expert_idx, angle in experts.items()
+        }
+        for module_key, experts in per_expert_angles.items()
+    }
 
     if not angles:
         return {
@@ -834,7 +956,7 @@ def measure_forgetting_signal(
         warning: str | None = None
         if mean_angle < angle_threshold:
             warning = "angle below threshold"
-        return {
+        out_angle_only: dict[str, Any] = {
             "angle_degrees_mean": mean_angle,
             "angle_degrees_per_module": per_module,
             "winrate_measured": None,
@@ -849,6 +971,9 @@ def measure_forgetting_signal(
             "min_angle_value": pm_partial.min_angle_value,
             "note": "Win-rate half not measured; run paired eval for full gate.",
         }
+        if per_expert_serialized:
+            out_angle_only["angle_degrees_per_expert"] = per_expert_serialized
+        return out_angle_only
 
     # Full gate path (phase 1b): compute win-rate, apply AND-logic rollback.
     if isinstance(generate_fn, str):
@@ -889,7 +1014,7 @@ def measure_forgetting_signal(
         )
     warning = "; ".join(warning_bits) or None
 
-    return {
+    out_full: dict[str, Any] = {
         "angle_degrees_mean": mean_angle,
         "angle_degrees_per_module": per_module,
         "winrate_measured": float(measured),
@@ -908,6 +1033,9 @@ def measure_forgetting_signal(
             "non-ignored module < 30°) both enforced with winrate_drop>0.03."
         ),
     }
+    if per_expert_serialized:
+        out_full["angle_degrees_per_expert"] = per_expert_serialized
+    return out_full
 
 
 # ---------------------------------------------------------------------------
