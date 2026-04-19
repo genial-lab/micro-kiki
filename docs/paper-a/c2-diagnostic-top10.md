@@ -488,5 +488,33 @@ How do use use an Arduino with a Stepper Motor?
 
 ## Patterns observed (hand-written by reviewer)
 
-_Edit after reading the 10 pairs above. Candidate patterns: persona mismatch,
-technical depth gap, answer length/tone, off-topic drift, hallucinated code._
+Reading the 10 top-gap pairs reveals **three distinct failure modes**, plus a **fourth finding** about the judge itself:
+
+### 1. Explicit persona-refusal on wrong routing (#2, #7)
+
+When VQC routes to `kicad-dsl` for a FreeCAD (#2) or DSP (#7) question, the LLM given the system prompt "You are an expert in kicad-dsl" **explicitly refuses** the off-topic question or reframes it: "KiCad DSL is not for 3D printing" (#2), "KiCad DSL is not for selecting microcontrollers" (#7). It scores 0. Oracle with the right persona scores 5. This is the **sharpest pathology**: the pseudo-adapter is strong enough to constrain the LLM to a domain, so constraining it incorrectly is worse than no constraint at all.
+
+### 2. Mode collapse on incompatible persona (#5)
+
+Query asks for PySpice Python code. VQC routes to `stm32` (embedded C expert). The LLM produces degenerate repeated imports (`from PySpice.Generator import *` × 12). The wrong-persona signal + Python-for-circuit-sim question triggers an attention/template failure. This is catastrophic vs merely incorrect — quantitatively visible as score 0.
+
+### 3. Near-identical content, large score delta (#3, #4, #6)
+
+In queries #3, #4, #6 the VQC and Oracle answers are essentially identical in substance (same imports, same structure, same logic). Yet VQC scores 0 and Oracle scores 5. #3 and #4 are literally the same query repeated; both get the same answer style; both score 0/5 for VQC and 5/5 for Oracle. This is **judge inconsistency**, not a content difference.
+
+### 4. Judge inconsistency on same-source content (cross-cutting)
+
+In #1 and #7, Random and VQC both route to `kicad-dsl` and produce similar-quality responses. Yet Random scores 5 while VQC scores 0 on the same wrong-routed query. The judge (same Qwen3.5-35B as the gen model) rates identical sources differently across calls. At n=100 this adds substantial noise to the mean-score comparison.
+
+## Routing-error taxonomy
+
+- **kicad-dsl attractor**: VQC misroutes ≥ 4/10 top-gap queries to `kicad-dsl`. The VQC's learned projection likely treats `kicad-dsl` as a low-information "dumping ground" class.
+- **Adjacent-domain misrouting (embedded↔stm32↔platformio)**: #3, #4 (platformio→embedded), #5 (spice→stm32). Less catastrophic than far-misrouting.
+- **Far-domain misrouting (freecad↔kicad-dsl, dsp↔kicad-dsl)**: #2, #7. Produces the sharpest persona-refusal pathology.
+
+## Implications for diagnostic report
+
+The confidently-wrong pathology (aggregate finding VQC < Random from C2) is driven primarily by pattern #1 (persona-refusal on far-domain misroutes) and amplified by pattern #4 (self-judging noise). Pattern #2 (mode collapse) is rare but catastrophic when it hits. Pattern #3 (near-identical content scored differently) is the most concerning methodologically — it suggests the n=100 sample is underpowered vs judge noise.
+
+**Implication for the sibling LoRA experiment:** real LoRA adapters would replace the strong "You are an expert in X" prompt signal with a weight-level specialisation. If the persona-refusal pathology (#1) is prompt-specific, LoRA adapters (which don't commit the model to an explicit persona string) might eliminate it. Worth testing — the diagnostic supports proceeding with the sibling spec.
+
