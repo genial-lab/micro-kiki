@@ -68,6 +68,39 @@ be harmless if win-rate on prior domains is unchanged. The full gate
 (angle **AND** win-rate drop) requires the paired eval wiring in
 `src/eval/forgetting.py::check_all_previous` — see phase 1b.
 
+## Per-expert analysis
+
+For MoE adapters the report also carries an optional
+`angle_degrees_per_expert` field — keyed `module → expert_idx → angle`
+with JSON-string expert indices. The field is **present only when the
+input adapters expose true expert structure** (pre-pivot
+`.experts.<N>` MoE-LoRA keys, or post-pivot MLX `switch_mlp.*` 3D
+stacks). Plain LoRA adapters omit it entirely, so existing callers
+that parse the JSON strictly remain unaffected.
+
+```json
+"angle_degrees_per_expert": {
+  "mlp.switch_mlp.down_proj": { "0": 82.1, "1": 77.4, "2": 89.0 },
+  "mlp.down_proj_moe_lora":   { "0": 71.2, "1": 65.8 }
+}
+```
+
+Interpret it against the module-averaged view:
+
+- **Spread wide, mean high (e.g. 60–95°)** — experts are genuinely
+  specializing and the adapter lives in mostly orthogonal directions.
+  The post-pivot `switch_mlp.*` 88° mean observation is real.
+- **Spread wide, mean near 90°** — averaging artifact. Random high-dim
+  vectors tend toward orthogonal under the mean; per-expert angles
+  will vary widely, some low. Do not trust the mean alone.
+- **Spread tight and low (< 30°)** — genuine forgetting on those
+  experts; the averaged gate will catch it too.
+
+Per-expert angles are **diagnostic only** — the gate threshold remains
+on the averaged per-module view. Use them when the mean looks
+suspiciously uniform or you need to localize which experts are driving
+the signal.
+
 ## Pairwise sweep across a fleet of adapters
 
 `scripts/run_forgetting_sweep.py` runs `measure_forgetting_signal()` for
@@ -205,6 +238,94 @@ override.
 populated even in angle-only mode; they never force a non-zero exit
 on their own (AND-logic with the win-rate drop is preserved).
 
+## Win-rate scoring modes
+
+The win-rate half of the gate compares generated responses against a
+reference answer per prompt. Two scoring modes ship with the framework;
+choose via `--scorer-module` (CLI) or the `scorer=` kwarg on
+`measure_forgetting_signal()`.
+
+### Containment (default)
+
+`src.eval.scorers.containment_score` — async wrapper around the legacy
+heuristic: score = 1.0 if the reference string is a substring of the
+response (case-insensitive); otherwise the fraction of
+whitespace-split reference tokens present in the response. Returns 0.0
+for empty references.
+
+**Use when:**
+- References are short, unambiguous strings (single facts, short
+  phrases, IDs, code tokens).
+- You cannot or will not call an external judge (air-gapped, CI cost).
+- You want a deterministic, reproducible score — the same
+  response/reference always produces the same value.
+
+**Don't use when:**
+- References are long free-form answers (paraphrases score near 0).
+- Correctness depends on semantics, not surface tokens.
+
+Default behaviour, no flag needed:
+
+```bash
+python scripts/measure_forgetting.py \
+    --prior-adapter ... --new-adapter ... \
+    --eval-dataset  ... --generate-fn-module ... \
+    --winrate-baseline-score 0.82
+```
+
+### LLM judge
+
+`src.eval.scorers.JudgeScorer` — async callable that reuses
+`src.eval.stack_eval.JUDGE_PROMPT` (the canonical per-stack evaluator
+template) and calls the configured judge client. Returns the `score`
+field from the judge's JSON response, clipped to `[0, 1]`.
+Bad-JSON responses return `0.0` with a warning — the gate stays
+robust when the judge is flaky.
+
+**Use when:**
+- References are long or free-form (essays, code explanations, French
+  translation critique).
+- You care about semantic equivalence, not surface tokens.
+- A judge client is already available (Mistral-Large via
+  `StackEvaluator`'s `judge_client`).
+
+**Don't use when:**
+- Budget / latency is tight (one judge call per prompt per adapter).
+- The judge model lives behind a flaky or slow network boundary
+  without retries.
+
+Wire a `JudgeScorer` via a small wrapper module that exposes a
+concrete scorer callable at import time, then point
+`--scorer-module` at it:
+
+```python
+# my_judge_scorer.py
+from src.eval.scorers import JudgeScorer
+from src.serving.judge_client import make_judge_client  # your client
+
+scorer = JudgeScorer(make_judge_client(), judge_model="mistral-large")
+```
+
+```bash
+python scripts/measure_forgetting.py \
+    --prior-adapter ... --new-adapter ... \
+    --eval-dataset  ... --generate-fn-module src.serving.mlx_client:generate \
+    --winrate-baseline-score 0.82 \
+    --scorer-module my_judge_scorer:scorer
+```
+
+The scorer is resolved via the same `module:attr` locator shape used
+by `--generate-fn-module`. Sync and async callables are both
+accepted; async ones are driven via `asyncio.run()` per prompt.
+
+### When to switch modes
+
+Typical playbook: containment for fast iteration during stack
+training, judge for the "real" post-stack gate check before
+registering an adapter with the router. The gate thresholds
+(`angle < 30°` AND `winrate_drop > 0.03`) are unchanged across
+modes — only the per-prompt score function differs.
+
 ## Adapter health sanity
 
 Before running the forgetting gate at all, check that each new adapter
@@ -229,6 +350,29 @@ need a stricter floor (e.g. catching near-zero adapters whose
 gradient path *did* fire but barely).
 
 CI enforces this as a smoke check in `.github/workflows/validators.yml`.
+
+### Audit 2026-04-19: full adapter sweep
+
+`scripts/sweep_adapter_health.py` walks a directory and emits structured
+per-adapter JSON (same health logic as `validate_adapter_health.py`,
+but batched). Results for every MLX adapter on Mac Studio are in
+`results/adapter-health-sweep.json`:
+
+- **Post-pivot `output/micro-kiki/lora-qwen36-35b/`**: 35/35 final
+  `adapters.safetensors` healthy (+28/28 intermediate checkpoints).
+- **Pre-pivot `output/micro-kiki/stacks-v3-r16/`**: 35/35 final
+  adapters degenerate (every `lora_B` tensor at exact zero, 512/512
+  per adapter).
+- **Surprises: none.** Both 2026-04-19 empirical predictions hold
+  across the full fleet.
+
+Run again with:
+
+```bash
+python scripts/sweep_adapter_health.py \
+    --adapters-dir <dir> \
+    --output results/<label>.json
+```
 
 ## Running full gate on Mac Studio
 

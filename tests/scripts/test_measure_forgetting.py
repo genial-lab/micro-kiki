@@ -380,9 +380,11 @@ def test_mlx_style_keys_matched(tmp_path: Path) -> None:
     b = torch.tensor([[1.0], [0.0]])
     a = torch.tensor([[1.0, 0.0]])
     tensors = _mlx_adapter_tensors("linear_attn.in_proj_a", b, a, layer=5)
-    deltas = _extract_deltas(tensors)
+    deltas, per_expert = _extract_deltas(tensors)
     assert "linear_attn.in_proj_a" in deltas
     assert len(deltas["linear_attn.in_proj_a"]) == 1
+    # Plain MLX LoRA (no expert structure) → empty per-expert view.
+    assert per_expert == {}
 
 
 def test_moe_lora_key_parsing() -> None:
@@ -454,7 +456,7 @@ def test_moe_lora_delta_averaged() -> None:
         f"{prefix}.experts.1.lora_B.weight": b1.contiguous(),
     }
 
-    deltas = _extract_deltas(tensors)
+    deltas, per_expert = _extract_deltas(tensors)
 
     # Both experts must collapse to a single module_key (the .experts.N
     # segment is stripped during parsing).
@@ -464,6 +466,136 @@ def test_moe_lora_delta_averaged() -> None:
     observed = deltas["mlp.down_proj_moe_lora"][0]
     expected = (b0 @ a0 + b1 @ a1) / 2.0
     assert torch.allclose(observed, expected, atol=1e-6), (observed, expected)
+    # Per-expert view exposes both experts under the same module_key,
+    # each with its own unaveraged per-layer delta.
+    assert list(per_expert.keys()) == ["mlp.down_proj_moe_lora"], per_expert
+    assert set(per_expert["mlp.down_proj_moe_lora"].keys()) == {0, 1}
+    assert len(per_expert["mlp.down_proj_moe_lora"][0]) == 1
+    assert len(per_expert["mlp.down_proj_moe_lora"][1]) == 1
+    assert torch.allclose(
+        per_expert["mlp.down_proj_moe_lora"][0][0], b0 @ a0, atol=1e-6
+    )
+    assert torch.allclose(
+        per_expert["mlp.down_proj_moe_lora"][1][0], b1 @ a1, atol=1e-6
+    )
+
+
+def test_per_expert_angles_emitted_for_moe(tmp_path: Path) -> None:
+    """MoE adapter (pre-pivot ``.experts.<N>`` LoRA) → JSON carries per-expert.
+
+    Build prior + new adapters with 2 experts each under a MoE-LoRA module,
+    run the CLI, and verify the JSON report contains
+    ``angle_degrees_per_expert`` keyed by module → expert_idx.
+    """
+    mod = _load_script_module()
+
+    prefix = "base_model.model.layers.0.mlp.down_proj_moe_lora"
+
+    # Prior: expert 0 rank-1 along e_0 e_0^T, expert 1 along e_1 e_1^T.
+    prior_tensors: dict[str, torch.Tensor] = {
+        f"{prefix}.experts.0.lora_A.weight": torch.tensor(
+            [[1.0, 0.0]]
+        ).contiguous(),
+        f"{prefix}.experts.0.lora_B.weight": torch.tensor(
+            [[1.0], [0.0]]
+        ).contiguous(),
+        f"{prefix}.experts.1.lora_A.weight": torch.tensor(
+            [[0.0, 1.0]]
+        ).contiguous(),
+        f"{prefix}.experts.1.lora_B.weight": torch.tensor(
+            [[0.0], [1.0]]
+        ).contiguous(),
+    }
+    # New: swap expert directions so each expert sees a different angle
+    # vs its prior (expert 0 → e_0 e_1^T, expert 1 → e_1 e_0^T).
+    new_tensors: dict[str, torch.Tensor] = {
+        f"{prefix}.experts.0.lora_A.weight": torch.tensor(
+            [[0.0, 1.0]]
+        ).contiguous(),
+        f"{prefix}.experts.0.lora_B.weight": torch.tensor(
+            [[1.0], [0.0]]
+        ).contiguous(),
+        f"{prefix}.experts.1.lora_A.weight": torch.tensor(
+            [[1.0, 0.0]]
+        ).contiguous(),
+        f"{prefix}.experts.1.lora_B.weight": torch.tensor(
+            [[0.0], [1.0]]
+        ).contiguous(),
+    }
+
+    prior_path = tmp_path / "prior.safetensors"
+    new_path = tmp_path / "new.safetensors"
+    save_file(prior_tensors, str(prior_path))
+    save_file(new_tensors, str(new_path))
+
+    out_path = tmp_path / "report.json"
+    rc = mod.main(
+        [
+            "--prior-adapter",
+            str(prior_path),
+            "--new-adapter",
+            str(new_path),
+            "--output",
+            str(out_path),
+        ]
+    )
+    assert rc == 0
+    report = json.loads(out_path.read_text())
+
+    # Field present + keyed by module → expert.
+    assert "angle_degrees_per_expert" in report, report
+    per_expert_out = report["angle_degrees_per_expert"]
+    assert "mlp.down_proj_moe_lora" in per_expert_out, per_expert_out
+    experts = per_expert_out["mlp.down_proj_moe_lora"]
+    # JSON object keys are strings; both experts from the adapter appear.
+    assert set(experts.keys()) == {"0", "1"}, experts
+    # Every per-expert angle is a finite float in [0, 180].
+    for expert_idx, angle in experts.items():
+        assert isinstance(angle, (int, float)), (expert_idx, angle)
+        assert 0.0 <= float(angle) <= 180.0, (expert_idx, angle)
+    # Legacy averaged view still intact — default unchanged.
+    assert "angle_degrees_per_module" in report
+    assert "mlp.down_proj_moe_lora" in report["angle_degrees_per_module"]
+
+
+def test_per_expert_angles_absent_for_plain_lora(tmp_path: Path) -> None:
+    """Plain LoRA adapter (no ``.experts.<N>``) → field must be omitted.
+
+    Mirrors ``test_orthogonal_weights_high_angle`` but asserts the new
+    optional ``angle_degrees_per_expert`` field is absent so existing
+    callers that parse the JSON strictly are unaffected.
+    """
+    mod = _load_script_module()
+
+    b1 = torch.tensor([[1.0], [0.0]])
+    a1 = torch.tensor([[1.0, 0.0]])
+    b2 = torch.tensor([[0.0], [1.0]])
+    a2 = torch.tensor([[0.0, 1.0]])
+
+    prior_path = tmp_path / "prior.safetensors"
+    new_path = tmp_path / "new.safetensors"
+    _write_adapter(prior_path, b1, a1)
+    _write_adapter(new_path, b2, a2)
+
+    out_path = tmp_path / "report.json"
+    rc = mod.main(
+        [
+            "--prior-adapter",
+            str(prior_path),
+            "--new-adapter",
+            str(new_path),
+            "--output",
+            str(out_path),
+        ]
+    )
+    assert rc == 0
+    report = json.loads(out_path.read_text())
+
+    # No MoE structure in either adapter → field must be omitted.
+    assert "angle_degrees_per_expert" not in report, report
+    # Averaged per-module view still there (sanity).
+    assert "angle_degrees_per_module" in report
+    assert "self_attn.q_proj" in report["angle_degrees_per_module"]
 
 
 def test_non_qkvo_modules_captured(tmp_path: Path) -> None:
@@ -647,6 +779,99 @@ def test_full_gate_via_mocked_mlx_client(
     assert len(calls) == 2, calls
     # Adapter kwarg propagated as the new-adapter path.
     assert all(str(new_path) == str(adapter) for _, adapter in calls), calls
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 — pluggable scorer (LLM-judge path)
+# ---------------------------------------------------------------------------
+
+
+def test_full_gate_with_judge_scorer(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """--scorer-module wires a mocked LLM-judge scorer through the full gate.
+
+    Parallel deltas give a low angle, but the mocked judge returns a score
+    of 1.0 per prompt → winrate = 1.0, drop <= 0.03 → gate passes via
+    AND-logic. This verifies the judge-based scorer propagates through to
+    ``gate_status`` (i.e. the pluggable scorer replaces containment).
+    """
+    import types
+
+    mod = _load_script_module()
+
+    # Parallel deltas → low angle.
+    b1 = torch.tensor([[1.0], [0.0]])
+    a1 = torch.tensor([[1.0, 0.0]])
+    b2 = torch.tensor([[1.001], [0.0005]])
+    a2 = torch.tensor([[1.0005, 0.0002]])
+
+    prior_path = tmp_path / "prior.safetensors"
+    new_path = tmp_path / "new.safetensors"
+    _write_adapter(prior_path, b1, a1)
+    _write_adapter(new_path, b2, a2)
+
+    # Reference is deliberately absent from the response — containment would
+    # return 0.0 and fail. The judge scorer returns 1.0, so the gate should
+    # pass, proving the scorer is actually being used.
+    eval_path = tmp_path / "eval.jsonl"
+    _write_eval_dataset(
+        eval_path,
+        [
+            {"prompt": "p1", "reference": "EXPECTED_MARKER_A"},
+            {"prompt": "p2", "reference": "EXPECTED_MARKER_B"},
+        ],
+    )
+
+    def fake_generate(prompt, adapter):  # noqa: ARG001
+        return "response without the marker"
+
+    gen_locator = _patch_generate_fn(monkeypatch, fake_generate)
+
+    # Install a JudgeScorer-style async callable under a module locator.
+    judge_calls: list[tuple[str, str, str]] = []
+
+    async def fake_judge_scorer(prompt, reference, response):
+        judge_calls.append((prompt, reference, response))
+        return 1.0
+
+    scorer_mod_name = "tests_mock_scorer_module"
+    scorer_mod = types.ModuleType(scorer_mod_name)
+    scorer_mod.scorer = fake_judge_scorer  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, scorer_mod_name, scorer_mod)
+
+    out_path = tmp_path / "report.json"
+    rc = mod.main(
+        [
+            "--prior-adapter",
+            str(prior_path),
+            "--new-adapter",
+            str(new_path),
+            "--eval-dataset",
+            str(eval_path),
+            "--generate-fn-module",
+            gen_locator,
+            "--winrate-baseline-score",
+            "0.99",
+            "--scorer-module",
+            f"{scorer_mod_name}:scorer",
+            "--output",
+            str(out_path),
+        ]
+    )
+    assert rc == 0, "judge-scored winrate=1.0 should pass the gate"
+    report = json.loads(out_path.read_text())
+
+    # Judge-based winrate = 1.0 even though containment would have been 0.
+    assert report["winrate_measured"] == 1.0, report
+    assert report["gate_status"] == "pass"
+    assert report["angle_degrees_mean"] < 30.0
+    # Judge was called once per prompt, with the right shape.
+    assert len(judge_calls) == 2, judge_calls
+    for prompt, reference, response in judge_calls:
+        assert prompt in {"p1", "p2"}
+        assert reference.startswith("EXPECTED_MARKER_")
+        assert response == "response without the marker"
 
 
 if __name__ == "__main__":

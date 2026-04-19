@@ -22,6 +22,7 @@ Operator-facing command-line drivers for the full micro-kiki lifecycle: download
 | `train_embeddings.py`, `train_forgetting_gate.py`, `train_qtha_stack.py` | Auxiliary trainers |
 | `distill_domain.py` | Teacher distillation via Qwen3-Coder-480B local MLX |
 | `generate_dataset_codex.py`, `generate_dataset_mcp.py`, `generate_bias_pairs.py`, `generate_dpo_pairs.py`, `expand_prompts_x25.py` | Synthetic data generators |
+| `gen_<domain>_dataset.py` | Per-domain dataset generators — one per niche. 34-domain entry points: `gen_spice_dataset.py`, `gen_emc_dataset.py`, `gen_platformio_dataset.py`, `gen_lua_upy_dataset.py`, `gen_yaml_json_dataset.py`, `gen_web_frontend_dataset.py`, `gen_web_backend_dataset.py`, `gen_music_audio_dataset.py`, `gen_llm_orch_dataset.py`, `gen_component_dataset.py` (structured singular), `gen_components_dataset.py` (teacher-distilled, sync 2026-04-18), `gen_llm_ops_dataset.py`, `gen_ml_training_dataset.py` (teacher-distilled, sync 2026-04-18). Batch: `gen_remaining_datasets.py` |
 | `merge_datasets.py`, `merge_all_sources.py`, `dataset_quality_filter.py`, `curate_bias_dataset.py`, `scrape_stackexchange.py`, `import_kiki_datasets.py`, `import_kiki_datasets.sh` | Dataset curation |
 | `eval_aeon.py`, `eval_base_knowbias.py`, `eval_niche_vs_base.py`, `group_eval.py`, `energy_bench.py`, `benchmark_base_vs_lora.py`, `benchmark_quantum_router.py` | Evaluation benches |
 | `run_full_eval.sh`, `run_forgetting.sh` | Shell orchestrators |

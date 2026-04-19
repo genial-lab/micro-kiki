@@ -1,0 +1,934 @@
+{
+  "timestamp": "2026-04-19T18:02:46+00:00",
+  "epsilon": 1e-06,
+  "dirs": [
+    {
+      "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b",
+      "label": "lora-qwen36-35b (post-pivot)",
+      "expected": "all_healthy",
+      "final_adapters": [
+        {
+          "name": "chat-fr",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/chat-fr/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 204,
+          "zero_lora_b": 0,
+          "max_norm": 0.9978392124176025,
+          "mean_norm": 0.1861804048291079
+        },
+        {
+          "name": "components",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/components/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0956857204437256,
+          "mean_norm": 0.20649639754750146
+        },
+        {
+          "name": "cpp",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/cpp/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1582238674163818,
+          "mean_norm": 0.21908362397459547
+        },
+        {
+          "name": "devops",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/devops/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9099873900413513,
+          "mean_norm": 0.1722509430717978
+        },
+        {
+          "name": "docker",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/docker/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0445153713226318,
+          "mean_norm": 0.19988289953257396
+        },
+        {
+          "name": "dsp",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/dsp/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8522434830665588,
+          "mean_norm": 0.16417631645134523
+        },
+        {
+          "name": "electronics",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/electronics/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0963506698608398,
+          "mean_norm": 0.20709485499195152
+        },
+        {
+          "name": "embedded",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/embedded/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1240297555923462,
+          "mean_norm": 0.21548158185175328
+        },
+        {
+          "name": "emc",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/emc/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.833002507686615,
+          "mean_norm": 0.15838937595767408
+        },
+        {
+          "name": "freecad",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/freecad/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0509157180786133,
+          "mean_norm": 0.1978757943593961
+        },
+        {
+          "name": "html-css",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/html-css/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9044479727745056,
+          "mean_norm": 0.17191864641876342
+        },
+        {
+          "name": "iot",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/iot/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8269028067588806,
+          "mean_norm": 0.15750712309290618
+        },
+        {
+          "name": "kicad-dsl",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/kicad-dsl/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.980440080165863,
+          "mean_norm": 0.1881787104756964
+        },
+        {
+          "name": "kicad-pcb",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/kicad-pcb/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0178333520889282,
+          "mean_norm": 0.19258070043824596
+        },
+        {
+          "name": "llm-ops",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/llm-ops/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8339245319366455,
+          "mean_norm": 0.1593777117092281
+        },
+        {
+          "name": "llm-orch",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/llm-orch/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8075659871101379,
+          "mean_norm": 0.15174750431427075
+        },
+        {
+          "name": "lua-upy",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/lua-upy/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8151918649673462,
+          "mean_norm": 0.15595913760069594
+        },
+        {
+          "name": "math",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/math/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8658909201622009,
+          "mean_norm": 0.16450118060525068
+        },
+        {
+          "name": "ml-training",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/ml-training/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.834794819355011,
+          "mean_norm": 0.1587991726027765
+        },
+        {
+          "name": "music-audio",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/music-audio/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.844449520111084,
+          "mean_norm": 0.15967977148601695
+        },
+        {
+          "name": "platformio",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/platformio/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8498005867004395,
+          "mean_norm": 0.16084114341784322
+        },
+        {
+          "name": "power",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/power/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0821619033813477,
+          "mean_norm": 0.20526786159048332
+        },
+        {
+          "name": "python",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/python/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0844190120697021,
+          "mean_norm": 0.20721876975628273
+        },
+        {
+          "name": "reasoning",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/reasoning/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 204,
+          "zero_lora_b": 0,
+          "max_norm": 1.2128394842147827,
+          "mean_norm": 0.22451401684106803
+        },
+        {
+          "name": "rust",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/rust/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.04388427734375,
+          "mean_norm": 0.1989120849591963
+        },
+        {
+          "name": "security",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/security/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9523704051971436,
+          "mean_norm": 0.1795548822379251
+        },
+        {
+          "name": "shell",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/shell/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1214500665664673,
+          "mean_norm": 0.21349796995762552
+        },
+        {
+          "name": "spice",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/spice/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.846117377281189,
+          "mean_norm": 0.16062151066737487
+        },
+        {
+          "name": "spice-sim",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/spice-sim/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8197937607765198,
+          "mean_norm": 0.15829612135398657
+        },
+        {
+          "name": "sql",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/sql/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1180342435836792,
+          "mean_norm": 0.2100816426844925
+        },
+        {
+          "name": "stm32",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/stm32/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9493144154548645,
+          "mean_norm": 0.18121414432728974
+        },
+        {
+          "name": "typescript",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/typescript/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0915682315826416,
+          "mean_norm": 0.20779982900107735
+        },
+        {
+          "name": "web-backend",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/web-backend/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.803416907787323,
+          "mean_norm": 0.15219698201262338
+        },
+        {
+          "name": "web-frontend",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/web-frontend/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8484166264533997,
+          "mean_norm": 0.16112965470814494
+        },
+        {
+          "name": "yaml-json",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/yaml-json/adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.8441481590270996,
+          "mean_norm": 0.16023268219364314
+        }
+      ],
+      "intermediate_checkpoints": [
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/chat-fr/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 204,
+          "zero_lora_b": 0,
+          "max_norm": 0.9978392124176025,
+          "mean_norm": 0.1861804048291079
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/components/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9647417068481445,
+          "mean_norm": 0.18302211851422565
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/components/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0956857204437256,
+          "mean_norm": 0.20649639754750146
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/cpp/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0175532102584839,
+          "mean_norm": 0.19354790979688166
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/cpp/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1582238674163818,
+          "mean_norm": 0.21908362397459547
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/docker/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9749586582183838,
+          "mean_norm": 0.1868013998587141
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/electronics/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9542701840400696,
+          "mean_norm": 0.1821260022794983
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/electronics/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0963506698608398,
+          "mean_norm": 0.20709485499195152
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/embedded/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.974035382270813,
+          "mean_norm": 0.1873561148297763
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/embedded/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1240297555923462,
+          "mean_norm": 0.21548158185175328
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/freecad/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9320273995399475,
+          "mean_norm": 0.17724941775896677
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/freecad/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0509157180786133,
+          "mean_norm": 0.1978757943593961
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/kicad-dsl/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9780251383781433,
+          "mean_norm": 0.18773816582831263
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/kicad-pcb/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9616039395332336,
+          "mean_norm": 0.1819985858193261
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/power/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.951178789138794,
+          "mean_norm": 0.1811696409570811
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/power/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0821619033813477,
+          "mean_norm": 0.20526786159048332
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/python/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9549745917320251,
+          "mean_norm": 0.18318007342053996
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/python/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0844190120697021,
+          "mean_norm": 0.20721876975628273
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/reasoning/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 204,
+          "zero_lora_b": 0,
+          "max_norm": 0.987981915473938,
+          "mean_norm": 0.18426431156124226
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/reasoning/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 204,
+          "zero_lora_b": 0,
+          "max_norm": 1.1357262134552002,
+          "mean_norm": 0.21105522122924608
+        },
+        {
+          "name": "0000300_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/reasoning/0000300_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 204,
+          "zero_lora_b": 0,
+          "max_norm": 1.2128394842147827,
+          "mean_norm": 0.22451401684106803
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/rust/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9730420112609863,
+          "mean_norm": 0.18578258943949444
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/shell/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9849036335945129,
+          "mean_norm": 0.18723303368474886
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/shell/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1214500665664673,
+          "mean_norm": 0.21349796995762552
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/sql/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9737674593925476,
+          "mean_norm": 0.18453386946588152
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/sql/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.1180342435836792,
+          "mean_norm": 0.2100816426844925
+        },
+        {
+          "name": "0000100_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/typescript/0000100_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 0.9636133313179016,
+          "mean_norm": 0.1839123227417825
+        },
+        {
+          "name": "0000200_adapters",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b/typescript/0000200_adapters.safetensors",
+          "healthy": true,
+          "total_lora_b": 102,
+          "zero_lora_b": 0,
+          "max_norm": 1.0915682315826416,
+          "mean_norm": 0.20779982900107735
+        }
+      ],
+      "summary": {
+        "total_safetensors_files": 63,
+        "final_adapters_count": 35,
+        "intermediate_checkpoints_count": 28,
+        "final_healthy": 35,
+        "final_degenerate": 0,
+        "checkpoints_healthy": 28,
+        "checkpoints_degenerate": 0
+      }
+    },
+    {
+      "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16",
+      "label": "stacks-v3-r16 (pre-pivot)",
+      "expected": "all_degenerate",
+      "final_adapters": [
+        {
+          "name": "chat-fr",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/chat-fr/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "components",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/components/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "cpp",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/cpp/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "devops",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/devops/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "docker",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/docker/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "dsp",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/dsp/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "electronics",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/electronics/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "embedded",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/embedded/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "emc",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/emc/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "freecad",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/freecad/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "html-css",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/html-css/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "iot",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/iot/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "kicad-dsl",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/kicad-dsl/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "kicad-pcb",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/kicad-pcb/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "llm-ops",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/llm-ops/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "llm-orch",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/llm-orch/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "lua-upy",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/lua-upy/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "math",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/math/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "ml-training",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/ml-training/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "music-audio",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/music-audio/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "platformio",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/platformio/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "power",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/power/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "python",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/python/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "reasoning",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/reasoning/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "rust",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/rust/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "security",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/security/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "shell",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/shell/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "spice",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/spice/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "spice-sim",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/spice-sim/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "sql",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/sql/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "stm32",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/stm32/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "typescript",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/typescript/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "web-backend",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/web-backend/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "web-frontend",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/web-frontend/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        },
+        {
+          "name": "yaml-json",
+          "path": "/Users/clems/KIKI-Mac_tunner/output/micro-kiki/stacks-v3-r16/yaml-json/adapters.safetensors",
+          "healthy": false,
+          "total_lora_b": 512,
+          "zero_lora_b": 512,
+          "max_norm": 0.0,
+          "mean_norm": 0.0
+        }
+      ],
+      "intermediate_checkpoints": [],
+      "summary": {
+        "total_safetensors_files": 35,
+        "final_adapters_count": 35,
+        "intermediate_checkpoints_count": 0,
+        "final_healthy": 0,
+        "final_degenerate": 35,
+        "checkpoints_healthy": 0,
+        "checkpoints_degenerate": 0
+      }
+    }
+  ],
+  "findings": {
+    "post_pivot_prediction_holds": true,
+    "pre_pivot_prediction_holds": true,
+    "surprises": [],
+    "notes": [
+      "Post-pivot (lora-qwen36-35b): 35/35 final adapters healthy.",
+      "Pre-pivot (stacks-v3-r16): 35/35 final adapters degenerate.",
+      "Intermediate checkpoints in post-pivot dir also audited: 28 files, 28 healthy.",
+      "Empirical predictions hold across the full fleet."
+    ]
+  }
+}

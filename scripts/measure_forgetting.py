@@ -40,6 +40,7 @@ if str(_REPO_ROOT) not in sys.path:
 from src.eval.forgetting import (  # noqa: E402
     ANGLE_THRESHOLD,
     WINRATE_DROP_THRESHOLD,
+    _resolve_generate_fn,
     measure_forgetting_signal,
 )
 
@@ -90,6 +91,18 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Reference win-rate from the prior adapter (phase 1b).",
     )
+    parser.add_argument(
+        "--scorer-module",
+        type=str,
+        default=None,
+        help=(
+            "Optional 'pkg.module:callable' locator for a scorer "
+            "fn(prompt, reference, response) -> float in [0,1]. "
+            "Sync or async. Defaults to token-containment heuristic. "
+            "Use 'src.eval.scorers:JudgeScorer(...)' via a wrapper "
+            "module to plug in an LLM judge."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -115,12 +128,21 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
 
+    scorer = None
+    if args.scorer_module:
+        try:
+            scorer = _resolve_generate_fn(args.scorer_module)
+        except (ImportError, AttributeError, ValueError) as exc:
+            logger.error("Failed to resolve --scorer-module {!r}: {}", args.scorer_module, exc)
+            return 2
+
     report = measure_forgetting_signal(
         prior_adapter_path=args.prior_adapter,
         new_adapter_path=args.new_adapter,
         eval_dataset=args.eval_dataset if all_set else None,
         generate_fn=args.generate_fn_module if all_set else None,
         winrate_baseline=args.winrate_baseline_score if all_set else None,
+        scorer=scorer,
     )
 
     status = report.get("gate_status")
