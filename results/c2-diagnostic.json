@@ -1,0 +1,226 @@
+{
+  "per_domain": {
+    "dsp": {
+      "mean_oracle": 3.9,
+      "mean_vqc": 2.3,
+      "mean_random": 3.3,
+      "gap_oracle_vs_vqc": 1.6,
+      "gap_vqc_vs_random": -1.0,
+      "n": 10
+    },
+    "electronics": {
+      "mean_oracle": 3.1,
+      "mean_vqc": 1.8,
+      "mean_random": 2.8,
+      "gap_oracle_vs_vqc": 1.3,
+      "gap_vqc_vs_random": -0.9999999999999998,
+      "n": 10
+    },
+    "emc": {
+      "mean_oracle": 3.5,
+      "mean_vqc": 2.5,
+      "mean_random": 4.0,
+      "gap_oracle_vs_vqc": 1.0,
+      "gap_vqc_vs_random": -1.5,
+      "n": 10
+    },
+    "embedded": {
+      "mean_oracle": 3.9,
+      "mean_vqc": 4.4,
+      "mean_random": 2.8,
+      "gap_oracle_vs_vqc": -0.5000000000000004,
+      "gap_vqc_vs_random": 1.6000000000000005,
+      "n": 10
+    },
+    "freecad": {
+      "mean_oracle": 3.5,
+      "mean_vqc": 1.9,
+      "mean_random": 2.9,
+      "gap_oracle_vs_vqc": 1.6,
+      "gap_vqc_vs_random": -1.0,
+      "n": 10
+    },
+    "kicad-dsl": {
+      "mean_oracle": 3.0,
+      "mean_vqc": 3.4,
+      "mean_random": 3.0,
+      "gap_oracle_vs_vqc": -0.3999999999999999,
+      "gap_vqc_vs_random": 0.3999999999999999,
+      "n": 10
+    },
+    "platformio": {
+      "mean_oracle": 3.7,
+      "mean_vqc": 1.5,
+      "mean_random": 3.6,
+      "gap_oracle_vs_vqc": 2.2,
+      "gap_vqc_vs_random": -2.1,
+      "n": 10
+    },
+    "power": {
+      "mean_oracle": 3.7,
+      "mean_vqc": 3.0,
+      "mean_random": 3.1,
+      "gap_oracle_vs_vqc": 0.7000000000000002,
+      "gap_vqc_vs_random": -0.10000000000000009,
+      "n": 10
+    },
+    "spice": {
+      "mean_oracle": 2.9,
+      "mean_vqc": 3.0,
+      "mean_random": 3.1,
+      "gap_oracle_vs_vqc": -0.10000000000000009,
+      "gap_vqc_vs_random": -0.10000000000000009,
+      "n": 10
+    },
+    "stm32": {
+      "mean_oracle": 3.6,
+      "mean_vqc": 2.7,
+      "mean_random": 3.3,
+      "gap_oracle_vs_vqc": 0.8999999999999999,
+      "gap_vqc_vs_random": -0.5999999999999996,
+      "n": 10
+    }
+  },
+  "stratified": {
+    "vqc_correct": {
+      "n": 17,
+      "vqc_mean_score": 3.0588235294117645,
+      "oracle_mean_score": 3.4705882352941178,
+      "random_mean_score": 3.7058823529411766
+    },
+    "vqc_wrong": {
+      "n": 83,
+      "vqc_mean_score": 2.566265060240964,
+      "oracle_mean_score": 3.4819277108433737,
+      "random_mean_score": 3.0843373493975905
+    }
+  },
+  "top_gaps": [
+    {
+      "index": 26,
+      "question": "Upgrading an Arduino Duemilanove from ATMega168 to ATMega328\nI have purchased an ATMega328 from SparkFun with the Arduino bootloader pre-programmed.  My intention is to replace the ATMega168 I currently have in my Duemilanove.  Is this as simple as swapping the chips, or will I need to take any additional steps?  As I recall, I am currently at Arduino 13 but am planning to upgrade to 17 (current version) concurrent with the part swap.",
+      "expected_domain": "emc",
+      "oracle_score": 5,
+      "vqc_routed_domain": "kicad-dsl",
+      "vqc_score": 0,
+      "random_routed_domain": "kicad-dsl",
+      "random_score": 5,
+      "gap": 5
+    },
+    {
+      "index": 45,
+      "question": "We have an old CD cabinet that has been sitting upside-down in the corner for... I think it's been 10 years.... That can't be right can it? The problem is one of the brackets that hold the \"legs\" on is broken and it doesn't stand up. In an effort to prove to my family (and my self) that the RepRap that I'm spending weeks on building is actually useful, I thought that one of the first things that I would print would be this.  \r\n\r\nUpdate: Five years later, this simple little bracket is my most pop",
+      "expected_domain": "freecad",
+      "oracle_score": 5,
+      "vqc_routed_domain": "kicad-dsl",
+      "vqc_score": 0,
+      "random_routed_domain": "platformio",
+      "random_score": 3,
+      "gap": 5
+    },
+    {
+      "index": 68,
+      "question": "Explain this Arduino concept and provide example code.",
+      "expected_domain": "platformio",
+      "oracle_score": 5,
+      "vqc_routed_domain": "embedded",
+      "vqc_score": 0,
+      "random_routed_domain": "spice",
+      "random_score": 5,
+      "gap": 5
+    },
+    {
+      "index": 69,
+      "question": "Explain this Arduino concept and provide example code.",
+      "expected_domain": "platformio",
+      "oracle_score": 5,
+      "vqc_routed_domain": "embedded",
+      "vqc_score": 0,
+      "random_routed_domain": "kicad-dsl",
+      "random_score": 0,
+      "gap": 5
+    },
+    {
+      "index": 82,
+      "question": "Write a PySpice script to simulate a low-pass RC filter and plot the Bode diagram.",
+      "expected_domain": "spice",
+      "oracle_score": 5,
+      "vqc_routed_domain": "stm32",
+      "vqc_score": 0,
+      "random_routed_domain": "emc",
+      "random_score": 2,
+      "gap": 5
+    },
+    {
+      "index": 91,
+      "question": "Write a FreeRTOS task that reads an I2C sensor (BME280) every 2 seconds and sends data to a queue.",
+      "expected_domain": "stm32",
+      "oracle_score": 5,
+      "vqc_routed_domain": "stm32",
+      "vqc_score": 0,
+      "random_routed_domain": "spice",
+      "random_score": 1,
+      "gap": 5
+    },
+    {
+      "index": 6,
+      "question": "DSP recommendation for beginners\nI am considering a project involving a fair share of digital signal processing. As far as I know, the best type of [PERSON] suited for this are the Digital Signal Processors. I have never worked with them before - can you recommend me any model that is simple enough for beginners? The project involves filtering hi-fi digital audio (44100Hz, 16 bit stereo) in several ways.\n\nAlso, do I need an additional uC to for example control an UI with an LCD panel and some buttons, or can the DSP handle this along its signal processing task?",
+      "expected_domain": "dsp",
+      "oracle_score": 4,
+      "vqc_routed_domain": "kicad-dsl",
+      "vqc_score": 0,
+      "random_routed_domain": "dsp",
+      "random_score": 5,
+      "gap": 4
+    },
+    {
+      "index": 46,
+      "question": "I needed a little wrench to tighten the M4 nylock nuts on my Mendel, so I designed a parametric wrench.",
+      "expected_domain": "freecad",
+      "oracle_score": 5,
+      "vqc_routed_domain": "kicad-dsl",
+      "vqc_score": 1,
+      "random_routed_domain": "kicad-dsl",
+      "random_score": 1,
+      "gap": 4
+    },
+    {
+      "index": 60,
+      "question": "Write a complete platformio.ini for an ESP32 project with [PERSON], MQTT, DHT22 sensor, OTA updates, and separate debug/release environments.",
+      "expected_domain": "platformio",
+      "oracle_score": 5,
+      "vqc_routed_domain": "stm32",
+      "vqc_score": 1,
+      "random_routed_domain": "spice",
+      "random_score": 5,
+      "gap": 4
+    },
+    {
+      "index": 74,
+      "question": "Arduino Stepper Motor\nHow do use use an Arduino with a Stepper Motor?",
+      "expected_domain": "power",
+      "oracle_score": 5,
+      "vqc_routed_domain": "kicad-dsl",
+      "vqc_score": 1,
+      "random_routed_domain": "power",
+      "random_score": 4,
+      "gap": 4
+    }
+  ],
+  "config": {
+    "domains": [
+      "dsp",
+      "electronics",
+      "emc",
+      "embedded",
+      "freecad",
+      "kicad-dsl",
+      "platformio",
+      "power",
+      "spice",
+      "stm32"
+    ],
+    "input": "results/c2-downstream.json",
+    "n_queries": 100
+  }
+}
