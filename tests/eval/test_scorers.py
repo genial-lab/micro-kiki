@@ -103,3 +103,27 @@ def test_judge_scorer_score_normalization() -> None:
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))
+
+
+import pytest
+
+from src.eval.forgetting import _call_scorer
+
+
+async def _async_score(prompt: str, reference: str, response: str) -> float:
+    return 0.7
+
+
+@pytest.mark.asyncio
+async def test_call_scorer_inside_running_loop():
+    """Regression: _call_scorer used to deadlock inside a running event loop.
+
+    Fixed 2026-04-20 by delegating to a worker thread when a loop is active.
+    """
+    score = _call_scorer(_async_score, "q", "ref", "resp")
+    assert score == 0.7
+
+
+def test_call_scorer_outside_loop_still_works():
+    score = _call_scorer(_async_score, "q", "ref", "resp")
+    assert score == 0.7

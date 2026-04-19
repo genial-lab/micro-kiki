@@ -769,17 +769,31 @@ def _call_scorer(
     """Dispatch a scorer that may be sync or async.
 
     If ``scorer`` is ``None``, falls back to the sync containment heuristic.
-    Async scorers are driven via ``asyncio.run`` (one event loop per call).
-    The gate path is sync, so async scorers pay an event-loop setup cost
-    per prompt — acceptable for eval-time, not hot inference.
+    Async scorers are driven via ``asyncio.run`` when no event loop is
+    running, or via a dedicated worker thread when the caller is already
+    inside one (pytest-asyncio, notebooks, async CLIs) to avoid the
+    ``RuntimeError: asyncio.run() cannot be called from a running event
+    loop``. Event-loop setup cost per prompt is acceptable for eval time.
     """
     if scorer is None:
         return _containment_score(response, reference)
 
     result = scorer(prompt, reference, response)
-    if inspect.isawaitable(result):
+    if not inspect.isawaitable(result):
+        return float(result)
+
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
         return float(asyncio.run(result))  # type: ignore[arg-type]
-    return float(result)
+
+    import concurrent.futures
+
+    def _run_in_thread() -> float:
+        return float(asyncio.run(result))  # type: ignore[arg-type]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(_run_in_thread).result()
 
 
 def _compute_winrate(
