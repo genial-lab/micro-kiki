@@ -111,7 +111,8 @@
       "title": "Forgetting check across all 10 stacks",
       "description": "After all 10 stacks are trained, run a comprehensive cross-stack forgetting analysis. For each stack pair, compute cosine angle between LoRA update subspaces. Flag any pair with angle < 30°. Generate report at `results/forgetting_cross_stacks.json`. Acceptance: report exists, all angle readings above 30° or rollback decisions documented.",
       "priority": 14,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-15",
