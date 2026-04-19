@@ -643,11 +643,13 @@ $\mathrm{acc}_\mathrm{max}$ requires (i) a projection $\pi_\theta$ that
 preserves all the class-relevant information in $X$, and (ii) a circuit +
 measurement that achieves the Holevo cap. Neither is automatic: the naive
 $\pi \tanh$ projection saturates and destroys signal, and
-\texttt{StronglyEntanglingLayers} with $\langle Z \rangle$ measurement is
-known to leave capacity on the table for some input
-distributions~\cite{du2020expressive}. The gap between our measured 0.246
-and the theoretical ceiling is attributable to both, and is the subject of
-ongoing architectural work.
+\texttt{StronglyEntanglingLayers} with $\langle Z \rangle$ measurement
+expressivity is bounded by MPS bond-dimension-equivalent results
+(Du et al.~\cite{du2020expressive}, Theorem 4: deep circuits with bond
+dimension $D$ are covered by $\mathcal{O}(\mathrm{poly}(\log D))$ Pauli-$Z$
+expectation-value blocks). The gap between our measured 0.246 and the
+theoretical ceiling is attributable to both projection and measurement
+sub-optimality, and is the subject of ongoing architectural work.
 ```
 
 - [ ] **Step 2: Substitute the measured values**
