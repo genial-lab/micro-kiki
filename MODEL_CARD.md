@@ -9,13 +9,13 @@ tags:
   - multi-domain
   - embedded-systems
   - cognitive
-base_model: Qwen/Qwen3.5-35B-A3B
+base_model: Qwen/Qwen3.6-35B-A3B
 pipeline_tag: text-generation
 ---
 
 # micro-kiki
 
-**35-domain expert model** built on Qwen3.5-35B-A3B (MoE, 256 experts, 3B active/token) with LoRA adapters and a cognitive layer (memory palace + negotiator + anti-bias).
+**34-domain expert model** built on Qwen3.6-35B-A3B (MoE, 256 experts, 3B active/token) with LoRA adapters and a cognitive layer (memory palace + negotiator + anti-bias).
 
 ## Model Description
 
@@ -23,14 +23,35 @@ micro-kiki is a multi-domain language model designed for technical applications 
 
 | Property | Value |
 |----------|-------|
-| Base model | Qwen3.5-35B-A3B |
+| Base model | Qwen3.6-35B-A3B |
 | Architecture | MoE (256 experts, 3B active/token) |
-| Adapter | LoRA rank 16 (q/k/v/o projections) |
-| Domains | 35 |
+| Adapter | LoRA, rank tiers {4, 8, 12, 16, 32}, MLX scale = 20.0, 17 module kinds/layer (attention + MoE routers + shared_expert + switch_mlp) |
+| Domains | 34 |
 | Max active stacks | 4 |
 | Context length | 262,144 tokens |
 | Quantization | Q4_K_M (inference), BF16 (training) |
 | License | Apache 2.0 |
+
+### Adapter shape — 17 module kinds per layer
+
+LoRA is applied (via `mlx_lm lora`) to:
+
+- `linear_attn.{in_proj_a, in_proj_b, in_proj_qkv, in_proj_z, out_proj}` (GLA hybrid, 5 modules)
+- `self_attn.{q_proj, k_proj, v_proj, o_proj}` (4 modules)
+- `mlp.gate`, `mlp.shared_expert_gate` (MoE routers, 2 modules)
+- `mlp.shared_expert.{down_proj, gate_proj, up_proj}` (3 modules)
+- `mlp.switch_mlp.{down_proj, gate_proj, up_proj}` (3 modules)
+
+Prior model-card revisions described "q/k/v/o attention projections only"; that was superseded 2026-04-18 after the real `adapter_config.json` was read and a forgetting audit (chat-fr ↔ reasoning, mean 79.4°, no catastrophic interference) demonstrated the 17-module surface holds. Pre-pivot MoE-LoRA adapters (stacks-v3-r16, 35 files) had `lora_B = 0` across all modules — archived to `scripts/legacy/`, see `docs/research/2026-04-19-prepivot-moe-lora-audit.md` and `docs/research/2026-04-19-moe-lora-root-cause.md`.
+
+### Forgetting-gate enforcement
+
+After every sequential stack trains, the adapter is admitted to the curriculum only if:
+
+- `scripts/validate_adapter_health.py` → all `lora_B` matrices non-zero, AND
+- `scripts/measure_forgetting.py` → per-module cosine angle ≥ 30° vs. every prior stack, OR win-rate drop ≤ 0.03 on cross-domain probes.
+
+Canonical doc: `docs/training/forgetting-gate.md`. Operator runbook for the dual-server flow: `docs/training/e2e-smoke-runbook.md`. Empirical sweeps in `results/forgetting-matrix.json`, `results/adapter-health-sweep.json`, `results/smoke-gate.json`.
 
 ## Architecture
 
@@ -43,7 +64,7 @@ micro-kiki is a multi-domain language model designed for technical applications 
               +----------+--------+--------+----------+
               |          |                 |          |
          +----v----+ +---v---+       +----v----+ +---v---+
-         | Stack 1 | |Stack 2|  ...  |Stack 34 | |Stack35|
+         | Stack 1 | |Stack 2|  ...  |Stack 33 | |Stack34|
          | chat-fr | |python |       |ml-train | |securi.|
          +---------+ +-------+       +---------+ +-------+
               |          |                 |          |
@@ -108,42 +129,48 @@ micro-kiki is a multi-domain language model designed for technical applications 
 | JITX open-components-database | 151 | — |
 | Vrindarani/netlistgen | 106 | — |
 
-### 35 Domains
+### 34 Domains
 
 | Group | Domains |
 |-------|---------|
 | Conversation | chat-fr, reasoning |
 | Code | python, typescript, cpp, rust, html-css, shell, sql, yaml-json, lua-upy |
-| Infrastructure | docker, devops, llm-orch, llm-ops (NEW), ml-training (NEW) |
-| Electronics | kicad-dsl, kicad-pcb, spice, electronics, components (NEW), power, emc, dsp |
+| Infrastructure | docker, devops, llm-orch, llm-ops, ml-training |
+| Electronics | kicad-dsl, kicad-pcb, spice, electronics, components, power, emc, dsp |
 | Hardware | embedded, stm32, iot, platformio |
 | CAD | freecad |
 | Web | web-frontend, web-backend |
 | Other | music-audio, math, security |
 
-**Changes from V2:** 3 new domains (components, llm-ops, ml-training). `spice-sim` merged into `spice`. `stm32` is a sub-category of `embedded`.
+**Changes from pre-v3 (32 domains):** 3 new domains (`components`, `llm-ops`, `ml-training`). `spice-sim` removed (merged into `spice`). Net: +2 → 34 total. The list must stay in sync across 3 config mirrors (`configs/micro_kiki/domains.yaml`, `configs/micro_kiki/brainstacks.yaml`, `configs/mlx-per-domain/*.yaml`) — enforced by `scripts/validate_domains.py`.
 
 ### New Domain: components
 
 57K Q&A about electronic component specs, datasheets, sourcing, BOM, and cross-reference. Sources: Electronics StackExchange (filtered by component tags) + JITX open-components-database.
 
-## Training — V3
+## Training — V3 (post-pivot 2026-04-16)
 
 | Property | Value |
 |----------|-------|
-| Base model | Qwen3.5-4B |
-| Adapter | MoE-LoRA: 4 experts/projection, rank 16, top-2 routing |
-| Null-space projection | ENABLED (prevents catastrophic forgetting between stacks) |
-| Curriculum | Sequential, 35 stacks trained in order |
+| Base model | Qwen3.6-35B-A3B (pivot from pre-v3 Qwen3.5-4B + MoE-LoRA) |
+| Adapter | Standard LoRA, rank tiers {4, 8, 12, 16, 32}, MLX scale = 20.0, 17 module kinds/layer |
+| Trainer | `mlx_lm lora` on Mac Studio M3 Ultra 512 GB (BF16) |
+| Forgetting gate | `scripts/post_train_gate.py` — health + angle + win-rate after every stack (rollback if angle < 30° AND win-rate drop > 0.03) |
+| Curriculum | Sequential, 34 stacks, foundations (rank 32) before niches — enforced by `scripts/validate_curriculum_order.py` |
 | Platform (MLX) | Mac Studio M3 Ultra 512 GB |
-| Platform (CUDA) | kxkm-ai RTX 4090 24 GB |
+| Platform (CUDA) | kxkm-ai RTX 4090 24 GB (Q4 inference only; **do not train** — 35B BF16 LoRA does not fit in 24 GB) |
+
+**Pre-pivot warning.** 35 MoE-LoRA adapters from the pre-pivot pipeline (`stacks-v3-r16/`) have `lora_B = 0` across all modules and are effectively dead weights. They are archived under `scripts/legacy/`. Do not deploy them. See `docs/research/2026-04-19-prepivot-moe-lora-audit.md` (audit) and `docs/research/2026-04-19-moe-lora-root-cause.md` (root cause).
 
 ## Evaluation
 
 | Metric | Value |
 |--------|-------|
 | Router accuracy (35-class) | [PENDING] |
-| Forgetting check (angle) | [PENDING] |
+| Forgetting check — per-module angle, post-pivot (chat-fr ↔ reasoning, `results/smoke-gate.json`) | mean 79.4°, winrate_drop −0.04, gate PASS |
+| Forgetting sweep — post-pivot (`results/forgetting-matrix.json`) | 5 adapters × 20 pairs, all above 30° |
+| Forgetting sweep — pre-pivot MoE-LoRA (`results/forgetting-matrix-prepivot.json`) | 35 adapters, all 0° (degenerate — `lora_B = 0`) |
+| Adapter health sweep (`results/adapter-health-sweep.json`) | 35/35 post-pivot healthy · 35/35 pre-pivot degenerate |
 | Perplexity (base) | [PENDING] |
 | Perplexity (debiased) | [PENDING] |
 | Aeon recall@1 | [PENDING] |

@@ -19,9 +19,9 @@ All project documentation that isn't in root-level markdown: dated specs (archit
 |-----------|---------|
 | `specs/` | Dated design specs. Architecture pivot to 35B (`2026-04-16-architecture-pivot-35b.md`), reorientation rationale, cognitive layer design, v0.2 quantum-inspired, v0.3 neuroscience, AeonSleep architecture, DiffAttention integration, energy methodology, LAS conversion framework, MAP paper spec + validation report, MLX-LM fork reference, SpikingBrain (7B / acquisition / quant), STM32H743 USB bootloader design, Ethernet bootloader update protocol |
 | `plans/` | Dated implementation plans. `2026-04-15-micro-kiki-plan{1..4}-*.md` (data pipeline, brainstacks training, meta-router, ANE pipeline), `v0.2-roadmap.md` |
-| `research/` | Research notes: `2026-04-16-micro-kiki-landscape.md`, `micro-kiki-moe-research.md`, `sota-training-2026.md` |
+| `research/` | Research notes: `2026-04-16-micro-kiki-landscape.md`, `micro-kiki-moe-research.md`, `sota-training-2026.md`. **Pivot audit (2026-04-19)**: `2026-04-19-prepivot-moe-lora-audit.md` (35 pre-pivot adapters all `lora_B=0` → dead weights) + `2026-04-19-moe-lora-root-cause.md` (root-cause trace for the bug). |
 | `superpowers/` | `plans/` (agentic capabilities, dataset gen+training paper, phases I-III foundations, reorientation) + `specs/` (agentic capabilities design) |
-| `training/` | `README.md` — authoritative 3-phase MLX curriculum (seq 512->1280->4096, LR 8e-6->5e-6->3e-6, grad-checkpoint mandatory, Qwen3.5-35B-A3B-Opus-bf16 base). `forgetting-gate.md` — operator ref for `scripts/measure_forgetting.py` (OPLoRA phase-1a angle CLI) |
+| `training/` | `README.md` — authoritative 3-phase MLX curriculum (seq 512->1280->4096, LR 8e-6->5e-6->3e-6, grad-checkpoint mandatory, Qwen3.6-35B-A3B-Opus-bf16 base). `forgetting-gate.md` — canonical forgetting-gate operator ref (angle + win-rate, `scripts/measure_forgetting.py` / `scripts/post_train_gate.py`). `e2e-smoke-runbook.md` — operator runbook for the dual-server real-adapter flow (`scripts/smoke_gate_on_studio.py`). |
 
 ## For AI Agents
 
