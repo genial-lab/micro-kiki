@@ -382,9 +382,10 @@
     {
       "id": "story-50",
       "priority": 50,
-      "passes": false,
+      "passes": true,
       "title": "Eval: full pipeline with fine-tuned embeddings",
-      "description": "End-to-end eval: query → Aeon recall (with fine-tuned embeddings) → domain routing → inference → response quality. Compare vs hash-based embeddings. Output: results/embedding-eval.json."
+      "description": "End-to-end eval: query → Aeon recall (with fine-tuned embeddings) → domain routing → inference → response quality. Compare vs hash-based embeddings. Output: results/embedding-eval.json.",
+      "status": "done"
     }
   ]
 }
