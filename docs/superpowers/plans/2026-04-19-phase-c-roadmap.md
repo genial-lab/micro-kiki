@@ -17,7 +17,7 @@ To move from workshop-track to **main-track publishable**, 5 independent sub-pro
 
 | Sub | Title | Owner | Effort | Status |
 |---|---|---|---|---|
-| **C1** | Baseline comparison (classical classifiers vs VQC) | TBD | 2-3 days | **Detailed plan ready** (`2026-04-19-phase-c1-baseline-comparison.md`) |
+| **C1** | Baseline comparison (classical classifiers vs VQC) | Done | ~1h actual | **Completed 2026-04-19 (commits `68dd690`..`73ceb40`)** — see `docs/paper-a/c1-baseline-results.md` |
 | **C2** | Downstream LLM eval (router → actual model selection quality, not just accuracy) | TBD | 3-5 days | Needs brainstorm before plan |
 | **C3** | Real dialogue corpus (replace `data/final` synthetic with real user queries) | TBD | 5-7 days | Needs data-source decision |
 | **C4** | Scale test (10 → 35 domains with full MoE stack routing) | TBD | 3-4 days | Blocked by C1 + C3 |
