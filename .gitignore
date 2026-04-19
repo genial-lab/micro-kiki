@@ -247,3 +247,6 @@ docs/papers/pdf/
 unsloth_compiled_cache/
 >>>>>>> 00928aeb7eec8139fd39941434a1f253c60172b8
 *.npz
+
+# C3 real corpus — raw ingestion files (may contain PII before sanitization)
+data/corpus-real/*/raw.jsonl
