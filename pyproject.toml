@@ -42,6 +42,8 @@ agentic = [
 eval = [
   "scikit-learn>=1.5",
   "matplotlib>=3.9",
+  "spacy>=3.8",
+  "hdbscan>=0.8.40",
 ]
 dev = [
   "pytest>=8.0",
