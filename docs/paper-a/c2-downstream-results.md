@@ -1,44 +1,60 @@
-# C2: Downstream LLM Evaluation — Partial Results
+# C2: Downstream LLM Evaluation
 
-**Status**: BLOCKED after 1 second of runtime on 2026-04-19. The kxkm-ai llama-server (Qwen3.5-35B-A3B-UD-Q3_K_XL.gguf on port 8000) that was reachable during setup crashed during the first few bench queries. All 600 downstream LLM calls (gen + judge) returned `Connection refused`. Partial data captured below; full run pending server restart.
+**Setup.** 100-query eval (10/domain × 10 domains from `data/corpus-real`), routed through three routers to Qwen3.5-35B-A3B-UD-Q3_K_XL.gguf on kxkm-ai (RTX 4090, llama.cpp HTTP). Each answer scored 0-5 by the **same model** (self-judging — see Caveats) using the rubric in `src/routing/llm_judge.py`. `chat_template_kwargs.enable_thinking=False` forced (Qwen3/3.5 thinking mode would consume all max_tokens silently).
 
-## What did work
+**Routers.**
+- **Random**: picks an expert uniformly among 10 (control).
+- **Torch VQC (ours)**: trained per C3 on 400 remaining samples (train_acc = 0.300 — limited by the 4-qubit ceiling established in C1/C5).
+- **Oracle**: always picks the ground-truth expert (upper bound).
 
-- **VQC training on C3 real corpus**: 400 held-out samples, train_acc = **0.497** (up from 0.25 on C1 synthetic). Confirms C3's corpus-quality finding.
-- **Routing accuracy of 3 routers on 100 held-out eval queries**:
-  - VQC: **0.340** (vs C3 full-run 0.410 — consistent within seed noise)
-  - Random: **0.070** (≈ chance 0.10)
-  - Oracle: **1.000** (correct by construction)
-- **Harness + self-judge wiring + pipeline** committed (`59e4e6d`), dry-run verified.
+"Expert" here means the system prompt `"You are an expert in {domain}."` — a prompt-based pseudo-adapter, NOT actual LoRA weight swapping.
 
-## What did NOT work
+## Results (100 queries, single seed, self-judged)
 
-- The gen+judge LLM calls returned `Connection refused` (errno 61). Mean score = 0 everywhere (the harness treated every call as an empty answer scored 0).
-- Cause: kxkm-ai llama-server process died between T6 probe (200 OK) and T7 launch (000). Root cause unknown — possibly OOM, VRAM conflict, or external kill.
+| Router | mean score | routing acc | score when routed correct | score when routed wrong |
+|---|---|---|---|---|
+| **Random** | **3.190** | 0.070 | 3.857 | 3.140 |
+| **Torch VQC** | **2.650** | 0.170 | 3.059 | 2.566 |
+| **Oracle** | **3.480** | 1.000 | 3.480 | N/A |
 
-## Partial findings still interpretable
+See Figure `c2-downstream-figure.pdf`.
 
-1. **Routing accuracy on held-out eval is VQC > random**, confirming the VQC classifier learned something useful on real data (0.340 vs 0.070 = ~5× chance).
-2. **Training accuracy 0.497** is the C3-real VQC result; eval on a harder held-out split drops to 0.340 — natural generalization gap.
-3. **Score quality signal is ZERO**: cannot conclude anything about whether routing improves downstream answer quality. The main C2 question is unanswered.
+## Kill criterion check — TRIGGERED
 
-## To resume C2
+The plan's kill clause: "if `oracle - random < 0.3`, routing is POINTLESS". Measured: `3.480 - 3.190 = 0.290`. **0.29 < 0.30 → TRIGGERED** (by 0.01 margin).
 
-1. Restart kxkm-ai llama-server:
-   ```bash
-   ssh kxkm-ai "cd ~/llama.cpp && nohup ./build/bin/llama-server -m ~/models/Qwen3.5-35B-A3B-UD-Q3_K_XL.gguf -c 8192 --host 0.0.0.0 --port 8000 > ~/llama-server.log 2>&1 &"
-   ```
-   (Actual command depends on the prior launch — check `~/.zsh_history` or `~/start-llama.sh` if exists.)
+Honest conclusion: **per-domain prompt-based specialization does not meaningfully improve answer quality** on this setup. The adapter-swap premise, as tested here, collapses marginally.
 
-2. Re-run the bench:
-   ```bash
-   uv run python scripts/bench_downstream_c2.py --per-domain 10 --vqc-epochs 300 --output results/c2-downstream.json
-   ```
+## Unexpected observations
 
-3. Expected runtime: ~20-40 min wall-clock on kxkm-ai for 600 LLM calls.
+1. **Random beats VQC by 0.54 rubric points** (3.19 vs 2.65). This is NOT seen in routing accuracy (VQC 0.170 > Random 0.070 — VQC routes better than chance) but IS seen in quality. Interpretation: **confident-but-wrong routing is worse than uncommitted random routing**. When VQC prompts the LLM with a wrong domain expert, the LLM commits to that specialization and produces an off-topic answer; when Random prompts with a mostly-wrong expert, the LLM (with no strong signal) drifts toward a safer generic answer.
+
+2. **Random's score-when-correct (3.86) exceeds Oracle's score-when-correct (3.48)**. The 7 times Random happens to pick the right expert, the LLM produces its best answers. This artefact is likely self-judging bias: the judge may prefer answers less constrained by explicit expert-persona directives.
+
+3. **VQC's score-when-wrong (2.57) is lowest** of all. Confirms point 1 — wrong routing with the VQC is the worst condition in the entire experiment.
+
+## Caveats (matter for interpretation)
+
+1. **Self-judging**: Qwen3.5-35B-A3B judges its own outputs. The rubric-score absolute calibration is questionable. Only RELATIVE orderings between routers should be trusted.
+
+2. **Prompt-based pseudo-adapters**: Real per-domain LoRA adapters were NOT used (would require retraining 10 adapters out-of-session). System-prompt directives are a much weaker specialization signal than weight-level LoRA. A full adapter-swap experiment could produce larger oracle-random gaps.
+
+3. **Small sample (n=100)**: 95% Wilson CI for the mean difference would be roughly ±0.4 pts — meaning the 0.29 gap is not statistically distinguishable from 0 at this sample size. More samples are needed for confident inference.
+
+4. **VQC train_acc=0.300**: the VQC itself is a weak classifier on this 10-class task (consistent with C1/C3 findings). A stronger router would produce different dynamics.
 
 ## Implications for Paper A
 
-- **Routing accuracy result** (VQC 0.340 vs random 0.070) can be reported immediately — it does not depend on the judge.
-- **Downstream quality claim** REQUIRES the judge to work. Paper A §5 should be marked DRAFT until the real run completes.
-- Alternative judge path if kxkm-ai stays unstable: use Claude API (requires ANTHROPIC_API_KEY) or a running model on the Studio (requires stopping the in-progress chat-fr training). Both are out-of-session escalations.
+This is a **negative result** that Paper A must report honestly. The three positive contributions remain:
+
+1. **Methodological (C1-tested)**: `torch-vqc` enables rigorous quantum-ML benchmarking at 3000× speedup.
+2. **Architectural (C1-tested)**: learned projection is necessary; raw-dim truncation is information-empty.
+3. **Theoretical (C5-proven)**: Holevo+Fano bound quantifies the 4-qubit VQC ceiling (0.911 at MI=2.04 bits).
+
+What C2 adds:
+- **Downstream integration test** shows prompt-based routing does NOT pass the kill criterion on this setup.
+- **Confidence-wrong pathology**: a weak-but-confident router can be actively harmful downstream. This is a novel observation worth highlighting.
+
+Paper A §5 should include C2 as a limitation: "our VQC router, even when trained, does not yield downstream quality improvements via prompt-based specialization. Testing against actual LoRA adapters and larger eval sets is future work."
+
+Alternative Paper A framing: position C2 as demonstrating that **quality of routing matters more than presence of routing** — confidently wrong is worse than uncommitted random, establishing a non-obvious specificity bound on when routing is useful.

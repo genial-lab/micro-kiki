@@ -37,6 +37,8 @@ logger = logging.getLogger(__name__)
 
 def _llm_call(base_url: str, model: str, prompt: str, max_tokens: int = 512,
               temperature: float = 0.0) -> str:
+    # Qwen3/3.5 thinking mode consumes max_tokens as hidden reasoning and
+    # returns empty visible content — disable via chat_template_kwargs.
     resp = requests.post(
         f"{base_url}/v1/chat/completions",
         json={
@@ -44,6 +46,7 @@ def _llm_call(base_url: str, model: str, prompt: str, max_tokens: int = 512,
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": max_tokens,
             "temperature": temperature,
+            "chat_template_kwargs": {"enable_thinking": False},
         },
         timeout=180,
     )

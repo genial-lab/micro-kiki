@@ -18,7 +18,7 @@ To move from workshop-track to **main-track publishable**, 5 independent sub-pro
 | Sub | Title | Owner | Effort | Status |
 |---|---|---|---|---|
 | **C1** | Baseline comparison (classical classifiers vs VQC) | Done | ~1h actual | **Completed 2026-04-19 (commits `68dd690`..`73ceb40`)** — see `docs/paper-a/c1-baseline-results.md` |
-| **C2** | Downstream LLM eval (router → actual model selection quality, not just accuracy) | TBD | 3-5 days | Needs brainstorm before plan |
+| **C2** | Downstream LLM eval (router → actual model selection quality, not just accuracy) | Done (negative result) | ~30min compute | **Completed 2026-04-19** — kill criterion TRIGGERED at oracle-random=0.29<0.30. See `docs/paper-a/c2-downstream-results.md`. Prompt-based routing does not improve quality; VQC is actively harmful (confidently-wrong pathology) |
 | **C3** | Real dialogue corpus (replace `data/final` synthetic with real user queries) | Done | ~1h actual | **Completed 2026-04-19 (commits `f6c688b`..`83b3dee`)** — mascarade-datasets, overlap 0.410, VQC 0.246→0.410 on real. See `docs/paper-a/c3-corpus-validation.md` |
 | **C4** | Scale test (10 → 35 domains with full MoE stack routing) | TBD | 3-4 days | Blocked by C1 + C3 |
 | **C5** | Theoretical analysis (information-capacity bound formal proof, linking 4-qubit ceiling to classical coding theory) | Done | ~45min eng | **Completed 2026-04-19 (commits `41a3432`..`c370001`)** — see `docs/paper-a/c5-info-bound.tex`, bound=0.911 vs empirical 0.246 |
