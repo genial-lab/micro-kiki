@@ -93,7 +93,7 @@ learning_rate: 2e-5
 adapter_path: "output/micro-kiki/lora-qwen36-35b-v3/$NEXT"
 $([ -n "$PRIOR" ] && echo "resume_adapter_file: \"output/micro-kiki/lora-qwen36-35b-v3/$PRIOR/adapters.safetensors\"")
 max_seq_length: 1024
-num_layers: 40
+num_layers: 20
 steps_per_report: 50
 steps_per_eval: 100
 grad_checkpoint: true
