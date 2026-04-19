@@ -231,7 +231,8 @@
       "title": "LAS convert Qwen3.5-122B-A10B (if available)",
       "description": "If Qwen3.5-122B-A10B weights are available on Mac Studio, run LAS conversion to produce SpikingKiki-122B. Estimated ~100h. This story is conditional: if weights are unavailable, mark as skipped with explanation in progress.txt. Output to `outputs/snn/spikingkiki-122b/`. Acceptance: conversion completes or skip documented with reason.",
       "priority": 29,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-30",
@@ -313,7 +314,8 @@
       "title": "HuggingFace release: SNN models",
       "description": "Publish available SpikingKiki SNN models to HuggingFace Hub under `electron-rare/spikingkiki`. Include energy benchmark results, architecture notes, and comparison vs dense baseline. Acceptance: at least SpikingKiki-27B and SpikingKiki-35B published (122B if available), energy report attached to model card, download test passes.",
       "priority": 40,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-41",
