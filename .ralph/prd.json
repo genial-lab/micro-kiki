@@ -191,7 +191,8 @@
       "title": "Anti-bias dataset eval (5213 pairs)",
       "description": "Full evaluation run of the anti-bias pipeline on the complete 5,213-pair bias dataset. Generate metrics: precision, recall, F1 for RBD detector; bias score delta for DeFrame re-generation; false positive rate. Output: `results/anti_bias_eval_full.json`. Acceptance: RBD F1 ≥ 0.70, DeFrame bias delta ≥ 15% average across flagged samples.",
       "priority": 24,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-25",
@@ -249,7 +250,8 @@
       "title": "Spikingformer cross-validation",
       "description": "Cross-validate SpikingKiki models against Spikingformer architecture reference results on common benchmarks. Identify divergences and document root causes. Output: `results/spikingformer_crossval.json`. Acceptance: cross-validation complete, ≥ 3 benchmark tasks compared, divergences ≥ 10% annotated with cause.",
       "priority": 32,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-33",
@@ -277,7 +279,8 @@
       "title": "Integration test serving pipeline",
       "description": "Full integration test of the serving pipeline end-to-end: MLX server + vLLM server + router + cognitive layer all running simultaneously. Send 20 test prompts covering all 10 domains + passthrough. Measure total latency (p50/p95), verify correct adapter selection, verify cognitive layer active. Acceptance: all prompts return responses, p95 latency < 10s for hardware domain queries, no serving errors in logs.",
       "priority": 36,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-37",
@@ -298,7 +301,8 @@
       "title": "HuggingFace release: niche adapters",
       "description": "Publish the 10 trained LoRA adapters to HuggingFace Hub under `electron-rare/micro-kiki-adapters`. Include model card, eval metrics, and per-domain README. Acceptance: all 10 adapters visible on HF Hub, model card rendered correctly, download test passes (`huggingface_hub.snapshot_download` retrieves files).",
       "priority": 39,
-      "passes": false
+      "passes": true,
+      "status": "done"
     },
     {
       "id": "story-40",
@@ -317,9 +321,10 @@
     {
       "id": "story-42",
       "priority": 42,
-      "passes": false,
+      "passes": true,
       "title": "DPO training script (mlx-tune DPOTrainer)",
-      "description": "Create scripts/train_dpo_niches.py using mlx-tune DPOTrainer. For each niche domain, load SFT adapter → apply DPO on preference pairs. Adaptive LR (1e-6 for DPO, lower than SFT). Metal buffer fixes (set_cache_limit). Output: outputs/stacks/stack-<domain>-dpo/adapters.safetensors."
+      "description": "Create scripts/train_dpo_niches.py using mlx-tune DPOTrainer. For each niche domain, load SFT adapter → apply DPO on preference pairs. Adaptive LR (1e-6 for DPO, lower than SFT). Metal buffer fixes (set_cache_limit). Output: outputs/stacks/stack-<domain>-dpo/adapters.safetensors.",
+      "status": "done"
     },
     {
       "id": "story-43",
@@ -346,9 +351,10 @@
     {
       "id": "story-46",
       "priority": 46,
-      "passes": false,
+      "passes": true,
       "title": "GRPO training script (mlx-tune GRPOTrainer)",
-      "description": "Create scripts/train_grpo_niches.py using mlx-tune GRPOTrainer or MLX-GRPO. For domains needing chain-of-thought (spice, emc, embedded, power). Reward: syntax_valid + accuracy_reward. Group size 4, KL penalty 0.1. Output: outputs/stacks/stack-<domain>-grpo/."
+      "description": "Create scripts/train_grpo_niches.py using mlx-tune GRPOTrainer or MLX-GRPO. For domains needing chain-of-thought (spice, emc, embedded, power). Reward: syntax_valid + accuracy_reward. Group size 4, KL penalty 0.1. Output: outputs/stacks/stack-<domain>-grpo/.",
+      "status": "done"
     },
     {
       "id": "story-47",

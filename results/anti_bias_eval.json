@@ -1,0 +1,70 @@
+{
+  "total_pairs": 5213,
+  "total_evaluations": 10426,
+  "confusion_matrix": {
+    "tp": 1995,
+    "fp": 613,
+    "fn": 3218,
+    "tn": 4600
+  },
+  "precision": 0.765,
+  "recall": 0.3827,
+  "f1": 0.5102,
+  "per_bias_type": {
+    "anchoring": {
+      "precision": 0.6237,
+      "recall": 0.6629,
+      "f1": 0.6427,
+      "tp": 580,
+      "fp": 350,
+      "fn": 295,
+      "tn": 525
+    },
+    "framing": {
+      "precision": 0.7634,
+      "recall": 0.0818,
+      "f1": 0.1478,
+      "tp": 71,
+      "fp": 22,
+      "fn": 797,
+      "tn": 846
+    },
+    "confirmation": {
+      "precision": 0.7633,
+      "recall": 0.5223,
+      "f1": 0.6202,
+      "tp": 445,
+      "fp": 138,
+      "fn": 407,
+      "tn": 714
+    },
+    "recency": {
+      "precision": 0.813,
+      "recall": 0.2135,
+      "f1": 0.3382,
+      "tp": 187,
+      "fp": 43,
+      "fn": 689,
+      "tn": 833
+    },
+    "stereotyping": {
+      "precision": 1.0,
+      "recall": 0.7351,
+      "f1": 0.8473,
+      "tp": 652,
+      "fp": 0,
+      "fn": 235,
+      "tn": 887
+    },
+    "authority": {
+      "precision": 0.5,
+      "recall": 0.0702,
+      "f1": 0.1231,
+      "tp": 60,
+      "fp": 60,
+      "fn": 795,
+      "tn": 795
+    }
+  },
+  "mock_based": true
+}
