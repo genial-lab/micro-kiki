@@ -29,6 +29,7 @@ from src.routing.quantum_router import QuantumRouter, QuantumRouterConfig
 from src.routing.text_jepa.dataset import load_domain_corpus
 from src.routing.text_jepa.embed import TextJEPAEmbedder
 from src.routing.text_jepa.encoder import StudentEncoder
+from src.routing.torch_vqc_router import TorchVQCRouter
 
 logger = logging.getLogger(__name__)
 
@@ -62,20 +63,16 @@ def _baseline_embed(token_fn, text: str) -> np.ndarray:
     return pooled.cpu().numpy()
 
 
-def _evaluate_vqc(
-    embs: np.ndarray,
-    labels: np.ndarray,
-    n_classes: int,
-    epochs: int,
-    seed: int,
-) -> dict:
-    """Split 80/20, train a VQC on train, measure accuracy on test."""
+def _split(embs, labels, seed):
     rng = np.random.default_rng(seed)
     idx = np.arange(len(embs))
     rng.shuffle(idx)
     split = int(0.8 * len(idx))
-    tr, te = idx[:split], idx[split:]
+    return idx[:split], idx[split:]
 
+
+def _evaluate_vqc_pennylane(embs, labels, n_classes, epochs, seed):
+    tr, te = _split(embs, labels, seed)
     cfg = QuantumRouterConfig(n_qubits=4, n_layers=6, n_classes=n_classes)
     vqc = QuantumRouter(cfg)
     vqc.train(embs[tr], labels[tr].astype(int), epochs=epochs)
@@ -84,8 +81,7 @@ def _evaluate_vqc(
     for e, y in zip(embs[te], labels[te]):
         qubits = vqc.circuit(vqc.weights, e)
         logits = qubits @ vqc.linear_w + vqc.linear_b
-        pred = int(np.argmax(logits))
-        if pred == int(y):
+        if int(np.argmax(logits)) == int(y):
             correct += 1
     acc = correct / max(len(te), 1)
     n_params = vqc.weights.size + vqc.linear_w.size + vqc.linear_b.size
@@ -94,7 +90,50 @@ def _evaluate_vqc(
         "n_test": int(len(te)),
         "n_params": int(n_params),
         "latent_dim": int(embs.shape[1]),
+        "backend": "pennylane",
     }
+
+
+def _evaluate_vqc_torch(embs, labels, n_classes, epochs, seed,
+                        use_projection=True, weight_decay=1e-4, lr=0.05):
+    """Torch-native VQC with optional learned projection — 3000× PennyLane speed."""
+    tr, te = _split(embs, labels, seed)
+    kwargs = dict(n_qubits=4, n_layers=6, n_classes=n_classes,
+                  lr=lr, seed=seed, weight_decay=weight_decay)
+    if use_projection:
+        kwargs["input_dim"] = int(embs.shape[1])
+    model = TorchVQCRouter(**kwargs)
+
+    X_tr = torch.from_numpy(embs[tr]).double()
+    y_tr = torch.from_numpy(labels[tr].astype(np.int64))
+    X_te = torch.from_numpy(embs[te]).double()
+    y_te = labels[te].astype(np.int64)
+    model.train_batched(X_tr, y_tr, epochs=epochs)
+
+    with torch.no_grad():
+        preds = model.predict(X_te).numpy()
+    acc = float((preds == y_te).mean())
+    n_params = sum(p.numel() for p in model.parameters())
+    return {
+        "accuracy": acc,
+        "n_test": int(len(te)),
+        "n_params": int(n_params),
+        "latent_dim": int(embs.shape[1]),
+        "backend": "torch",
+        "projection": bool(use_projection),
+        "weight_decay": float(weight_decay),
+    }
+
+
+def _evaluate_vqc(embs, labels, n_classes, epochs, seed, backend="torch",
+                  use_projection=True, weight_decay=1e-4):
+    if backend == "pennylane":
+        return _evaluate_vqc_pennylane(embs, labels, n_classes, epochs, seed)
+    if backend == "torch":
+        return _evaluate_vqc_torch(embs, labels, n_classes, epochs, seed,
+                                   use_projection=use_projection,
+                                   weight_decay=weight_decay)
+    raise ValueError(f"unknown backend {backend!r} — use 'torch' or 'pennylane'")
 
 
 def main() -> int:
@@ -109,6 +148,12 @@ def main() -> int:
     p.add_argument("--seq-len", type=int, default=32)
     p.add_argument("--input-dim", type=int, default=384)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--backend", default="torch", choices=["torch", "pennylane"],
+                   help="VQC backend (default: torch — ~3000× faster, autograd vs parameter-shift)")
+    p.add_argument("--no-projection", action="store_true",
+                   help="Disable learned projection (torch backend only) — reproduces PennyLane truncation behavior")
+    p.add_argument("--weight-decay", type=float, default=1e-4,
+                   help="L2 regularization for torch backend (default: 1e-4, optimal per sweep)")
     args = p.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -143,10 +188,18 @@ def main() -> int:
 
     n_classes = len(domains)
 
-    logger.info("training+evaluating baseline VQC …")
-    baseline_result = _evaluate_vqc(baseline_embs, labels, n_classes, epochs=args.epochs, seed=args.seed)
-    logger.info("training+evaluating Text-JEPA VQC …")
-    jepa_result = _evaluate_vqc(jepa_embs, labels, n_classes, epochs=args.epochs, seed=args.seed)
+    eval_kwargs = dict(
+        n_classes=n_classes,
+        epochs=args.epochs,
+        seed=args.seed,
+        backend=args.backend,
+        use_projection=not args.no_projection,
+        weight_decay=args.weight_decay,
+    )
+    logger.info("training+evaluating baseline VQC (backend=%s) …", args.backend)
+    baseline_result = _evaluate_vqc(baseline_embs, labels, **eval_kwargs)
+    logger.info("training+evaluating Text-JEPA VQC (backend=%s) …", args.backend)
+    jepa_result = _evaluate_vqc(jepa_embs, labels, **eval_kwargs)
 
     out = {
         "baseline": baseline_result,
