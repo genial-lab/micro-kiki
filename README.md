@@ -2,6 +2,10 @@
 
 **34 domain-expert LoRA adapters + cognitive layer on Qwen3.6-35B-A3B (native MoE, 256 experts, 3B active).**
 
+Deployable artefact of the *dreamOfkiki* research program, part of
+[Hypneum Lab](https://github.com/hypneum-lab). Author: Clément Saillant
+(L'Electron Rare).
+
 **Status: PRD 50/50 stories complete.** 10 SFT adapters trained, 134K dataset, 800+ tests, triple-hybrid architecture (Quantum VQC + SNN + Classical) validated. Post-pivot adapters (35/35) pass the adapter-health validator; pre-pivot MoE-LoRA adapters (stacks-v3-r16) were archived as dead weights after an `lora_B = 0` audit — see `docs/research/2026-04-19-prepivot-moe-lora-audit.md`.
 
 Sequential per-domain training via MLX on Mac Studio M3 Ultra 512 GB. Q4_K_M inference on kxkm-ai (RTX 4090 24 GB). Router is 35 sigmoid outputs — domains are not mutually exclusive. Metal OOM during long training runs is handled by a restart wrapper (`scripts/restart_wrapper.sh`).
