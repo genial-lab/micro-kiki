@@ -157,6 +157,37 @@ uv run python src/serving/vllm_server.py \
 
 Supports Q4_K_M base + 2-4 active adapters simultaneously.
 
+### Optional: `nerve-wml` advisor bridge
+
+`MetaRouter.forward()` accepts an optional `query_tokens` argument and,
+when the environment variable `NERVE_WML_ENABLED=1` is set, blends
+per-domain advice produced by the sibling
+[nerve-wml](https://github.com/hypneum-lab/nerve-wml) Nerve Protocol
+into the domain slice of the raw logits **pre-sigmoid**:
+
+```python
+raw[:, :num_domains] = (1 - α) * raw[:, :num_domains] + α * advice
+```
+
+where α is read from `NERVE_WML_ALPHA` (default `0.5`). The advisor is
+lazy-loaded once (`_get_nerve_wml_advisor()`), memoised on success, and
+never raises into `forward()` — missing install, import error, or a
+failing `advise()` call all fall back to the vanilla sigmoid path.
+
+```bash
+# Default (no advisor): forward is byte-identical to the pre-bridge
+# baseline, zero perf cost, no import attempt.
+python -c "from src.routing.router import MetaRouter; ..."
+
+# Enable the advisor (requires nerve-wml installed in the same venv)
+NERVE_WML_ENABLED=1 NERVE_WML_ALPHA=0.4 \
+  uv run python src/serving/mlx_server.py --model ... --port 8000
+```
+
+Contract covered by `tests/routing/test_router_nerve_wml.py` (5 tests:
+byte-identical default, graceful missing-advisor, alpha-blend math,
+`query_tokens=None` bypass, advisor-raises pass-through).
+
 ## Hardware reality
 
 | Role | Machine | Why |
