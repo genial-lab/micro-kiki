@@ -12,13 +12,14 @@ abstract: >
   shared episodic-memory protocol defined in the parent framework.
 type: software
 authors:
+  - name: "hypneum-lab contributors"
   - family-names: Saillant
     given-names: Clément
     email: clement@saillant.cc
     affiliation: "L'Electron Rare, Grandris, France"
 repository-code: "https://github.com/hypneum-lab/micro-kiki"
 url: "https://github.com/hypneum-lab/micro-kiki"
-license: Apache-2.0
+license: MIT
 license-url: "https://github.com/hypneum-lab/micro-kiki/blob/main/LICENSE"
 keywords:
   - mixture of experts
@@ -30,6 +31,12 @@ keywords:
   - quantized inference
   - Q4_K_M
 identifiers:
+  - type: doi
+    value: 10.5281/zenodo.19666759
+    description: "Zenodo concept DOI (resolves to latest version)"
+  - type: doi
+    value: 10.5281/zenodo.19666760
+    description: "Zenodo v0.3.0 version DOI"
   - type: doi
     value: 10.17605/OSF.IO/Q6JYN
     description: "Parent research program pre-registration (dreamOfkiki Cycle 1)"
