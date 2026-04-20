@@ -1,13 +1,13 @@
 # Contributors
 
-This repository is part of the **genial-lab** research organization
+This repository is part of the **c-geni-al** research organization
 (General Enhanced Neural Intelligence Artificial Learning), a small
 research lab developing executable formal frameworks for cognitive AI.
 
 The parent research program is **dreamOfkiki** — see the OSF
 pre-registration at [10.17605/OSF.IO/Q6JYN](https://doi.org/10.17605/OSF.IO/Q6JYN)
 and the flagship repository at
-[github.com/genial-lab/dream-of-kiki](https://github.com/genial-lab/dream-of-kiki).
+[github.com/c-geni-al/dream-of-kiki](https://github.com/c-geni-al/dream-of-kiki).
 
 ## Authorship policy
 
@@ -41,7 +41,7 @@ per pull-request merge.*
 
 The parent research program (dreamOfkiki) maintains a reviewer slate
 for its pre-registered framework. See the
-[dream-of-kiki/CONTRIBUTORS.md](https://github.com/genial-lab/dream-of-kiki/blob/main/CONTRIBUTORS.md)
+[dream-of-kiki/CONTRIBUTORS.md](https://github.com/c-geni-al/dream-of-kiki/blob/main/CONTRIBUTORS.md)
 for the current reviewer and co-author outreach status.
 
 ## Contact

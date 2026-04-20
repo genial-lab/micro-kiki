@@ -9,7 +9,7 @@ priorities ; security is handled on a best-effort basis.
 
 This policy applies to :
 
-- The code in this repository (`genial-lab/micro-kiki`)
+- The code in this repository (`c-geni-al/micro-kiki`)
 - The LoRA adapters, router weights, and quantized model checkpoints
   released from this repository
 - The documentation in `docs/` and the inference / deployment scripts
@@ -34,7 +34,7 @@ please report it **privately** via one of these channels :
 
 1. Email : `clement@saillant.cc` — subject starting with `[SECURITY]`
 2. GitHub Private Vulnerability Reporting :
-   https://github.com/genial-lab/micro-kiki/security/advisories/new
+   https://github.com/c-geni-al/micro-kiki/security/advisories/new
 
 Please include :
 

@@ -66,7 +66,7 @@ If any kill criterion triggers, the contribution degrades to "tool release only"
 
 ## Current blockers & dependencies
 
-- **Repo**: `genial-lab/micro-kiki` (main branch at `9e920ad`)
+- **Repo**: `c-geni-al/micro-kiki` (main branch at `9e920ad`)
 - **Standalone tool**: `electron-rare/torch-vqc` (v0.1.0 published 2026-04-19)
 - **Compute**: Studio available for parallelism; M5 for iteration
 - **Data for C3**: open question — real dialogue logs from where? Need to decide (Kiki/Yi sessions? mascarade? synthetic augmentation?)
