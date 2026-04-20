@@ -91,7 +91,7 @@ iters: 1000
 batch_size: 1
 learning_rate: 2e-5
 adapter_path: "output/micro-kiki/lora-qwen36-35b-v3/$NEXT"
-$([ -n "$PRIOR" ] && echo "resume_adapter_file: \"output/micro-kiki/lora-qwen36-35b-v3/$PRIOR/adapters.safetensors\"")
+# No resume_adapter_file — niches train independently from base.
 max_seq_length: 1024
 num_layers: 20
 steps_per_report: 50
