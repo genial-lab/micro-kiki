@@ -12,14 +12,13 @@ abstract: >
   shared episodic-memory protocol defined in the parent framework.
 type: software
 authors:
-  - name: "hypneum-lab contributors"
   - family-names: Saillant
     given-names: Clément
     email: clement@saillant.cc
     affiliation: "L'Electron Rare, Grandris, France"
 repository-code: "https://github.com/hypneum-lab/micro-kiki"
 url: "https://github.com/hypneum-lab/micro-kiki"
-license: MIT
+license: Apache-2.0
 license-url: "https://github.com/hypneum-lab/micro-kiki/blob/main/LICENSE"
 keywords:
   - mixture of experts

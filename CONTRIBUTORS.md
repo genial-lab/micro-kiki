@@ -9,6 +9,13 @@ pre-registration at [10.17605/OSF.IO/Q6JYN](https://doi.org/10.17605/OSF.IO/Q6JY
 and the flagship repository at
 [github.com/hypneum-lab/dream-of-kiki](https://github.com/hypneum-lab/dream-of-kiki).
 
+## Licensing note
+
+Unlike the other hypneum-lab code repositories (MIT-licensed), this
+one is released under **Apache-2.0**, inherited from the upstream
+Qwen3.5 base model. All contributions land under Apache-2.0 ;
+please ensure your submissions are compatible with that licence.
+
 ## Authorship policy
 
 - **Byline** : publications resulting from this repository use the
