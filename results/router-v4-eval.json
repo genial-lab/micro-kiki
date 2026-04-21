@@ -1,0 +1,232 @@
+{
+  "num_domains": 34,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dim": 384,
+  "valid_size": 5377,
+  "top1_accuracy": 0.46419936418533325,
+  "top3_accuracy": 0.6955551505088806,
+  "top_confusions": [
+    {
+      "true": "components",
+      "pred": "electronics",
+      "count": 55
+    },
+    {
+      "true": "iot",
+      "pred": "chat-fr",
+      "count": 47
+    },
+    {
+      "true": "embedded",
+      "pred": "chat-fr",
+      "count": 41
+    },
+    {
+      "true": "shell",
+      "pred": "math",
+      "count": 41
+    },
+    {
+      "true": "components",
+      "pred": "power",
+      "count": 39
+    },
+    {
+      "true": "embedded",
+      "pred": "iot",
+      "count": 37
+    },
+    {
+      "true": "typescript",
+      "pred": "chat-fr",
+      "count": 37
+    },
+    {
+      "true": "power",
+      "pred": "chat-fr",
+      "count": 36
+    },
+    {
+      "true": "iot",
+      "pred": "emc",
+      "count": 35
+    },
+    {
+      "true": "typescript",
+      "pred": "iot",
+      "count": 35
+    }
+  ],
+  "per_domain_accuracy": {
+    "chat-fr": {
+      "n": 200,
+      "correct": 130,
+      "acc": 0.65
+    },
+    "components": {
+      "n": 200,
+      "correct": 40,
+      "acc": 0.2
+    },
+    "cpp": {
+      "n": 200,
+      "correct": 141,
+      "acc": 0.705
+    },
+    "devops": {
+      "n": 200,
+      "correct": 128,
+      "acc": 0.64
+    },
+    "docker": {
+      "n": 200,
+      "correct": 26,
+      "acc": 0.13
+    },
+    "dsp": {
+      "n": 100,
+      "correct": 31,
+      "acc": 0.31
+    },
+    "electronics": {
+      "n": 200,
+      "correct": 15,
+      "acc": 0.075
+    },
+    "embedded": {
+      "n": 166,
+      "correct": 19,
+      "acc": 0.1144578313253012
+    },
+    "emc": {
+      "n": 181,
+      "correct": 108,
+      "acc": 0.5966850828729282
+    },
+    "freecad": {
+      "n": 23,
+      "correct": 1,
+      "acc": 0.043478260869565216
+    },
+    "html-css": {
+      "n": 200,
+      "correct": 179,
+      "acc": 0.895
+    },
+    "iot": {
+      "n": 200,
+      "correct": 64,
+      "acc": 0.32
+    },
+    "kicad-dsl": {
+      "n": 200,
+      "correct": 117,
+      "acc": 0.585
+    },
+    "kicad-pcb": {
+      "n": 75,
+      "correct": 11,
+      "acc": 0.14666666666666667
+    },
+    "llm-ops": {
+      "n": 172,
+      "correct": 109,
+      "acc": 0.6337209302325582
+    },
+    "llm-orch": {
+      "n": 164,
+      "correct": 86,
+      "acc": 0.524390243902439
+    },
+    "lua-upy": {
+      "n": 200,
+      "correct": 94,
+      "acc": 0.47
+    },
+    "math": {
+      "n": 200,
+      "correct": 117,
+      "acc": 0.585
+    },
+    "ml-training": {
+      "n": 200,
+      "correct": 152,
+      "acc": 0.76
+    },
+    "music-audio": {
+      "n": 57,
+      "correct": 26,
+      "acc": 0.45614035087719296
+    },
+    "platformio": {
+      "n": 23,
+      "correct": 4,
+      "acc": 0.17391304347826086
+    },
+    "power": {
+      "n": 131,
+      "correct": 11,
+      "acc": 0.08396946564885496
+    },
+    "python": {
+      "n": 200,
+      "correct": 97,
+      "acc": 0.485
+    },
+    "reasoning": {
+      "n": 200,
+      "correct": 131,
+      "acc": 0.655
+    },
+    "rust": {
+      "n": 200,
+      "correct": 50,
+      "acc": 0.25
+    },
+    "security": {
+      "n": 200,
+      "correct": 136,
+      "acc": 0.68
+    },
+    "shell": {
+      "n": 200,
+      "correct": 34,
+      "acc": 0.17
+    },
+    "spice": {
+      "n": 47,
+      "correct": 13,
+      "acc": 0.2765957446808511
+    },
+    "sql": {
+      "n": 200,
+      "correct": 129,
+      "acc": 0.645
+    },
+    "stm32": {
+      "n": 38,
+      "correct": 38,
+      "acc": 1.0
+    },
+    "typescript": {
+      "n": 184,
+      "correct": 17,
+      "acc": 0.09239130434782608
+    },
+    "web-backend": {
+      "n": 163,
+      "correct": 86,
+      "acc": 0.5276073619631901
+    },
+    "web-frontend": {
+      "n": 110,
+      "correct": 65,
+      "acc": 0.5909090909090909
+    },
+    "yaml-json": {
+      "n": 143,
+      "correct": 91,
+      "acc": 0.6363636363636364
+    }
+  }
+}
