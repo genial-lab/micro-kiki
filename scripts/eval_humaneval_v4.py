@@ -81,7 +81,14 @@ def _extract_completion(raw: str, prompt: str) -> str:
         i = text.find(s)
         if i != -1 and i < cut:
             cut = i
-    return text[:cut]
+    text = text[:cut]
+    # Fix indentation: models sometimes emit 3-space first indent when body
+    # should be 4 spaces. Detect and normalize.
+    lines = text.split("\n")
+    if lines and lines[0].startswith("   ") and not lines[0].startswith("    "):
+        lines[0] = " " + lines[0]
+        text = "\n".join(lines)
+    return text
 
 
 # ---------------------------------------------------------------------------
