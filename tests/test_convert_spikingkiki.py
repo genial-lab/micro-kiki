@@ -486,3 +486,141 @@ class TestMetadata:
             args, layer_map, spike_stats={}, elapsed_s=0.0, status="test"
         )
         assert meta["converted_layers"] == 3
+
+
+# ---------------------------------------------------------------------------
+# MoE expert weight extraction tests (Qwen3.5 ModuleList vs Qwen3.6 fused)
+# ---------------------------------------------------------------------------
+
+
+class TestExpertWeightExtraction:
+    """Tests for the layout-agnostic expert weight helper.
+
+    Qwen3.5 exposes ``block.mlp.experts`` as an ``nn.ModuleList`` of per-expert
+    triplets. Qwen3.6 replaced that with a single ``Qwen3_5MoeExperts`` module
+    holding fused 3D tensors: ``gate_up_proj.weight`` with shape
+    ``(E, 2*I, H)`` and ``down_proj.weight`` with shape ``(E, H, I)``. The
+    helper must expose both layouts through the same dict API.
+    """
+
+    @pytest.fixture(scope="class")
+    def mod(self):
+        return _import_script()
+
+    @pytest.fixture(scope="class")
+    def torch(self):
+        torch = pytest.importorskip("torch")
+        return torch
+
+    def _fused_stub(self, torch, num_experts=4, intermediate=16, hidden=8):
+        """Build a plain-object stub mimicking HF's ``Qwen3_5MoeExperts``.
+
+        The script only touches ``experts.gate_up_proj.weight`` and
+        ``experts.down_proj.weight``, so we build a non-``nn.Module`` stub
+        to sidestep torch's Parameter/Module attribute gymnastics.
+        """
+        fused = _FusedStub()
+        fused.gate_up_proj = _TensorHolder(
+            torch.randn(num_experts, 2 * intermediate, hidden)
+        )
+        fused.down_proj = _TensorHolder(
+            torch.randn(num_experts, hidden, intermediate)
+        )
+        return fused
+
+    def _modulelist_stub(self, torch, num_experts=4, intermediate=16, hidden=8):
+        class Expert(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.gate_proj = torch.nn.Linear(hidden, intermediate, bias=False)
+                self.up_proj = torch.nn.Linear(hidden, intermediate, bias=False)
+                self.down_proj = torch.nn.Linear(intermediate, hidden, bias=False)
+
+        return torch.nn.ModuleList([Expert() for _ in range(num_experts)])
+
+    def test_detect_fused_true(self, mod, torch):
+        fused = self._fused_stub(torch)
+        assert mod._detect_fused_experts(fused) is True
+
+    def test_detect_fused_false_on_modulelist(self, mod, torch):
+        ml = self._modulelist_stub(torch)
+        assert mod._detect_fused_experts(ml) is False
+
+    def test_num_experts_fused(self, mod, torch):
+        fused = self._fused_stub(torch, num_experts=7)
+        assert mod._num_experts(fused, is_fused=True) == 7
+
+    def test_num_experts_modulelist(self, mod, torch):
+        ml = self._modulelist_stub(torch, num_experts=5)
+        assert mod._num_experts(ml, is_fused=False) == 5
+
+    def test_fused_expert_weight_extraction(self, mod, torch):
+        """Fused layout: helper slices the correct row of each fused tensor.
+
+        gate = first half of gate_up along axis 1; up = second half;
+        down = per-expert slice of down_proj.
+        """
+        hidden, intermediate, num_experts = 8, 16, 4
+        fused = self._fused_stub(
+            torch, num_experts=num_experts, intermediate=intermediate, hidden=hidden
+        )
+        for expert_id in range(num_experts):
+            w = mod._get_expert_weights(fused, expert_id, is_fused=True)
+            assert set(w.keys()) == {"gate_proj", "up_proj", "down_proj"}
+            assert w["gate_proj"]["weight"].shape == (intermediate, hidden)
+            assert w["up_proj"]["weight"].shape == (intermediate, hidden)
+            assert w["down_proj"]["weight"].shape == (hidden, intermediate)
+            assert w["gate_proj"]["bias"] is None
+            assert w["up_proj"]["bias"] is None
+            assert w["down_proj"]["bias"] is None
+
+            # Values must match a manual slice of the fused tensors.
+            gate_up = fused.gate_up_proj.weight.detach().cpu().float().numpy()
+            down = fused.down_proj.weight.detach().cpu().float().numpy()
+            assert (w["gate_proj"]["weight"] == gate_up[expert_id, :intermediate, :]).all()
+            assert (w["up_proj"]["weight"] == gate_up[expert_id, intermediate:, :]).all()
+            assert (w["down_proj"]["weight"] == down[expert_id]).all()
+
+    def test_modulelist_expert_weight_extraction(self, mod, torch):
+        """ModuleList layout: helper returns the same 3-key dict."""
+        hidden, intermediate, num_experts = 8, 16, 3
+        ml = self._modulelist_stub(
+            torch, num_experts=num_experts, intermediate=intermediate, hidden=hidden
+        )
+        for expert_id in range(num_experts):
+            w = mod._get_expert_weights(ml, expert_id, is_fused=False)
+            assert set(w.keys()) == {"gate_proj", "up_proj", "down_proj"}
+            assert w["gate_proj"]["weight"].shape == (intermediate, hidden)
+            assert w["up_proj"]["weight"].shape == (intermediate, hidden)
+            assert w["down_proj"]["weight"].shape == (hidden, intermediate)
+            # Values must match the underlying nn.Linear weights.
+            import numpy as np
+            expert = ml[expert_id]
+            assert np.allclose(
+                w["gate_proj"]["weight"],
+                expert.gate_proj.weight.detach().cpu().float().numpy(),
+            )
+
+
+class _TensorHolder:
+    """Expose a tensor via ``.weight`` (mimics an ``nn.Linear``-ish surface).
+
+    The real ``Qwen3_5MoeExperts`` attaches its fused parameters such that
+    ``experts.gate_up_proj.weight`` resolves to the fused tensor. This shim
+    is the compact equivalent for tests — we do not need gradient tracking
+    nor the rest of the ``nn.Linear`` API.
+    """
+
+    def __init__(self, tensor):
+        self.weight = tensor
+
+
+class _FusedStub:
+    """Plain object standing in for ``Qwen3_5MoeExperts`` in tests.
+
+    Not an ``nn.Module``: the conversion script only calls
+    ``hasattr(experts, 'gate_up_proj')``, ``experts.gate_up_proj.weight``,
+    and ``experts.down_proj.weight``. A bare namespace suffices.
+    """
+
+    pass

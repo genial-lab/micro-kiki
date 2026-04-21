@@ -298,10 +298,71 @@ def _extract_linear_weights(module: Any) -> dict[str, Any]:
     w = module.weight.detach().cpu().float().numpy()
     b = (
         module.bias.detach().cpu().float().numpy()
-        if module.bias is not None
+        if getattr(module, "bias", None) is not None
         else None
     )
     return {"weight": w, "bias": b}
+
+
+def _detect_fused_experts(experts_module: Any) -> bool:
+    """Return True when ``experts_module`` uses Qwen3.6's fused layout.
+
+    Qwen3.6-35B-A3B ships ``Qwen3_5MoeExperts``: a single ``nn.Module`` that
+    holds two fused parameters (``gate_up_proj`` and ``down_proj``) shaped
+    ``(num_experts, …)`` instead of the Qwen3.5 ``ModuleList`` of per-expert
+    ``nn.Linear`` triplets. The fused module has neither ``__len__`` nor
+    ``__getitem__``, so the old per-expert iteration crashes on it.
+    """
+    return hasattr(experts_module, "gate_up_proj") and hasattr(
+        experts_module, "down_proj"
+    )
+
+
+def _num_experts(experts_module: Any, is_fused: bool) -> int:
+    """Return the expert count regardless of layout."""
+    if is_fused:
+        return int(experts_module.gate_up_proj.weight.shape[0])
+    return len(experts_module)
+
+
+def _get_expert_weights(
+    experts_module: Any,
+    expert_id: int,
+    is_fused: bool,
+) -> dict[str, dict[str, Any]]:
+    """Return ``{"gate_proj": wb, "up_proj": wb, "down_proj": wb}`` slices.
+
+    Each value matches the ``_extract_linear_weights`` shape
+    (``{"weight": np.ndarray, "bias": np.ndarray | None}``). Biases are
+    ``None`` for MoE expert FFNs in both Qwen3.5 and Qwen3.6.
+
+    For the Qwen3.6 fused layout, ``gate_up_proj.weight`` has shape
+    ``(num_experts, 2 * intermediate, hidden)`` — the first half along axis 1
+    is the gate projection, the second half is the up projection. The
+    ``down_proj.weight`` has shape ``(num_experts, hidden, intermediate)``.
+    For the Qwen3.5 ModuleList layout, we simply delegate to
+    ``_extract_linear_weights`` on each per-expert submodule.
+    """
+    import numpy as np
+
+    if is_fused:
+        gate_up = experts_module.gate_up_proj.weight  # (E, 2*I, H)
+        down = experts_module.down_proj.weight         # (E, H, I)
+        intermediate = gate_up.shape[1] // 2
+        gate_w = gate_up[expert_id, :intermediate, :].detach().cpu().float().numpy()
+        up_w = gate_up[expert_id, intermediate:, :].detach().cpu().float().numpy()
+        down_w = down[expert_id].detach().cpu().float().numpy()
+        return {
+            "gate_proj": {"weight": gate_w, "bias": None},
+            "up_proj": {"weight": up_w, "bias": None},
+            "down_proj": {"weight": down_w, "bias": None},
+        }
+
+    expert = experts_module[expert_id]
+    return {
+        proj_name: _extract_linear_weights(getattr(expert, proj_name))
+        for proj_name in ("gate_proj", "up_proj", "down_proj")
+    }
 
 
 def _save_passthrough_tensor(
@@ -430,16 +491,32 @@ def convert_block_torch(
         log.debug("skip (resume) %s", router_key)
 
     # --- MoE experts ---
+    # Dispatch on layout: Qwen3.6 ships a fused ``Qwen3_5MoeExperts`` module
+    # (no ``__len__`` / ``__getitem__``) whereas Qwen3.5 uses a ModuleList of
+    # per-expert ``nn.Linear`` triplets. ``_get_expert_weights`` hides the
+    # difference behind a uniform dict per expert.
     experts_module = block.mlp.experts
+    is_fused = _detect_fused_experts(experts_module)
+    num_experts = _num_experts(experts_module, is_fused)
+    if is_fused:
+        log.debug("layer %d: fused MoE experts (num=%d)", layer_idx, num_experts)
     expert_spike_counts: list[float] = []
-    for expert_id in range(len(experts_module)):
-        expert = experts_module[expert_id]
+    for expert_id in range(num_experts):
+        # Compute only-if-needed: skip the slice/extract when every projection
+        # for this expert is already in the resume set.
+        needed = [
+            proj
+            for proj in ("gate_proj", "up_proj", "down_proj")
+            if f"{prefix}.mlp.experts.{expert_id}.{proj}" not in converted_keys
+        ]
+        if not needed:
+            continue
+        expert_weights = _get_expert_weights(experts_module, expert_id, is_fused)
         for proj_name in ("gate_proj", "up_proj", "down_proj"):
             key = f"{prefix}.mlp.experts.{expert_id}.{proj_name}"
             if key in converted_keys:
                 continue
-            proj_module = getattr(expert, proj_name)
-            weights = _extract_linear_weights(proj_module)
+            weights = expert_weights[proj_name]
             spiking = converter.convert_layer(weights, activation="relu")
             _save_spiking_layer(spiking, key, output_dir)
             # Rough spike count estimate via max weight * timesteps
