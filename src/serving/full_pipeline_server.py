@@ -29,11 +29,13 @@ import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
-from src.serving.model_aliases import ModelAlias, build_aliases
+from src.serving.model_aliases import ModelAlias, build_aliases, lookup
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +64,37 @@ class FullPipelineConfig:
     @classmethod
     def defaults(cls) -> "FullPipelineConfig":
         return cls()
+
+
+# ---------------------------------------------------------------------------
+# OpenAI-compatible request schemas + error helper
+# ---------------------------------------------------------------------------
+
+
+class ChatMessage(BaseModel):
+    role: Literal["system", "user", "assistant"]
+    content: str
+
+
+class ChatCompletionRequest(BaseModel):
+    model: str
+    messages: list[ChatMessage]
+    max_tokens: int | None = None
+    temperature: float | None = None
+    stream: bool = False
+
+
+def _err(
+    status: int,
+    msg: str,
+    err_type: str,
+    param: str | None = None,
+) -> JSONResponse:
+    """Return an OpenAI-style error envelope."""
+    return JSONResponse(
+        status_code=status,
+        content={"error": {"message": msg, "type": err_type, "param": param}},
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -215,6 +248,19 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 for a in state.aliases
             ],
         }
+
+    @app.post("/v1/chat/completions")
+    async def chat_completions(req: ChatCompletionRequest):
+        alias = lookup(req.model)
+        if alias is None:
+            return _err(
+                404,
+                f"model {req.model!r} not found",
+                "model_not_found",
+                "model",
+            )
+        # Orchestration stages 1-7 land in PB-T4+.
+        return _err(501, "pipeline not yet wired", "not_implemented")
 
     return app
 
