@@ -32,6 +32,12 @@ keywords:
   - Q4_K_M
 identifiers:
   - type: doi
+    value: 10.5281/zenodo.19666759
+    description: "Zenodo concept DOI (resolves to latest version)"
+  - type: doi
+    value: 10.5281/zenodo.19666760
+    description: "Zenodo v0.3.0 version DOI"
+  - type: doi
     value: 10.17605/OSF.IO/Q6JYN
     description: "Parent research program pre-registration (dreamOfkiki Cycle 1)"
   - type: url
