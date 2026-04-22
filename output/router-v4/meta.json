@@ -2,7 +2,7 @@
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
   "embedding_dim": 384,
   "hidden_dim": 512,
-  "num_domains": 34,
+  "num_domains": 35,
   "domains": [
     "chat-fr",
     "components",
@@ -32,6 +32,7 @@
     "security",
     "shell",
     "spice",
+    "spice-sim",
     "sql",
     "stm32",
     "typescript",
@@ -68,16 +69,17 @@
     "security": 25,
     "shell": 26,
     "spice": 27,
-    "sql": 28,
-    "stm32": 29,
-    "typescript": 30,
-    "web-backend": 31,
-    "web-frontend": 32,
-    "yaml-json": 33
+    "spice-sim": 28,
+    "sql": 29,
+    "stm32": 30,
+    "typescript": 31,
+    "web-backend": 32,
+    "web-frontend": 33,
+    "yaml-json": 34
   },
   "arch": "sentence_embedding + MLP(hidden) + linear_head (sigmoid at inference)",
   "loss": "BCEWithLogitsLoss (multi-label friendly)",
-  "epochs": 30,
+  "epochs": 10,
   "batch_size": 128,
   "lr": 0.001
 }

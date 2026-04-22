@@ -27,10 +27,11 @@
   "security": 25,
   "shell": 26,
   "spice": 27,
-  "sql": 28,
-  "stm32": 29,
-  "typescript": 30,
-  "web-backend": 31,
-  "web-frontend": 32,
-  "yaml-json": 33
+  "spice-sim": 28,
+  "sql": 29,
+  "stm32": 30,
+  "typescript": 31,
+  "web-backend": 32,
+  "web-frontend": 33,
+  "yaml-json": 34
 }
