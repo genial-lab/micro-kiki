@@ -26,11 +26,22 @@ Design notes
 from __future__ import annotations
 
 import logging
+import re
 import time
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
+
+# Qwen3/Qwen3.6 emit a chain-of-thought inside <think>...</think>. Callers
+# opt in to stripping via ``strip_thinking=True`` on the request — default
+# is False so reasoning-heavy models (kiki-meta-reasoning, kiki-meta-research,
+# kiki-niche-reasoning, …) keep their CoT visible to consumers that need it.
+_THINK_PATTERN = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
+
+
+def _strip_think(text: str) -> str:
+    return _THINK_PATTERN.sub("", text).lstrip()
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -126,6 +137,10 @@ class ChatCompletionRequest(BaseModel):
     max_tokens: int | None = None
     temperature: float | None = None
     stream: bool = False
+    # When True, strip <think>...</think> chain-of-thought from the final
+    # response. Default False: keep CoT visible (reasoning-heavy models
+    # benefit from it). Set True for short UI-bound chat turns.
+    strip_thinking: bool = False
 
 
 def _err(
@@ -510,6 +525,12 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 except Exception as exc:  # noqa: BLE001
                     log.warning("AntiBias failed, passing through: %s", exc)
                     final_text, ab_report = winner, {}
+
+            # Opt-in Qwen3 chain-of-thought cleanup. Keep the raw CoT for
+            # reasoning-heavy meta intents by default (caller opts in via
+            # strip_thinking=True when short, UI-bound output is desired).
+            if req.strip_thinking:
+                final_text = _strip_think(final_text)
 
             # Stage 7 — Aeon write (best-effort, never block on failure).
             with metrics["stage_latency"].labels(stage="memory_write").time():
