@@ -154,6 +154,26 @@ class MLXRuntime(Protocol):
         """
         ...
 
+    def current_context_ceiling(self) -> int:
+        """Live context ceiling for a *new* session right now.
+
+        Computes ``min(max_context_tokens, kv_free_bytes / kv_per_token)``.
+        Used by the ``/v1/chat/completions`` admission step to
+        clamp (or reject) requests whose reserved context would
+        overflow the remaining KV pool.
+
+        The ceiling is dynamic — it shrinks as more sessions open,
+        grows again as they close / get evicted. The endpoint
+        echoes it in the ``X-Max-Context-Available`` response
+        header so clients can pre-empt the next request before
+        hitting a 413.
+
+        Backends that don't enforce a KV budget may return
+        ``max_context_tokens`` verbatim ; the interface still
+        exists so callers can bind to a single signature.
+        """
+        ...
+
 
 # ---------------------------------------------------------------------------
 # Seed helpers.
@@ -277,6 +297,19 @@ class FakeMLXRuntime:
             "uptime_s": round(time.time() - self.started_at, 1),
         }
 
+    def current_context_ceiling(self) -> int:
+        """Live ceiling = min(configured max, what the KV pool
+        can still absorb)."""
+        kv_per_token = 40 * 1024
+        free = max(
+            0, self._kv_bytes_budget - self._kv_bytes_used,
+        )
+        # Always admit at least 1 token of ceiling so the handler
+        # can surface an explicit "context_length_exceeded" 413
+        # rather than a divide-by-zero.
+        fit = max(1, free // kv_per_token) if kv_per_token else 1
+        return min(self.max_context_tokens, fit)
+
     def kv_stats(self) -> dict[str, Any]:
         """Synthesise a plausible KV / session snapshot.
 
@@ -320,6 +353,7 @@ class FakeMLXRuntime:
         return {
             "runtime": "fake",
             "max_context_tokens": self.max_context_tokens,
+            "current_context_ceiling": self.current_context_ceiling(),
             "kv_bytes_per_token": kv_per_token,
             "sessions_active": self._sessions_active,
             "kv_bytes_used": self._kv_bytes_used,

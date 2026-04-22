@@ -483,6 +483,60 @@ def create_app(
             yield f"data: {error_payload}\n\n".encode("utf-8")
         yield b"data: [DONE]\n\n"
 
+    def _admit_context(
+        request: s.ChatCompletionRequest,
+    ) -> int:
+        """Dynamic context admission.
+
+        Returns the clamped ceiling for this request. Reads the
+        live ``runtime.current_context_ceiling()`` (shrinks as
+        the KV pool fills, grows as sessions close). Three code
+        paths :
+
+        - No explicit ``max_completion_tokens`` → return ceiling,
+          runtime is free to use up to that many output tokens.
+        - Explicit request ≤ ceiling → honor the request.
+        - Explicit request > ceiling → raise 413
+          ``context_length_exceeded`` with the ceiling in the
+          error body so the client can retry with a smaller
+          budget instead of silent truncation.
+
+        Falls back to ``runtime.health()['max_context_tokens']``
+        when the runtime has no ``current_context_ceiling`` method
+        (older backends).
+        """
+        try:
+            ceiling = runtime.current_context_ceiling()
+        except (AttributeError, NotImplementedError):
+            ceiling = int(
+                runtime.health().get("max_context_tokens", 262_144)
+            )
+
+        req_max = (
+            request.max_completion_tokens or request.max_tokens
+        )
+        if req_max is None:
+            return ceiling
+        if req_max > ceiling:
+            raise HTTPException(
+                status_code=413,
+                detail={
+                    "error": {
+                        "message": (
+                            f"requested max_tokens ({req_max}) "
+                            f"exceeds current ceiling ({ceiling}) — "
+                            f"KV pool is near budget ; retry with "
+                            f"a smaller value or wait for idle sessions"
+                        ),
+                        "type": "context_length_exceeded",
+                        "param": "max_completion_tokens",
+                        "code": "dynamic_ceiling",
+                    }
+                },
+                headers={"X-Max-Context-Available": str(ceiling)},
+            )
+        return req_max
+
     @app.post("/v1/chat/completions")
     async def chat_completions(
         request: s.ChatCompletionRequest,
@@ -495,14 +549,27 @@ def create_app(
 
         1. ``tool_choice`` / ``tools`` consistency (T7).
         2. ``response_format`` sanity (T7).
-        3. ``stream=True`` → SSE stream (T8).
-        4. Non-streaming → dispatch to ``runtime.generate``.
-        5. Wrap runtime exceptions in OpenAI-shaped errors.
+        3. Dynamic context admission (T9 extension) — clamp or
+           reject per the live KV pool ceiling.
+        4. ``stream=True`` → SSE stream (T8).
+        5. Non-streaming → dispatch to ``runtime.generate``.
+        6. Wrap runtime exceptions in OpenAI-shaped errors.
         """
         _validate_tool_choice(request)
         _validate_response_format(request)
 
+        effective_max = _admit_context(request)
+        # Stamp the clamp back onto the request so the runtime
+        # sees it — preserves the ``max_completion_tokens ||
+        # max_tokens`` fallback chain OpenAI introduced.
+        if request.max_completion_tokens is None and request.max_tokens is None:
+            request.max_completion_tokens = effective_max
+
         metrics.record_adapter(request.model)
+
+        admission_headers = {
+            "X-Max-Context-Available": str(effective_max),
+        }
 
         if request.stream:
             return StreamingResponse(
@@ -514,6 +581,7 @@ def create_app(
                     "Cache-Control": "no-cache",
                     "X-Accel-Buffering": "no",
                     "Connection": "keep-alive",
+                    **admission_headers,
                 },
             )
 
@@ -523,8 +591,12 @@ def create_app(
             return JSONResponse(
                 status_code=exc.http_status,
                 content=exc.to_error().model_dump(),
+                headers=admission_headers,
             )
-        return JSONResponse(content=completion.model_dump())
+        return JSONResponse(
+            content=completion.model_dump(),
+            headers=admission_headers,
+        )
 
     return app
 

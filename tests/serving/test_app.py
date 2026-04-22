@@ -778,6 +778,132 @@ def test_kv_status_custom_budget_reflected() -> None:
     assert body["kv_bytes_free"] == 120 * 1024**3
 
 
+def test_dynamic_context_ceiling_header_on_success() -> None:
+    """Every chat completion (including non-streaming) carries
+    ``X-Max-Context-Available`` so clients can self-adjust before
+    hitting a 413 on a later request."""
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+            },
+        )
+    assert resp.status_code == 200
+    available = int(resp.headers["x-max-context-available"])
+    # With a fresh FakeMLXRuntime (60 GB budget, 40 KB/token),
+    # ceiling is capped at max_context_tokens = 1 M.
+    assert available == 1_048_576
+
+
+def test_dynamic_context_shrinks_as_kv_fills() -> None:
+    """As the KV pool fills, the ceiling must shrink linearly —
+    this is the whole point of dynamic context : operators who
+    want more concurrency cap the ceiling, those who want longer
+    context keep concurrency low."""
+    rt = FakeMLXRuntime()
+    rt._kv_bytes_budget = 1 * 1024**3  # 1 GB
+    # Use 512 MB of the 1 GB budget → remaining 512 MB ÷ 40 KB =
+    # 13 107 tokens.
+    rt._kv_bytes_used = 512 * 1024**2
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+            },
+        )
+    available = int(resp.headers["x-max-context-available"])
+    # 512 MB / 40 KB/token ≈ 13 107 tokens. Accept ±5 %.
+    assert 12_000 <= available <= 14_000
+
+
+def test_explicit_max_tokens_over_ceiling_returns_413() -> None:
+    """Explicit ``max_completion_tokens`` > current ceiling → 413
+    ``context_length_exceeded`` with the ceiling echoed in the
+    body + ``X-Max-Context-Available`` header. The client can
+    retry smaller."""
+    rt = FakeMLXRuntime()
+    rt._kv_bytes_budget = 100 * 1024**2  # tiny budget
+    rt._kv_bytes_used = 50 * 1024**2
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "max_completion_tokens": 100_000,
+            },
+        )
+    assert resp.status_code == 413
+    body = resp.json()
+    assert body["detail"]["error"]["type"] == "context_length_exceeded"
+    assert body["detail"]["error"]["code"] == "dynamic_ceiling"
+    assert "x-max-context-available" in resp.headers
+
+
+def test_max_tokens_within_ceiling_honored_verbatim() -> None:
+    """Explicit ``max_completion_tokens`` within the ceiling is
+    honored — we don't silently downgrade to the ceiling."""
+    rt = FakeMLXRuntime()
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "max_completion_tokens": 512,
+            },
+        )
+    assert resp.status_code == 200
+    # Header echoes the ceiling, not the request value — clients
+    # get the accurate "you can still go this high" signal.
+    assert int(resp.headers["x-max-context-available"]) >= 512
+
+
+def test_legacy_max_tokens_field_also_admitted() -> None:
+    """OpenAI renamed ``max_tokens`` → ``max_completion_tokens``
+    in 2024 ; the legacy field must still be honored so old
+    LangChain / Instructor clients work."""
+    rt = FakeMLXRuntime()
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "max_tokens": 256,
+            },
+        )
+    assert resp.status_code == 200
+
+
+def test_stream_response_carries_admission_header() -> None:
+    """Streaming responses also need ``X-Max-Context-Available``
+    alongside the other SSE headers — LangChain observes them
+    on the initial response."""
+    rt = FakeMLXRuntime(scripted_responses={"x": "ok"})
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "stream": True,
+            },
+        )
+    assert resp.status_code == 200
+    assert "x-max-context-available" in resp.headers
+
+
 def test_kv_bytes_per_token_matches_qwen36_hybrid_math() -> None:
     """40 KB/token is the Qwen3.6-35B-A3B hybrid-attention KV
     cost (10 full-attn layers × 8 KV heads × 128 head_dim × 2
