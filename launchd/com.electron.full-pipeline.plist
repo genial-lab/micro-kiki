@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.electron.full-pipeline</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/clems/.local/bin/uv</string>
+    <string>run</string>
+    <string>--project</string>
+    <string>/Users/clems/Projets/micro-kiki</string>
+    <string>--python</string>
+    <string>3.13</string>
+    <string>--extra</string>
+    <string>serve</string>
+    <string>--extra</string>
+    <string>mlx</string>
+    <string>python</string>
+    <string>-m</string>
+    <string>uvicorn</string>
+    <string>src.serving.full_pipeline_server:make_default_app</string>
+    <string>--factory</string>
+    <string>--host</string>
+    <string>127.0.0.1</string>
+    <string>--port</string>
+    <string>9200</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/clems/Projets/micro-kiki</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>KIKI_LOG_LEVEL</key><string>INFO</string>
+    <key>PATH</key><string>/Users/clems/.local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key>
+  <dict><key>SuccessfulExit</key><false/></dict>
+  <key>StandardOutPath</key>
+  <string>/Users/clems/Projets/micro-kiki/full-pipeline.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/clems/Projets/micro-kiki/full-pipeline.err.log</string>
+</dict>
+</plist>
