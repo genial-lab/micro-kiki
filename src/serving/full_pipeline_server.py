@@ -189,12 +189,32 @@ class _MLXRuntimeAdapter:
         base_model_path: str,
         adapters_root: str,
         preload_all: bool = True,
+        eager_materialize: bool = True,
     ) -> None:
         from mlx_lm import load as mlx_load  # lazy heavy import
+        import mlx.core as mx
 
         self._base_model_path = base_model_path
         self._adapters_root = adapters_root
         self._model, self._tokenizer = mlx_load(base_model_path)
+        if eager_materialize:
+            # MLX evaluates lazily by default. Force every parameter
+            # (attention + MoE experts + shared_expert + embeddings)
+            # to be materialized in Metal/unified memory at startup so
+            # the first inference doesn't pay the lazy-eval cost for
+            # the 256 experts × 48 layers of Qwen3.6-35B-A3B.
+            try:
+                mx.eval(self._model.parameters())
+                log.info(
+                    "eager-materialized all base model parameters "
+                    "(including 256 MoE experts)"
+                )
+            except Exception as exc:  # noqa: BLE001
+                log.warning(
+                    "eager materialization failed (%s), first inference "
+                    "may pay lazy-eval cost",
+                    exc,
+                )
         self._current_adapter: str | None = None
         # Preload all adapter safetensors into RAM at startup. Studio has
         # 512 GB so caching 34 × ~500 MB LoRA state dicts (~17 GB total)
