@@ -586,11 +586,63 @@ def _build_negotiator(cfg: FullPipelineConfig) -> Any:
     return _StubNegotiator()
 
 
-def _build_antibias(cfg: FullPipelineConfig) -> Any:
-    """Return a stub AntiBias whose async ``check`` raises at call time.
-
-    Orchestrator catches and passes the Negotiator winner straight through.
+class _AntiBiasAdapter:
+    """Adapter mapping orchestrator's ``check(text, ctx)`` contract to
+    the real ``AntiBiasPipeline.process(prompt, response)``.
     """
+
+    def __init__(self, pipeline: Any) -> None:
+        self._pipeline = pipeline
+
+    async def check(
+        self, text: str, ctx: dict | None = None
+    ) -> tuple[str, dict]:
+        ctx = ctx or {}
+        prompt_proxy = ""
+        recalled = ctx.get("recalled") or []
+        if recalled:
+            first = recalled[0]
+            prompt_proxy = (
+                first if isinstance(first, str) else first.get("text", "")
+            )
+        result = await self._pipeline.process(prompt_proxy, text)
+        final = (
+            getattr(result, "final_response", None)
+            or getattr(result, "response", None)
+            or text
+        )
+        report = {
+            "bias_detected": bool(getattr(result, "bias_detected", False)),
+            "rewritten": bool(getattr(result, "rewritten", False)),
+        }
+        detection = getattr(result, "detection", None)
+        if detection is not None:
+            report["bias_type"] = getattr(detection, "bias_type", "")
+            report["confidence"] = float(
+                getattr(detection, "confidence", 0.0)
+            )
+        return final, report
+
+
+def _build_antibias(cfg: FullPipelineConfig) -> Any:
+    """Construct a real AntiBiasPipeline (RBD + heuristic generate_fn).
+
+    Wraps in ``_AntiBiasAdapter`` to match the orchestrator's ``check``
+    contract. Stub fallback if construction fails.
+    """
+    try:
+        from src.cognitive.antibias import AntiBiasPipeline, PipelineConfig
+        from src.cognitive.rbd import ReasoningBiasDetector
+
+        detector = ReasoningBiasDetector(generate_fn=None)
+        pipeline = AntiBiasPipeline(
+            detector=detector,
+            generate_fn=None,
+            config=PipelineConfig(max_retries=cfg.antibias_max_retries),
+        )
+        return _AntiBiasAdapter(pipeline)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("AntiBias init failed (%s), using stub", exc)
 
     class _StubAntiBias:
         async def check(
