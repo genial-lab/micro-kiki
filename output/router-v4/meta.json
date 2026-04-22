@@ -79,7 +79,7 @@
   },
   "arch": "sentence_embedding + MLP(hidden) + linear_head (sigmoid at inference)",
   "loss": "BCEWithLogitsLoss (multi-label friendly)",
-  "epochs": 10,
+  "epochs": 30,
   "batch_size": 128,
   "lr": 0.001
 }
