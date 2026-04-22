@@ -37,8 +37,8 @@ def test_recall_invoked_with_user_text(monkeypatch):
             {"role": "user", "content": "Write a hello world"},
         ],
     })
-    # Endpoint is still 501 until later tasks land stages 2-7. But recall
-    # must already have been invoked with the latest user message.
+    # Endpoint is 200 end-to-end after PB-T9. Regardless, recall must
+    # already have been invoked with the latest user message.
     assert recall_calls, "Aeon.recall must have been called"
     query, k = recall_calls[0]
     assert query == "Write a hello world"  # last USER message drives recall
@@ -74,5 +74,5 @@ def test_recall_failure_is_non_blocking(monkeypatch):
         "model": "kiki-meta-coding",
         "messages": [{"role": "user", "content": "hi"}],
     })
-    # Still 501 (orchestration not complete), but must NOT be 500.
-    assert r.status_code == 501, f"Aeon failure must not propagate as 500; got {r.status_code}: {r.text}"
+    # 200 end-to-end after PB-T9 — Aeon failure must NOT propagate as 500.
+    assert r.status_code == 200, f"Aeon failure must not propagate as 500; got {r.status_code}: {r.text}"

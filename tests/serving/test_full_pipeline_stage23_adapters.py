@@ -138,6 +138,6 @@ def test_meta_router_failure_falls_back_to_base(monkeypatch):
         "model": "kiki-meta-coding",
         "messages": [{"role": "user", "content": "x"}],
     })
-    # Still 501 because stages 4-7 aren't wired yet, but must NOT be 500.
-    assert r.status_code == 501
+    # 200 end-to-end after PB-T9 — MetaRouter failure must degrade to base, not 500.
+    assert r.status_code == 200
     assert apply_calls == [[]], "base-only fallback should apply empty adapter list"

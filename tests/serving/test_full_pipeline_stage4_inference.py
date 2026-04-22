@@ -6,7 +6,7 @@ exactly ``cfg.negotiator_k`` times, forwards ``max_tokens`` (defaulting
 to 512), and surfaces inference failures as 500 ``inference_error``.
 
 Heavy deps (MLX/torch) are never imported; factories are monkeypatched.
-Endpoint still returns 501 after stage 4 — Negotiator lands in PB-T7.
+Endpoint returns 200 end-to-end after PB-T9 lands stage 7 + OpenAI shape.
 """
 from __future__ import annotations
 

@@ -3,7 +3,8 @@
 Validates request schema + OpenAI-style error shapes:
 - 404 ``model_not_found`` for unknown aliases
 - 422 FastAPI default for malformed bodies (missing ``messages``)
-- 501 ``not_implemented`` on happy path — orchestration lands in PB-T4+.
+- 200 OpenAI ``chat.completion`` on happy path — full pipeline landed
+  in PB-T9.
 
 Heavy deps (MLX/torch/mlx-lm) never imported; factories are monkeypatched
 with lightweight fakes. Mirrors the skeleton test pattern.
@@ -76,7 +77,7 @@ def test_chat_malformed_request_422(monkeypatch):
     assert r.status_code == 422
 
 
-def test_chat_happy_path_501_for_now(monkeypatch):
+def test_chat_happy_path_200(monkeypatch):
     client = _client(monkeypatch)
     # Use a REAL meta alias (per T1 discovery the intents are:
     # quick-reply, reasoning, coding, creative, research, agentic, tool-use)
@@ -87,7 +88,9 @@ def test_chat_happy_path_501_for_now(monkeypatch):
             "messages": [{"role": "user", "content": "hi"}],
         },
     )
-    # Orchestration stages 1-7 land in PB-T4+. For T3 we accept 501.
-    assert r.status_code == 501
+    # PB-T9 closed the end-to-end path — happy path returns OpenAI shape.
+    assert r.status_code == 200, r.text
     body = r.json()
-    assert body["error"]["type"] == "not_implemented"
+    assert body["object"] == "chat.completion"
+    assert body["model"] == "kiki-meta-coding"
+    assert body["choices"][0]["message"]["role"] == "assistant"

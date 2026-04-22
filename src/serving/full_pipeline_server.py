@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import logging
 import time
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
@@ -357,14 +358,39 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
             log.warning("AntiBias failed, passing through: %s", exc)
             final_text, ab_report = winner, {}
 
-        _ = (final_text, ab_report)
+        # Stage 7 — Aeon write (best-effort, never block on failure)
+        try:
+            state.aeon.write({
+                "query": user_text,
+                "response": final_text,
+                "adapters": adapters,
+                "recalled": [r.get("text", "") for r in recalled],
+                "quality": quality,
+                "antibias": ab_report,
+            })
+        except Exception as exc:  # noqa: BLE001 — write must not block
+            log.warning("Aeon write failed (non-blocking): %s", exc)
 
-        # Stage 7 and final response shape land in PB-T8/T9.
-        return _err(
-            501,
-            "pipeline partially wired (stages 1-5)",
-            "not_implemented",
-        )
+        return {
+            "id": f"chatcmpl-{uuid.uuid4().hex[:12]}",
+            "object": "chat.completion",
+            "created": int(time.time()),
+            "model": req.model,
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {"role": "assistant", "content": final_text},
+                    "finish_reason": "stop",
+                }
+            ],
+            "usage": {
+                "prompt_tokens": max(1, len(user_text) // 4),
+                "completion_tokens": max(1, len(final_text) // 4),
+                "total_tokens": max(
+                    1, (len(user_text) + len(final_text)) // 4
+                ),
+            },
+        }
 
     return app
 

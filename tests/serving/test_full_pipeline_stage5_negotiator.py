@@ -4,8 +4,7 @@ Verifies the orchestrator captures the Negotiator's ``(winner, quality)``
 tuple, forwards the winner to ``AntiBias.check`` with ``quality`` in the
 ctx, and degrades to ``candidates[0]`` when the Negotiator raises.
 
-Endpoint still returns 501 after stage 5 — the final response shape
-lands in PB-T8/T9.
+Endpoint returns 200 end-to-end after PB-T9 lands stage 7 + OpenAI shape.
 """
 from __future__ import annotations
 
@@ -85,7 +84,7 @@ def test_negotiator_failure_degrades_to_candidate_zero(monkeypatch):
         "model": "kiki-meta-coding",
         "messages": [{"role": "user", "content": "x"}],
     })
-    # 501 still returned (T8+ not wired), but AB must have been called with candidate 0
-    assert r.status_code == 501
+    # 200 end-to-end after PB-T9; Negotiator crash must still reach AB with cand-1.
+    assert r.status_code == 200
     assert ab_calls, "degraded path should still reach AntiBias"
     assert ab_calls[0] == "cand-1", f"first candidate expected, got {ab_calls[0]!r}"
