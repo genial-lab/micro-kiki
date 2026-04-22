@@ -212,6 +212,21 @@ class _State:
     cfg: FullPipelineConfig | None = None
 
 
+def _build_prompt(messages: list[ChatMessage], recalled: list[dict]) -> str:
+    """Assemble a Qwen-style chat prompt with optional recalled context."""
+    parts: list[str] = []
+    if recalled:
+        context_lines = "\n".join(f"- {r.get('text', '')}" for r in recalled)
+        parts.append(
+            f"<|im_start|>system\nPrior relevant context:\n"
+            f"{context_lines}<|im_end|>"
+        )
+    for m in messages:
+        parts.append(f"<|im_start|>{m.role}\n{m.content}<|im_end|>")
+    parts.append("<|im_start|>assistant\n")
+    return "\n".join(parts)
+
+
 def make_app(cfg: FullPipelineConfig) -> FastAPI:
     """Build a FastAPI app with the 5 subsystems wired into app.state."""
     app = FastAPI(title="kiki-router full pipeline", version="0.1.0")
@@ -305,13 +320,39 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 "adapter_apply_failed",
             )
 
-        # `recalled` + `adapters` are consumed by stages 4-7 in PB-T6+.
-        _ = recalled
+        # Stage 4 — inference, K candidates (K = cfg.negotiator_k).
+        prompt = _build_prompt(req.messages, recalled)
+        max_toks = req.max_tokens if req.max_tokens is not None else 512
+        temp = req.temperature if req.temperature is not None else 0.7
+        candidates: list[str] = []
+        for i in range(state.cfg.negotiator_k):
+            try:
+                candidates.append(
+                    state.runtime.generate(
+                        prompt,
+                        max_tokens=max_toks,
+                        temperature=temp,
+                    )
+                )
+            except Exception as exc:  # noqa: BLE001
+                log.error("inference attempt %d failed: %s", i, exc)
+                return _err(
+                    500,
+                    f"inference failed: {exc}",
+                    "inference_error",
+                )
+
+        # Hand candidates to the Negotiator. Arbitration semantics (pick
+        # winner, compute agreement, route back into the response) land in
+        # PB-T7 — for now we just ensure the candidates reach it so the
+        # inference stage can be exercised end-to-end.
+        await state.negotiator.arbitrate(candidates)
+
         _ = adapters
 
         return _err(
             501,
-            "pipeline partially wired (stages 1-3)",
+            "pipeline partially wired (stages 1-4)",
             "not_implemented",
         )
 

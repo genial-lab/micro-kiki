@@ -22,6 +22,9 @@ def _client(monkeypatch):
         def apply(self, adapters):
             pass
 
+        def generate(self, prompt, **kw):
+            return "stub"
+
     class _FakeMeta:
         def route(self, q):
             return []
