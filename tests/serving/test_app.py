@@ -12,11 +12,17 @@ introduce ``httpx.AsyncClient`` for SSE).
 """
 from __future__ import annotations
 
+import json
+
 from fastapi.testclient import TestClient
 
 from src.serving import schemas as s
 from src.serving.app import Metrics, create_app
-from src.serving.runtime import FakeMLXRuntime
+from src.serving.runtime import (
+    AdapterNotFound,
+    FakeMLXRuntime,
+    JSONSchemaValidationError,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -273,3 +279,237 @@ def test_request_id_header_roundtrip() -> None:
     assert "x-request-id" in resp2.headers
     generated = resp2.headers["x-request-id"]
     assert len(generated) >= 16
+
+
+# ---------------------------------------------------------------------------
+# T7 — tool calling.
+# ---------------------------------------------------------------------------
+
+
+def test_chat_completions_with_tools_returns_tool_call() -> None:
+    """When the runtime decides to call a tool, the response
+    must have ``content=null`` and ``finish_reason=tool_calls``."""
+    forced = s.ToolCall(
+        function=s.FunctionCall(
+            name="get_weather",
+            arguments=json.dumps({"city": "Paris"}),
+        )
+    )
+    runtime = FakeMLXRuntime(force_tool_call=forced)
+    app = _app(runtime=runtime)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "weather ?"}],
+                "tools": [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "get_weather",
+                            "parameters": {"type": "object"},
+                        },
+                    }
+                ],
+                "tool_choice": "auto",
+            },
+        )
+    assert resp.status_code == 200
+    body = resp.json()
+    msg = body["choices"][0]["message"]
+    # Silent-killer #1 : content is None, not "".
+    assert msg["content"] is None
+    assert msg["tool_calls"] is not None
+    assert msg["tool_calls"][0]["function"]["name"] == "get_weather"
+    # Arguments travel as a JSON string (not dict).
+    args = msg["tool_calls"][0]["function"]["arguments"]
+    assert isinstance(args, str)
+    assert json.loads(args) == {"city": "Paris"}
+    assert body["choices"][0]["finish_reason"] == "tool_calls"
+
+
+def test_tool_choice_required_without_tools_rejected() -> None:
+    """``tool_choice='required'`` with empty tools → 400."""
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "tool_choice": "required",
+            },
+        )
+    assert resp.status_code == 400
+    body = resp.json()
+    assert body["detail"]["error"]["type"] == "invalid_request_error"
+    assert body["detail"]["error"]["param"] == "tool_choice"
+
+
+def test_tool_choice_structured_name_must_match_declared_tool() -> None:
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "tools": [
+                    {
+                        "type": "function",
+                        "function": {"name": "existing_fn"},
+                    }
+                ],
+                "tool_choice": {
+                    "type": "function",
+                    "function": {"name": "missing_fn"},
+                },
+            },
+        )
+    assert resp.status_code == 400
+    assert "not found in tools" in resp.json()["detail"]["error"]["message"]
+
+
+def test_tool_choice_structured_with_empty_tools_rejected() -> None:
+    """Structured tool_choice with empty tools is a logical
+    contradiction — return 400 rather than silently ignore."""
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "tool_choice": {
+                    "type": "function",
+                    "function": {"name": "f"},
+                },
+            },
+        )
+    assert resp.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# T7 — response_format (JSON mode).
+# ---------------------------------------------------------------------------
+
+
+def test_response_format_json_schema_without_payload_rejected() -> None:
+    """Silent killer : ``{"type": "json_schema"}`` without
+    ``json_schema`` payload — the runtime has nothing to
+    enforce, must 400 up front."""
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "response_format": {"type": "json_schema"},
+            },
+        )
+    assert resp.status_code == 400
+    assert (
+        resp.json()["detail"]["error"]["param"] == "response_format"
+    )
+
+
+def test_response_format_json_object_passes_through() -> None:
+    """json_object mode is looser — no schema needed. The
+    runtime is expected to nudge the model via prompt
+    instruction. Just verify the request reaches it."""
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "response_format": {"type": "json_object"},
+            },
+        )
+    assert resp.status_code == 200
+
+
+def test_response_format_json_schema_with_payload_passes_through() -> None:
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "answer",
+                        "schema": {"type": "object"},
+                        "strict": True,
+                    },
+                },
+            },
+        )
+    assert resp.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# T7 — runtime exception → OpenAI-shaped error mapping.
+# ---------------------------------------------------------------------------
+
+
+class _ErroringRuntime(FakeMLXRuntime):
+    """Raises a user-supplied ``RuntimeError_`` subclass."""
+
+    def __init__(self, exc_cls, message: str) -> None:
+        super().__init__()
+        self._exc_cls = exc_cls
+        self._message = message
+
+    async def generate(self, request):  # type: ignore[override]
+        raise self._exc_cls(self._message)
+
+
+def test_adapter_not_found_maps_to_404() -> None:
+    rt = _ErroringRuntime(AdapterNotFound, "adapter 'xxx' missing")
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-xxx",
+                "messages": [{"role": "user", "content": "x"}],
+            },
+        )
+    assert resp.status_code == 404
+    body = resp.json()
+    assert body["error"]["type"] == "adapter_not_found"
+    assert "xxx" in body["error"]["message"]
+
+
+def test_json_schema_validation_error_maps_to_400_for_instructor() -> None:
+    """Instructor retries on exactly ``type='json_schema_validation'``.
+    Return 400 (not 500) so LiteLLM doesn't self-DDoS by retrying
+    on a 5xx."""
+    rt = _ErroringRuntime(
+        JSONSchemaValidationError, "guided decoding unavailable",
+    )
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "qwen3.6-35b-python",
+                "messages": [{"role": "user", "content": "x"}],
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "answer",
+                        "schema": {"type": "object"},
+                    },
+                },
+            },
+        )
+    assert resp.status_code == 400
+    body = resp.json()
+    assert body["error"]["type"] == "json_schema_validation"

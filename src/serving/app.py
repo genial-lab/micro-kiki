@@ -51,7 +51,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 
 from . import schemas as s
-from .runtime import MLXRuntime
+from .runtime import MLXRuntime, RuntimeError_
 
 _LOG = logging.getLogger(__name__)
 
@@ -319,23 +319,112 @@ def create_app(
         )
 
     # -----------------------------------------------------------------
-    # /v1/chat/completions stub — T7 will replace this body.
+    # /v1/chat/completions — non-streaming + tool calling + JSON mode.
     # -----------------------------------------------------------------
+
+    def _validate_tool_choice(
+        req: s.ChatCompletionRequest,
+    ) -> None:
+        """Guard against malformed tool_choice / tools combos.
+
+        OpenAI and Anthropic both 400 on ``tool_choice="required"``
+        with empty ``tools``. LiteLLM propagates the error code so
+        the client can fall back to a non-tool-calling pass.
+        Silent demotion would cause agent chains to retry with
+        the same malformed payload.
+        """
+        tc = req.tool_choice
+        has_tools = bool(req.tools)
+
+        if isinstance(tc, s.ToolChoice):
+            if not has_tools:
+                raise HTTPException(
+                    status_code=400,
+                    detail={
+                        "error": {
+                            "message": (
+                                "tool_choice specifies a function "
+                                "but 'tools' is empty"
+                            ),
+                            "type": "invalid_request_error",
+                            "param": "tool_choice",
+                        }
+                    },
+                )
+            declared = {t.function.name for t in req.tools or []}
+            if tc.function.name not in declared:
+                raise HTTPException(
+                    status_code=400,
+                    detail={
+                        "error": {
+                            "message": (
+                                f"tool_choice.function.name "
+                                f"{tc.function.name!r} not found in "
+                                f"tools"
+                            ),
+                            "type": "invalid_request_error",
+                            "param": "tool_choice",
+                        }
+                    },
+                )
+        elif tc == "required" and not has_tools:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": {
+                        "message": (
+                            "tool_choice='required' needs at least "
+                            "one tool declared"
+                        ),
+                        "type": "invalid_request_error",
+                        "param": "tool_choice",
+                    }
+                },
+            )
+
+    def _validate_response_format(
+        req: s.ChatCompletionRequest,
+    ) -> None:
+        """``response_format=json_schema`` without ``json_schema``
+        payload is a silent killer — the request looks valid but
+        the runtime cannot enforce anything. Return 400 up front
+        so Instructor gets a useful error."""
+        rf = req.response_format
+        if rf is None:
+            return
+        if rf.type == "json_schema" and rf.json_schema is None:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": {
+                        "message": (
+                            "response_format.type='json_schema' "
+                            "requires 'json_schema' payload"
+                        ),
+                        "type": "invalid_request_error",
+                        "param": "response_format",
+                    }
+                },
+            )
 
     @app.post("/v1/chat/completions")
     async def chat_completions(
         request: s.ChatCompletionRequest,
     ) -> JSONResponse:
-        """Non-streaming chat completions (T7 work).
+        """Non-streaming chat completions with tool calling +
+        JSON mode. Streaming (``stream=true``) is T8.
 
-        T6 ships a **minimal scaffold** that dispatches to
-        ``runtime.generate`` for non-streaming requests and
-        returns the result. Tool calling, JSON mode, streaming
-        (SSE) land in T7 / T8.
+        Validation steps ordered so the cheapest / most
+        user-impactful checks fire first :
+
+        1. ``stream=True`` → 400 ``not_implemented`` (T8 will
+           replace).
+        2. ``tool_choice`` / ``tools`` consistency (T7).
+        3. ``response_format`` sanity (T7).
+        4. Dispatch to runtime.
+        5. Wrap runtime exceptions in OpenAI-shaped errors.
         """
         if request.stream:
-            # T8 will implement. For now, explicit 400 so clients
-            # discover the limitation without silent buffering.
             raise HTTPException(
                 status_code=400,
                 detail={
@@ -346,8 +435,24 @@ def create_app(
                     }
                 },
             )
+
+        _validate_tool_choice(request)
+        _validate_response_format(request)
+
         metrics.record_adapter(request.model)
-        completion = await runtime.generate(request)
+
+        try:
+            completion = await runtime.generate(request)
+        except RuntimeError_ as exc:
+            # Structured runtime errors (adapter_not_found,
+            # json_schema_validation, context_length_exceeded, …)
+            # get mapped to the right HTTP status + OpenAI error
+            # shape. Instructor / LangChain retry logic keys off
+            # these.
+            return JSONResponse(
+                status_code=exc.http_status,
+                content=exc.to_error().model_dump(),
+            )
         return JSONResponse(content=completion.model_dump())
 
     return app
