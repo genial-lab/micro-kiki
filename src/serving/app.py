@@ -281,11 +281,18 @@ def create_app(
         runtime is alive ; no heavy ping to a backend model —
         that would bounce on startup.
         """
+        rt_health = runtime.health()
         payload: dict[str, Any] = {
             "status": "ok",
             "uptime_s": round(time.time() - metrics.started_at, 1),
-            "runtime": runtime.health(),
+            "runtime": rt_health,
             "adapters_count": len(runtime.list_adapters()),
+            # Surfaced at top level so k8s / autoscalers don't
+            # have to parse the nested runtime dict for the one
+            # capacity limit that matters.
+            "max_context_tokens": rt_health.get(
+                "max_context_tokens",
+            ),
         }
         return payload
 
@@ -317,6 +324,42 @@ def create_app(
             content=text,
             media_type="text/plain; version=0.0.4",
         )
+
+    @app.get("/v1/internal/kv-status")
+    async def kv_status() -> dict[str, Any]:
+        """Observability endpoint for the KV cache + session pool.
+
+        Not part of the OpenAI spec — intentionally namespaced
+        under ``/v1/internal/`` so clients that enumerate ``/v1/*``
+        don't stumble on it. Meant for operator dashboards and
+        the autoscaling controller (which uses ``kv_bytes_free``
+        to know when to open more serving processes).
+
+        Graceful degradation : if the runtime doesn't implement
+        ``kv_stats`` (older backends, test mocks without the
+        method), we synthesize a minimum-viable payload from
+        ``health()`` + ``list_adapters()`` so the endpoint never
+        500s.
+        """
+        try:
+            stats = runtime.kv_stats()
+        except AttributeError:
+            stats = {
+                "runtime": type(runtime).__name__,
+                "kv_stats_supported": False,
+                "note": (
+                    "runtime does not implement kv_stats() ; "
+                    "falling back to health snapshot"
+                ),
+                **runtime.health(),
+            }
+        except NotImplementedError:
+            stats = {
+                "runtime": type(runtime).__name__,
+                "kv_stats_supported": False,
+                "note": "kv_stats() explicitly unimplemented",
+            }
+        return stats
 
     # -----------------------------------------------------------------
     # /v1/chat/completions — non-streaming + tool calling + JSON mode.

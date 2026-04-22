@@ -704,6 +704,93 @@ def test_stream_headers_disable_proxy_buffering() -> None:
     assert resp.headers.get("cache-control") == "no-cache"
 
 
+# ---------------------------------------------------------------------------
+# T9 — /v1/internal/kv-status + long context.
+# ---------------------------------------------------------------------------
+
+
+def test_kv_status_endpoint_returns_runtime_snapshot() -> None:
+    """The KV-status endpoint dimensions the fleet ; minimal
+    shape contract : ``runtime``, ``max_context_tokens``,
+    session + cache counters."""
+    rt = FakeMLXRuntime()
+    rt._sessions_active = 3
+    rt._kv_bytes_used = 5 * 1024**3  # 5 GB
+    rt._prefix_cache_entries = 7
+    rt._prefix_cache_hits = 18
+    rt._prefix_cache_lookups = 20
+    rt._context_tokens_observed = [2048, 4096, 8192, 16384, 32768]
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.get("/v1/internal/kv-status")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["runtime"] == "fake"
+    # 1 M native ceiling with YaRN — Qwen3.6-35B-A3B can go that
+    # far and the fake reports whatever we set.
+    assert body["max_context_tokens"] == 1_048_576
+    assert body["sessions_active"] == 3
+    assert body["kv_bytes_used"] == 5 * 1024**3
+    assert body["kv_bytes_free"] >= 0
+    assert body["prefix_cache_entries"] == 7
+    assert body["prefix_cache_hit_rate"] == 0.9  # 18/20
+    assert body["context_tokens_p50"] > 0
+
+
+def test_kv_status_endpoint_graceful_when_runtime_lacks_method() -> None:
+    """Older backends may not implement ``kv_stats`` — the
+    endpoint must never 500. It falls back to a synthesised
+    payload built from ``health()`` + a flag."""
+
+    class BareRuntime(FakeMLXRuntime):
+        def kv_stats(self):
+            raise NotImplementedError
+
+    app = _app(runtime=BareRuntime())
+    with TestClient(app) as client:
+        resp = client.get("/v1/internal/kv-status")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["kv_stats_supported"] is False
+
+
+def test_health_surfaces_max_context_tokens_at_top_level() -> None:
+    """Autoscalers don't parse nested runtime dicts — the
+    context ceiling must be at the top level of ``/health``."""
+    app = _app()
+    with TestClient(app) as client:
+        resp = client.get("/health")
+    body = resp.json()
+    assert body["max_context_tokens"] == 1_048_576
+
+
+def test_kv_status_custom_budget_reflected() -> None:
+    """Operators can bump the KV pool budget at runtime ; the
+    endpoint must report the new number without re-init."""
+    rt = FakeMLXRuntime()
+    rt._kv_bytes_budget = 160 * 1024**3  # 160 GB
+    rt._kv_bytes_used = 40 * 1024**3
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.get("/v1/internal/kv-status")
+    body = resp.json()
+    assert body["kv_bytes_budget"] == 160 * 1024**3
+    assert body["kv_bytes_free"] == 120 * 1024**3
+
+
+def test_kv_bytes_per_token_matches_qwen36_hybrid_math() -> None:
+    """40 KB/token is the Qwen3.6-35B-A3B hybrid-attention KV
+    cost (10 full-attn layers × 8 KV heads × 128 head_dim × 2
+    (K+V) × 2 bytes BF16 = 40 KB). Canonical value — regressions
+    here mean we broke the RAM sizing model."""
+    rt = FakeMLXRuntime()
+    app = _app(runtime=rt)
+    with TestClient(app) as client:
+        resp = client.get("/v1/internal/kv-status")
+    body = resp.json()
+    assert body["kv_bytes_per_token"] == 40 * 1024
+
+
 def test_stream_runtime_error_serialised_as_final_data_frame() -> None:
     """Mid-stream errors come through as a final ``data: {error}``
     frame before ``[DONE]``. LangChain / OpenAI SDK see a valid

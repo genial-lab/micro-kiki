@@ -397,6 +397,54 @@ def test_health_and_list_adapters_shape() -> None:
     assert health["runtime"] == "fake"
     assert health["adapters_warm"] == 3
     assert "uptime_s" in health
+    # 1M context is the post-YaRN ceiling the backend advertises.
+    assert health["max_context_tokens"] == 1_048_576
+
+
+def test_kv_stats_default_values() -> None:
+    rt = r.FakeMLXRuntime()
+    stats = rt.kv_stats()
+    # Sanity : all mandatory keys present, numbers coherent.
+    assert stats["max_context_tokens"] == 1_048_576
+    assert stats["kv_bytes_per_token"] == 40 * 1024
+    assert stats["sessions_active"] == 0
+    assert stats["kv_bytes_used"] == 0
+    assert stats["kv_bytes_free"] == stats["kv_bytes_budget"]
+    assert stats["prefix_cache_entries"] == 0
+    assert stats["prefix_cache_hit_rate"] == 0.0
+
+
+def test_kv_stats_hit_rate_computes_correctly() -> None:
+    rt = r.FakeMLXRuntime()
+    rt._prefix_cache_hits = 7
+    rt._prefix_cache_lookups = 10
+    stats = rt.kv_stats()
+    assert stats["prefix_cache_hit_rate"] == 0.7
+
+
+def test_kv_stats_percentiles_handle_small_samples() -> None:
+    """p50 / p99 must not crash on a 1-element or empty
+    observed-context list (common at startup)."""
+    rt = r.FakeMLXRuntime()
+    # Empty.
+    stats_empty = rt.kv_stats()
+    assert stats_empty["context_tokens_p50"] == 0
+    assert stats_empty["context_tokens_p99"] == 0
+    # Single sample.
+    rt._context_tokens_observed = [2048]
+    stats_one = rt.kv_stats()
+    assert stats_one["context_tokens_p50"] == 2048
+    assert stats_one["context_tokens_p99"] == 2048
+
+
+def test_kv_stats_supports_1m_context_advertisement() -> None:
+    """Operators need to lift the cap per deploy (YaRN config).
+    The runtime advertises whatever its ``max_context_tokens``
+    attribute says — tests assert the max can go to 1 M."""
+    rt = r.FakeMLXRuntime(max_context_tokens=1_048_576)
+    assert rt.kv_stats()["max_context_tokens"] == 1_048_576
+    rt.max_context_tokens = 262_144  # native Qwen3.6 ceiling
+    assert rt.kv_stats()["max_context_tokens"] == 262_144
 
 
 # ---------------------------------------------------------------------------

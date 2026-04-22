@@ -128,6 +128,32 @@ class MLXRuntime(Protocol):
         it with uptime + process info."""
         ...
 
+    def kv_stats(self) -> dict[str, Any]:
+        """KV cache + session pool snapshot.
+
+        Backs the ``/v1/internal/kv-status`` endpoint. The
+        endpoint dimensions the serving fleet under load — operators
+        need to see sessions_active, kv_bytes_used, prefix_cache
+        hit_rate, and the runtime's advertised max_context_tokens
+        (Qwen3.6-35B-A3B native is 262K, YaRN-extended up to 1M).
+
+        Standardised keys (all optional — runtimes that can't
+        observe a metric omit it) :
+
+        - ``sessions_active`` : int, live sessions holding a KV cache.
+        - ``kv_bytes_used`` : int, total bytes currently allocated
+          to KV cache across all sessions.
+        - ``kv_bytes_budget`` : int, soft cap before eviction kicks in.
+        - ``prefix_cache_entries`` : int, distinct cached prefixes.
+        - ``prefix_cache_hit_rate`` : float in [0, 1].
+        - ``max_context_tokens`` : int, the runtime's hard context
+          ceiling. 262144 native, up to 1048576 with YaRN scaling.
+        - ``context_tokens_p50`` / ``_p99`` : int, per-session
+          context-length distribution on the trailing N requests.
+        - ``runtime`` : str, runtime class identifier.
+        """
+        ...
+
 
 # ---------------------------------------------------------------------------
 # Seed helpers.
@@ -218,6 +244,23 @@ class FakeMLXRuntime:
     completion_for: Callable[[str, int], str] | None = None
     stream_token_delay_s: float = 0.0
     started_at: float = field(default_factory=time.time)
+    # Qwen3.6-35B-A3B native is 262 144 tokens. With YaRN /
+    # NTK-aware RoPE scaling, we can push to 1 048 576. The
+    # fake backend reports the ceiling the real runtime will be
+    # configured with ; tests can bump this to exercise clamp
+    # logic without needing MLX.
+    max_context_tokens: int = 1_048_576
+    # Session / KV cache accounting — the fake backend doesn't
+    # really hold sessions, but it maintains the counters so
+    # the ``/v1/internal/kv-status`` endpoint has something to
+    # show and downstream dashboards exercise their render paths.
+    _sessions_active: int = 0
+    _kv_bytes_used: int = 0
+    _kv_bytes_budget: int = 60 * 1024**3  # 60 GB default pool
+    _prefix_cache_entries: int = 0
+    _prefix_cache_hits: int = 0
+    _prefix_cache_lookups: int = 0
+    _context_tokens_observed: list[int] = field(default_factory=list)
 
     # -------------------------------------------------------------------
     # Protocol methods.
@@ -230,7 +273,52 @@ class FakeMLXRuntime:
         return {
             "runtime": "fake",
             "adapters_warm": len(self.adapters),
+            "max_context_tokens": self.max_context_tokens,
             "uptime_s": round(time.time() - self.started_at, 1),
+        }
+
+    def kv_stats(self) -> dict[str, Any]:
+        """Synthesise a plausible KV / session snapshot.
+
+        Real runtimes would read live counters from their
+        tokenizer + cache layers ; the fake returns whatever the
+        tests pushed into the accumulator attributes so the
+        endpoint shape can be asserted without a real model.
+        """
+        hit_rate = 0.0
+        if self._prefix_cache_lookups > 0:
+            hit_rate = round(
+                self._prefix_cache_hits / self._prefix_cache_lookups,
+                3,
+            )
+        ctx = sorted(self._context_tokens_observed)
+        p50 = p99 = 0
+        if ctx:
+            p50 = ctx[len(ctx) // 2]
+            p99 = ctx[min(len(ctx) - 1, int(len(ctx) * 0.99))]
+        # Typical Qwen3.6-35B-A3B hybrid : 10 full_attn layers,
+        # GQA (8 KV heads × 128 head_dim), BF16 → 40 KB per
+        # token total across all full-attn layers. Only the
+        # full-attn layers grow with context ; linear_attn
+        # layers keep a fixed state so context_tokens × 40 KB
+        # is the right approximation.
+        return {
+            "runtime": "fake",
+            "max_context_tokens": self.max_context_tokens,
+            "kv_bytes_per_token": 40 * 1024,
+            "sessions_active": self._sessions_active,
+            "kv_bytes_used": self._kv_bytes_used,
+            "kv_bytes_budget": self._kv_bytes_budget,
+            "kv_bytes_free": max(
+                0, self._kv_bytes_budget - self._kv_bytes_used,
+            ),
+            "prefix_cache_entries": self._prefix_cache_entries,
+            "prefix_cache_hit_rate": hit_rate,
+            "prefix_cache_hits": self._prefix_cache_hits,
+            "prefix_cache_lookups": self._prefix_cache_lookups,
+            "context_tokens_p50": p50,
+            "context_tokens_p99": p99,
+            "context_tokens_observed": len(self._context_tokens_observed),
         }
 
     async def generate(
