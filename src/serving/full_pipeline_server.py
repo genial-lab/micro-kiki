@@ -146,99 +146,158 @@ def _err(
 # Each does a LAZY import so pytest collection on Linux CI does not crash.
 # ---------------------------------------------------------------------------
 
-def _build_runtime(cfg: FullPipelineConfig) -> Any:
-    """Construct a ``MoELoRARuntime`` and load the base model.
+class _MLXRuntimeAdapter:
+    """Thin adapter that exposes the orchestrator's ``apply(list[str])`` /
+    ``generate(prompt, max_tokens, temperature)`` contract over the native
+    ``mlx_lm`` stack.
 
-    The real constructor takes a ``MoELoRAConfig | None`` — not a
-    base_model_path — so we instantiate then call ``load_base_model``.
-    Adapter loading per-request is the orchestrator's job (PB-T4+).
+    The real ``MoELoRARuntime`` in ``src.serving.moe_lora_runtime`` only
+    consumes **custom MoE-LoRA** safetensors (with ``.experts.*`` and
+    ``.router_*`` keys). The V4 SOTA stacks on Studio are **vanilla MLX
+    LoRA** (``fine_tune_type: lora``, keys ``…lora_a`` / ``…lora_b``) and
+    therefore cannot be loaded by ``MoELoRARuntime.load_adapter``. This
+    adapter takes the pragmatic path:
+
+    * ``mlx_lm.load(base_model)`` once at startup.
+    * ``apply(adapters)``: resolve the single (or first) niche name to
+      ``<adapters_root>/<name>`` and call
+      ``mlx_lm.tuner.utils.load_adapters`` to patch the live model in
+      place. Swapping to a *different* adapter re-loads the base model
+      from disk to avoid LoRA-layer stacking.
+    * ``apply([])`` is a no-op (degraded path for failed MetaRouter).
+    * ``generate`` uses ``mlx_lm.generate`` with
+      ``sampler=make_sampler(temp=temperature)``.
     """
-    from src.serving.moe_lora_runtime import MoELoRARuntime  # lazy MLX/torch
 
-    runtime = MoELoRARuntime()
-    runtime.load_base_model(cfg.base_model_path)
-    return runtime
+    def __init__(self, base_model_path: str, adapters_root: str) -> None:
+        from mlx_lm import load as mlx_load  # lazy heavy import
+
+        self._base_model_path = base_model_path
+        self._adapters_root = adapters_root
+        self._model, self._tokenizer = mlx_load(base_model_path)
+        self._current_adapter: str | None = None
+
+    def apply(self, adapters: list[str]) -> None:
+        if not adapters:
+            # Degraded path: base-model only, no adapter.
+            return
+        # Only one active adapter supported in V1.0 (first wins).
+        name = adapters[0]
+        if name == self._current_adapter:
+            return
+        from mlx_lm import load as mlx_load
+        from mlx_lm.tuner.utils import load_adapters
+
+        adapter_path = str(Path(self._adapters_root) / name)
+        if self._current_adapter is not None:
+            # Swapping: reload base to drop previous LoRA layers cleanly.
+            self._model, self._tokenizer = mlx_load(self._base_model_path)
+        self._model = load_adapters(self._model, adapter_path)
+        self._current_adapter = name
+
+    def generate(
+        self,
+        prompt: str,
+        *,
+        max_tokens: int = 512,
+        temperature: float = 0.7,
+    ) -> str:
+        from mlx_lm import generate as mlx_generate
+        from mlx_lm.sample_utils import make_sampler
+
+        sampler = make_sampler(temp=float(temperature))
+        return mlx_generate(
+            self._model,
+            self._tokenizer,
+            prompt=prompt,
+            max_tokens=int(max_tokens),
+            sampler=sampler,
+        )
+
+
+def _build_runtime(cfg: FullPipelineConfig) -> Any:
+    """Construct an MLX-backed runtime adapter (see ``_MLXRuntimeAdapter``).
+
+    The orchestrator only calls ``.apply(list[str])`` and ``.generate(...)``
+    on the returned object. We deliberately do *not* instantiate the
+    native ``MoELoRARuntime`` here because V4 SOTA stacks on Studio are
+    vanilla MLX LoRA, which the MoE-LoRA runtime cannot load (schema
+    mismatch in ``load_adapter_projections``). See adapter docstring.
+    """
+    return _MLXRuntimeAdapter(
+        base_model_path=str(cfg.base_model_path),
+        adapters_root=str(cfg.adapters_root),
+    )
 
 
 def _build_meta_router(cfg: FullPipelineConfig) -> Any:
-    """Construct the query-level adapter selector.
+    """Return a stub MetaRouter whose ``.route(query)`` raises at call time.
 
-    The orchestrator expects ``state.meta_router.route(query) ->
-    list[tuple[str, float]]`` where each tuple is ``(niche_name,
-    weight)`` and ``niche_name`` is an entry in ``NICHE_DOMAINS``.
-
-    The real ``MetaRouter`` in ``src.routing.router`` is a pure
-    ``torch.nn.Module`` operating on a 768-dim embedding — no tokenizer,
-    no text-to-embedding front-end — and ``src.routing.dispatcher``
-    maps the 35 sigmoid outputs to 7 *meta-intents* (QUICK_REPLY,
-    CODING, …), not to niche domain names. Neither exposes the
-    ``.route(query)`` contract directly, and no trained weights are
-    available locally yet.
-
-    We therefore defer the real wrapper to PB-T11 (Studio integration)
-    and raise here. The test suite monkeypatches this factory with a
-    fake ``route(query)`` implementation, so unit tests remain green.
+    Rationale: ``make_app(cfg)`` must succeed at startup so integration
+    tests can exercise the *degraded* path. The orchestrator catches the
+    exception at stage 2 and falls back to ``adapters=[]`` (base-model
+    only). Wired to a real implementation in V1.1.
     """
-    raise NotImplementedError(
-        "MetaRouter.route(query) wrapper deferred to PB-T11 Studio "
-        "integration. The real MetaRouter (src.routing.router) is a "
-        "torch.nn.Module over 768-dim embeddings; the dispatcher "
-        "(src.routing.dispatcher) maps to 7 meta-intents, not niche "
-        "names. Tests monkeypatch this factory with fakes.",
-    )
+
+    class _StubMetaRouter:
+        def route(self, query: str) -> list[tuple[str, float]]:
+            raise NotImplementedError(
+                "MetaRouter.route wiring deferred to V1.1"
+            )
+
+    return _StubMetaRouter()
 
 
 def _build_aeon(cfg: FullPipelineConfig) -> Any:
-    """Construct an ``AeonPalace`` memory instance.
+    """Return a stub AeonPalace whose recall/write raise at call time.
 
-    Real constructor requires either an ``embed_fn`` or an embedding
-    ``model_path``. No ``create_aeon_palace`` helper exists in
-    ``src.memory.aeon``. If the config does not provide a model path, we
-    raise ``NotImplementedError`` — PB-T5 will wire the real embedder.
-    Tests monkeypatch this factory before it executes.
+    Orchestrator wraps both stage 1 (recall) and stage 7 (write) in
+    try/except and degrades to empty recall / skipped write on failure.
     """
-    from src.memory.aeon import AeonPalace  # lazy sentence-transformers
 
-    if cfg.aeon_embed_model_path is None:
-        raise NotImplementedError(
-            "AeonPalace requires an embedding model; set "
-            "FullPipelineConfig.aeon_embed_model_path or wire a real "
-            "embedder in PB-T5.",
-        )
-    return AeonPalace(model_path=str(cfg.aeon_embed_model_path))
+    class _StubAeon:
+        def recall(self, query: str, k: int = 3) -> list[dict]:
+            raise NotImplementedError("Aeon.recall deferred to V1.1")
+
+        def write(self, episode: dict) -> None:
+            raise NotImplementedError("Aeon.write deferred to V1.1")
+
+    return _StubAeon()
 
 
 def _build_negotiator(cfg: FullPipelineConfig) -> Any:
-    """Construct a ``Negotiator`` (CAMP: extractor + judge + catfish).
+    """Return a stub Negotiator whose async ``arbitrate`` raises at call time.
 
-    Real constructor is ``Negotiator(extractor, judge, catfish)`` — it
-    does *not* accept a ``k`` kwarg or a generate_fn. Its three deps all
-    currently depend on an async ``generate_fn`` that is the server's
-    own inference function (circular). PB-T6/T7 will wire the real
-    generate_fn and instantiate the three subsystems with it; until
-    then, raise so real startup is explicit about the missing dep.
-    Tests monkeypatch this factory before it executes.
+    Orchestrator catches and falls back to ``candidates[0]`` with an
+    empty quality dict.
     """
-    raise NotImplementedError(
-        "Negotiator requires ArgumentExtractor + AdaptiveJudge + "
-        "CatfishModule, all of which need the orchestrator's generate_fn. "
-        "Wire in PB-T6/T7.",
-    )
+
+    class _StubNegotiator:
+        async def arbitrate(
+            self, candidates: list[str]
+        ) -> tuple[str, dict]:
+            raise NotImplementedError(
+                "Negotiator.arbitrate deferred to V1.1"
+            )
+
+    return _StubNegotiator()
 
 
 def _build_antibias(cfg: FullPipelineConfig) -> Any:
-    """Construct the ``AntiBiasPipeline``.
+    """Return a stub AntiBias whose async ``check`` raises at call time.
 
-    Real constructor is ``AntiBiasPipeline(detector, generate_fn=None,
-    config=None)``. ``max_retries`` lives on ``PipelineConfig``. The
-    ``ReasoningBiasDetector`` itself depends on a generate_fn for LLM-
-    backed bias detection, same circular dep as Negotiator. PB-T8 will
-    wire it. Tests monkeypatch this factory before it executes.
+    Orchestrator catches and passes the Negotiator winner straight through.
     """
-    raise NotImplementedError(
-        "AntiBiasPipeline requires a ReasoningBiasDetector with a real "
-        "generate_fn. Wire in PB-T8.",
-    )
+
+    class _StubAntiBias:
+        async def check(
+            self, text: str, ctx: dict | None = None
+        ) -> tuple[str, dict]:
+            raise NotImplementedError(
+                "AntiBiasPipeline.check deferred to V1.1"
+            )
+
+    return _StubAntiBias()
 
 
 @dataclass
