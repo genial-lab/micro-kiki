@@ -342,17 +342,27 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                     "inference_error",
                 )
 
-        # Hand candidates to the Negotiator. Arbitration semantics (pick
-        # winner, compute agreement, route back into the response) land in
-        # PB-T7 — for now we just ensure the candidates reach it so the
-        # inference stage can be exercised end-to-end.
-        await state.negotiator.arbitrate(candidates)
+        # Stage 5 — Negotiator arbitrates K candidates → winner + quality signals
+        try:
+            winner, quality = await state.negotiator.arbitrate(candidates)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("Negotiator failed, using candidate 0: %s", exc)
+            winner, quality = candidates[0], {}
 
-        _ = adapters
+        # Pass winner + quality to AntiBias for stage 6 (tests can observe via AB monkeypatch).
+        ab_ctx = {"quality": quality, "recalled": recalled, "adapters": adapters}
+        try:
+            final_text, ab_report = await state.antibias.check(winner, ctx=ab_ctx)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("AntiBias failed, passing through: %s", exc)
+            final_text, ab_report = winner, {}
 
+        _ = (final_text, ab_report)
+
+        # Stage 7 and final response shape land in PB-T8/T9.
         return _err(
             501,
-            "pipeline partially wired (stages 1-4)",
+            "pipeline partially wired (stages 1-5)",
             "not_implemented",
         )
 
