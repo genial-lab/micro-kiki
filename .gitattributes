@@ -1,0 +1,17 @@
+# Track trained model weights via Git LFS so re-trains don't balloon
+# the pack file. The router-v4 head is re-generated every time we add
+# a domain or tune hyperparameters; at ~860 KB per retrain x N retrains
+# the history bloat is compound.
+#
+# Note: safetensors entries committed before this file landed still live
+# in the regular object store. A `git lfs migrate import` on main after
+# merge can move them retroactively without rewriting feature-branch
+# history.
+output/router-v4/*.safetensors filter=lfs diff=lfs merge=lfs -text
+output/router-v4/router.safetensors filter=lfs diff=lfs merge=lfs -text
+
+# Generic guard: any future safetensors under outputs/ or checkpoints/
+# auto-tracks via LFS even if a different training pipeline drops it.
+output/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+outputs/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+checkpoints/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
