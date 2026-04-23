@@ -17,6 +17,8 @@
     <string>serve</string>
     <string>--extra</string>
     <string>mlx</string>
+    <string>--extra</string>
+    <string>embeddings</string>
     <string>python</string>
     <string>-m</string>
     <string>uvicorn</string>
