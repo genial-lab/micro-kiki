@@ -44,7 +44,7 @@ def test_full_pipeline_returns_openai_chat_completion(monkeypatch):
         async def check(self, t, ctx=None):
             return t, {"rewritten": False}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -116,7 +116,7 @@ def test_niche_mode_full_pipeline_200(monkeypatch):
         async def check(self, t, ctx=None):
             return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -163,7 +163,7 @@ def test_aeon_write_failure_does_not_block_200(monkeypatch):
         async def check(self, t, ctx=None):
             return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())

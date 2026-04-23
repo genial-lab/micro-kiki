@@ -35,7 +35,7 @@ def test_health_and_models(monkeypatch):
         async def check(self, t, ctx=None):
             return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _FakeRuntime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _FakeRuntime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _FakeMeta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _FakeAeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _FakeNeg())

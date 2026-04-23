@@ -52,7 +52,7 @@ def _happy_wire(monkeypatch):
             return t, {}
 
     for name, fac in (
-        ("_build_runtime", lambda cfg: _Runtime()),
+        ("_build_runtime", lambda cfg, **_k: _Runtime()),
         ("_build_meta_router", lambda cfg: _Meta()),
         ("_build_aeon", lambda cfg: _Aeon()),
         ("_build_negotiator", lambda cfg: _Neg()),

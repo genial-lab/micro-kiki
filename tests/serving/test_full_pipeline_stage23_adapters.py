@@ -26,7 +26,7 @@ def test_meta_mode_uses_router(monkeypatch):
         async def check(self, t, ctx=None): return t, {}
 
     m = _Meta()
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: m)
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -62,7 +62,7 @@ def test_niche_mode_bypasses_router(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -93,7 +93,7 @@ def test_apply_failure_returns_503(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -127,7 +127,7 @@ def test_meta_router_failure_falls_back_to_base(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())

@@ -109,6 +109,13 @@ def _build_registry() -> tuple[CollectorRegistry, dict]:
             ["reason"],
             registry=reg,
         ),
+        "adapter_swap": Histogram(
+            "kiki_adapter_swap_seconds",
+            "Adapter swap latency by method "
+            "(unpatch = zero-swap, reload = full base reload fallback)",
+            ["method"],
+            registry=reg,
+        ),
     }
 
 
@@ -209,12 +216,14 @@ class _MLXRuntimeAdapter:
         adapters_root: str,
         preload_all: bool = True,
         eager_materialize: bool = True,
+        swap_metric: Any | None = None,
     ) -> None:
         from mlx_lm import load as mlx_load  # lazy heavy import
         import mlx.core as mx
 
         self._base_model_path = base_model_path
         self._adapters_root = adapters_root
+        self._swap_metric = swap_metric
         self._model, self._tokenizer = mlx_load(base_model_path)
         if eager_materialize:
             # MLX evaluates lazily by default. Force every parameter
@@ -305,19 +314,27 @@ class _MLXRuntimeAdapter:
                 from src.serving.mlx_unpatch import unpatch_all_lora
 
                 unpatch_all_lora(self._model)
+                dt = time.perf_counter() - t0
                 log.info(
                     "adapter unpatched in %.1f ms (%s -> %s)",
-                    (time.perf_counter() - t0) * 1000,
+                    dt * 1000,
                     self._current_adapter,
                     name,
                 )
+                if self._swap_metric is not None:
+                    self._swap_metric.labels(method="unpatch").observe(dt)
             except Exception as exc:  # noqa: BLE001
                 log.warning(
                     "unpatch_all_lora failed (%s); falling back to "
                     "full base reload",
                     exc,
                 )
+                t1 = time.perf_counter()
                 self._model, self._tokenizer = mlx_load(self._base_model_path)
+                if self._swap_metric is not None:
+                    self._swap_metric.labels(method="reload").observe(
+                        time.perf_counter() - t1
+                    )
         self._model = load_adapters(self._model, adapter_path)
         self._current_adapter = name
 
@@ -341,7 +358,7 @@ class _MLXRuntimeAdapter:
         )
 
 
-def _build_runtime(cfg: FullPipelineConfig) -> Any:
+def _build_runtime(cfg: FullPipelineConfig, swap_metric: Any | None = None) -> Any:
     """Construct an MLX-backed runtime adapter (see ``_MLXRuntimeAdapter``).
 
     The orchestrator only calls ``.apply(list[str])`` and ``.generate(...)``
@@ -349,10 +366,15 @@ def _build_runtime(cfg: FullPipelineConfig) -> Any:
     native ``MoELoRARuntime`` here because V4 SOTA stacks on Studio are
     vanilla MLX LoRA, which the MoE-LoRA runtime cannot load (schema
     mismatch in ``load_adapter_projections``). See adapter docstring.
+
+    ``swap_metric`` is the Prometheus ``kiki_adapter_swap_seconds``
+    histogram; ``None`` keeps the runtime usable in tests without a
+    registry.
     """
     return _MLXRuntimeAdapter(
         base_model_path=str(cfg.base_model_path),
         adapters_root=str(cfg.adapters_root),
+        swap_metric=swap_metric,
     )
 
 
@@ -746,8 +768,11 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
     """Build a FastAPI app with the 5 subsystems wired into app.state."""
     app = FastAPI(title="kiki-router full pipeline", version="0.1.0")
 
+    # Build the registry first so the runtime can be wired with the
+    # adapter-swap histogram for per-swap observability.
+    reg, metrics = _build_registry()
     state = _State(
-        runtime=_build_runtime(cfg),
+        runtime=_build_runtime(cfg, swap_metric=metrics["adapter_swap"]),
         meta_router=_build_meta_router(cfg),
         aeon=_build_aeon(cfg),
         negotiator=_build_negotiator(cfg),
@@ -756,7 +781,6 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
         cfg=cfg,
     )
     app.state.kiki = state
-    reg, metrics = _build_registry()
     app.state.kiki_metrics = metrics
     app.state.kiki_registry = reg
 

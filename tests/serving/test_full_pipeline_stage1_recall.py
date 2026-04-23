@@ -22,7 +22,7 @@ def test_recall_invoked_with_user_text(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -63,7 +63,7 @@ def test_recall_failure_is_non_blocking(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _AeonExploding())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())

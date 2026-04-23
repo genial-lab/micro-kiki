@@ -32,7 +32,7 @@ def test_negotiator_winner_flows_to_antibias(monkeypatch):
             ab_calls.append((text, ctx))
             return text, {"rewritten": False}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -73,7 +73,7 @@ def test_negotiator_failure_degrades_to_candidate_zero(monkeypatch):
             ab_calls.append(t)
             return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())

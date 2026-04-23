@@ -38,7 +38,7 @@ def test_inference_k_candidates_passed_to_negotiator(monkeypatch):
         async def check(self, t, ctx=None): return t, {}
 
     neg = _Neg()
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: neg)
@@ -83,7 +83,7 @@ def test_inference_failure_returns_500(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
@@ -118,7 +118,7 @@ def test_max_tokens_defaults_to_512(monkeypatch):
     class _AB:
         async def check(self, t, ctx=None): return t, {}
 
-    monkeypatch.setattr(fps, "_build_runtime", lambda cfg: _Runtime())
+    monkeypatch.setattr(fps, "_build_runtime", lambda cfg, **_k: _Runtime())
     monkeypatch.setattr(fps, "_build_meta_router", lambda cfg: _Meta())
     monkeypatch.setattr(fps, "_build_aeon", lambda cfg: _Aeon())
     monkeypatch.setattr(fps, "_build_negotiator", lambda cfg: _Neg())
