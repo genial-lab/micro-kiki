@@ -164,15 +164,28 @@ def _measure_angles_vs_priors(
 # LoRA reset
 # ---------------------------------------------------------------------------
 
+def _remove_all_lora(model: Any) -> None:
+    """Remove ALL LoRA layer types (Linear, SwitchLinear, Embedding)."""
+    from mlx_lm.tuner.utils import LoRALinear, LoRASwitchLinear, LoRAEmbedding
+    from mlx.utils import tree_unflatten
+
+    reset_layers = []
+    for name, module in model.named_modules():
+        if isinstance(module, LoRALinear):
+            reset_layers.append((name, module.linear))
+        elif isinstance(module, LoRASwitchLinear):
+            reset_layers.append((name, module.linear))
+        elif isinstance(module, LoRAEmbedding):
+            reset_layers.append((name, module.embedding))
+    if reset_layers:
+        model.update_modules(tree_unflatten(reset_layers))
+
+
 def _apply_fresh_lora(model: Any, lora_cfg: dict[str, Any]) -> None:
     """Strip any existing LoRA state and apply fresh (zero-initialised) layers."""
-    from mlx_lm.tuner.utils import linear_to_lora_layers, remove_lora_layers
+    from mlx_lm.tuner.utils import linear_to_lora_layers
 
-    # Remove existing LoRA layers first, then apply fresh ones.
-    try:
-        remove_lora_layers(model)
-    except Exception:
-        pass  # no LoRA layers to remove on first call
+    _remove_all_lora(model)
 
     linear_to_lora_layers(
         model,
