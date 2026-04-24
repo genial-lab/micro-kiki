@@ -166,6 +166,10 @@ class ChatCompletionRequest(BaseModel):
     # response. Default False: keep CoT visible (reasoning-heavy models
     # benefit from it). Set True for short UI-bound chat turns.
     strip_thinking: bool = True
+    # When True, bypass the cognitive layer (Aeon recall/write, Negotiator,
+    # AntiBias). Only routing + adapter swap + single inference run.
+    # Used by A/B evaluation to isolate the cognitive layer contribution.
+    raw_mode: bool = False
 
 
 def _err(
@@ -965,12 +969,16 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
             )
 
             # Stage 1 — Aeon recall (best-effort, non-blocking on failure).
-            with metrics["stage_latency"].labels(stage="recall").time():
-                try:
-                    recalled = state.aeon.recall(user_text, k=3)
-                except Exception as exc:  # noqa: BLE001 — recall never blocks
-                    log.warning("Aeon recall failed: %s", exc)
-                    recalled = []
+            # Skipped in raw_mode to isolate routing + inference only.
+            if not req.raw_mode:
+                with metrics["stage_latency"].labels(stage="recall").time():
+                    try:
+                        recalled = state.aeon.recall(user_text, k=3)
+                    except Exception as exc:  # noqa: BLE001 — recall never blocks
+                        log.warning("Aeon recall failed: %s", exc)
+                        recalled = []
+            else:
+                recalled = []
 
             # Stage 2 — adapter selection. Meta aliases consult the
             # MetaRouter; niche aliases force the requested adapter.
@@ -1028,31 +1036,39 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                         )
 
             # Stage 5 — Negotiator arbitrates K candidates.
-            with metrics["stage_latency"].labels(stage="negotiator").time():
-                try:
-                    winner, quality = await state.negotiator.arbitrate(
-                        candidates
-                    )
-                except Exception as exc:  # noqa: BLE001
-                    log.warning(
-                        "Negotiator failed, using candidate 0: %s", exc
-                    )
-                    winner, quality = candidates[0], {}
+            # Skipped in raw_mode: use first candidate directly.
+            if not req.raw_mode:
+                with metrics["stage_latency"].labels(stage="negotiator").time():
+                    try:
+                        winner, quality = await state.negotiator.arbitrate(
+                            candidates
+                        )
+                    except Exception as exc:  # noqa: BLE001
+                        log.warning(
+                            "Negotiator failed, using candidate 0: %s", exc
+                        )
+                        winner, quality = candidates[0], {}
+            else:
+                winner, quality = candidates[0], {}
 
             # Stage 6 — AntiBias check on the winner.
-            ab_ctx = {
-                "quality": quality,
-                "recalled": recalled,
-                "adapters": adapters,
-            }
-            with metrics["stage_latency"].labels(stage="antibias").time():
-                try:
-                    final_text, ab_report = await state.antibias.check(
-                        winner, ctx=ab_ctx
-                    )
-                except Exception as exc:  # noqa: BLE001
-                    log.warning("AntiBias failed, passing through: %s", exc)
-                    final_text, ab_report = winner, {}
+            # Skipped in raw_mode: pass winner through unchanged.
+            if not req.raw_mode:
+                ab_ctx = {
+                    "quality": quality,
+                    "recalled": recalled,
+                    "adapters": adapters,
+                }
+                with metrics["stage_latency"].labels(stage="antibias").time():
+                    try:
+                        final_text, ab_report = await state.antibias.check(
+                            winner, ctx=ab_ctx
+                        )
+                    except Exception as exc:  # noqa: BLE001
+                        log.warning("AntiBias failed, passing through: %s", exc)
+                        final_text, ab_report = winner, {}
+            else:
+                final_text, ab_report = winner, {}
 
             # Opt-in Qwen3 chain-of-thought cleanup. Keep the raw CoT for
             # reasoning-heavy meta intents by default (caller opts in via
@@ -1061,18 +1077,20 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 final_text = _strip_think(final_text)
 
             # Stage 7 — Aeon write (best-effort, never block on failure).
-            with metrics["stage_latency"].labels(stage="memory_write").time():
-                try:
-                    state.aeon.write({
-                        "query": user_text,
-                        "response": final_text,
-                        "adapters": adapters,
-                        "recalled": [r.get("text", "") for r in recalled],
-                        "quality": quality,
-                        "antibias": ab_report,
-                    })
-                except Exception as exc:  # noqa: BLE001 — write never blocks
-                    log.warning("Aeon write failed (non-blocking): %s", exc)
+            # Skipped in raw_mode to avoid polluting memory with eval traffic.
+            if not req.raw_mode:
+                with metrics["stage_latency"].labels(stage="memory_write").time():
+                    try:
+                        state.aeon.write({
+                            "query": user_text,
+                            "response": final_text,
+                            "adapters": adapters,
+                            "recalled": [r.get("text", "") for r in recalled],
+                            "quality": quality,
+                            "antibias": ab_report,
+                        })
+                    except Exception as exc:  # noqa: BLE001 — write never blocks
+                        log.warning("Aeon write failed (non-blocking): %s", exc)
 
             metrics["requests_total"].labels(
                 model=req.model, status="200"
