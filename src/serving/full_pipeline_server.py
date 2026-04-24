@@ -59,6 +59,23 @@ from src.serving.model_aliases import ModelAlias, build_aliases, lookup
 
 log = logging.getLogger(__name__)
 
+# Attach our own StreamHandler so adapter-swap / eager-materialize /
+# preload events surface in whatever captures stdout/stderr (e.g. the
+# nohup log file). Uvicorn's default logging configuration only wires
+# up ``uvicorn.access`` / ``uvicorn.error`` — custom module loggers
+# silently drop their records otherwise.
+if not log.handlers:
+    _h = logging.StreamHandler()
+    _h.setFormatter(
+        logging.Formatter(
+            "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            datefmt="%H:%M:%S",
+        )
+    )
+    log.addHandler(_h)
+    log.setLevel(logging.INFO)
+    log.propagate = False
+
 
 def _build_registry() -> tuple[CollectorRegistry, dict]:
     """Construct a fresh Prometheus registry + per-server metric objects.
@@ -90,6 +107,13 @@ def _build_registry() -> tuple[CollectorRegistry, dict]:
             "kiki_rejections_total",
             "Rejected at queue boundary",
             ["reason"],
+            registry=reg,
+        ),
+        "adapter_swap": Histogram(
+            "kiki_adapter_swap_seconds",
+            "Adapter swap latency by method "
+            "(unpatch = zero-swap, reload = full base reload fallback)",
+            ["method"],
             registry=reg,
         ),
     }
@@ -177,8 +201,10 @@ class _MLXRuntimeAdapter:
     * ``apply(adapters)``: resolve the single (or first) niche name to
       ``<adapters_root>/<name>`` and call
       ``mlx_lm.tuner.utils.load_adapters`` to patch the live model in
-      place. Swapping to a *different* adapter re-loads the base model
-      from disk to avoid LoRA-layer stacking.
+      place. Swapping to a *different* adapter unpatches the previous
+      LoRA wrappers via :mod:`src.serving.mlx_unpatch` (O(10ms)) rather
+      than reloading the 19 GB base from disk. A base reload is the
+      safe fallback if unpatching raises.
     * ``apply([])`` is a no-op (degraded path for failed MetaRouter).
     * ``generate`` uses ``mlx_lm.generate`` with
       ``sampler=make_sampler(temp=temperature)``.
@@ -190,12 +216,14 @@ class _MLXRuntimeAdapter:
         adapters_root: str,
         preload_all: bool = True,
         eager_materialize: bool = True,
+        swap_metric: Any | None = None,
     ) -> None:
         from mlx_lm import load as mlx_load  # lazy heavy import
         import mlx.core as mx
 
         self._base_model_path = base_model_path
         self._adapters_root = adapters_root
+        self._swap_metric = swap_metric
         self._model, self._tokenizer = mlx_load(base_model_path)
         if eager_materialize:
             # MLX evaluates lazily by default. Force every parameter
@@ -277,11 +305,46 @@ class _MLXRuntimeAdapter:
 
         adapter_path = str(Path(self._adapters_root) / name)
         if self._current_adapter is not None:
-            # Swapping: reload base to drop previous LoRA layers cleanly.
-            # With the base safetensors already in the page cache, this
-            # is CPU-bound (~1 s) rather than disk-bound.
-            self._model, self._tokenizer = mlx_load(self._base_model_path)
+            # Zero-swap path: unpatch LoRA wrappers in place (O(10ms))
+            # instead of reloading the 19 GB base from disk. Fall back
+            # to a full reload if unpatch raises — keeps the behaviour
+            # of the original implementation as a safety net.
+            t0 = time.perf_counter()
+            try:
+                from src.serving.mlx_unpatch import unpatch_all_lora
+
+                unpatch_all_lora(self._model)
+                dt = time.perf_counter() - t0
+                log.info(
+                    "adapter unpatched in %.1f ms (%s -> %s)",
+                    dt * 1000,
+                    self._current_adapter,
+                    name,
+                )
+                if self._swap_metric is not None:
+                    self._swap_metric.labels(method="unpatch").observe(dt)
+            except Exception as exc:  # noqa: BLE001
+                log.warning(
+                    "unpatch_all_lora failed (%s); falling back to "
+                    "full base reload",
+                    exc,
+                )
+                t1 = time.perf_counter()
+                self._model, self._tokenizer = mlx_load(self._base_model_path)
+                if self._swap_metric is not None:
+                    self._swap_metric.labels(method="reload").observe(
+                        time.perf_counter() - t1
+                    )
+        # Observe the load_adapters call itself. When self._current_adapter
+        # is None we emit method="initial" so dashboards can separate cold-
+        # boot latency from steady-state swaps; otherwise the unpatch/reload
+        # observations above already cover the cost that matters.
+        t_apply = time.perf_counter()
         self._model = load_adapters(self._model, adapter_path)
+        if self._swap_metric is not None and self._current_adapter is None:
+            self._swap_metric.labels(method="initial").observe(
+                time.perf_counter() - t_apply
+            )
         self._current_adapter = name
 
     def generate(
@@ -304,7 +367,7 @@ class _MLXRuntimeAdapter:
         )
 
 
-def _build_runtime(cfg: FullPipelineConfig) -> Any:
+def _build_runtime(cfg: FullPipelineConfig, swap_metric: Any | None = None) -> Any:
     """Construct an MLX-backed runtime adapter (see ``_MLXRuntimeAdapter``).
 
     The orchestrator only calls ``.apply(list[str])`` and ``.generate(...)``
@@ -312,10 +375,15 @@ def _build_runtime(cfg: FullPipelineConfig) -> Any:
     native ``MoELoRARuntime`` here because V4 SOTA stacks on Studio are
     vanilla MLX LoRA, which the MoE-LoRA runtime cannot load (schema
     mismatch in ``load_adapter_projections``). See adapter docstring.
+
+    ``swap_metric`` is the Prometheus ``kiki_adapter_swap_seconds``
+    histogram; ``None`` keeps the runtime usable in tests without a
+    registry.
     """
     return _MLXRuntimeAdapter(
         base_model_path=str(cfg.base_model_path),
         adapters_root=str(cfg.adapters_root),
+        swap_metric=swap_metric,
     )
 
 
@@ -709,8 +777,11 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
     """Build a FastAPI app with the 5 subsystems wired into app.state."""
     app = FastAPI(title="kiki-router full pipeline", version="0.1.0")
 
+    # Build the registry first so the runtime can be wired with the
+    # adapter-swap histogram for per-swap observability.
+    reg, metrics = _build_registry()
     state = _State(
-        runtime=_build_runtime(cfg),
+        runtime=_build_runtime(cfg, swap_metric=metrics["adapter_swap"]),
         meta_router=_build_meta_router(cfg),
         aeon=_build_aeon(cfg),
         negotiator=_build_negotiator(cfg),
@@ -719,7 +790,6 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
         cfg=cfg,
     )
     app.state.kiki = state
-    reg, metrics = _build_registry()
     app.state.kiki_metrics = metrics
     app.state.kiki_registry = reg
 

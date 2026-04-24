@@ -15,7 +15,11 @@ CAPABILITY_NAMES = [
     "deep_eval",
 ]
 
-# 34 niche domain names (2026-04-17: expanded to 35 outputs = 34 niche + 1 base)
+# 35 niche domain names. Aligned with the trained v4 SOTA adapter set
+# on Studio (lora-qwen36-35b-v4-sota/) and the `num_domains=35` default
+# in MetaRouter. The router v4 safetensors shipped with 34 outputs; an
+# updated weight file with 35 outputs is required before the MetaRouter
+# meta-mode can rank `spice-sim` — niche-explicit calls work regardless.
 NICHE_DOMAINS: frozenset[str] = frozenset({
     "chat-fr",
     "components",
@@ -45,6 +49,7 @@ NICHE_DOMAINS: frozenset[str] = frozenset({
     "security",
     "shell",
     "spice",
+    "spice-sim",
     "sql",
     "stm32",
     "typescript",

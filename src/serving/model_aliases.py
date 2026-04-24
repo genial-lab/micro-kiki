@@ -1,4 +1,4 @@
-"""OpenAI-compat model alias table: 7 meta + 34 niche = 41."""
+"""OpenAI-compat model alias table: 7 meta + 35 niche = 42."""
 from __future__ import annotations
 
 from dataclasses import dataclass
