@@ -25,6 +25,7 @@ Design notes
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 import time
@@ -793,6 +794,10 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
     app.state.kiki_metrics = metrics
     app.state.kiki_registry = reg
 
+    # Serialize /v1/route threshold/top_k mutations on the shared
+    # meta_router to prevent TOCTOU races between concurrent clients.
+    route_lock = asyncio.Lock()
+
     from fastapi import Response as _Response
 
     @app.get("/metrics")
@@ -849,13 +854,16 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
         top_k = int(req.get("top_k", 4))
 
         try:
-            old_threshold = state.meta_router._threshold
-            old_max = state.meta_router._max_active
-            state.meta_router._threshold = threshold
-            state.meta_router._max_active = top_k
-            pairs = state.meta_router.route(query)
-            state.meta_router._threshold = old_threshold
-            state.meta_router._max_active = old_max
+            async with route_lock:
+                old_threshold = state.meta_router._threshold
+                old_max = state.meta_router._max_active
+                state.meta_router._threshold = threshold
+                state.meta_router._max_active = top_k
+                try:
+                    pairs = state.meta_router.route(query)
+                finally:
+                    state.meta_router._threshold = old_threshold
+                    state.meta_router._max_active = old_max
         except NotImplementedError:
             return {"error": "router weights not loaded", "domains": []}
 
