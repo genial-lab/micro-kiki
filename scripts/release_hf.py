@@ -23,22 +23,19 @@ from textwrap import dedent
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_ADAPTERS_DIR = PROJECT_ROOT / "outputs" / "stacks"
-DEFAULT_MODEL_CARD = PROJECT_ROOT / "MODEL_CARD.md"
+DEFAULT_ADAPTERS_DIR = Path.home() / "KIKI-Mac_tunner" / "output" / "micro-kiki" / "lora-qwen36-35b-v4-sota"
+DEFAULT_MODEL_CARD = DEFAULT_ADAPTERS_DIR / "README.md"
 
-# The 10 niche adapter domains (must match train_dpo_niches.py)
-NICHE_DOMAINS: list[str] = [
-    "kicad-dsl",
-    "spice",
-    "emc",
-    "stm32",
-    "embedded",
-    "freecad",
-    "platformio",
-    "power",
-    "dsp",
-    "electronics",
-]
+# 35 V4 SOTA domain adapters
+NICHE_DOMAINS: list[str] = sorted([
+    "chat-fr", "components", "cpp", "devops", "docker", "dsp",
+    "electronics", "embedded", "emc", "freecad", "html-css", "iot",
+    "kicad-dsl", "kicad-pcb", "llm-ops", "llm-orch", "lua-upy",
+    "math", "ml-training", "music-audio", "platformio", "power",
+    "python", "reasoning", "rust", "security", "shell", "spice",
+    "spice-sim", "sql", "stm32", "typescript", "web-backend",
+    "web-frontend", "yaml-json",
+])
 
 
 @dataclass(frozen=True)
@@ -59,7 +56,7 @@ def discover_adapters(adapters_dir: Path, domains: list[str]) -> dict[str, Path]
     """
     found: dict[str, Path] = {}
     for domain in domains:
-        stack_dir = adapters_dir / f"stack-{domain}"
+        stack_dir = adapters_dir / domain
         adapter_file = stack_dir / "adapters.safetensors"
         if adapter_file.exists():
             found[domain] = stack_dir
@@ -80,16 +77,41 @@ def collect_files(stack_dir: Path) -> list[Path]:
 def generate_adapter_model_card(domain: str, repo: str) -> str:
     """Generate a per-adapter model card for a niche domain."""
     domain_descriptions: dict[str, str] = {
-        "kicad-dsl": "KiCad DSL generation (schematics, footprints, PCB layout S-expressions)",
-        "spice": "SPICE netlist generation and circuit simulation",
-        "emc": "EMC/EMI analysis, compliance, and mitigation strategies",
-        "stm32": "STM32 HAL firmware development and peripheral configuration",
-        "embedded": "Embedded systems programming (FreeRTOS, bare-metal, drivers)",
-        "freecad": "FreeCAD/OpenSCAD parametric 3D modeling scripts",
-        "platformio": "PlatformIO project configuration and multi-platform firmware",
-        "power": "Power electronics design (converters, regulators, thermal)",
+        "chat-fr": "French language conversational assistant",
+        "components": "Electronic component selection, datasheets, and specifications",
+        "cpp": "C++ development, STL, modern C++ idioms",
+        "devops": "CI/CD pipelines, infrastructure as code, deployment",
+        "docker": "Docker and container orchestration",
         "dsp": "Digital signal processing algorithms and implementations",
         "electronics": "General electronics design, component selection, and analysis",
+        "embedded": "Embedded systems programming (FreeRTOS, bare-metal, drivers)",
+        "emc": "EMC/EMI analysis, compliance, and mitigation strategies",
+        "freecad": "FreeCAD/OpenSCAD parametric 3D modeling scripts",
+        "html-css": "HTML and CSS web markup and styling",
+        "iot": "IoT protocols, sensors, and connected device firmware",
+        "kicad-dsl": "KiCad DSL generation (schematics, footprints, S-expressions)",
+        "kicad-pcb": "KiCad PCB layout, routing, and design rules",
+        "llm-ops": "LLM deployment, serving, and operational tooling",
+        "llm-orch": "LLM orchestration, agents, and multi-model pipelines",
+        "lua-upy": "Lua and MicroPython scripting for embedded devices",
+        "math": "Mathematics, proofs, and numerical methods",
+        "ml-training": "ML model training, fine-tuning, and optimization",
+        "music-audio": "Music production, audio processing, and DSP for audio",
+        "platformio": "PlatformIO project configuration and multi-platform firmware",
+        "power": "Power electronics design (converters, regulators, thermal)",
+        "python": "Python development, libraries, and best practices",
+        "reasoning": "Logical reasoning, problem solving, and analysis",
+        "rust": "Rust development, ownership, and systems programming",
+        "security": "Cybersecurity, penetration testing, and secure coding",
+        "shell": "Shell scripting, Bash, and command-line tooling",
+        "spice": "SPICE netlist generation and circuit simulation",
+        "spice-sim": "SPICE simulation analysis and parameter sweeps",
+        "sql": "SQL queries, database design, and optimization",
+        "stm32": "STM32 HAL firmware development and peripheral configuration",
+        "typescript": "TypeScript/JavaScript development and frameworks",
+        "web-backend": "Backend web development, APIs, and server frameworks",
+        "web-frontend": "Frontend web development, React, and UI frameworks",
+        "yaml-json": "YAML/JSON configuration, schemas, and data formats",
     }
     desc = domain_descriptions.get(domain, f"Domain-specific adapter for {domain}")
 
