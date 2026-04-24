@@ -164,7 +164,7 @@ class ChatCompletionRequest(BaseModel):
     # When True, strip <think>...</think> chain-of-thought from the final
     # response. Default False: keep CoT visible (reasoning-heavy models
     # benefit from it). Set True for short UI-bound chat turns.
-    strip_thinking: bool = False
+    strip_thinking: bool = True
 
 
 def _err(
