@@ -1,0 +1,54 @@
+# Brainstacks V4 — Null-space projection on Qwen3.6-35B-A3B
+model: /Users/clems/KIKI-Mac_tunner/models/Qwen3.6-35B-A3B-4bit
+adapter_dir: /Users/clems/KIKI-Mac_tunner/output/micro-kiki/lora-qwen36-35b-v4-sota
+data_dir: /Users/clems/KIKI-Mac_tunner/data/micro-kiki
+
+lora:
+  rank: 16
+  alpha: 16
+  num_layers: 32
+  lr: 1.0e-5
+
+null_space:
+  top_k: 32
+  svd_oversampling: 10
+  svd_n_iter: 3
+  enabled: true
+
+training:
+  iters_foundation: 1000
+  iters_coding: 500
+  iters_niche: 200
+  batch_size: 1
+  max_seq_length: 1024
+  grad_checkpoint: true
+
+curriculum:
+  foundations: [chat-fr, reasoning]
+  coding: [python, typescript, cpp, rust, html-css, shell, sql, yaml-json]
+  niche:
+    - docker
+    - kicad-dsl
+    - spice
+    - lua-upy
+    - embedded
+    - stm32
+    - iot
+    - freecad
+    - platformio
+    - power
+    - emc
+    - dsp
+    - spice-sim
+    - electronics
+    - kicad-pcb
+    - web-frontend
+    - web-backend
+    - music-audio
+    - devops
+    - llm-orch
+    - llm-ops
+    - ml-training
+    - math
+    - security
+    - components
