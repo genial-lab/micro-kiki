@@ -179,34 +179,45 @@ def _compute_ppl(
 ) -> float:
     """Compute perplexity = exp(avg NLL) on the full dataset.
 
-    Uses the same default_loss + iterate_batches logic as mlx_lm training.
-    Returns float('inf') on failure.
+    Tokenizes each example via chat template, computes cross-entropy
+    loss directly. Returns float('inf') on failure.
     """
     import mlx.core as mx
     import mlx.nn as nn
-    from mlx_lm.tuner.trainer import default_loss, iterate_batches
 
     model.eval()
-    all_nll = mx.array(0.0)
-    total_toks = mx.array(0)
+    total_loss = 0.0
+    total_tokens = 0
 
-    num_batches = max(len(dataset) // batch_size, 1)
+    for item in dataset:
+        # item is a dict with 'messages' key
+        messages = item.get("messages", [])
+        if not messages:
+            continue
+        try:
+            tokens = tokenizer.apply_chat_template(
+                messages, return_dict=False,
+            )
+        except Exception:
+            continue
+        if len(tokens) < 4:
+            continue
+        tokens = tokens[:max_seq_length]
 
-    for _, batch in zip(
-        range(num_batches),
-        iterate_batches(
-            dataset=dataset,
-            batch_size=batch_size,
-            max_seq_length=max_seq_length,
-        ),
-    ):
-        nll, toks = default_loss(model, *batch)
-        all_nll += nll * toks
-        total_toks += toks
-        mx.eval(all_nll, total_toks)
+        x = mx.array([tokens[:-1]])
+        y = mx.array([tokens[1:]])
+        logits = model(x)
+        loss = nn.losses.cross_entropy(logits, y, reduction="sum")
+        mx.eval(loss)
 
-    avg_nll = (all_nll / total_toks).item()
-    ppl = math.exp(avg_nll)
+        total_loss += loss.item()
+        total_tokens += len(tokens) - 1
+
+    if total_tokens == 0:
+        return float("inf")
+
+    avg_nll = total_loss / total_tokens
+    ppl = math.exp(min(avg_nll, 100))
     return round(ppl, 4)
 
 
