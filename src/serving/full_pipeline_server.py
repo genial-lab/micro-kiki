@@ -44,6 +44,15 @@ _THINK_PATTERN = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
 def _strip_think(text: str) -> str:
     return _THINK_PATTERN.sub("", text).lstrip()
 
+# Domains where cognitive augmentation (Aeon + Negotiator + AntiBias) improves quality.
+# Based on A/B eval 2026-04-25: conversational/design domains benefit,
+# purely technical domains (code gen, hardware config) are hurt by noisy recall.
+COGNITIVE_DOMAINS: frozenset[str] = frozenset({
+    "chat-fr", "reasoning", "power", "python", "dsp",
+    "math", "security", "devops", "llm-ops", "llm-orch",
+    "ml-training", "music-audio", "web-backend", "web-frontend",
+})
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from prometheus_client import (
@@ -968,20 +977,9 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 req.messages[-1].content,
             )
 
-            # Stage 1 — Aeon recall (best-effort, non-blocking on failure).
-            # Skipped in raw_mode to isolate routing + inference only.
-            if not req.raw_mode:
-                with metrics["stage_latency"].labels(stage="recall").time():
-                    try:
-                        recalled = state.aeon.recall(user_text, k=3)
-                    except Exception as exc:  # noqa: BLE001 — recall never blocks
-                        log.warning("Aeon recall failed: %s", exc)
-                        recalled = []
-            else:
-                recalled = []
-
             # Stage 2 — adapter selection. Meta aliases consult the
             # MetaRouter; niche aliases force the requested adapter.
+            # Runs before recall so the domain is known for cognitive gating.
             with metrics["stage_latency"].labels(stage="router").time():
                 if alias.mode == "meta":
                     try:
@@ -994,6 +992,33 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                         adapters = []
                 else:
                     adapters = [alias.target]
+
+            # Auto-gate cognitive layer based on routed domain.
+            # Skip Aeon/Negotiator/AntiBias for purely technical domains
+            # where recall noise degrades quality.
+            use_cognitive = not req.raw_mode and any(
+                a in COGNITIVE_DOMAINS for a in adapters
+            )
+            if not adapters:  # fallback to base — enable cognitive
+                use_cognitive = not req.raw_mode
+            log.info(
+                "cognitive gate: use_cognitive=%s adapters=%s raw_mode=%s",
+                use_cognitive,
+                adapters,
+                req.raw_mode,
+            )
+
+            # Stage 1 — Aeon recall (best-effort, non-blocking on failure).
+            # Skipped when cognitive layer is gated off (raw_mode or non-cognitive domain).
+            if use_cognitive:
+                with metrics["stage_latency"].labels(stage="recall").time():
+                    try:
+                        recalled = state.aeon.recall(user_text, k=3)
+                    except Exception as exc:  # noqa: BLE001 — recall never blocks
+                        log.warning("Aeon recall failed: %s", exc)
+                        recalled = []
+            else:
+                recalled = []
 
             # Stage 3 — apply adapters on the MLX runtime.
             try:
@@ -1036,8 +1061,8 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                         )
 
             # Stage 5 — Negotiator arbitrates K candidates.
-            # Skipped in raw_mode: use first candidate directly.
-            if not req.raw_mode:
+            # Skipped when cognitive layer is gated off.
+            if use_cognitive:
                 with metrics["stage_latency"].labels(stage="negotiator").time():
                     try:
                         winner, quality = await state.negotiator.arbitrate(
@@ -1052,8 +1077,8 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 winner, quality = candidates[0], {}
 
             # Stage 6 — AntiBias check on the winner.
-            # Skipped in raw_mode: pass winner through unchanged.
-            if not req.raw_mode:
+            # Skipped when cognitive layer is gated off.
+            if use_cognitive:
                 ab_ctx = {
                     "quality": quality,
                     "recalled": recalled,
@@ -1077,8 +1102,8 @@ def make_app(cfg: FullPipelineConfig) -> FastAPI:
                 final_text = _strip_think(final_text)
 
             # Stage 7 — Aeon write (best-effort, never block on failure).
-            # Skipped in raw_mode to avoid polluting memory with eval traffic.
-            if not req.raw_mode:
+            # Skipped when cognitive layer is gated off.
+            if use_cognitive:
                 with metrics["stage_latency"].labels(stage="memory_write").time():
                     try:
                         state.aeon.write({
