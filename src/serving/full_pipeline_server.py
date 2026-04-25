@@ -899,17 +899,79 @@ def _run_inference(
     during MLX Metal inference (~5-30 s).  The caller holds
     ``_inference_semaphore`` before dispatching, ensuring only one OS
     thread drives MLX at a time (Metal is single-stream per process).
+
+    For K=1 the simple ``runtime.generate()`` path is used (no batching
+    overhead).  For K>1 all candidates are generated in a single batched
+    forward pass via ``mlx_lm.generate.BatchGenerator``.  Each candidate
+    uses a slightly different temperature (+0.05 per rank) to encourage
+    diversity while keeping all requests in the same decode batch.  If
+    BatchGenerator is unavailable or raises an unexpected error the code
+    falls back to the sequential path with a warning.
     """
     # Stage 3 — apply adapter (10-50 ms unpatch + weight load).
     runtime.apply(adapters)
 
-    # Stage 4 — generate K candidates sequentially.
-    candidates: list[str] = []
-    for _ in range(k):
-        candidates.append(
-            runtime.generate(prompt, max_tokens=max_toks, temperature=temp)
+    # Stage 4 — generate K candidates.
+    if k == 1:
+        # Fast path: no batching overhead.
+        return [runtime.generate(prompt, max_tokens=max_toks, temperature=temp)]
+
+    # Batched path: all K candidates in one decode pass.
+    try:
+        from mlx_lm.generate import BatchGenerator
+        from mlx_lm.sample_utils import make_sampler
+
+        model = runtime._model
+        tokenizer = runtime._tokenizer
+        tokens: list[int] = tokenizer.encode(prompt)
+
+        # Per-candidate samplers with a tiny temperature spread to encourage
+        # diversity across candidates without diverging too far from the
+        # requested temperature.
+        samplers = [
+            make_sampler(temp=float(temp) + i * 0.05) for i in range(k)
+        ]
+
+        batch_gen = BatchGenerator(model=model, max_tokens=max_toks)
+
+        # Insert all K requests (same prompt tokens, different samplers).
+        uids = batch_gen.insert(
+            prompts=[tokens] * k,
+            max_tokens=[max_toks] * k,
+            samplers=samplers,
         )
-    return candidates
+        uid_set = set(uids)
+
+        # Accumulate completed responses keyed by uid.
+        finished: dict[int, list[int]] = {}
+
+        while len(finished) < k:
+            responses = batch_gen.next_generated()
+            for resp in responses:
+                if resp.uid in uid_set and resp.finish_reason is not None:
+                    finished[resp.uid] = resp.all_tokens or []
+
+        batch_gen.close()
+
+        # Decode each candidate in uid insertion order.
+        candidates: list[str] = []
+        for uid in uids:
+            token_ids = finished.get(uid, [])
+            candidates.append(tokenizer.decode(token_ids))
+        return candidates
+
+    except Exception as exc:  # noqa: BLE001
+        log.warning(
+            "BatchGenerator unavailable or failed (%s); "
+            "falling back to sequential K-candidate generation",
+            exc,
+        )
+        candidates_seq: list[str] = []
+        for _ in range(k):
+            candidates_seq.append(
+                runtime.generate(prompt, max_tokens=max_toks, temperature=temp)
+            )
+        return candidates_seq
 
 
 def _build_prompt(messages: list[ChatMessage], recalled: list[dict]) -> str:
