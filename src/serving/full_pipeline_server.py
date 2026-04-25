@@ -246,6 +246,15 @@ class _MLXRuntimeAdapter:
         from mlx_lm import load as mlx_load  # lazy heavy import
         import mlx.core as mx
 
+        # Pin MLX unified-memory budgets early — must happen before the
+        # base model load so Metal does not pick a conservative default.
+        # 460 GB = full usable budget on M3 Ultra 512 GB (headroom for OS +
+        # torch MetaRouter + sentence-transformers).
+        # 32 GB KV cache matches the hard invariant in CLAUDE.md.
+        mx.set_memory_limit(460 * 1024**3)
+        mx.set_cache_limit(32 * 1024**3)
+        log.info("MLX memory limit: 460 GB, cache limit: 32 GB")
+
         self._base_model_path = base_model_path
         self._adapters_root = adapters_root
         self._swap_metric = swap_metric
@@ -286,22 +295,23 @@ class _MLXRuntimeAdapter:
             self._preload_adapters()
 
     def _preload_adapters(self) -> None:
-        """Prime the filesystem cache for every adapter.safetensors.
+        """Load all adapter weights into MLX unified memory at startup.
 
-        On a 512 GB Apple Silicon host the page cache readily absorbs the
-        ~17 GB of LoRA weights (34 × ~500 MB), so subsequent mmap-based
-        reads inside ``load_adapters`` skip disk I/O. This is a lightweight
-        alternative to holding a parallel dict of MLX tensors in memory —
-        ``mlx_lm.tuner.utils.load_adapters`` already handles LoRA rank,
-        target modules, and scale from each adapter's ``adapter_config.json``;
-        we don't try to reimplement that plumbing.
+        On a 512 GB M3 Ultra the 36 × ~3.7 GB LoRA state dicts fit
+        comfortably (~133 GB wired) within the 460 GB MLX budget alongside
+        the 19 GB base model.  Storing tensors in ``self._adapter_cache``
+        means ``apply()`` can call ``model.load_weights()`` directly instead
+        of re-mmapping from disk on every swap, eliminating the 50-200 ms
+        disk-read half of the swap cost.
         """
+        import mlx.core as mx
+
         root = Path(self._adapters_root)
         if not root.exists():
             log.warning("adapters_root %s missing, no preload", root)
             return
         count = 0
-        bytes_touched = 0
+        bytes_total = 0
         for child in sorted(root.iterdir()):
             if not child.is_dir() or child.name.startswith("."):
                 continue
@@ -309,18 +319,21 @@ class _MLXRuntimeAdapter:
             if not st.exists():
                 continue
             try:
-                with st.open("rb") as f:
-                    while f.read(1 << 20):  # 1 MiB chunks
-                        pass
-                bytes_touched += st.stat().st_size
-                self._adapter_cache[child.name] = True  # marker; actual
-                                                        # weights live in page cache
+                weights = mx.load(str(st))
+                mx.eval(weights)  # force materialization in unified memory
+                self._adapter_cache[child.name] = weights
+                size = sum(v.nbytes for v in weights.values())
+                bytes_total += size
                 count += 1
+                log.debug(
+                    "wired adapter %s (%.1f MB)",
+                    child.name, size / (1024**2),
+                )
             except Exception as exc:  # noqa: BLE001
-                log.warning("preload failed for %s: %s", child.name, exc)
+                log.warning("failed to preload %s: %s", child.name, exc)
         log.info(
-            "primed page cache for %d adapters (%.1f GB)",
-            count, bytes_touched / (1024**3),
+            "preloaded %d adapters into MLX memory (%.1f GB wired)",
+            count, bytes_total / (1024**3),
         )
 
     # Merged domain → first on-disk adapter directory.
@@ -378,16 +391,45 @@ class _MLXRuntimeAdapter:
                     self._swap_metric.labels(method="reload").observe(
                         time.perf_counter() - t1
                     )
-        # Observe the load_adapters call itself. When self._current_adapter
-        # is None we emit method="initial" so dashboards can separate cold-
-        # boot latency from steady-state swaps; otherwise the unpatch/reload
-        # observations above already cover the cost that matters.
+        # Apply the adapter weights.
+        #
+        # Fast path (cache hit): the first call for a given adapter still
+        # goes through load_adapters() so mlx_lm can wrap Linear layers with
+        # LoRALinear and read adapter_config.json (rank, target_modules,
+        # scale). On subsequent swaps back to the same adapter, the LoRA
+        # structure is already in place after unpatch_all_lora() restores
+        # plain weights — we can then call model.load_weights() directly
+        # from the in-memory tensor dict, skipping the disk read entirely.
+        #
+        # Slow path (cache miss / first-ever call): fall back to
+        # load_adapters() which reads from disk and sets up the LoRA
+        # wrappers.
         t_apply = time.perf_counter()
-        self._model = load_adapters(self._model, adapter_path)
+        cached = self._adapter_cache.get(name)
+        if cached is not None and isinstance(cached, dict):
+            # LoRA wrappers were already constructed on the first call;
+            # just swap the weight values.
+            try:
+                self._model.load_weights(list(cached.items()))
+                method_label = "cache_hit"
+            except Exception as exc:  # noqa: BLE001
+                log.warning(
+                    "load_weights from cache failed (%s); falling back "
+                    "to disk load for %s",
+                    exc, name,
+                )
+                self._model = load_adapters(self._model, adapter_path)
+                method_label = "cache_fallback"
+        else:
+            self._model = load_adapters(self._model, adapter_path)
+            method_label = "initial" if self._current_adapter is None else "disk_load"
+        dt_apply = time.perf_counter() - t_apply
         if self._swap_metric is not None and self._current_adapter is None:
-            self._swap_metric.labels(method="initial").observe(
-                time.perf_counter() - t_apply
-            )
+            self._swap_metric.labels(method=method_label).observe(dt_apply)
+        log.debug(
+            "load_weights %s via %s in %.1f ms",
+            name, method_label, dt_apply * 1000,
+        )
         self._current_adapter = name
         # KV cache is invalidated on adapter swap — cached states were
         # computed with the previous adapter's LoRA projections.
