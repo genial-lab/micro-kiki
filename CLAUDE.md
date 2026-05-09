@@ -1,6 +1,6 @@
 # micro-kiki
 
-35 domain-expert LoRAs + cognitive layer on Qwen3.6-35B-A3B (native MoE, 256 experts, 3B active; earlier drafts referenced Qwen3.5-35B-A3B — superseded 2026-04-18 per real `adapter_config.json`). Sequential per-domain training via MLX on Mac Studio M3 Ultra 512 GB; Q4 inference on kxkm-ai (RTX 4090 24 GB).
+41 domain-expert LoRAs (v4-sota, latest stack — incl. v2 retrains for cpp, html-css, python, rust, shell, typescript) + cognitive layer on Qwen3.6-35B-A3B (native MoE, 256 experts, 3B active; earlier drafts referenced Qwen3.5-35B-A3B — superseded 2026-04-18 per real `adapter_config.json`; v3 was 24 stacks, expanded to 41 in v4-sota 2026-04-26). Sequential per-domain training via MLX on Mac Studio M3 Ultra 512 GB; Q4 inference on kxkm-ai (RTX 4090 24 GB) **or local M1 Max 32 GB via mlx-lm — see Inference deployments below**.
 
 > Training, datasets, and the `mlx-lm` fork live in the sibling repo `~/KIKI-Mac_tunner/`. This repo holds the runtime code (routing, cognitive layer, serving, eval) and configs that drive the tuner.
 
@@ -32,6 +32,24 @@ Artifacts (`checkpoints/`, `output/`, `outputs/`, `results/`, `models/`, `data/`
 - **Forgetting gate**: run after EACH stack; rollback if angle < 30° AND win-rate drop > 0.03.
 - **Serving**: Q4_K_M for inference, never below Q4 (quality cliff). Max 4 active stacks simultaneously (VRAM + interference).
 - **Router shape**: 35 sigmoid outputs (domains are not mutually exclusive) — not softmax.
+
+## Inference deployments (validated 2026-05-02)
+
+Three distinct serving paths, picked by use case:
+
+| Target | Hardware | Runtime | Models | Wrapper |
+|---|---|---|---|---|
+| **kxkm-ai** | RTX 4090 24 GB | vLLM Q4_K_M | base + adapters via vLLM LoRA hot-swap | (per `deploy/`) |
+| **macM1** (M1 Max 32 GB) | Apple Silicon | mlx-lm 0.31.3 (Python 3.12 venv) | `Qwen3.6-35B-A3B-4bit` MLX (~19 GB) + 41 v4-sota LoRA adapters at `~/llm/adapters/v4-sota/<sub>/` | `~/llm/qwen.sh "..." [adapter] [--think]` |
+| **macM1 — edge mode** | ANE (Neural Engine, ~1-2 W) | ANEMLL via CoreML (separate venv `~/llm/venv-anemll/`) | `anemll-qwen3-0.6b` and `anemll-qwen3-1.7b` (CoreML, on T7 SSD) | `~/llm/anemll.sh "..." [0.6b\|1.7b]` |
+
+**macM1 stack gotchas (load-bearing):**
+- `mlx-lm < 0.30` raises `Model type qwen3_5_moe not supported` — must use 0.31.x with Python ≥3.12. Earlier `~/llm/venv/` (Python 3.9) is broken for this base.
+- **Chat template is mandatory** when invoking adapters via `--adapter-path` — without `tokenizer.apply_chat_template(..., enable_thinking=False)` the adapters loop ("J'ai lu les calculatrices..." on kicad-pcb). The `qwen.sh` wrapper handles this.
+- Adapters can be **fused** into the base via `python -m mlx_lm fuse --model <base> --adapter-path <adapter> --save-path <out>` — cuts load time ~40 % at the cost of disk per fused variant (~19 GB each).
+- macM1 ↔ studio sync **must use WAN ProxyJump** (`clems@86.207.130.39` → `192.168.13.100`). Tailscale falls into DERP relay and caps at ~0.7 MB/s; WAN direct = ~16 MB/s/flow, ~65 MB/s on 5 concurrent flows.
+
+**ANEMLL caveat:** the 0.6B/1.7B CoreML models are convenient for low-power chat but **hallucinate badly on technical questions** (tested 2026-05-02: 0.6B answers "200 mm" trace width for 10A/2oz, 1.7B fabricates a snubber formula with a fictional inductor). Reserve for chat-fr / classification / batterie longue durée; hardware questions go to the 35B path.
 
 ## Never do this
 

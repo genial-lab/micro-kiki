@@ -1,0 +1,23 @@
+# Deploy
+
+LaunchAgent (macOS), systemd (Linux), and container manifests for serving.
+
+## Layout
+
+- `launchd/` — macOS user agents (`com.<org>.<service>.plist`)
+- `systemd/` — Linux unit files (`<service>.service`, `<service>.socket`)
+- Dockerfiles / compose: `../docker/`
+
+## Conventions
+
+- Plist `Label` mirrors the file name without `.plist`
+- `WorkingDirectory` is absolute (no `~` expansion in launchd)
+- Logs to `~/Library/Logs/<name>.{out,err}.log` (macOS), `/var/log/<name>.log` (Linux)
+- All env vars in one block; document each in `../docs/`
+
+## Anti-patterns
+
+- Don't put secrets in plists/units — use a secrets manager or `.env` excluded from git
+- Don't hardcode user paths — use template + install script
+- Don't omit `KeepAlive` policy — choose `SuccessfulExit=false` for daemons
+- Don't mix dev and prod configs in the same file — split by env

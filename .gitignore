@@ -254,3 +254,6 @@ data/corpus-real/*/raw.jsonl
 
 # Large dry-run artifact (regenerated on demand)
 results/spikingkiki-35b-convert.json
+
+# Local backups
+*.backup
