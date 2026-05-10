@@ -37,3 +37,13 @@ bash scripts/install-launchd.sh --uninstall
 - Don't hardcode user paths — use template + install script
 - Don't omit `KeepAlive` policy — choose `SuccessfulExit=false` for daemons
 - Don't mix dev and prod configs in the same file — split by env
+
+## Source of the launchd templates
+
+The install script + plist template were instantiated from the
+workspace-level templates at:
+`~/Documents/Projets/_templates/launchd/` (promoted by N4 Task 8,
+2026-05-10).
+
+To bring future improvements from the workspace template back
+into this project, diff against the source and merge selectively.
