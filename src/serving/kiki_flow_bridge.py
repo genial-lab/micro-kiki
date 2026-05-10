@@ -13,6 +13,7 @@ of the workshop sprint).
 """
 from __future__ import annotations
 
+import json
 import logging
 import os
 from pathlib import Path
@@ -26,6 +27,31 @@ logger = logging.getLogger(__name__)
 # v0.2-d128: synthetic JKO pairs only (128-dim, Mode-A, 30 epochs, loss 9.8e-5)
 # v0.3:      text-conditioned via QueryConditionedF + g_JEPA pre-training
 _WEIGHTS_VERSION = "v0.3"
+
+
+def _resolve_weights_path(weights_dir: Path) -> Path:
+    """Resolve the canonical weights file via MANIFEST.json.
+
+    N4 Task 7: bridge consumes kiki-flow-research's MANIFEST.json
+    ({schema_version, latest, files {sha256, bytes}}) so weight bumps
+    update the manifest atomically and the bridge auto-discovers the
+    new file without code changes.
+
+    Falls back to legacy hard-coded ``v0.3.safetensors`` if MANIFEST.json
+    is missing — allows incremental rollout where consumer machines may
+    not have the manifest on day one.
+    """
+    weights_dir = Path(weights_dir)
+    manifest_path = weights_dir / "MANIFEST.json"
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text())
+            latest = manifest.get("latest")
+            if latest:
+                return weights_dir / latest
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.warning("MANIFEST.json unreadable (%s); using legacy fallback", exc)
+    return weights_dir / "v0.3.safetensors"
 
 
 class KikiFlowBridge:
