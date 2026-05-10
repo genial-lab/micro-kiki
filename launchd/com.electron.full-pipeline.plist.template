@@ -7,10 +7,10 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/clems/.local/bin/uv</string>
+    <string>${USER_HOME}/.local/bin/uv</string>
     <string>run</string>
     <string>--project</string>
-    <string>/Users/clems/Projets/micro-kiki</string>
+    <string>${REPO_DIR}</string>
     <string>--python</string>
     <string>3.13</string>
     <string>--extra</string>
@@ -30,18 +30,18 @@
     <string>9200</string>
   </array>
   <key>WorkingDirectory</key>
-  <string>/Users/clems/Projets/micro-kiki</string>
+  <string>${REPO_DIR}</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>KIKI_LOG_LEVEL</key><string>INFO</string>
-    <key>PATH</key><string>/Users/clems/.local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>PATH</key><string>${USER_HOME}/.local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
   </dict>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key>
   <dict><key>SuccessfulExit</key><false/></dict>
   <key>StandardOutPath</key>
-  <string>/Users/clems/Projets/micro-kiki/full-pipeline.out.log</string>
+  <string>${REPO_DIR}/full-pipeline.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/clems/Projets/micro-kiki/full-pipeline.err.log</string>
+  <string>${REPO_DIR}/full-pipeline.err.log</string>
 </dict>
 </plist>

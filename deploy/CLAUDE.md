@@ -15,6 +15,22 @@ LaunchAgent (macOS), systemd (Linux), and container manifests for serving.
 - Logs to `~/Library/Logs/<name>.{out,err}.log` (macOS), `/var/log/<name>.log` (Linux)
 - All env vars in one block; document each in `../docs/`
 
+## Installation
+
+```bash
+bash scripts/install-launchd.sh
+```
+
+Loads `launchd/com.electron.full-pipeline.plist.template` with
+`${USER_HOME}` and `${REPO_DIR}` substituted for the current user.
+The watchdog itself is documented in the F4L tree (cross-repo).
+
+To uninstall:
+
+```bash
+bash scripts/install-launchd.sh --uninstall
+```
+
 ## Anti-patterns
 
 - Don't put secrets in plists/units — use a secrets manager or `.env` excluded from git
